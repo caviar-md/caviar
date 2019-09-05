@@ -1,0 +1,61 @@
+
+
+#=======================================================================
+# 
+# Copyright (C) 2019 by Morad Biagooi and Ehsan Nedaaee Oskoee.
+# 
+# This file is part of the CAVIAR package.
+# 
+# The CAVIAR package is free software; you can use it, redistribute
+# it, and/or modify it under the terms of the GNU Lesser General
+# Public License as published by the Free Software Foundation; either
+# version 3.0 of the License, or (at your option) any later version.
+# The full text of the license can be found in the file LICENSE at
+# the top level of the CAVIAR distribution.
+# 
+#=======================================================================
+
+int i
+int j
+
+
+echo "================"
+echo "    LOOP TEST"
+echo "================"
+
+i=1
+do i<5
+  echo "i: " i   
+  if i<3
+    echo i " is smaller than 3"
+  endif
+  i = i+1
+enddo 
+
+
+
+echo "================"
+echo "NESTED LOOP TEST"
+echo "================"
+
+int sum = 0
+
+i=1
+do i<5
+  j=1
+  do j<5
+    sum = i+j
+    if sum > 5
+      echo "yes: " sum ">5"
+    elseif i+j==5
+      echo "middle :" sum "==5"
+    else
+      echo "no : " sum "< 5"
+    endif
+    echo "i,j: " i " " j  
+    j  = j + 1
+  enddo
+  i = i+1
+enddo
+
+

@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language id="caviar" _name="CAVIAR" version="2.0" _section="Markup">
+  <metadata> 
+    <property name="globs">*.casl</property>
+  </metadata>
+  <styles>
+    <style id="comment" _name="Comment" map-to="def:comment"/>
+    <style id="keyword" _name="Keyword" map-to="def:keyword"/>
+    <style id="string" _name="String" map-to="def:string"/>
+    <style id="floating-point" _name="Floating Point" map-to="def:floating-point"/>
+    <style id="decimal" _name="Decimal" map-to="def:decimal"/>
+    <style id="boz-literal" name="BOZ Literal" map-to="def:base-n-integer"/>
+    <style id="type" _name="Data Type" map-to="def:type"/>
+    <style id="intrinsic" name="Intrinsic function" map-to="def:builtin"/>
+<!--
+    <style id="indent2" _name="2x indented"  map-to="def:comment" />
+    <style id="indent3" _name="3x indented"  map-to="def:constant" />
+    <style id="indent4" _name="4x indented"  map-to="def:identifier" />
+-->
+    <style id="intext"  _name="INT. or EXT." map-to="def:statement" />
+
+  </styles>
+
+  <default-regex-options case-sensitive="false"/>
+
+  <definitions>
+
+    <context id="caviar">
+      <include>
+
+    <define-regex id="string-prefix">(u|U)?</define-regex>
+
+    <context id="multiline-double-quoted-string" style-ref="comment" class="comment" class-disabled="no-spell-check">
+      <start>\%{string-prefix}#[*]</start>
+      <end>[*]#</end>
+      <include>
+        <context ref="def:escape"/>
+      </include>
+    </context>
+
+
+    <context id="line-comment" style-ref="comment" end-at-line-end="true" class="comment" class-disabled="no-spell-check">
+      <start>(#[^$])</start>
+      <include>
+        <context ref="def:escape"/>
+        <context ref="def:in-line-comment"/>
+      </include>
+    </context>
+
+    <context id="string" style-ref="string">
+      <match>(L?'[^']*')|(L?"[^"]*")</match>
+    </context>
+
+    <context id="floating-point-number" style-ref="floating-point">
+      <match extended="true">
+        (?&lt;![\w\.])
+        [+-]?
+        ((\.[0-9]+ | [0-9]+\.[0-9]*) ([ed][+-]?[0-9]*)? |
+         ([0-9]+[ed][+-]?[0-9]*))
+         ([_]([0-9]+|[a-z][\w_]*))?
+        (?![\w\.])
+      </match>
+    </context>
+
+    <context id="decimal" style-ref="decimal">
+      <match extended="true">
+        (?&lt;![\w\.])
+        [+-]? ([1-9][0-9]*|0)
+        ([_]([0-9]+|[a-z][\w_]*))?
+        (?![\w\.])
+      </match>
+    </context>
+
+    <context id="boz-literal" style-ref="boz-literal">
+      <match extended="true">
+        \bb'[01]+'|\bb"[01]+"|
+        \bo'[0-7]+'|\bo"[0-7]+"|
+        \bz'[0-9a-f]+'|\bz"[0-9a-f]+"
+      </match>
+    </context>
+
+
+    <context id="keywords" style-ref="keyword">
+      <keyword>atom_data</keyword>
+      <keyword>constraint</keyword>
+      <keyword>domain</keyword>
+      <keyword>force_field</keyword>
+      <keyword>integrator</keyword>
+      <keyword>md_simulator</keyword>
+      <keyword>neighborlist</keyword>
+      <keyword>shape</keyword>
+      <keyword>unique</keyword>
+      <keyword>writer</keyword>
+
+      <keyword>string</keyword>
+      <keyword>bool</keyword>
+      <keyword>int</keyword>
+      <keyword>real</keyword>
+      <keyword>int2d</keyword>
+      <keyword>real2d</keyword>
+      <keyword>int3d</keyword>
+      <keyword>real3d</keyword>
+    </context>
+
+
+    <context id="intrinsics" style-ref="intrinsic">
+
+      <keyword>object_container</keyword>
+
+      <keyword>function</keyword>
+      <keyword>end_function</keyword>
+
+      <keyword>class</keyword>
+      <keyword>end_class</keyword>
+
+      <keyword>read</keyword>
+
+      <keyword>include</keyword>
+
+      <keyword>import</keyword>
+
+      <keyword>output</keyword>
+
+      <keyword>exit</keyword>
+      <keyword>quit</keyword>
+
+      <keyword>print</keyword>
+      <keyword>fprint</keyword>
+
+
+      <keyword>echo</keyword>
+
+      <keyword>for</keyword>
+      <keyword>next</keyword>
+
+      <keyword>do</keyword>
+      <keyword>end_do</keyword>
+      <keyword>enddo</keyword>
+
+      <keyword>while</keyword>
+
+      <keyword>break</keyword>
+      <keyword>continue</keyword>
+
+      <keyword>if</keyword>
+      <keyword>endif</keyword>
+      <keyword>end_if</keyword>
+      <keyword>else_if</keyword>
+      <keyword>elseif</keyword>
+      <keyword>else</keyword>
+      <keyword>evaluate</keyword>
+      <keyword>calculate</keyword>
+
+      <keyword>compare_real</keyword>
+      <keyword>compare_int</keyword>
+      <keyword>compare_string</keyword>
+      <keyword>compare</keyword>
+
+      <keyword>delete</keyword>
+
+      <keyword>help</keyword>
+
+    </context>
+
+
+    <context id="type-attributes" style-ref="type">
+      <keyword>add_atom_data</keyword>
+      <keyword>add_constraint</keyword>
+      <keyword>add_domain</keyword>
+      <keyword>add_force_field</keyword>
+      <keyword>add_integrator</keyword>
+      <keyword>add_md_simulator</keyword>
+      <keyword>add_neighborlist</keyword>
+      <keyword>add_shape</keyword>
+      <keyword>add_unique</keyword>
+      <keyword>add_writer</keyword>
+
+      <keyword>set_atom_data</keyword>
+      <keyword>set_constraint</keyword>
+      <keyword>set_domain</keyword>
+      <keyword>set_force_field</keyword>
+      <keyword>set_integrator</keyword>
+      <keyword>set_md_simulator</keyword>
+      <keyword>set_neighborlist</keyword>
+      <keyword>set_shape</keyword>
+      <keyword>set_unique</keyword>
+      <keyword>set_writer</keyword>
+<!--
+      <keyword>basic</keyword>
+
+      <keyword>atom_molarity</keyword>
+      <keyword>atoms_molarity</keyword>
+      <keyword>brendsen</keyword>
+      <keyword>langevin</keyword>
+      <keyword>m_shake</keyword>
+      <keyword>nose_hoover</keyword>
+      <keyword>nve</keyword>
+      <keyword>rattle</keyword>
+      <keyword>shake</keyword>
+
+      <keyword>box</keyword>
+
+      <keyword>dpd</keyword>
+      <keyword>dpd_mpi</keyword>
+      <keyword>electromagnetic</keyword>
+      <keyword>electromagnetic_external</keyword>
+      <keyword>electrostatic</keyword>
+      <keyword>electrostatic</keyword>
+      <keyword>electrostatic</keyword>
+      <keyword>electrostatic</keyword>
+      <keyword>geometry</keyword>
+      <keyword>lj</keyword>
+      <keyword>lj_acc</keyword>
+      <keyword>granular</keyword>
+      <keyword>finite_element</keyword>
+      <keyword>electrostatic</keyword>
+      <keyword>pppm</keyword>
+      <keyword>p3m</keyword>
+      <keyword>ewald</keyword>
+
+
+      <keyword>leap_frog</keyword>
+      <keyword>velocity_verlet</keyword>
+      <keyword>velocity_verlet_langevin</keyword>
+      <keyword>verlet</keyword>
+
+      <keyword>cell_list</keyword>
+      <keyword>verlet_list</keyword>
+
+      <keyword>circle</keyword>
+      <keyword>cylinder</keyword>
+      <keyword>mixed</keyword>
+      <keyword>plane</keyword>
+      <keyword>polygon</keyword>
+      <keyword>polyhedron</keyword>
+      <keyword>sphere</keyword>
+      <keyword>triangle</keyword>
+
+      <keyword>atom</keyword>
+      <keyword>atom_group</keyword>
+      <keyword>atom_list</keyword>
+      <keyword>distribution</keyword>
+      <keyword>grid_1d</keyword>
+      <keyword>molecule</keyword>
+      <keyword>molecule_group</keyword>
+      <keyword>molecule_list</keyword>
+      <keyword>random_1d</keyword>
+
+
+      <keyword>parameter</keyword>
+      <keyword>thickness</keyword>
+      <keyword>invert_normals</keyword>
+      <keyword>correct_normals</keyword>
+      <keyword>elements</keyword>
+
+      <keyword>sigma</keyword>
+      <keyword>epsilon</keyword>
+      <keyword>zeta</keyword>
+      <keyword>eta</keyword>
+      <keyword>alpha</keyword>
+      <keyword>beta</keyword>
+
+      <keyword>boundary</keyword>
+
+      <keyword>boundary_condition</keyword>
+
+      <keyword>radius</keyword>
+      <keyword>charge</keyword>
+      <keyword>mass</keyword>
+      <keyword>position</keyword>
+      <keyword>position_x</keyword>
+      <keyword>position_y</keyword>
+      <keyword>position_z</keyword>
+      <keyword>velocity</keyword>
+
+      <keyword>generate</keyword>
+
+      <keyword>vtk_file_name</keyword>
+
+      <keyword>object</keyword>
+      <keyword>container</keyword>
+
+      <keyword>min</keyword>
+      <keyword>minimum</keyword>
+      <keyword>max</keyword>
+      <keyword>maximum</keyword>
+
+      <keyword>segment</keyword>
+      <keyword>increment</keyword>
+      <keyword>to_molecule</keyword>
+      <keyword>at_position</keyword>
+      <keyword>povray</keyword>
+
+      <keyword>inside</keyword>
+      <keyword>outside</keyword>
+      <keyword>and_inside</keyword>
+      <keyword>and_outside</keyword>
+
+      <keyword>xmin</keyword>
+      <keyword>ymin</keyword>
+      <keyword>zmin</keyword>
+      <keyword>xmax</keyword>
+      <keyword>ymax</keyword>
+      <keyword>zmax</keyword>
+
+
+
+      <keyword>boundary_condition</keyword>
+      <keyword>time_step</keyword>
+      <keyword>timestep</keyword>
+      <keyword>dt</keyword>
+
+      <keyword>output_step</keyword>
+      <keyword>outputstep</keyword>
+      <keyword>xyz</keyword>
+      <keyword>vmd</keyword>
+      <keyword>povray</keyword>
+
+      <keyword>initial_step</keyword>
+      <keyword>final_step</keyword>
+      <keyword>initial_time</keyword>
+      <keyword>final_time</keyword>
+      <keyword>set_integrator</keyword>
+      <keyword>run</keyword>
+      <keyword>temperature</keyword>
+
+      <keyword>kb</keyword>
+      <keyword>kbt</keyword>
+
+      <keyword>young_modulus</keyword>
+      <keyword>elastic_coef</keyword>
+      <keyword>dissip_coef</keyword>
+
+      <keyword>center</keyword>
+
+      <keyword>cutoff_extra</keyword>
+      <keyword>cutoff_r</keyword>
+      <keyword>cutoff_k</keyword>
+      <keyword>cutoff</keyword>
+      <keyword>neighbor_cutoff</keyword>
+      <keyword>ghost_cutoff</keyword>
+-->
+    </context>
+
+<!--
+        <context id="indent4" style-ref="indent4">
+          <start>^\t\t\t\t</start>
+          <end>$</end>
+        </context>
+        <context id="indent3" style-ref="indent3">
+          <start>^\t\t\t</start>
+          <end>$</end>
+        </context>
+        <context id="indent2" style-ref="indent2">
+          <start>^\t\t</start>
+          <end>$</end>
+        </context>
+-->
+        <context id="intext" style-ref="intext">
+          <start>^(INT|EXT)\.</start>
+          <end>$</end>
+        </context>
+
+
+      </include>
+    </context>
+
+
+  </definitions>
+</language>

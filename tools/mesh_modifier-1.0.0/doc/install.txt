@@ -1,0 +1,7 @@
+To compile and use the code, do the commands below,
+
+  $ mkdir build
+  $ cd build
+  $ cmake $(PATH_TO_MESH_MODIFIER)
+  $ make
+

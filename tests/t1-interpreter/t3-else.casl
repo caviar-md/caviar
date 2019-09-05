@@ -1,0 +1,71 @@
+
+
+#=======================================================================
+# 
+# Copyright (C) 2019 by Morad Biagooi and Ehsan Nedaaee Oskoee.
+# 
+# This file is part of the CAVIAR package.
+# 
+# The CAVIAR package is free software; you can use it, redistribute
+# it, and/or modify it under the terms of the GNU Lesser General
+# Public License as published by the Free Software Foundation; either
+# version 3.0 of the License, or (at your option) any later version.
+# The full text of the license can be found in the file LICENSE at
+# the top level of the CAVIAR distribution.
+# 
+#=======================================================================
+
+# this is a CAVIAR test which should give the correct result with no runtime error.
+
+
+int number_of_errors = 0
+
+
+
+if 11>=22
+  echo "p1: A: yes 1==1"
+  number_of_errors = number_of_errors + 1
+elseif 2==2
+  echo "p2: elseif 1"
+elseif 3==3
+  echo "p2.1: elseif 1"
+  echo "p2.2: elseif 1"
+  number_of_errors = number_of_errors + 1
+elseif 2==2
+  echo "p2.3: elseif 1"
+  echo "p2.4: elseif 1"
+  number_of_errors = number_of_errors + 1
+elseif 3==3
+  echo "p3: elseif 2"
+  number_of_errors = number_of_errors + 1
+else  
+  echo "p4: else 1"
+  number_of_errors = number_of_errors + 1
+endif 
+
+if 1==1
+  echo "p4: A: yes 1==1"
+else 
+  echo "p5: ERROR 2"
+  number_of_errors = number_of_errors + 1
+endif
+
+
+
+if 2>4
+  echo "p6: Error 3"
+  number_of_errors = number_of_errors + 1
+else
+  echo "p7: we passed here"
+endif
+
+if 2>=4
+  echo "p8: Error 4"
+  number_of_errors = number_of_errors + 1
+else
+  echo "p9: we passed here"
+endif
+
+
+echo "test finished with " number_of_errors " errors."
+

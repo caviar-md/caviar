@@ -1,0 +1,252 @@
+
+#=======================================================================
+# 
+# Copyright (C) 2019 by Morad Biagooi and Ehsan Nedaaee Oskoee.
+# 
+# This file is part of the CAVIAR package.
+# 
+# The CAVIAR package is free software; you can use it, redistribute
+# it, and/or modify it under the terms of the GNU Lesser General
+# Public License as published by the Free Software Foundation; either
+# version 3.0 of the License, or (at your option) any later version.
+# The full text of the license can be found in the file LICENSE at
+# the top level of the CAVIAR distribution.
+# 
+#=======================================================================
+# 
+# This script script is made with the contributions of Mr Amin Karim Abadi
+# 
+
+#===== global variables
+
+real global_dt 0.001
+
+#===== Atom definition =====
+
+unique atom a_H1
+a_H1 type 1
+a_H1 position -.815 0 0
+
+
+unique atom a_H2
+a_H2 type 1
+a_H2 position .815 0 0
+
+
+unique atom a_O
+a_O type 0
+a_O position 0 .5794 0
+
+
+#===== Molecule definition =====
+
+unique molecule m_water
+
+m_water add_atom a_H1  #0
+m_water add_atom a_H2  #1
+m_water add_atom a_O   #2
+
+m_water position 0 0 0
+
+m_water atomic_bond 0 1 0 1.63
+m_water atomic_bond 1 2 0 1.0
+m_water atomic_bond 2 0 0 1.0
+
+
+#===== Molecule_group definition =====
+
+unique molecule_group mg
+
+
+#===== Domain
+
+domain box dom
+dom xmin -15 xmax 15
+dom ymin -15 ymax 15
+dom zmin -15 zmax 15
+dom boundary_condition 1 1 1
+ 
+dom generate
+
+#===== Grid definition =====
+
+unique grid_1d gx
+unique grid_1d gy
+unique grid_1d gz
+
+# compact distribution
+#gx min -14 max 14 segment 9
+#gy min -14 max 14 segment 8
+#gz min -14 max 14 segment 8
+
+
+# A few number of molecules
+gx min -5 max 5 segment 2
+gy min -5 max 5 segment 2
+gz min -5 max 5 segment 2
+
+gx generate
+gy generate
+gz generate
+
+#==== Distribution =====
+
+unique distribution d
+d molecule_group mg
+d molecule m_water
+d grid_1d_x gx 
+d grid_1d_y gy 
+d grid_1d_z gz
+d distribute_grid_3d
+
+
+#========== Atom_data
+
+atom_data basic adata
+adata ghost_cutoff 5
+adata cutoff_extra 0.01
+adata k_b 1.0
+adata set_domain dom
+adata add_type_mass   0 15.999   # oxygen
+adata add_type_charge 0 -0.8476  # oxygen
+adata add_type_radius 0 1.4146  # oxygen 
+
+adata add_type_mass   1 1.0      # hydrogen
+adata add_type_charge 1 0.4238   # hydrogen
+adata add_type_radius 1 0.0836   # hydrogen
+
+adata add_molecule_group mg
+adata add_random_velocity
+
+#===== Neighborlist
+
+neighborlist verlet_list neigh_verlet 
+neigh_verlet set_atom_data adata
+neigh_verlet cutoff 12
+neigh_verlet dt global_dt
+
+#===== Neighborlist
+
+neighborlist cell_list neigh_cell 
+neigh_cell set_atom_data adata
+neigh_cell cutoff 12
+neigh_cell set_domain dom
+neigh_cell make_neighlist
+neigh_cell cutoff_neighlist 10
+#===== force_field
+
+force_field lj f_lj 
+
+f_lj cutoff 9.0 # 
+
+f_lj epsilon 0 0 .650   # o-o
+f_lj epsilon 0 1 0      # o-h
+f_lj epsilon 1 0 0      # h-o
+f_lj epsilon 1 1 0      # h h
+
+
+f_lj sigma 0 0 3.166
+f_lj sigma 0 1 0
+f_lj sigma 1 0 0
+f_lj sigma 1 1 0
+
+f_lj set_neighborlist neigh_verlet
+#f_lj set_neighborlist neigh_cell
+
+f_lj set_atom_data adata
+f_lj set_domain dom
+
+
+
+#===== force_field
+
+force_field electrostatic_short_range f_elsh 
+f_elsh set_atom_data adata
+f_elsh set_domain dom
+f_elsh k_electrostatic 1389.38550539
+f_elsh cutoff 12
+f_elsh beta 2.0 # a number between 1.0 to 6.0
+f_elsh set_neighborlist neigh_verlet
+
+
+#==== Constraint
+constraint m_shake c_mshake 
+c_mshake dt global_dt
+c_mshake set_atom_data adata
+c_mshake set_domain dom
+#c_mshake error_tolerance 0.01
+
+#==== Constraint
+constraint shake c_shake 
+c_shake dt global_dt
+c_shake set_atom_data adata
+c_shake set_domain dom
+#c_mshake error_tolerance 0.01
+
+#==== Constraint
+constraint rattle c_rattle 
+c_rattle dt global_dt
+c_rattle set_atom_data adata
+c_rattle set_domain dom
+#c_mshake error_tolerance 0.01
+
+#==== Constraint
+constraint  nve c_nve
+c_nve kbt 2.477758377 # 298K / 120.27
+c_nve set_atom_data adata
+
+
+#==== Integration =====
+
+integrator leap_frog integ_leapfrog 
+integ_leapfrog set_atom_data adata
+integ_leapfrog dt global_dt
+
+#==== Integration =====
+
+integrator leap_frog2 integ_leapfrog2 
+integ_leapfrog2 set_atom_data adata
+integ_leapfrog2 dt global_dt
+
+#====== writer 
+writer atom_data w1
+w1 set_atom_data adata
+w1 set_domain dom
+w1 xyz_step 100
+w1 energy_step 100
+w1 msd_step 500
+w1 output_velocity
+
+#=====  simulator
+
+
+md_simulator basic sim 
+
+sim set_integrator integ_leapfrog2  
+#sim set_integrator integ_leapfrog  
+
+sim set_atom_data adata
+
+sim add_force_field f_lj
+sim add_force_field f_elsh 
+
+sim add_neighborlist neigh_verlet
+#integ2 add_neighborlist neigh_cell
+
+sim add_writer w1
+
+#sim add_constraint c_rattle   
+#sim add_constraint c_mshake   
+sim add_constraint c_shake     
+
+sim add_constraint c_nve      
+
+
+sim initial_step 0
+sim final_step 100000000
+sim dt global_dt
+sim run
+
+#exit
+
+

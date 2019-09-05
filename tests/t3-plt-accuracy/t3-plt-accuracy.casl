@@ -1,0 +1,181 @@
+
+
+#=======================================================================
+# 
+# Copyright (C) 2019 by Morad Biagooi and Ehsan Nedaaee Oskoee.
+# 
+# This file is part of the CAVIAR package.
+# 
+# The CAVIAR package is free software; you can use it, redistribute
+# it, and/or modify it under the terms of the GNU Lesser General
+# Public License as published by the Free Software Foundation; either
+# version 3.0 of the License, or (at your option) any later version.
+# The full text of the license can be found in the file LICENSE at
+# the top level of the CAVIAR distribution.
+# 
+#=======================================================================
+
+#===== constant parameters that are used in more than once
+
+real k_elec_all   1.0
+
+
+#===== Atom definition =====
+
+unique atom a_p   #positive type
+a_p type 0
+a_p position 0.01 0 0
+
+unique atom a_n   #negative type
+a_n type 1
+a_n position 0 0 0
+
+#===== Domain
+
+domain box dom
+dom xmin -10.0 xmax 10.0
+dom ymin -10.0 ymax 10.0
+dom zmin -10.0 zmax 10.0
+dom boundary_condition 0 0 0
+dom generate
+
+
+#========== Atom_data
+
+
+atom_data basic adata
+adata ghost_cutoff 10.0 
+adata cutoff_extra 0.01       # XXX if not zero, problem arises for plt_dealii in periodic systems
+adata set_domain dom
+adata add_type_mass   0  1.0  # atom type 0
+adata add_type_charge 0  1.0  # atom type 0
+adata add_type_radius 0  1.0  # atom type 0
+adata add_atom a_p
+
+
+#===== force_field electrostatic
+
+force_field  electrostatic_spherical_boundary f_elsb
+f_elsb set_atom_data adata
+#f_elsb set_domain dom
+f_elsb k_electrostatic k_elec_all
+
+#===== force_field electrostatic
+
+force_field  electrostatic f_el
+f_el set_atom_data adata
+f_el set_domain dom
+f_el k_electrostatic k_elec_all
+
+#===== finite element Mesh import
+
+force_field plt_dealii f_ic
+f_ic k_electrostatic k_elec_all
+f_ic set_atom_data adata
+
+f_ic add_force_field f_el
+
+f_ic dealii_grid_generator hyper_ball center 0 0 0 radius 1.0 
+
+f_ic boundary_id_value 1 0.0 #set to zero
+
+
+
+
+
+f_ic set_solve_type faster_adaptive
+
+
+f_ic set_spherical_test_force f_elsb
+
+#===========
+real dx=0.01
+#=====
+
+f_ic refine_global_here
+
+f_ic output_induced_charge_name 1 "induced_charge1.txt"
+f_ic start_spherical_test "refine1.txt"
+
+real x=0.01
+
+do x < 1.0
+  echo "refine 1 , x = " x
+  adata set_owned_position 0 x 0.0 0.0
+  
+  f_ic write_spherical_test
+
+  x = x+dx
+enddo
+
+f_ic output_vtk_here "mesh1.vtk"
+f_ic finish_spherical_test
+
+
+#=====
+
+f_ic refine_global_here
+
+f_ic output_induced_charge_name 1 "induced_charge2.txt"
+f_ic start_spherical_test "refine2.txt"
+
+
+x=0.01
+
+do x < 1.0
+  echo "refine 2 , x = " x
+  adata set_owned_position 0 x 0.0 0.0
+  
+  f_ic write_spherical_test
+
+  x = x+dx
+enddo
+
+f_ic output_vtk_here "mesh2.vtk"
+f_ic finish_spherical_test
+
+
+#=====
+f_ic refine_global_here
+f_ic output_induced_charge_name 1 "induced_charge3.txt"
+f_ic start_spherical_test "refine3.txt"
+
+
+x=0.01
+
+do x < 1.0
+  echo "refine 3 , x = " x
+  adata set_owned_position 0 x 0.0 0.0
+  
+  f_ic write_spherical_test
+
+  x = x+dx
+enddo
+
+f_ic output_vtk_here "mesh3.vtk"
+f_ic finish_spherical_test
+
+#=====
+f_ic refine_global_here
+f_ic output_induced_charge_name 1 "induced_charge4.txt"
+f_ic start_spherical_test "refine4.txt"
+
+
+x=0.01
+
+do x < 1.0
+  echo "refine 4 , x = " x
+  adata set_owned_position 0 x 0.0 0.0
+  
+  f_ic write_spherical_test
+
+  x = x+dx
+enddo
+
+f_ic output_vtk_here "mesh4.vtk"
+f_ic finish_spherical_test
+
+
+
+#exit
+

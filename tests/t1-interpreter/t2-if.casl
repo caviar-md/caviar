@@ -1,0 +1,100 @@
+
+
+#=======================================================================
+# 
+# Copyright (C) 2019 by Morad Biagooi and Ehsan Nedaaee Oskoee.
+# 
+# This file is part of the CAVIAR package.
+# 
+# The CAVIAR package is free software; you can use it, redistribute
+# it, and/or modify it under the terms of the GNU Lesser General
+# Public License as published by the Free Software Foundation; either
+# version 3.0 of the License, or (at your option) any later version.
+# The full text of the license can be found in the file LICENSE at
+# the top level of the CAVIAR distribution.
+# 
+#=======================================================================
+
+echo " "
+echo "=================================="
+echo "Part 1:"
+
+if 1==1
+  echo "A1: yes 1==1"
+endif
+
+echo " "
+echo "=================================="
+echo "Part 2:"
+
+if 1>=1
+  echo "A2: yes 1>=1"
+  int bc = 4
+endif
+
+echo " "
+echo "=================================="
+echo "Part 3:"
+
+if 1<=1
+  echo "A3: yes 1<=1"
+endif
+
+echo " "
+echo "=================================="
+echo "Part 4:"
+
+if 1==1
+  echo "A41: again yes 1==1"
+  echo "A42: this looks ok"
+endif
+
+echo " "
+echo "=================================="
+echo "Part 5:"
+
+if 2==1
+  echo "A51: wrong"
+else 
+  echo "A52: this looks ok"
+endif
+
+echo " "
+echo "=================================="
+echo "Part 6:"
+
+if 2<=1
+  echo "A61: wrong"
+else 
+  echo "A62: this looks ok"
+endif
+
+echo " "
+echo "=================================="
+echo "Part 7:"
+
+if 2<=1
+  echo "A71: wrong"
+else 
+  echo "A72: this looks ok"
+endif
+
+int a = 2
+real b = 3.6
+
+echo " "
+echo "=================================="
+echo "Part 8:"
+
+if -3 + a + 2 <= b*11 + 4
+  echo "A81: OK"
+  echo -3 + a + 2 " is smaller than " b*11 + 4
+else 
+  echo "A82: wrong"
+endif
+
+
+
+exit
+
+

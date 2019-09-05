@@ -1,0 +1,126 @@
+================================================================================
+================================================================================
+
+DEVELOPER MANUAL for CAVIAR Version 1.0
+
+Prepared by M. Biagooi 
+
+IASBS
+
+================================================================================
+================================================================================
+
+
+================================================================================
+CHAPTER : {Introduction}
+================================================================================
+
+--------------------------------------------------------------------------------
+- SECTION:What is CAVIAR?
+--------------------------------------------------------------------------------
+
+CAVIAR is a simulation software purposed to perform molecular dynamics (MD) of soft matter physics. Here we mention some of its simulation abilities.
+
+  -  Simple MD with Lennard-Jones (LJ), Dissipative particle dynamics (DPD), Electrostatic.
+  -  Parallel simulation using Massage Passing Interface (MPI) with domain decomposition.
+  -  Ewald sum for electrostatics in 1D and 3D. Slab correction for 3D ewald sums (ELC).
+  -  Molecules with soft bonds and angles.
+  -  Molecules with hard bonds (Shake, M-shake and Rattle)
+  -  NVE, Langevin NVT and some other ensembles.
+  -  The ability to simulate electrostatic of charged particles near conductive boundaries. These boundaries are made of geometrical elements. This is one of the unique features of CAVIAR.
+  -  Other features such as gravity, Hookean granular force which make the package a little more general.
+
+
+This guide surely does not cover all of CAVIAR-1.0.0 abilities and power. We hope to make a detailed version of the user documentation available as soon as possible.
+
+--------------------------------------------------------------------------------
+- SECTION:License
+--------------------------------------------------------------------------------
+
+We have chosen GNU Lesser General Public License (LGPL) version 3.0 for the whole CAVIAR package. Anyone can use it according to this license which can be found in the main directory of CAVIAR, or at the URL below.
+
+URL:{https://www.gnu.org/licenses/lgpl-3.0.en.html}
+
+
+--------------------------------------------------------------------------------
+- SECTION:Disclaimer
+--------------------------------------------------------------------------------
+
+CAVIAR has been designed and developed meticulously. But we won’t claim it to be error-less or bug-less. Before using any new simulation or situation, always try to simulate some standard tests that you know the answer to it. It is highly recommended that the user has enough knowledge of the algorithms that it is being used.
+
+In addition to that, we have provided (and will provide more) some terminal warning outputs in cases the user doing something that may make unphysical simulation results if one didn’t pay enough attention. Always check the terminal output of the program.
+
+
+--------------------------------------------------------------------------------
+- SECTION:Authors, developers, contributors and history
+--------------------------------------------------------------------------------
+
+CAVIAR is an acronym for Finite Elements for Charged Particle Package. CAVIAR package started and developed as a part of Morad Biagooi PhD project, advised by Ehsan Nedaaee Oskoee at Institute for Advanced Studies in Basic Sciences (IASBS), Zanjan, Iran. It was the continuation of Mohammad Samanipour master thesis idea of simulating charged particles near conductive boundaries using a new algorithm. It continued to be developed as a MD code. The package core design has rewritten many times to take the current shape.
+The main authors and developers are Morad Biagooi and Ehsan Nedaaee Oskoee.
+We have to mention S. Alireza Ghasemi, assistant professor at IASBS as a contributor to CAVIAR project, specially about developing and handling electrostatic algorithms.
+The last contributor is Ashkan Shahmoradi, a PhD track student in physics at IASBS, responsible for developing an interface for CAVIAR in other kinds of software, editing this user guide, and also the implementations of Shake, M-Shake and Rattle constraints algorithms.
+
+--------------------------------------------------------------------------------
+- SECTION:How to cite CAVIAR?
+--------------------------------------------------------------------------------
+
+Right now (in the process of editing this user guide) the introduction paper of CAVIAR-1.0.0 is in the process of submission. So here we cannot give you the exact reference. We are certain it will be ready in a few months and we are going to update this part. If you have published anything while using CAVIAR, please contact package authors and give us the information. We will add it to the package website.
+
+================================================================================
+CHAPTER 1: {Object addition}
+================================================================================
+
+It is obvious that developing CAVIAR needs some knowledge in C++ programming
+language. The level of it related to what it is needed to be done. However, 
+adding a object is not very complicated. In these section, by 'object' we mean
+CAVIAR's object, not a C++ instantiation of a class.
+
+
+The correct way to create a new object, whether it is a child class or a 
+base class of the CAVIAR objects, is to copy and paste the most similar class 
+files, then rename it to a good name the file name related to the new object.
+In addition to that, the content of the file should be renamed by using 
+'find and replace' tool which is a basic tool in text editors and IDEs.
+
+
+Note that in the current version of CAVIAR, the objects have more than one 
+headers. At each level, base or child, look at a directory named 'macro' and a
+file named 'all.h'. In the 'all.h' you should add the new object name to the
+list of includes. In the macro directory, there should be another file renamed
+to the new object name and the contents should also be changed.
+
+
+In the macro directory, in the related file with the same as a new class, a line
+like this should be there,
+{BEGINCODE}
+FC_CHECK_AND_CREATE(Abc,abc,objects::abc_base_class::Abc)
+{ENDDCODE}
+In this line, 'abc' is the name for the creation of the object by command line and
+'Abc' is the name of the object class.
+
+
+After adding any new '.cpp' file, one needs to run the 'cmake' command again
+in order to create a new make file.
+
+
+The object classes have a 'read()' methods which interact with the interpreter.
+Adding a new variable is checked with a simple 'if' statement. The fastest way
+to understand and develop a 'read()' method is to copy and paste the similar
+commands from other classes.
+
+================================================================================
+CHAPTER 2: {Final notes}
+================================================================================
+
+This manual is far from complete. We hope it gives you a basic idea about how 
+to change CAVIAR. We make it better as soon as possible. Authors will happily
+answer the questions about the package structure.
+
+================================================================================
+CHAPTER : {Bibliography and references}
+================================================================================
+
+  -  'CAVIAR':
+Morad Biagooi, Mohammad Samanipour, S. Alireza Ghasemi, and Ehsan Nedaee Oskoee, CAVIAR: A simulation package for charged particles in environments surrounded by conductive boundaries, Under submission.
+
+

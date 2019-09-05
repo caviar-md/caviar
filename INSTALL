@@ -1,0 +1,20 @@
+
+
+CAVIAR Package
+
+
+how to build:
+
+It is pretty easy with minimum requirements.
+Go to build directory or make one.
+
+  $ cd ${BUILD_DIRECTORY}
+  $ cmake ${PATH_TO_CAVIAR}
+  $ make
+
+After that, a file with the name 'CAVIAR' will be generated.
+You can run an example using this command:
+
+  $ ./CAVIAR < ${PATH_TO_CAVIAR}/examples/e1-two-atoms/e1-two-atoms.fcpp
+
+For more info see 'doc' directory.

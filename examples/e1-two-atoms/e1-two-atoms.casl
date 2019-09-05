@@ -1,0 +1,102 @@
+
+#=======================================================================
+# 
+# Copyright (C) 2019 by Morad Biagooi and Ehsan Nedaaee Oskoee.
+# 
+# This file is part of the CAVIAR package.
+# 
+# The CAVIAR package is free software; you can use it, redistribute
+# it, and/or modify it under the terms of the GNU Lesser General
+# Public License as published by the Free Software Foundation; either
+# version 3.0 of the License, or (at your option) any later version.
+# The full text of the license can be found in the file LICENSE at
+# the top level of the CAVIAR distribution.
+# 
+#=======================================================================
+
+
+#===== Atom definition =====
+
+unique atom a1
+a1 type 0
+a1 position -1 0 0
+
+unique atom a2
+a2 type 0
+a2 position 1 0 0
+
+
+#===== Domain
+
+domain box dom 
+dom xmin -50 xmax 50
+dom ymin -50 ymax 50
+dom zmin -50 zmax 50
+dom boundary_condition 0 0 0
+dom generate
+
+#========== Atom_data
+
+atom_data basic adata
+adata ghost_cutoff 5
+adata cutoff_extra 0.01
+adata set_domain dom
+adata add_atom a1
+adata add_atom a2
+adata add_type_mass   0 1.0
+adata add_type_charge 0 0.0
+
+#===== Neighborlist
+
+neighborlist verlet_list neigh_verlet 
+neigh_verlet set_atom_data adata
+neigh_verlet cutoff 15
+neigh_verlet dt 0.001
+
+#===== Neighborlist
+
+neighborlist cell_list  neigh_cell
+neigh_cell set_atom_data adata
+neigh_cell cutoff 15
+neigh_cell set_domain dom
+neigh_cell make_neighlist
+neigh_cell cutoff_neighlist 10
+#===== force_field
+
+force_field  lj f_lj
+
+f_lj cutoff 10.0
+f_lj epsilon 0 0 1.0
+f_lj sigma 0 0 1.0
+f_lj set_neighborlist neigh_verlet
+#f_lj set_neighborlist neigh_cell
+f_lj set_atom_data adata
+
+
+#==== Integrator =====
+
+integrator  velocity_verlet  integ2
+integ2 set_atom_data adata
+integ2 dt 0.001
+
+#====== writer 
+writer atom_data w1
+w1 set_atom_data adata
+w1 xyz_step 200
+
+#=====  simulator
+
+md_simulator basic sim
+sim set_integrator integ2
+sim set_atom_data adata
+sim add_force_field f_lj
+sim add_neighborlist neigh_verlet
+#integ2 add_neighborlist neigh_cell
+sim add_writer w1
+sim initial_step 0
+sim final_step 20000
+sim dt 0.001 
+sim run
+
+
+exit
