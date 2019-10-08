@@ -143,7 +143,7 @@ if (my_mpi_rank==0) {
   if (output_msd)     
     if (!ofs_msd.is_open()) 
       ofs_msd.open("o_msd.txt");
-  }*/
+  }//*/
 #else
 
   if (output_xyz) 

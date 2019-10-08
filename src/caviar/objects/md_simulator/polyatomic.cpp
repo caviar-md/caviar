@@ -22,6 +22,7 @@
 #include "caviar/objects/constraint.h"
 #include "caviar/objects/writer.h"
 #include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/interpreter/communicator.h"
 #include <ctime>
 
 namespace caviar {
@@ -106,7 +107,7 @@ bool Polyatomic::run () {
 
 
 #if defined (CAVIAR_WITH_MPI) 
-  std::string s = "process " + std::to_strig(comm->me) + " : ";
+  std::string s = "process " + std::to_string(comm->me) + " : ";
 #else
   std::string s = "";
 #endif

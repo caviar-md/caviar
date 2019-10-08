@@ -19,6 +19,7 @@
 
 #include "caviar/objects/force_field/plt_dealii_mpi.h"
 #include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/interpreter/communicator.h"
 
 #ifdef CAVIAR_WITH_DEALII_MPI
 
@@ -383,7 +384,7 @@ void Plt_dealii_mpi::make_boundary_face_normals () {
           face_id.push_back (boundary_id);
                     
           ofs << fc(0) << " " << fc(1) << " " << fc(2) << " "
-              << n[0]  << " " << n[1]  << " " << n[2]  << "\n";
+              << normal[0]  << " " << normal[1]  << " " << normal[2]  << "\n";
               
 
         }

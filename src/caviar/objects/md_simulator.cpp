@@ -22,6 +22,7 @@
 #include "caviar/objects/constraint.h"
 #include "caviar/objects/writer.h"
 #include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/interpreter/communicator.h"
 
 namespace caviar {
 

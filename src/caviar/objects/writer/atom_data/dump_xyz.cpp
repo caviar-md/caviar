@@ -17,6 +17,7 @@
 #include "caviar/objects/writer/atom_data.h"
 #include "caviar/objects/atom_data.h"
 #include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/interpreter/communicator.h"
 
 
 namespace caviar {
@@ -49,6 +50,7 @@ void Atom_data::dump_xyz (int i) {
   
   const auto nla = pos.size();//atom_data -> num_local_atoms;
   const auto nta = atom_data -> num_total_atoms;
+  const unsigned nprocs = comm -> nprocs;
   unsigned *nla_list = new unsigned [nprocs];
 
   if (nprocs > 1) {
