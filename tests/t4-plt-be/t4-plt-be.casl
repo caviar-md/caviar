@@ -1,0 +1,122 @@
+
+
+#=======================================================================
+# 
+# Copyright (C) 2019 by Morad Biagooi and Ehsan Nedaaee Oskoee.
+# 
+# This file is part of the CAVIAR package.
+# 
+# The CAVIAR package is free software; you can use it, redistribute
+# it, and/or modify it under the terms of the GNU Lesser General
+# Public License as published by the Free Software Foundation; either
+# version 3.0 of the License, or (at your option) any later version.
+# The full text of the license can be found in the file LICENSE at
+# the top level of the CAVIAR distribution.
+# 
+#=======================================================================
+
+#===== constant parameters that are used in more than once
+
+real k_elec_all   1.0
+
+
+#===== Atom definition =====
+
+unique atom a_p   #positive type
+a_p type 0
+a_p position 0.01 0 0
+
+unique atom a_n   #negative type
+a_n type 1
+a_n position 0 0 0
+
+#===== Domain
+
+domain box dom
+dom xmin -10.0 xmax 10.0
+dom ymin -10.0 ymax 10.0
+dom zmin -10.0 zmax 10.0
+dom boundary_condition 0 0 0
+dom generate
+
+
+#========== Atom_data
+
+
+atom_data basic adata
+adata ghost_cutoff 10.0 
+adata cutoff_extra 0.01       # XXX if not zero, problem arises for plt_dealii in periodic systems
+adata set_domain dom
+adata add_type_mass   0  1.0  # atom type 0
+adata add_type_charge 0  1.0  # atom type 0
+adata add_type_radius 0  1.0  # atom type 0
+adata add_atom a_p
+
+#========== Shape
+
+shape polyhedron s_full 
+s_full vtk_file_name "sphere_mesh_be.vtk"
+s_full thickness 10.0
+s_full correct_normals
+s_full an_inside_point 0.0 0.0 0.0
+s_full point_is_inside_method 2
+s_full generate
+
+#===== force_field electrostatic
+
+force_field  electrostatic_spherical_boundary f_elsb
+f_elsb set_atom_data adata
+#f_elsb set_domain dom
+f_elsb k_electrostatic k_elec_all
+
+#===== force_field electrostatic
+
+force_field  electrostatic f_el
+f_el set_atom_data adata
+f_el set_domain dom
+f_el k_electrostatic k_elec_all
+
+#===== finite element Mesh import
+
+force_field plt_be f_be
+f_be k_electrostatic k_elec_all
+f_be set_atom_data adata
+
+f_be add_force_field f_el
+
+f_be add_polyhedron s_full
+
+#f_be boundary_id_value 1 0.0 #set to zero
+
+
+
+
+#===========
+real dx=0.01
+#=====
+
+#f_be refine_global_here
+
+#f_be output_induced_charge_name 1 "induced_charge1.txt"
+#f_be start_spherical_test "refine1.txt"
+
+real x=0.01
+
+do x < 1.0
+  echo "refine 1 , x = " x
+  adata set_owned_position 0 x 0.0 0.0
+  
+  #f_be write_spherical_test
+
+  x = x+dx
+enddo
+
+#f_be output_vtk_here "mesh1.vtk"
+#f_be finish_spherical_test
+
+
+#=====
+
+
+#exit
+
