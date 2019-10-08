@@ -17,6 +17,7 @@
 #include "caviar/objects/md_simulator/basic.h"
 #include "caviar/objects/integrator.h"
 #include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/interpreter/communicator.h"
 #include <ctime>
 
 namespace caviar {
@@ -101,7 +102,7 @@ bool Basic::run () {
 
 
 #if defined (CAVIAR_WITH_MPI) 
-  std::string s = "process " + std::to_strig(comm->me) + " : ";
+  std::string s = "process " + std::to_string(comm->me) + " : ";
 #else
   std::string s = "";
 #endif

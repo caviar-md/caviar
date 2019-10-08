@@ -47,6 +47,14 @@ struct Polyhedron {
    */
   std::vector<std::vector<unsigned int>> face;
 
+
+  /**
+   * contains indices of the faces. It can be imported from UNV files or set...
+   * The number '-1' is the default and invalid face_id.
+   */
+  std::vector<int> face_id;
+
+
   /**
    * normal of faces. The direction has to be set by the user
    */

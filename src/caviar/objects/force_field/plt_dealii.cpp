@@ -19,6 +19,7 @@
 
 #include "caviar/objects/force_field/plt_dealii.h"
 #include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/interpreter/communicator.h"
 #include "caviar/objects/atom_data.h"
 #include "caviar/objects/neighborlist.h"
 #include "caviar/utility/macro_constants.h"
@@ -668,6 +669,7 @@ double Plt_dealii::calculate_induced_charge (int t, const int requested_id) {
   }
 
 
+  double sum_q = 0; // This is defined here because of CAVIAR_WITH_MPI 
 
 #if defined(CAVIAR_WITH_MPI)
   if (my_mpi_rank == 0) {
@@ -687,8 +689,8 @@ double Plt_dealii::calculate_induced_charge (int t, const int requested_id) {
     ofs_induced_charge << " " << "sum_q" << " " << "sum_abs_q" << "\n" << std::flush;    
   }
   
-
-  double sum_q = 0;
+  
+  // double sum_q = 0; // This is not defined here because of CAVIAR_WITH_MPI 
   double sum_abs_q = 0;  
   ofs_induced_charge << t;
 

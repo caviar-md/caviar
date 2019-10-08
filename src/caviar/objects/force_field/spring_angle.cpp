@@ -105,6 +105,7 @@ void Spring_angle::calculate_acceleration () {
         auto angle_cos = (p21*p23)*(p21_size_inv*p23_size_inv);
         auto angle = std::acos(angle_cos);
         auto angle_diff = angle - angle_value;
+        
 
 /*      // this is not a good way.
         double angle_dot = 0.0;
@@ -131,9 +132,6 @@ void Spring_angle::calculate_acceleration () {
 
         auto torque = elastic_coef[atype]*angle_diff;
 
-        auto force12_size = torque* p21_size_inv;
-        auto force32_size = torque* p23_size_inv;
-
         auto p21_norm = p21*p21_size_inv;
         auto p23_norm = p23*p23_size_inv;
 
@@ -141,8 +139,9 @@ void Spring_angle::calculate_acceleration () {
         auto f12 = cross_product(n, p21_norm);
         auto f32 = cross_product(p23_norm, n);
 
-        auto force_12 = force12_size*f12;
-        auto force_32 = force32_size*f32;
+        // r * F = Tau -> F = Tau / r
+        auto force_12 = torque*f12* p21_size_inv;
+        auto force_32 = torque*f32* p23_size_inv;
 
         atom_data -> owned.acceleration [k1] += force_12 * mass_inv[type[k1]];
         atom_data -> owned.acceleration [k3] += force_32 * mass_inv[type[k3]];        

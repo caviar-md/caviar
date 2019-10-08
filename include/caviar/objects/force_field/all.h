@@ -36,9 +36,11 @@
 #include "caviar/objects/force_field/electrostatic_ewald_k.h"
 #include "caviar/objects/force_field/electrostatic_ewald_r.h"
 #include "caviar/objects/force_field/electrostatic_ewald_slab_correction.h"
+#include "caviar/objects/force_field/plt_be.h"
 #include "caviar/objects/force_field/plt_dealii.h"
 #include "caviar/objects/force_field/plt_dealii_mpi.h"
 #include "caviar/objects/force_field/spring_bond.h"
+#include "caviar/objects/force_field/spring_bond_test.h"
 #include "caviar/objects/force_field/spring_angle.h"
 
 

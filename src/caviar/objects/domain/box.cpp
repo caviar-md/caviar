@@ -95,7 +95,7 @@ void Box::calculate_local_domain () {
 
 double Box::fix_distance_x(double d) {
 #ifdef CAVIAR_WITH_MPI
-  error -> al
+  error -> all(FC_FILE_LINE_FUNC,"not implemented.");
   return 0.0;
 #else
   if (boundary_condition.x==1) {
@@ -108,7 +108,7 @@ double Box::fix_distance_x(double d) {
 
 double Box::fix_distance_y(double d) {
 #ifdef CAVIAR_WITH_MPI
-    //FC_ERR_NOT_IMPLEMENTED
+  error -> all(FC_FILE_LINE_FUNC,"not implemented.");
     return 0.0;
 #else
   if (boundary_condition.y==1) {
@@ -121,7 +121,7 @@ double Box::fix_distance_y(double d) {
 
 double Box::fix_distance_z(double d) {
 #ifdef CAVIAR_WITH_MPI
-  //FC_ERR_NOT_IMPLEMENTED
+  error -> all(FC_FILE_LINE_FUNC,"not implemented.");
   return 0.0;
 #else
   if (boundary_condition.z==1) {

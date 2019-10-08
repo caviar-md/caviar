@@ -31,9 +31,9 @@ print_flag_value(CAVIAR_SINGLE_MPI_MD_DOMAIN)
 message("")
 print_flag_value(CAVIAR_WITH_DEALII)
 print_flag_value(CAVIAR_WITH_DEALII_MPI)
-
 message("")
-
+print_flag_value(CAVIAR_WITH_EIGEN)
+message("")
 # ===============================
 # =======                 =======
 # ===============================
