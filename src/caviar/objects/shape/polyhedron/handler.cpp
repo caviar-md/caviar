@@ -81,16 +81,22 @@ bool Handler::read(class caviar::interpreter::Parser * parser) {
       const auto file_name = token.string_value;
       polyhedron_input -> read_vtk (polyhedron, file_name);
       polyhedron_read = true;
+      if (polyhedron.face.size() == 0) 
+        error->all(FC_FILE_LINE_FUNC,"The imported file's face is empty. Maybe the command or format is incorrect.");
     } else if (string_cmp(t,"stl_file_name")) {
       const auto token = parser->get_val_token();
       const auto file_name = token.string_value;
       polyhedron_input -> read_stl (polyhedron, file_name);
       polyhedron_read = true;
+      if (polyhedron.face.size() == 0) 
+        error->all(FC_FILE_LINE_FUNC,"The imported file's face is empty. Maybe the command or format is incorrect.");
     } else if (string_cmp(t,"unv_file_name")) {
       const auto token = parser->get_val_token();
       const auto file_name = token.string_value;
       polyhedron_input -> read_unv (polyhedron, file_name);
       polyhedron_read = true;
+      if (polyhedron.face.size() == 0) 
+        error->all(FC_FILE_LINE_FUNC,"The imported file's face is empty. Maybe the command or format is incorrect.");
     } else if (string_cmp(t,"output")) {
       const auto token = parser->get_val_token();
       const auto t = token.string_value; 

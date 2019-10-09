@@ -32,7 +32,7 @@ Format_unv_reader::~Format_unv_reader() {}
 
  
 void Format_unv_reader::read_polyhedron (shape::polyhedron::Polyhedron &p_object, const std::string & filename) {
-    
+
     std::ifstream ifs;
     ifs.open (filename.c_str());
 
@@ -76,14 +76,17 @@ void Format_unv_reader::import_udn_ignore (std::ifstream & ifs, int udn_code) {
 void Format_unv_reader::import_udn_2411 (shape::polyhedron::Polyhedron &p_object, std::ifstream & ifs) {
 
   auto & vertex = p_object.vertex;
-  //auto & vertex_map = p_object.vertex_map;
-
 
 
     while (true) {
       int tmp;
       ifs >> tmp;
-      if (tmp == -1) return;     
+      if (tmp == -1) {
+        polyhedron::Preprocess p_pre (fptr);
+        p_pre.merge_vertices(p_object); 
+
+        return;
+      }
       
       int dummy[3];
       ifs >> dummy[0] >> dummy[1] >> dummy[2];
@@ -102,11 +105,12 @@ void Format_unv_reader::import_udn_2411 (shape::polyhedron::Polyhedron &p_object
 }
 
 void Format_unv_reader::import_udn_2412 (shape::polyhedron::Polyhedron &p_object, std::ifstream & ifs) {
+  std::cout << "import_udn_2412" << std::endl;
 
-  //auto & vertex = p_object.vertex;
   auto & edges = p_object.edges;
   auto & face = p_object.face;
   auto & face_id = p_object.face_id;
+  auto & vertex_map = p_object.vertex_map;
 
   if (face.size() != face_id.size()) {
     error->all(FC_FILE_LINE_FUNC,"face.size() != face_id.size()");
@@ -161,6 +165,12 @@ void Format_unv_reader::import_udn_2412 (shape::polyhedron::Polyhedron &p_object
           unsigned num1 = field[0];
           unsigned num2 = field[1];
           unsigned num3 = field[2];
+
+          num1 = (vertex_map[num1-1].size()==0)?num1-1 :vertex_map[num1-1][1];  // uses vertex_map instead of vertex
+          num2 = (vertex_map[num2-1].size()==0)?num2-1 :vertex_map[num2-1][1];  //
+          num3 = (vertex_map[num3-1].size()==0)?num3-1 :vertex_map[num3-1][1];  //
+
+
           std::vector<unsigned int> gons{num1, num2, num3};
           face.push_back (gons);      
           face_id.push_back(-1); // invalid face_id;
@@ -326,7 +336,7 @@ void Format_unv_reader::export_udn_2412 (shape::polyhedron::Polyhedron &p_object
 
       
       for (unsigned int j = 0; j < num_of_elements; ++j)     
-        ofs << std::setw(10) << face[i][j];      
+        ofs << std::setw(10) << face[i][j]+1;      // Plus one is due to starting label from 1 in UNV file.
       ofs << "\n";                    
         
       

@@ -35,6 +35,12 @@ void Format_stl_reader::read_polyhedron (shape::polyhedron::Polyhedron &p_object
   auto & vertex = p_object.vertex;
   auto & face = p_object.face;
   auto & edges = p_object.edges;
+  auto & face_id = p_object.face_id;
+
+  if (face.size() != face_id.size()) {
+    error->all(FC_FILE_LINE_FUNC,"face.size() != face_id.size()");
+  }
+
   //auto & vertex_map = p_object.vertex_map;
   std::cout << "info: Stl_file: recording Stl file as a 3D shape with index " << " ? " << std::endl;
 
@@ -178,6 +184,7 @@ void Format_stl_reader::read_polyhedron (shape::polyhedron::Polyhedron &p_object
     std::vector<unsigned int> gons;
     gons.push_back (num1); gons.push_back (num2); gons.push_back (num3);
     face.push_back (gons);      
+    face_id.push_back(-1); // invalid face_id;
 
     //faces_of_vertex[num1].push_back(i); faces_of_vertex[num2].push_back(i); faces_of_vertex[num3].push_back(i);
 
@@ -204,7 +211,7 @@ void Format_stl_reader::read_polyhedron (shape::polyhedron::Polyhedron &p_object
 
   }
       
-
+  delete parser;
 }
 
 } //polyhedron

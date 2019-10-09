@@ -55,6 +55,8 @@ void Preprocess::pre_correct_normals (shape::polyhedron::Polyhedron & p_object) 
   auto & face = p_object.face;
   const auto & edges = p_object.edges;
 
+  if (face.size() == 0 || edges.size() == 0) error-> all(FC_FILE_LINE_FUNC,"The polyhedron face or edge is empty");
+
   std::vector<unsigned int> face_list; // sequence of faces
   std::vector<unsigned int> face_in,face_out; // face index of edge_list
   std::vector<std::vector<unsigned int>> edge_list; // sequence of edges
@@ -62,9 +64,12 @@ void Preprocess::pre_correct_normals (shape::polyhedron::Polyhedron & p_object) 
   int start_face = 0;
 
   face_list.push_back (start_face);
-
+  std::cout << "edges.size: "<< edges.size() << "\n";
+  std::cout << "face_list.size: "<< face_list.size() << "\n";
+  std::cout << "face.size: "<< face.size() << "\n";  
+  std::cout << "edge_list.size: "<< edge_list.size() << "\n";
+std::cout << "XXX HEY 1 " << std::endl;
 //   while (face_list.size() != face.size()) 
-
   {
     for (unsigned int i = 0; i<face_list.size(); ++i) {
 
@@ -117,12 +122,13 @@ void Preprocess::pre_correct_normals (shape::polyhedron::Polyhedron & p_object) 
 
     }
   }
-//  std::cout << "edges.size: "<< edges.size() << "\n";
-//  std::cout << "face_list.size: "<< face_list.size() << "\n";
-//  std::cout << "face.size: "<< face.size() << "\n";  
-//  std::cout << "edge_list.size: "<< edge_list.size() << "\n";
 
-    for (unsigned int i=0; i<edge_list.size(); ++i) {
+  //std::cout << "edges.size: "<< edges.size() << "\n";
+  //std::cout << "face_list.size: "<< face_list.size() << "\n";
+  //std::cout << "face.size: "<< face.size() << "\n";  
+  //std::cout << "edge_list.size: "<< edge_list.size() << "\n";
+std::cout << "XXX HEY 2 " << std::endl;
+  for (unsigned int i=0; i<edge_list.size(); ++i) {
 
       std::map<std::vector<unsigned int>,std::vector<unsigned int>>::const_iterator it;    
       it = edges.find (edge_list[i]);  
@@ -233,7 +239,7 @@ void Preprocess::pre_correct_normals (shape::polyhedron::Polyhedron & p_object) 
 
         }
       }
-    }
+  }
 }
 
 
