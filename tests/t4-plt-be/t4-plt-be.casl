@@ -55,7 +55,7 @@ adata add_atom a_p
 #========== Shape
 
 shape polyhedron s_full 
-s_full vtk_file_name "sphere_mesh_be.vtk"
+s_full unv_file_name "sphere1.unv"
 s_full thickness 10.0
 s_full correct_normals
 s_full an_inside_point 0.0 0.0 0.0
@@ -86,9 +86,10 @@ f_be add_force_field f_el
 
 f_be add_polyhedron s_full
 
-#f_be boundary_id_value 1 0.0 #set to zero
+f_be boundary_id_value 0 0.0 #set to zero
+f_be boundary_id_value 1 0.0 #set to zero
 
-
+f_be set_spherical_test_force f_elsb
 
 
 #===========
@@ -97,8 +98,7 @@ real dx=0.01
 
 #f_be refine_global_here
 
-#f_be output_induced_charge_name 1 "induced_charge1.txt"
-#f_be start_spherical_test "refine1.txt"
+f_be start_spherical_test "refine1.txt"
 
 real x=0.01
 
@@ -106,13 +106,13 @@ do x < 1.0
   echo "refine 1 , x = " x
   adata set_owned_position 0 x 0.0 0.0
   
-  #f_be write_spherical_test
+  f_be write_spherical_test
 
   x = x+dx
 enddo
 
-#f_be output_vtk_here "mesh1.vtk"
-#f_be finish_spherical_test
+
+f_be finish_spherical_test
 
 
 #=====
