@@ -158,6 +158,7 @@ void Atom_data::dump_xyz (int i) {
   }
 
   delete[] nla_list;
+
 #else
 
 
@@ -166,9 +167,10 @@ void Atom_data::dump_xyz (int i) {
   auto &all_vel = atom_data -> owned.velocity;
   auto &all_acc = atom_data -> owned.acceleration;
   auto nta = atom_data -> owned.position.size();
+
   ofs_xyz << nta << "\nAtom\n";
 
-  if (my_mpi_rank==0) {
+  //if (my_mpi_rank==0) {
   if (output_velocity && output_acceleration) {
     for (unsigned int i = 0; i<nta; ++i) {
       ofs_xyz << all_type[i] << " " << all_pos[i].x << " " << all_pos[i].y << " " << all_pos[i].z ;
@@ -196,7 +198,7 @@ void Atom_data::dump_xyz (int i) {
   }
 
   ofs_xyz << std::flush;
-  }
+  //}
 #endif
 
   clock_t tStart2 = clock();

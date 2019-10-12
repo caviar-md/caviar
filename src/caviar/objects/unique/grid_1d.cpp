@@ -102,8 +102,9 @@ double Grid_1D::give_point () {
 double Grid_1D::give_point (int i) {
   double val = min + i * increment;  
   if (by_segment) {
-    if (i == segment) return max;
-    else return val;
+    //if (i == segment) return max; // XXX
+    //else return val;
+    return val;
   } else {
     return val;    
   }

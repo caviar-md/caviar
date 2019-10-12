@@ -1125,6 +1125,34 @@ void Plt_dealii::calculate_all_particles_mesh_force_acc() {
 //==================================================
 //==================================================
 
+double Plt_dealii::potential (const int) {
+  error->all(FC_FILE_LINE_FUNC,"Not implemented");
+  return 0.0;
+}
+
+double Plt_dealii::potential (const Vector<double> &v) {
+
+  double potential_singular = 0.0;
+  for (auto &&f : force_field_custom)
+    potential_singular += f->potential (v);
+
+
+  const dealii::Point<3> r = {v.x, v.y, v.z};
+
+  double potential_smooth = 0.0;
+  try {
+     potential_smooth = VectorTools::point_value (dof_handler, solution, r);
+  } catch (...) {
+
+  }
+
+  return potential_smooth + potential_singular;
+}
+
+//==================================================
+//==================================================
+//==================================================
+
 
 } //force_field
 } //objects

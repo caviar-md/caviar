@@ -69,6 +69,9 @@ public:
   void make_boundary_face_normals ();
   void output_boundary_id_areas ();
 
+  double potential (const Vector<double> &v); // Gives the total potential (sum of smooth and singular).
+  double potential (const int);
+
   // simple: a dealii standard Laplace solving process is done in every step.
   // faster: Laplace is solved using dealii::Filtered matrix, in order to get
   // rid of setup and assemble part of FE process in every step.
