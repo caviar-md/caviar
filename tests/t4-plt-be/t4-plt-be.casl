@@ -55,10 +55,12 @@ adata add_atom a_p
 #========== Shape
 
 shape polyhedron s_full 
-s_full unv_file_name "sphere1.unv"
+s_full unv_file_name "sphere2.unv"
 s_full thickness 10.0
 s_full correct_normals
-s_full an_inside_point 0.0 0.0 0.0
+#s_full an_inside_point 0.0 0.0 0.0
+#s_full invert_normals
+s_full output vector
 s_full point_is_inside_method 2
 s_full generate
 

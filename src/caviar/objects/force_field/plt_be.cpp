@@ -111,7 +111,7 @@ void Plt_be::jacobian_calculation() {
 
   const auto & vertex = polyhedron -> polyhedron_handler -> polyhedron.vertex;
   const auto & face   = polyhedron -> polyhedron_handler -> polyhedron.face;
-  const auto & normal = polyhedron -> polyhedron_handler -> polyhedron.normal;
+  auto & normal = polyhedron -> polyhedron_handler -> polyhedron.normal;
 
   // XXX check the normal direction. It may be different from the paper.
 
@@ -171,7 +171,14 @@ void Plt_be::jacobian_calculation() {
       auto v21 = vertex[face[i][1]] - vertex[face[i][0]];
       auto v23 = vertex[face[i][1]] - vertex[face[i][2]]; 
       auto v31 = vertex[face[i][2]] - vertex[face[i][0]];       
-
+	
+	    //double nx = v21.y * v31.z - v21.z * v31.y ;
+	    //double ny = v21.z * v31.x - v21.x * v31.z ;
+	    //double nz = v21.x * v31.y - v21.y * v31.x ;
+      
+      double nx = normal[i].x;
+	    double ny = normal[i].y;
+	    double nz = normal[i].z;
 
       double aa = std::sqrt(v21*v21); // edges norm
       double bb = std::sqrt(v23*v23);
@@ -183,29 +190,29 @@ void Plt_be::jacobian_calculation() {
 
       auto v1 = vertex[face[i][0]];
 
-      if (abs(normal[i].z) >= s3) {
+      if (abs(nz) >= s3) {
         pc1[i].x = v21.x;
         pc2[i].x = v31.x;
         pc3[i].x = v1.x;
         pc1[i].y = v21.y;
         pc2[i].y = v31.y;
         pc3[i].y = v1.y;
-        pc1[i].z = -(normal[i].x*pc1[i].x +   normal[i].y*pc1[i].y) /   normal[i].z; 
-        pc2[i].z = -(normal[i].x*pc2[i].x +   normal[i].y*pc2[i].y) /   normal[i].z;
+        pc1[i].z = -(nx*pc1[i].x +   ny*pc1[i].y) /   nz; 
+        pc2[i].z = -(nx*pc2[i].x +   ny*pc2[i].y) /   nz;
         pc3[i].z = v1.z;
-      } else if(abs(normal[i].y) >= s3) {
+      } else if(abs(ny) >= s3) {
         pc1[i].x = v21.x;
         pc2[i].x = v31.x;
         pc3[i].x = v1.x;
-        pc1[i].y = -(normal[i].x*pc1[i].x +   normal[i].z*pc1[i].z) / normal[i].y; 
-        pc2[i].y = -(normal[i].x*pc2[i].x +   normal[i].z*pc2[i].z) / normal[i].y;
+        pc1[i].y = -(nx*pc1[i].x +   nz*pc1[i].z) / ny; 
+        pc2[i].y = -(nx*pc2[i].x +   nz*pc2[i].z) / ny;
         pc3[i].y = v1.y;
         pc1[i].z = v21.z;
         pc2[i].z = v31.z;
         pc3[i].z = v1.z;
       } else {
-        pc1[i].x = -(normal[i].z*pc1[i].z +   normal[i].y*pc1[i].y) /   normal[i].x; 
-        pc2[i].x = -(normal[i].z*pc2[i].z +   normal[i].y*pc2[i].y) /   normal[i].x;
+        pc1[i].x = -(nz*pc1[i].z +   ny*pc1[i].y) /   nx; 
+        pc2[i].x = -(nz*pc2[i].z +   ny*pc2[i].y) /   nx;
         pc3[i].x = v1.x;
         pc1[i].y = v21.y;
         pc2[i].y = v31.y;
@@ -344,13 +351,13 @@ void Plt_be::make_vec_zz() {
     b[m] = sum ;
   }
 
-
-  vec_zz.resize(face_size);
+  vec_zz.clear();
+  vec_zz.resize(face_size, 0);
 
   // We implement ' vec_zz = a.inverse() * b ' as follows.
   for (unsigned int i=0; i < face_size; ++i) {
     for (unsigned int j=0; j < face_size; ++j) {
-      vec_zz[i] += m_inverse[i][j] + b[j];  
+      vec_zz[i] += m_inverse[i][j] * b[j];  
     }
   }
 
