@@ -162,7 +162,7 @@ f_lj set_domain dom
 
 force_field electrostatic_short_range f_elsh 
 f_elsh set_atom_data adata
-f_elsh set_domain dom
+#f_elsh set_domain dom
 f_elsh k_electrostatic 1389.38550539
 f_elsh cutoff 12
 f_elsh beta 2.0 # a number between 1.0 to 6.0

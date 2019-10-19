@@ -88,8 +88,8 @@ gz generate
 
 shape polyhedron s_full 
 s_full vtk_file_name "data/Poly_middle_rachet.vtk"
-s_full parameter thickness 10.0
-s_full parameter correct_normals
+s_full thickness 10.0
+s_full correct_normals
 s_full an_inside_point 20.0 0.0 3.0
 s_full point_is_inside_method 2
 s_full generate
@@ -98,8 +98,8 @@ s_full generate
 
 shape polyhedron s_full_shell
 s_full_shell vtk_file_name "data/Shell_middle_rachet.vtk"
-s_full_shell parameter thickness 10.0
-s_full_shell parameter correct_normals
+s_full_shell thickness 10.0
+s_full_shell correct_normals
 s_full_shell an_inside_point 20.0 0.0 3.0
 s_full_shell point_is_inside_method 2
 s_full_shell output vectors
