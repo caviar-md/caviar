@@ -270,7 +270,7 @@ bool Plt_dealii::read (caviar::interpreter::Parser *parser) {
       output_field_vectors (parser);
       return in_file;
     } else if (string_cmp(t,"output_potential_values")) {
-      output_field_vectors (parser);
+      output_potential_values (parser);
       return in_file;
     }
     
@@ -349,7 +349,7 @@ void Plt_dealii::output_field_vectors(caviar::interpreter::Parser *parser) {
 
     caviar::Vector<double> field_tot = {0, 0, 0};
 
-    if (field_type != 'i') {
+
       const dealii::Point<3> r = {x, y, z};
 
       dealii::Tensor<1, 3, double> field_sm;
@@ -360,7 +360,7 @@ void Plt_dealii::output_field_vectors(caviar::interpreter::Parser *parser) {
         continue;
       }
 
-
+    if (field_type != 'i') {
       field_tot.x += field_sm[0];
       field_tot.y += field_sm[1];
       field_tot.z += field_sm[2];
@@ -464,7 +464,7 @@ void Plt_dealii::output_potential_values(caviar::interpreter::Parser *parser) {
 
     const dealii::Point<3> r = {x, y, z};
 
-    if (field_type != 'i') {
+
 
       double potential_sm = 0;
       try {
@@ -473,6 +473,7 @@ void Plt_dealii::output_potential_values(caviar::interpreter::Parser *parser) {
         continue;
       }
 
+    if (field_type != 'i') {
       potential_tot += potential_sm;
     }
 
