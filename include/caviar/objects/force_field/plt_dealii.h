@@ -62,12 +62,14 @@ public:
 public:
 
 
+
   void run ();
   void run_time_profile ();
   void read_domain();
   void make_spherical_grid ();
   void make_boundary_face_normals ();
   void output_boundary_id_areas ();
+  void output_field_vectors(caviar::interpreter::Parser *);
 
   double potential (const Vector<double> &v); // Gives the total potential (sum of smooth and singular).
   double potential (const int);
