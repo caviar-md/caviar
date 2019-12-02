@@ -269,6 +269,9 @@ bool Plt_dealii::read (caviar::interpreter::Parser *parser) {
     } else if (string_cmp(t,"output_field_vectors")) {
       output_field_vectors (parser);
       return in_file;
+    } else if (string_cmp(t,"output_potential_values")) {
+      output_field_vectors (parser);
+      return in_file;
     }
     
     else FC_ERR_UNDEFINED_VAR(t)
@@ -346,20 +349,23 @@ void Plt_dealii::output_field_vectors(caviar::interpreter::Parser *parser) {
 
     caviar::Vector<double> field_tot = {0, 0, 0};
 
-    const dealii::Point<3> r = {x, y, z};
+    if (field_type != 'i') {
+      const dealii::Point<3> r = {x, y, z};
 
-    dealii::Tensor<1, 3, double> field_sm;
+      dealii::Tensor<1, 3, double> field_sm;
 
-    try {
-      field_sm = - VectorTools::point_gradient (dof_handler, solution, r);
-    } catch (...) {
-      continue;
+      try {
+        field_sm = - VectorTools::point_gradient (dof_handler, solution, r);
+      } catch (...) {
+        continue;
+      }
+
+
+      field_tot.x += field_sm[0];
+      field_tot.y += field_sm[1];
+      field_tot.z += field_sm[2];
     }
 
-
-    field_tot.x += field_sm[0];
-    field_tot.y += field_sm[1];
-    field_tot.z += field_sm[2];
 
     if (field_type != 'm') {
       const caviar::Vector<double> p {x,y,z};
@@ -392,6 +398,103 @@ void Plt_dealii::output_field_vectors(caviar::interpreter::Parser *parser) {
   ofs.close();
 }
 
+
+//==================================================
+//==================================================
+//==================================================
+
+void Plt_dealii::output_potential_values(caviar::interpreter::Parser *parser) {
+
+  std::string file_name = "o_field_vectors";
+  //double scale = 1.0;
+  //double limit = -1.0;
+  char field_type = 't';
+  bool in_file = true;
+  if (in_file==true) {
+    // removes a warning
+  }
+  unique::Grid_1D *grid_1d_x = nullptr, *grid_1d_y = nullptr, *grid_1d_z = nullptr;
+
+  while(true) {
+    GET_A_TOKEN_FOR_CREATION
+
+    auto t = token.string_value;
+
+    if (string_cmp(t,"file_name")) {
+      auto t2 = parser->get_val_token();
+      file_name  = t2.string_value;
+    } else if (string_cmp(t,"type")) {
+      auto t2 = parser->get_val_token();
+      if (t2.string_value == "total") field_type = 't';
+      if (t2.string_value == "smooth") field_type = 'm';
+      if (t2.string_value == "singular") field_type = 'i';
+
+    } else if (string_cmp(t,"grid_1d_x")) {
+      FIND_OBJECT_BY_NAME(unique,it)        
+      grid_1d_x = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+    } else if (string_cmp(t,"grid_1d_y")) {
+      FIND_OBJECT_BY_NAME(unique,it)        
+      grid_1d_y = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+    } else  if (string_cmp(t,"grid_1d_z")) {
+      FIND_OBJECT_BY_NAME(unique,it)        
+      grid_1d_z = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+    } 
+
+    else FC_ERR_UNDEFINED_VAR(t)
+
+  }
+
+  FC_NULLPTR_CHECK(grid_1d_x)
+  FC_NULLPTR_CHECK(grid_1d_y)
+  FC_NULLPTR_CHECK(grid_1d_z)
+
+  std::ofstream ofs;
+
+  ofs.open(file_name.c_str());
+
+  for (unsigned int i = 0; i < grid_1d_x->no_points(); ++i) {
+  double x = grid_1d_x->give_point(i);
+  for (unsigned int j = 0; j < grid_1d_y->no_points(); ++j) {
+  double y = grid_1d_y->give_point(j);      
+  for (unsigned int k = 0; k < grid_1d_z->no_points(); ++k) {  
+    double z = grid_1d_z->give_point(k);         
+
+
+    double potential_tot = 0;
+
+    const dealii::Point<3> r = {x, y, z};
+
+    if (field_type != 'i') {
+
+      double potential_sm = 0;
+      try {
+        potential_sm = VectorTools::point_value (dof_handler, solution, r);
+      } catch (...) {
+        continue;
+      }
+
+      potential_tot += potential_sm;
+    }
+
+
+    if (field_type != 'm') {
+      const caviar::Vector<double> p {x,y,z};
+      double potential_si = 0;
+
+      for (auto &&f : force_field_custom)
+        potential_si += f->potential (p);
+
+      potential_tot += potential_si;
+    }
+
+    ofs << x << " " << y << " " << z << " " << potential_tot << "\n";
+
+  }
+  }
+  }
+
+  ofs.close();
+}
 
 //==================================================
 //==================================================
