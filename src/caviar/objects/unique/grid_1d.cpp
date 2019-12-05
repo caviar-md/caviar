@@ -71,21 +71,26 @@ void Grid_1D::generate () {
     error->all("Grid_1D: Generate: Assign one of segment or increment. ");
   if (min > max)
     error->all("Grid_1D: Generate: min has to be smaller than max. ");    
-  if (segment<0) {
+
+  if (segment<0) { // by increment
     by_increment = true;
     segment = int ((max-min)/increment);
   }
-  if (increment<0) {
+
+  if (increment<0) { // by segment
     by_segment = true;
     increment = (max - min)/double(segment);
   }
 }
   
 unsigned int Grid_1D::no_points () {
-  if (by_segment)
+  if (by_segment) {
+    if (segment == 0) // segment means that there has to be at least two points
+      return 0;
     return segment + 1;
-  else
-    return segment;
+  
+  }  else // by increment. It should have at least one point
+    return segment + 1;
 }
   
 double Grid_1D::give_point () {

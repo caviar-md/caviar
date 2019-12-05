@@ -448,9 +448,19 @@ void Plt_dealii::output_potential_values(caviar::interpreter::Parser *parser) {
   FC_NULLPTR_CHECK(grid_1d_y)
   FC_NULLPTR_CHECK(grid_1d_z)
 
+  std::string st_ofs_x = file_name + "_x";
+  std::string st_ofs_y = file_name + "_y";
+  std::string st_ofs_z = file_name + "_z";
+  std::string st_ofs_p = file_name + "_p";
+
   std::ofstream ofs;
+  std::ofstream ofs_x, ofs_y, ofs_z, ofs_p;
 
   ofs.open(file_name.c_str());
+  ofs_x.open(st_ofs_x.c_str());
+  ofs_y.open(st_ofs_y.c_str());
+  ofs_z.open(st_ofs_z.c_str());
+  ofs_p.open(st_ofs_p.c_str());
 
   for (unsigned int i = 0; i < grid_1d_x->no_points(); ++i) {
   double x = grid_1d_x->give_point(i);
@@ -490,11 +500,20 @@ void Plt_dealii::output_potential_values(caviar::interpreter::Parser *parser) {
 
     ofs << x << " " << y << " " << z << " " << potential_tot << "\n";
 
+    ofs_x << x << "\n";
+    ofs_y << y << "\n";
+    ofs_z << z << "\n";
+    ofs_p << potential_tot << "\n";
   }
   }
   }
 
   ofs.close();
+
+  ofs_x.close();
+  ofs_y.close();
+  ofs_z.close();
+  ofs_p.close();
 }
 
 //==================================================
