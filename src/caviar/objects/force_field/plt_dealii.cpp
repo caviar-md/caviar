@@ -913,6 +913,7 @@ double Plt_dealii::calculate_induced_charge (int t, const int requested_id) {
     i *= four_pi_k_electrostatic_inv; // correcting to the absolute charge value
   }
 
+  ofs_induced_charge << std::setprecision(10); // XXX
 
   double sum_q = 0; // This is defined here because of CAVIAR_WITH_MPI 
 

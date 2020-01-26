@@ -15,6 +15,7 @@
 //========================================================================
 
 #include "caviar/objects/writer/atom_data.h"
+#include "caviar/objects/atom_data.h"
 #include "caviar/utility/interpreter_io_headers.h"
 #include <ctime>
 #include <sys/stat.h> // used for mkdir()
@@ -76,8 +77,14 @@ bool Atom_data::read (caviar::interpreter::Parser *parser) {
     } else  if (string_cmp(t,"output_velocity")) {
       output_velocity = true;
     } else  if (string_cmp(t,"output_acceleration")) {
-      output_acceleration = true;
-    }
+      //output_acceleration = true;
+      std::ofstream ofs ("o_acc");
+      const auto &pos = atom_data -> owned.position;  
+      const auto &acc = atom_data -> owned.acceleration;  
+      for (unsigned int i=0;i<pos.size();++i) {
+        ofs << i << " " << acc[i].x << "\t" << acc[i].y << "\t" << acc[i].z << "\n" ;
+      }
+    } 
     else FC_ERR_UNDEFINED_VAR(t)
   }
   return in_file;

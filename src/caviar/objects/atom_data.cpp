@@ -129,7 +129,7 @@ Vector<Real_t> Atom_data::owned_velocity_cm () {
 Vector<Real_t> Atom_data::owned_angular_momentum_cm () {
   Vector<Real_t> am_cm {0.0,0.0,0.0};
   error->all(FC_FILE_LINE_FUNC,"not implemented.");
-  return am_cm;
+    return am_cm;
 }
 
 std::vector<std::vector<Real_t> > Atom_data::owned_inertia_tensor_cm () {
