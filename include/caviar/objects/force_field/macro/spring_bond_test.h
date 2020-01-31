@@ -14,30 +14,6 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_SHAPE_POLYHEDRON_INPUT_H
-#define CAVIAR_OBJECTS_SHAPE_POLYHEDRON_INPUT_H
-
-#include "caviar/utility/pointers.h"
-
-namespace caviar {
-namespace objects {
-namespace shape {
-namespace polyhedron {
-struct Polyhedron;
-class Input : public Pointers {
-public:
-  Input (class CAVIAR *);
-  ~Input ();
-
-  void read_unv (shape::polyhedron::Polyhedron&, const std::string &);   
-  void read_vtk (shape::polyhedron::Polyhedron&, const std::string &); 
-  void read_stl (shape::polyhedron::Polyhedron&, const std::string &); 
-
-
-};
-} //polyhedron
-} //shape
-} //objects
-} // namespace caviar
-
+#ifdef FC_CHECK_AND_CREATE_ACTIVATED
+FC_CHECK_AND_CREATE(Spring_bond_test,spring_bond_test,objects::force_field::Spring_bond_test)
 #endif

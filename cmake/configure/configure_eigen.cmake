@@ -14,26 +14,28 @@
 #
 #=======================================================================
 
-# ===================================================
-# ======= print_final_caviar_configuration =======
-# ===================================================
 
+# ==============================
+# =======  CONFIGURE EIGEN =======
+# ==============================
 
-print_stars()
-  
-message("Final CAVIAR configuration:")
-message("")
-print_flag_value(CAVIAR_DEBUG_VERSION)
-print_flag_value(CMAKE_BUILD_TYPE)
-message("")
-print_flag_value(CAVIAR_WITH_MPI)
-print_flag_value(CAVIAR_SINGLE_MPI_MD_DOMAIN)
-message("")
-print_flag_value(CAVIAR_WITH_DEALII)
-print_flag_value(CAVIAR_WITH_DEALII_MPI)
-message("")
+if (CAVIAR_WITH_EIGEN)
+  set (CAVIAR_WITH_EIGEN ON)
+
+  find_package(EIGEN)
+
+  add_definitions (-DCAVIAR_WITH_EIGEN)
+
+else ()
+  set (CAVIAR_WITH_EIGEN OFF)
+endif ()
+
 print_flag_value(CAVIAR_WITH_EIGEN)
-message("")
+
+if (CAVIAR_WITH_EIGEN)
+  print_flag_value(EIGEN_DIR)
+endif ()
+
 # ===============================
 # =======                 =======
 # ===============================

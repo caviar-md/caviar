@@ -14,29 +14,36 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_SHAPE_POLYHEDRON_INPUT_H
-#define CAVIAR_OBJECTS_SHAPE_POLYHEDRON_INPUT_H
+#ifndef CAVIAR_OBJECTS_FORCEFIELD_SPRINGBONDTEST_H
+#define CAVIAR_OBJECTS_FORCEFIELD_SPRINGBONDTEST_H
 
-#include "caviar/utility/pointers.h"
+#include "caviar/objects/force_field.h"
 
 namespace caviar {
 namespace objects {
-namespace shape {
-namespace polyhedron {
-struct Polyhedron;
-class Input : public Pointers {
+namespace force_field {
+
+/**
+ * This class does a spring force-field on the molecular bonds
+ *  
+ */
+class Spring_bond_test : public Force_field {
 public:
-  Input (class CAVIAR *);
-  ~Input ();
+  Spring_bond_test (class CAVIAR *);
+  ~Spring_bond_test () {};
 
-  void read_unv (shape::polyhedron::Polyhedron&, const std::string &);   
-  void read_vtk (shape::polyhedron::Polyhedron&, const std::string &); 
-  void read_stl (shape::polyhedron::Polyhedron&, const std::string &); 
+  //double energy();
 
+  bool read (class caviar::interpreter::Parser *);
+  void verify_settings ();
+  void calculate_acceleration ();
+public:
 
+  std::vector<Real_t> elastic_coef, dissip_coef;
+ 
 };
-} //polyhedron
-} //shape
+
+} //force_field
 } //objects
 } // namespace caviar
 

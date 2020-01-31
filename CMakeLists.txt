@@ -68,6 +68,7 @@ print_stars()
 
 include(cmake/configure/configure_mpi.cmake)
 include(cmake/configure/configure_dealii.cmake)
+include(cmake/configure/configure_eigen.cmake)
 
 print_stars()
 

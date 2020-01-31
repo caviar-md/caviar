@@ -14,26 +14,30 @@
 #
 #=======================================================================
 
-# ===================================================
-# ======= print_final_caviar_configuration =======
-# ===================================================
+# ============================
+# =======  FINDING EIGEN =======
+# ============================
 
+if (NOT EIGEN_DIR)
+  SET( EIGEN_DIR "$ENV{EIGEN_DIR}" ) # Environment variable
+ENDIF()
 
-print_stars()
-  
-message("Final CAVIAR configuration:")
-message("")
-print_flag_value(CAVIAR_DEBUG_VERSION)
-print_flag_value(CMAKE_BUILD_TYPE)
-message("")
-print_flag_value(CAVIAR_WITH_MPI)
-print_flag_value(CAVIAR_SINGLE_MPI_MD_DOMAIN)
-message("")
-print_flag_value(CAVIAR_WITH_DEALII)
-print_flag_value(CAVIAR_WITH_DEALII_MPI)
-message("")
-print_flag_value(CAVIAR_WITH_EIGEN)
-message("")
+IF( NOT EIGEN_DIR )
+  MESSAGE( FATAL_ERROR " Couldn't find Eigen library.
+  Please point the environment variable EIGEN_DIR to the include directory of 
+  your Eigen3 installation
+or
+  add the cmake definition with '-DEIGEN_DIR=THE_PATH/TO/EIGEN/LIBRARY' .
+ ")
+ENDIF()
+
+if (NOT EXISTS "${EIGEN_DIR}/Eigen/Core")
+  MESSAGE( FATAL_ERROR " Couldn't find Eigen Core header at: 
+    '${EIGEN_DIR}/Eigen/Core' .")
+ENDIF()
+
+INCLUDE_DIRECTORIES ( "${EIGEN_DIR}" )
+
 # ===============================
 # =======                 =======
 # ===============================

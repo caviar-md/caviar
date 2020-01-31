@@ -15,6 +15,7 @@
 //========================================================================
 
 #include "caviar/objects/shape/polyhedron/input.h"
+#include "caviar/objects/shape/polyhedron/format_unv_reader.h"
 #include "caviar/objects/shape/polyhedron/format_vtk_reader.h"
 #include "caviar/objects/shape/polyhedron/format_stl_reader.h"
 
@@ -37,6 +38,11 @@ void Input::read_vtk (shape::polyhedron::Polyhedron & p_object, const std::strin
 
 void Input::read_stl (shape::polyhedron::Polyhedron & p_object, const std::string &file_name) {
   class Format_stl_reader fvr (fptr);
+  fvr.read_polyhedron (p_object, file_name);
+}
+
+void Input::read_unv (shape::polyhedron::Polyhedron & p_object, const std::string &file_name) {
+  class Format_unv_reader fvr (fptr);
   fvr.read_polyhedron (p_object, file_name);
 }
 
