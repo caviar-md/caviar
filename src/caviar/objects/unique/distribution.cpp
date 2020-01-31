@@ -59,7 +59,7 @@ bool Distribution::read (caviar::interpreter::Parser* parser) {
     if (string_cmp(t,"boundary_shape")) {
       FIND_OBJECT_BY_NAME(shape,it)
       boundary_shape = object_container->shape[it->second.index];
-    } if (string_cmp(t,"set_atom_data") || string_cmp(t,"atom_data")) {
+    } else if (string_cmp(t,"set_atom_data") || string_cmp(t,"atom_data")) {
       FIND_OBJECT_BY_NAME(atom_data,it)
       atom_data = object_container->atom_data[it->second.index];
     } else if (string_cmp(t,"atom")) {

@@ -116,7 +116,7 @@ namespace mesh_modifier {
       unsigned udi = unv_container[uci].udn_2411.size() - 1;
       
       
-      int dummy[2];
+      int dummy[3];
       ifs >> dummy[0] >> dummy[1] >> dummy[2];
       //std::cout<< tmp << " " <<  dummy[0] << " " << dummy[1] << " " << dummy[2] << "\n";
       
@@ -125,7 +125,7 @@ namespace mesh_modifier {
       unv_container[uci].udn_2411[udi].record1[2] = dummy[1];
       unv_container[uci].udn_2411[udi].record1[3] = dummy[2];            
       
-      double pos[2];      
+      double pos[3];      
       ifs >> pos[0] >> pos[1] >> pos[2];
       //std::cout << pos[0] << " " << pos[1] << " " << pos[2] << "\n"; 
       
@@ -164,7 +164,7 @@ namespace mesh_modifier {
       unsigned num_of_elements = dummy[4];
                             
       if (beam_type) { //beam elements
-        int dummy_[2];
+        int dummy_[3];
         ifs >> dummy_[0] >> dummy_[1] >> dummy_[2];
         //std::cout <<  dummy_[0] << " " << dummy_[1] << " " << dummy_[2]  << "\n";
         unv_container[uci].udn_2412[udi].record2.push_back(dummy_[0]);

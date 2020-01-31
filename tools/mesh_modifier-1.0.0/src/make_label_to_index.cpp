@@ -29,7 +29,7 @@ namespace mesh_modifier {
       if (max < u[i].record1[0]) 
         max = u[i].record1[0];
     
-    v.resize(max, 0);
+    v.resize(max + 1, 0); // XXX
     for (unsigned i = 0; i < u.size(); ++i) 
       v[u[i].record1[0]] = i;      
    
@@ -42,7 +42,7 @@ namespace mesh_modifier {
       if (max < u[i].record1[0]) 
         max = u[i].record1[0];
     
-    v.resize(max, 0);
+    v.resize(max + 1, 0); // XXX
     for (unsigned i = 0; i < u.size(); ++i) 
       v[u[i].record1[0]] = i;            
       
