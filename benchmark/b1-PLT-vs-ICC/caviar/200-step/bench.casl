@@ -1,0 +1,176 @@
+
+#===== global variables
+
+real global_dt 0.001
+
+real k_elec_all   1.0    # for T=400k, according to breitsprecher2017 k_elec = k_elec_vacuum / 4.0
+
+#output info 5 off
+
+real cutoff_all 4.9
+
+
+#===== Atom definition =====
+
+unique atom a1
+a1 type 0
+a1 position 0 0 0
+
+unique atom a2
+a2 type 1
+a2 position 0 0 0
+
+#===== Molecule Definition
+
+unique molecule m1
+unique molecule m
+
+#===== bcc distribution ======
+
+
+m1 add_atom a1 at_position 10 10 12.5
+m1 add_atom a2 at_position 10 10 7.5
+
+
+unique molecule m2
+m2 add_atom a1 at_position 0 0 12.5
+m2 add_atom a2 at_position 0 0 7.5
+
+#===================
+unique grid_1d gx
+unique grid_1d gy
+unique grid_1d gz
+
+gx min 1. max 19 segment 9#7
+gy min 1. max 19 segment 9#7
+gz min 1 max 1 increment 200#7  
+gx generate
+gy generate
+gz generate
+
+unique molecule_group mg
+#===================
+unique distribution d
+d molecule_group mg
+d molecule m2
+d add_radius 1 0.01
+d add_radius 0 0.01
+d grid_1d_x gx 
+d grid_1d_y gy 
+d grid_1d_z gz
+d distribute_grid_3d
+
+#===== Domain
+
+domain  box dom
+dom xmin 0 xmax 20
+dom ymin 0 ymax 20
+dom zmin 0 zmax 20
+dom boundary_condition 1 1 1
+dom generate
+
+#========== Atom_data
+
+atom_data basic adata
+adata ghost_cutoff 9.5
+adata cutoff_extra 0.0
+adata k_b 1.0
+adata set_domain dom
+adata add_type_mass   0 1.0  
+adata add_type_charge 0 -1.0 
+adata add_type_radius 0 0.5  
+
+adata add_type_mass   1 1.0  
+adata add_type_charge 1 +1.0 
+adata add_type_radius 1 0.5  
+
+#adata add_molecule m1
+adata add_molecule_group mg
+
+
+#===== Neighborlist
+
+neighborlist cell_list neigh_cell 
+neigh_cell set_atom_data adata
+neigh_cell cutoff 4.9
+neigh_cell set_domain dom
+neigh_cell make_neighlist
+neigh_cell cutoff_neighlist 4.9
+
+#===== force_field elec_ewald_r
+
+force_field electrostatic_ewald_r f_eer 
+f_eer set_atom_data adata
+#f_eer set_neighborlist neigh_verlet
+f_eer set_neighborlist neigh_cell
+f_eer alpha 1.112583061
+f_eer cutoff 4.9
+f_eer k_electrostatic k_elec_all
+
+#===== force_field elec_ewald_k
+
+force_field electrostatic_ewald_k f_eek 
+f_eek set_atom_data adata
+f_eek alpha 1.112583061
+f_eek k_max 5
+f_eek set_domain dom
+f_eek k_electrostatic k_elec_all
+
+#===== finite element Mesh import
+
+force_field plt_dealii f_plt
+f_plt k_electrostatic k_elec_all
+f_plt set_atom_data adata
+f_plt add_force_field f_eer
+f_plt add_force_field f_eek
+
+f_plt add_unv_mesh "box.unv"
+f_plt read_unv_mesh 
+
+f_plt boundary_id_value 1 0 #set to V
+f_plt boundary_id_value 2 0 #set to V
+
+f_plt output_induced_charge 100
+
+f_plt set_solve_type faster_adaptive
+
+f_plt refine_global 2
+#f_plt refine_boundary 3
+
+
+
+#==== Integrator =====
+
+integrator leap_frog2 integ_leapfrog2 
+integ_leapfrog2 set_atom_data adata
+integ_leapfrog2 dt global_dt
+
+#====== writer 
+writer atom_data w1
+w1 set_atom_data adata
+w1 set_domain dom
+#w1 xyz_step 20
+#w1 energy_step 1
+w1 output_velocity
+
+
+#=====  simulator
+
+md_simulator basic sim 
+sim set_integrator integ_leapfrog2
+sim set_atom_data adata
+#sim add_force_field f_lj
+sim add_force_field f_eer
+sim add_force_field f_eek
+sim add_force_field f_plt
+#sim add_force_field f_geslab_up
+#sim add_force_field f_geslab_do
+sim add_neighborlist neigh_cell
+sim add_writer w1
+sim initial_step 0
+sim final_step 200
+sim dt global_dt
+sim run
+
+w1 output_acceleration
+

@@ -1,0 +1,290 @@
+
+#=======================================================================
+# 
+# Copyright (C) 2019 by Morad Biagooi and Ehsan Nedaaee Oskoee.
+# 
+# This file is part of the CAVIAR package.
+# 
+# The CAVIAR package is free software; you can use it, redistribute
+# it, and/or modify it under the terms of the GNU Lesser General
+# Public License as published by the Free Software Foundation; either
+# version 3.0 of the License, or (at your option) any later version.
+# The full text of the license can be found in the file LICENSE at
+# the top level of the CAVIAR distribution.
+# 
+#=======================================================================
+
+
+#===== Atom definition =====
+
+unique atom a_H1
+a_H1 type 1
+a_H1 position -1 0 0
+
+
+unique atom a_H2
+a_H2 type 1
+a_H2 position 1 0 0
+
+unique atom a_O
+a_O type 0
+a_O position 0 1 0
+
+unique atom a_p
+a_p type 2
+a_p position 0 0 0
+
+#===== Molecule definition =====
+
+unique molecule m_water
+
+m_water add_atom a_H1 # 0 
+m_water add_atom a_H2 # 1 
+m_water add_atom a_O  # 2
+
+m_water position 0 0 0
+
+m_water atomic_bond 0 1 0 1.633
+m_water atomic_bond 1 2 0 1.0
+m_water atomic_bond 2 0 0 1.0
+
+
+#===== Molecule definition =====
+
+unique molecule m_poly
+
+m_poly add_atom a_p at_position 0 0 0 # 0 
+m_poly add_atom a_p at_position 2 0 0 # 1
+m_poly add_atom a_p at_position 3 1 0 # 2
+m_poly add_atom a_p at_position 2 2 0 # 3
+m_poly add_atom a_p at_position 0 2 0 # 4
+m_poly add_atom a_p at_position -1 1 0 # 5
+
+
+m_poly position 0 0 0
+
+m_poly atomic_bond 0 1 0 2.0
+m_poly atomic_bond 1 2 0 2.0
+m_poly atomic_bond 2 3 0 2.0
+m_poly atomic_bond 3 4 0 2.0
+m_poly atomic_bond 4 5 0 2.0
+m_poly atomic_bond 5 0 0 2.0
+
+
+m_poly atomic_angle 0 1 2 0 2.094394667
+m_poly atomic_angle 1 2 3 0 2.094394667
+m_poly atomic_angle 2 3 4 0 2.094394667
+m_poly atomic_angle 3 4 5 0 2.094394667
+m_poly atomic_angle 4 5 0 0 2.094394667
+m_poly atomic_angle 5 0 1 0 2.094394667
+
+
+#===== Molecule_group definition =====
+
+unique molecule_group mg
+
+#===== Domain
+
+domain box dom
+dom xmin -20 xmax 20
+dom ymin -20 ymax 20
+dom zmin -20 zmax 20
+dom boundary_condition 1 1 1
+dom generate
+
+#===== Grid definition =====
+
+unique grid_1d gx
+unique grid_1d gy
+unique grid_1d gz
+
+# compact distributi
+gx min -8 max 8 increment 3
+gy min -8 max 8 increment 3
+gz min -8 max 8 increment 3
+
+
+gx generate
+gy generate
+gz generate
+
+#==== Distribution =====
+
+unique distribution d
+d molecule_group mg
+d molecule m_water
+d grid_1d_x gx 
+d grid_1d_y gy 
+d grid_1d_z gz
+d distribute_grid_3d
+
+
+#========== Atom_data
+
+atom_data basic adata
+adata ghost_cutoff 5
+adata cutoff_extra 0.01
+adata set_domain dom
+
+adata add_type_mass   0 15.999   # oxygen
+adata add_type_charge 0 -0.8476  # oxygen
+adata add_type_radius 0 0.5      # oxygen
+
+adata add_type_mass   1 1.0      # hydrogen
+adata add_type_charge 1 0.4238   # hydrogen
+adata add_type_radius 1 0.5      # hydrogen
+
+adata add_type_mass   2 1.0      # poly
+adata add_type_charge 2 0.0      # poly
+adata add_type_radius 2 0.5      # poly
+
+#adata add_molecule_group mg
+#adata add_molecule m_water
+adata add_molecule m_poly
+
+adata add_random_velocity
+
+#===== Neighborlist
+
+neighborlist verlet_list neigh_verlet 
+neigh_verlet set_atom_data adata
+neigh_verlet cutoff 15
+neigh_verlet dt 0.001
+
+#===== Neighborlist
+
+neighborlist cell_list neigh_cell 
+neigh_cell set_atom_data adata
+neigh_cell cutoff 15
+neigh_cell set_domain dom
+neigh_cell make_neighlist
+neigh_cell cutoff_neighlist 10
+#===== force_field
+
+force_field  lj f_lj
+
+f_lj cutoff 10.0 # 2^(1/5) is a repulsive only
+
+f_lj epsilon 0 0 1.0
+f_lj epsilon 0 1 1.0
+f_lj epsilon 0 2 1.0
+f_lj epsilon 0 3 1.0
+f_lj epsilon 1 0 1.0
+f_lj epsilon 1 1 1.0
+f_lj epsilon 1 2 1.0
+f_lj epsilon 1 3 1.0
+f_lj epsilon 2 0 1.0
+f_lj epsilon 2 1 1.0
+f_lj epsilon 2 2 1.0
+f_lj epsilon 2 3 1.0
+f_lj epsilon 3 0 1.0
+f_lj epsilon 3 1 1.0
+f_lj epsilon 3 2 1.0
+f_lj epsilon 3 3 1.0
+
+f_lj sigma 0 0 1.0
+f_lj sigma 0 1 1.0
+f_lj sigma 0 2 1.0
+f_lj sigma 0 3 1.0
+f_lj sigma 1 0 1.0
+f_lj sigma 1 1 1.0
+f_lj sigma 1 2 1.0
+f_lj sigma 1 3 1.0
+f_lj sigma 2 0 1.0
+f_lj sigma 2 1 1.0
+f_lj sigma 2 2 1.0
+f_lj sigma 2 3 1.0
+f_lj sigma 3 0 1.0
+f_lj sigma 3 1 1.0
+f_lj sigma 3 2 1.0
+f_lj sigma 3 3 1.0
+
+f_lj set_neighborlist neigh_verlet
+#f_lj set_neighborlist neigh_cell
+f_lj set_atom_data adata
+f_lj set_domain dom
+
+#===== force_field
+
+force_field electrostatic f_el 
+f_el set_atom_data adata
+f_el  set_domain dom
+f_el k_electrostatic 1.0
+
+#===== force_field
+
+force_field spring_bond f_sb
+f_sb set_atom_data adata
+f_sb set_domain dom
+f_sb elastic_coef 0 100.0
+f_sb dissip_coef 0 1.0
+
+#===== force_field
+
+force_field spring_angle f_sa
+f_sa set_atom_data adata
+f_sa set_domain dom
+f_sa elastic_coef 0 5.0
+f_sa dissip_coef 0 0.0
+
+#===== force_field
+
+force_field granular f_grn
+f_grn set_atom_data adata
+#f_grn set_domain dom
+f_grn elastic_coef 0 100.0
+f_grn dissip_coef  0 1.0
+f_grn elastic_coef 1 100.0
+f_grn dissip_coef  1 1.0
+f_grn elastic_coef 2 100.0
+f_grn dissip_coef  2 1.0
+
+
+#==== Integration =====
+
+integrator leap_frog integ3 
+integ3 set_atom_data adata
+integ3 dt 0.001 
+
+#==== Integration =====
+integrator velocity_verlet_langevin integ4 
+integ4 set_atom_data adata
+integ4 dt 0.001 
+integ4 temperature 0.1
+integ4 kb 1.0
+integ4 friction 1.0
+
+
+#====== writer 
+writer atom_data w1
+w1 set_atom_data adata
+w1 set_domain dom
+w1 xyz_step 400
+
+#w1 msd_step 200
+
+#=====  simulator
+
+md_simulator basic sim 
+sim set_integrator integ4
+sim set_atom_data adata
+
+#sim add_force_field f_lj
+#sim add_force_field f_el
+sim add_force_field f_sb
+sim add_force_field f_sa
+
+#sim add_neighborlist neigh_verlet
+#sim add_neighborlist neigh_cell
+
+sim add_writer w1
+
+
+sim initial_step 0
+sim final_step 200000
+sim dt 0.001 
+sim run
+
+#exit
+
+

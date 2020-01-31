@@ -49,6 +49,7 @@ private:
 
 public: 
   void import (const std::string &, bool unsupported);
+  void import_vtk (const std::string &, bool unsupported);
 private:  
   void import_udn_ignore (std::ifstream &, int);
   void import_udn_unsupported (std::ifstream &, int);      

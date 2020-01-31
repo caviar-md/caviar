@@ -21,6 +21,7 @@
 #include "caviar/objects/force_field/macro/dpd.h"
 #include "caviar/objects/force_field/macro/dpd_mpi.h"
 #include "caviar/objects/force_field/macro/geometry.h"
+#include "caviar/objects/force_field/macro/geometry_slab.h"
 #include "caviar/objects/force_field/macro/geometry_lj.h"
 #include "caviar/objects/force_field/macro/gravity.h"
 #include "caviar/objects/force_field/macro/gravity_external.h"

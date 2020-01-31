@@ -23,6 +23,7 @@
 #include "caviar/objects/atom_data.h"
 #include "caviar/objects/neighborlist.h"
 #include "caviar/utility/macro_constants.h"
+#include "caviar/objects/unique/grid_1d.h"
 
 #ifdef CAVIAR_WITH_DEALII
 
@@ -68,6 +69,7 @@
 #include <deal.II/lac/precondition.h>
 #include <deal.II/lac/vector_memory.h>
 #include <deal.II/lac/filtered_matrix.h>
+
 
 #ifdef CAVIAR_WITH_DEALII_WITH_OPENCASCADE
  #include <deal.II/opencascade/boundary_lib.h>
@@ -264,6 +266,12 @@ bool Plt_dealii::read (caviar::interpreter::Parser *parser) {
       auto token = parser->get_val_token();
       spherical_test_file_name = token.string_value;
       output_vtk_solution (spherical_test_file_name);
+    } else if (string_cmp(t,"output_field_vectors")) {
+      output_field_vectors (parser);
+      return in_file;
+    } else if (string_cmp(t,"output_potential_values")) {
+      output_potential_values (parser);
+      return in_file;
     }
     
     else FC_ERR_UNDEFINED_VAR(t)
@@ -271,6 +279,243 @@ bool Plt_dealii::read (caviar::interpreter::Parser *parser) {
   
   return in_file;
 }
+
+//==================================================
+//==================================================
+//==================================================
+
+void Plt_dealii::output_field_vectors(caviar::interpreter::Parser *parser) {
+
+  std::string file_name = "o_field_vectors";
+  double scale = 1.0;
+  double limit = -1.0;
+  char field_type = 't';
+  bool in_file = true;
+  if (in_file==true) {
+    // removes a warning
+  }
+  unique::Grid_1D *grid_1d_x = nullptr, *grid_1d_y = nullptr, *grid_1d_z = nullptr;
+
+  while(true) {
+    GET_A_TOKEN_FOR_CREATION
+
+    auto t = token.string_value;
+
+    if (string_cmp(t,"file_name")) {
+      auto t2 = parser->get_val_token();
+      file_name  = t2.string_value;
+    } else if (string_cmp(t,"type")) {
+      auto t2 = parser->get_val_token();
+      if (t2.string_value == "total") field_type = 't';
+      if (t2.string_value == "smooth") field_type = 'm';
+      if (t2.string_value == "singular") field_type = 'i';
+
+    } else if (string_cmp(t,"scale")) {
+      auto t2 = parser->get_val_token();
+      scale  = t2.real_value;
+    } else if (string_cmp(t,"limit")) {
+      auto t2 = parser->get_val_token();
+      limit  = t2.real_value;
+    } else if (string_cmp(t,"grid_1d_x")) {
+      FIND_OBJECT_BY_NAME(unique,it)        
+      grid_1d_x = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+    } else if (string_cmp(t,"grid_1d_y")) {
+      FIND_OBJECT_BY_NAME(unique,it)        
+      grid_1d_y = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+    } else  if (string_cmp(t,"grid_1d_z")) {
+      FIND_OBJECT_BY_NAME(unique,it)        
+      grid_1d_z = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+    } 
+
+    else FC_ERR_UNDEFINED_VAR(t)
+
+  }
+
+  FC_NULLPTR_CHECK(grid_1d_x)
+  FC_NULLPTR_CHECK(grid_1d_y)
+  FC_NULLPTR_CHECK(grid_1d_z)
+
+  std::ofstream ofs;
+
+  ofs.open(file_name.c_str());
+
+  for (unsigned int i = 0; i < grid_1d_x->no_points(); ++i) {
+  double x = grid_1d_x->give_point(i);
+  for (unsigned int j = 0; j < grid_1d_y->no_points(); ++j) {
+  double y = grid_1d_y->give_point(j);      
+  for (unsigned int k = 0; k < grid_1d_z->no_points(); ++k) {  
+    double z = grid_1d_z->give_point(k);         
+
+
+    caviar::Vector<double> field_tot = {0, 0, 0};
+
+
+      const dealii::Point<3> r = {x, y, z};
+
+      dealii::Tensor<1, 3, double> field_sm;
+
+      try {
+        field_sm = - VectorTools::point_gradient (dof_handler, solution, r);
+      } catch (...) {
+        continue;
+      }
+
+    if (field_type != 'i') {
+      field_tot.x += field_sm[0];
+      field_tot.y += field_sm[1];
+      field_tot.z += field_sm[2];
+    }
+
+
+    if (field_type != 'm') {
+      const caviar::Vector<double> p {x,y,z};
+      caviar::Vector<double> field_si{0,0,0};
+
+      for (auto &&f : force_field_custom)
+        field_si += f->field (p);
+
+      field_tot += field_si;
+    }
+
+
+
+
+    if (limit > 0) {
+      if (std::abs(field_tot.x)> limit) field_tot.x = limit*(field_tot.x/std::abs(field_tot.x));
+      if (std::abs(field_tot.y)> limit) field_tot.y = limit*(field_tot.y/std::abs(field_tot.y));
+      if (std::abs(field_tot.z)> limit) field_tot.z = limit*(field_tot.z/std::abs(field_tot.z));
+    }
+
+    field_tot = field_tot * scale;
+
+    ofs << x << " " << y << " " << z << " " 
+        << field_tot.x << " " << field_tot.y << " " << field_tot.z << "\n";
+
+  }
+  }
+  }
+
+  ofs.close();
+}
+
+
+//==================================================
+//==================================================
+//==================================================
+
+void Plt_dealii::output_potential_values(caviar::interpreter::Parser *parser) {
+
+  std::string file_name = "o_field_vectors";
+  //double scale = 1.0;
+  //double limit = -1.0;
+  char field_type = 't';
+  bool in_file = true;
+  if (in_file==true) {
+    // removes a warning
+  }
+  unique::Grid_1D *grid_1d_x = nullptr, *grid_1d_y = nullptr, *grid_1d_z = nullptr;
+
+  while(true) {
+    GET_A_TOKEN_FOR_CREATION
+
+    auto t = token.string_value;
+
+    if (string_cmp(t,"file_name")) {
+      auto t2 = parser->get_val_token();
+      file_name  = t2.string_value;
+    } else if (string_cmp(t,"type")) {
+      auto t2 = parser->get_val_token();
+      if (t2.string_value == "total") field_type = 't';
+      if (t2.string_value == "smooth") field_type = 'm';
+      if (t2.string_value == "singular") field_type = 'i';
+
+    } else if (string_cmp(t,"grid_1d_x")) {
+      FIND_OBJECT_BY_NAME(unique,it)        
+      grid_1d_x = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+    } else if (string_cmp(t,"grid_1d_y")) {
+      FIND_OBJECT_BY_NAME(unique,it)        
+      grid_1d_y = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+    } else  if (string_cmp(t,"grid_1d_z")) {
+      FIND_OBJECT_BY_NAME(unique,it)        
+      grid_1d_z = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+    } 
+
+    else FC_ERR_UNDEFINED_VAR(t)
+
+  }
+
+  FC_NULLPTR_CHECK(grid_1d_x)
+  FC_NULLPTR_CHECK(grid_1d_y)
+  FC_NULLPTR_CHECK(grid_1d_z)
+
+  std::string st_ofs_x = file_name + "_x";
+  std::string st_ofs_y = file_name + "_y";
+  std::string st_ofs_z = file_name + "_z";
+  std::string st_ofs_p = file_name + "_p";
+
+  std::ofstream ofs;
+  std::ofstream ofs_x, ofs_y, ofs_z, ofs_p;
+
+  ofs.open(file_name.c_str());
+  ofs_x.open(st_ofs_x.c_str());
+  ofs_y.open(st_ofs_y.c_str());
+  ofs_z.open(st_ofs_z.c_str());
+  ofs_p.open(st_ofs_p.c_str());
+
+  for (unsigned int i = 0; i < grid_1d_x->no_points(); ++i) {
+  double x = grid_1d_x->give_point(i);
+  for (unsigned int j = 0; j < grid_1d_y->no_points(); ++j) {
+  double y = grid_1d_y->give_point(j);      
+  for (unsigned int k = 0; k < grid_1d_z->no_points(); ++k) {  
+    double z = grid_1d_z->give_point(k);         
+
+
+    double potential_tot = 0;
+
+    const dealii::Point<3> r = {x, y, z};
+
+
+
+      double potential_sm = 0;
+      try {
+        potential_sm = VectorTools::point_value (dof_handler, solution, r);
+      } catch (...) {
+        continue;
+      }
+
+    if (field_type != 'i') {
+      potential_tot += potential_sm;
+    }
+
+
+    if (field_type != 'm') {
+      const caviar::Vector<double> p {x,y,z};
+      double potential_si = 0;
+
+      for (auto &&f : force_field_custom)
+        potential_si += f->potential (p);
+
+      potential_tot += potential_si;
+    }
+
+    ofs << x << " " << y << " " << z << " " << potential_tot << "\n";
+
+    ofs_x << x << "\n";
+    ofs_y << y << "\n";
+    ofs_z << z << "\n";
+    ofs_p << potential_tot << "\n";
+  }
+  }
+  }
+
+  ofs.close();
+
+  ofs_x.close();
+  ofs_y.close();
+  ofs_z.close();
+  ofs_p.close();
+}
+
 //==================================================
 //==================================================
 //==================================================
@@ -668,6 +913,7 @@ double Plt_dealii::calculate_induced_charge (int t, const int requested_id) {
     i *= four_pi_k_electrostatic_inv; // correcting to the absolute charge value
   }
 
+  ofs_induced_charge << std::setprecision(12); // XXX
 
   double sum_q = 0; // This is defined here because of CAVIAR_WITH_MPI 
 
@@ -1119,6 +1365,34 @@ void Plt_dealii::calculate_all_particles_mesh_force_acc() {
     auto force = caviar::Vector<double> {frc[0], frc[1], frc[2]};
     atom_data -> owned.acceleration [i] += force * mass_inv_i;    
   }
+}
+
+//==================================================
+//==================================================
+//==================================================
+
+double Plt_dealii::potential (const int) {
+  error->all(FC_FILE_LINE_FUNC,"Not implemented");
+  return 0.0;
+}
+
+double Plt_dealii::potential (const Vector<double> &v) {
+
+  double potential_singular = 0.0;
+  for (auto &&f : force_field_custom)
+    potential_singular += f->potential (v);
+
+
+  const dealii::Point<3> r = {v.x, v.y, v.z};
+
+  double potential_smooth = 0.0;
+  try {
+     potential_smooth = VectorTools::point_value (dof_handler, solution, r);
+  } catch (...) {
+
+  }
+
+  return potential_smooth + potential_singular;
 }
 
 //==================================================

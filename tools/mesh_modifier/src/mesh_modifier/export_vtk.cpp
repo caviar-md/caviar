@@ -112,10 +112,11 @@ void Mesh_modifier::export_vtk (const std::string & filename) {
 
 void Mesh_modifier::export_vtk_headers (std::ofstream & ofs) {
   std::string text[4];
-  text[0] = "# vtk DataFile Version 3.0\n";
-  text[1] = "****\n";
+  text[0] = "# vtk DataFile Version 4.1\n";
+  text[1] = "vtk output\n";
   text[2] = "ASCII\n";
-  text[3] = "DATASET UNSTRUCTURED_GRID\n";
+  text[3] = "DATASET POLYDATA\n";
+  //text[3] = "DATASET UNSTRUCTURED_GRID\n";
 
   for (unsigned int i = 0; i < 4; ++i) {
     ofs << text[i];
@@ -127,7 +128,8 @@ void Mesh_modifier::export_vtk_headers (std::ofstream & ofs) {
   void Mesh_modifier::export_vtk_points (std::ofstream & ofs) {
     unsigned uci = unv_container.size() - 1; 
     unsigned no_points =  unv_container[uci].udn_2411.size();
-    ofs << "POINTS " << no_points << " double\n";
+    //ofs << "POINTS " << no_points << " double\n"; 
+    ofs << "POINTS " << no_points << " float\n"; 
     for (unsigned i = 0; i < unv_container[uci].udn_2411.size(); ++i) {
       ofs << unv_container[uci].udn_2411[i].record2[0] << " "
           << unv_container[uci].udn_2411[i].record2[1] << " "
@@ -172,6 +174,10 @@ type 2
     
     for (auto i : udn_2412) {
       auto cell_type = i.record1[1];
+      if (cell_type == 41) {
+        ++no_cells;
+        no_ints += 4;
+      }
       if (cell_type == 44) {
         ++no_cells;
         no_ints += 5;
@@ -182,7 +188,8 @@ type 2
       }
     }
     
-    ofs << "\nCELLS " << no_cells << " " << no_ints << "\n";
+    //ofs << "\nCELLS " << no_cells << " " << no_ints << "\n";
+    ofs << "\nPOLYGONS " << no_cells << " " << no_ints << "\n";
     
     std::vector<unsigned> li;
     make_label_to_index (unv_container[uci].udn_2411, li);
@@ -198,6 +205,16 @@ type 2
         ofs << "\n";
       }
     }    
+
+    for (unsigned i = 0; i < udn_2412.size(); ++i) {
+      auto cell_type = udn_2412[i].record1[1];
+      if (cell_type == 41) {
+        ofs << "3";
+        for (unsigned int j = 0; j < 3; ++j)
+          ofs << " " << li[udn_2412[i].record2[j]];
+        ofs << "\n";
+      }
+    }
     
     for (unsigned i = 0; i < udn_2412.size(); ++i) {
       auto cell_type = udn_2412[i].record1[1];

@@ -25,6 +25,7 @@ int main (int argc, char **argv) {
   int xyz_steps = 10000;
   double time_converter = 0.000006; // step to time in (ps)
 
+  std::ofstream ofs_min_max ("min_max.txt");
 
   //std::cout << "argc: " << argc << "\nargv:";
   for (int i = 0; i < argc; ++i) {
@@ -99,6 +100,9 @@ int main (int argc, char **argv) {
   if (output_total_number_of_ions)
     ofs_sum.open("o_sum_ionnumber");
 
+
+  double min_pore = 10, max_pore = -10;
+
   while (!ifs.eof()) {
 
     for (int k = 0; k < x_positions.size()-1; ++k) {
@@ -119,7 +123,7 @@ int main (int argc, char **argv) {
       getline(ifs, dummyLine);
     } 
 
-   
+
    
     for (int j = 0; j < num_of_atoms; ++j) {
     
@@ -138,7 +142,11 @@ int main (int argc, char **argv) {
         ifs >> x >> y >> z;
 
        //std::cout << x << " " << y << " " << z <<  "\n";      
-
+      if (x < -2) {
+        ofs_min_max << y << "\n";
+        if (y < min_pore) min_pore = y;
+        if (y > max_pore) max_pore = y;
+      }
       for (int k = 0; k < x_positions.size(); ++k) {
         if (x_positions[k][0] < x && x < x_positions[k][1]) {
           x_number[k][type] ++;
@@ -147,7 +155,7 @@ int main (int argc, char **argv) {
 
     
     }  
-
+    
     double time = time_converter * frame_counter * xyz_steps;
 
 
@@ -177,7 +185,8 @@ int main (int argc, char **argv) {
     ++frame_counter;
   } 
 
-
+  std::cout << " min_pore : " << min_pore << "\n";
+  std::cout << " max_pore : " << max_pore << "\n";
 
 }
 
