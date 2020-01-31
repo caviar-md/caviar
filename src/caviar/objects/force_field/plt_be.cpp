@@ -111,7 +111,7 @@ void Plt_be::jacobian_calculation() {
 
   const auto & vertex = polyhedron -> polyhedron_handler -> polyhedron.vertex;
   const auto & face   = polyhedron -> polyhedron_handler -> polyhedron.face;
-  const auto & normal = polyhedron -> polyhedron_handler -> polyhedron.normal;
+  auto & normal = polyhedron -> polyhedron_handler -> polyhedron.normal;
 
   // XXX check the normal direction. It may be different from the paper.
 
@@ -171,7 +171,14 @@ void Plt_be::jacobian_calculation() {
       auto v21 = vertex[face[i][1]] - vertex[face[i][0]];
       auto v23 = vertex[face[i][1]] - vertex[face[i][2]]; 
       auto v31 = vertex[face[i][2]] - vertex[face[i][0]];       
-
+	
+	    //double nx = v21.y * v31.z - v21.z * v31.y ;
+	    //double ny = v21.z * v31.x - v21.x * v31.z ;
+	    //double nz = v21.x * v31.y - v21.y * v31.x ;
+      
+      double nx = normal[i].x;
+	    double ny = normal[i].y;
+	    double nz = normal[i].z;
 
       double aa = std::sqrt(v21*v21); // edges norm
       double bb = std::sqrt(v23*v23);
@@ -183,29 +190,29 @@ void Plt_be::jacobian_calculation() {
 
       auto v1 = vertex[face[i][0]];
 
-      if (abs(normal[i].z) >= s3) {
+      if (abs(nz) >= s3) {
         pc1[i].x = v21.x;
         pc2[i].x = v31.x;
         pc3[i].x = v1.x;
         pc1[i].y = v21.y;
         pc2[i].y = v31.y;
         pc3[i].y = v1.y;
-        pc1[i].z = -(normal[i].x*pc1[i].x +   normal[i].y*pc1[i].y) /   normal[i].z; 
-        pc2[i].z = -(normal[i].x*pc2[i].x +   normal[i].y*pc2[i].y) /   normal[i].z;
+        pc1[i].z = -(nx*pc1[i].x +   ny*pc1[i].y) /   nz; 
+        pc2[i].z = -(nx*pc2[i].x +   ny*pc2[i].y) /   nz;
         pc3[i].z = v1.z;
-      } else if(abs(normal[i].y) >= s3) {
+      } else if(abs(ny) >= s3) {
         pc1[i].x = v21.x;
         pc2[i].x = v31.x;
         pc3[i].x = v1.x;
-        pc1[i].y = -(normal[i].x*pc1[i].x +   normal[i].z*pc1[i].z) / normal[i].y; 
-        pc2[i].y = -(normal[i].x*pc2[i].x +   normal[i].z*pc2[i].z) / normal[i].y;
+        pc1[i].y = -(nx*pc1[i].x +   nz*pc1[i].z) / ny; 
+        pc2[i].y = -(nx*pc2[i].x +   nz*pc2[i].z) / ny;
         pc3[i].y = v1.y;
         pc1[i].z = v21.z;
         pc2[i].z = v31.z;
         pc3[i].z = v1.z;
       } else {
-        pc1[i].x = -(normal[i].z*pc1[i].z +   normal[i].y*pc1[i].y) /   normal[i].x; 
-        pc2[i].x = -(normal[i].z*pc2[i].z +   normal[i].y*pc2[i].y) /   normal[i].x;
+        pc1[i].x = -(nz*pc1[i].z +   ny*pc1[i].y) /   nx; 
+        pc2[i].x = -(nz*pc2[i].z +   ny*pc2[i].y) /   nx;
         pc3[i].x = v1.x;
         pc1[i].y = v21.y;
         pc2[i].y = v31.y;
@@ -284,18 +291,24 @@ void Plt_be::set_potential_on_boundary() {
   //const auto & face   = polyhedron -> polyhedron_handler -> polyhedron.face;
   const auto & face_id   = polyhedron -> polyhedron_handler -> polyhedron.face_id;
 
-  phi_boundary.resize(face_size);   // phi on the boundaries (input)
+  // initial zero value is good because if it is not set, it would have undefined
+  // behavior or segmentation fault 
+  phi_boundary.resize(face_size, 0);   // phi on the boundaries (input)
 
 
   for (unsigned int i = 0; i < face_size; ++i) {
-    if (face_id[i] == 0) continue;
+    if (face_id[i] == -1) continue;
 
     double local_potential = 0.0; // local in MPI view.
 
     for (auto &&f : force_field_custom)
       local_potential += f->potential (face_center[i]);
 
+
+
     double applied_potential = boundary_id_value[face_id[i]];
+
+
 
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
 
@@ -312,6 +325,7 @@ void Plt_be::set_potential_on_boundary() {
     phi_boundary[i] = applied_potential - total_potential; 
 #else
     phi_boundary[i] = applied_potential - local_potential; 
+
 #endif    
 
   }
@@ -326,26 +340,26 @@ void Plt_be::set_potential_on_boundary() {
 //---------  
 void Plt_be::make_vec_zz() {
 
-    std::vector <double> b (face_size);
+  std::vector <double> b (face_size);
 
-    for (unsigned int m = 0; m < face_size; ++m) {
-      double sum=0;
-      for (unsigned int k = 0; k < face_size; ++k) {
-            double delta_mk = (m==k ? 1 : 0);
-            sum += phi_boundary[k] * (-D2[m][k] + 0.5*delta_mk);            
-      }
-      b[m] = sum ;
+  for (unsigned int m = 0; m < face_size; ++m) {
+    double sum=0;
+    for (unsigned int k = 0; k < face_size; ++k) {
+      double delta_mk = (m==k ? 1 : 0);
+      sum += phi_boundary[k] * (-D2[m][k] + 0.5*delta_mk);            
     }
+    b[m] = sum ;
+  }
 
+  vec_zz.clear();
+  vec_zz.resize(face_size, 0);
 
-    vec_zz.resize(face_size);
-
-    // We implement ' vec_zz = a.inverse() * b ' as follows.
-    for (unsigned int i=0; i < face_size; ++i) {
-      for (unsigned int j=0; j < face_size; ++j) {
-        vec_zz[i] += m_inverse[i][j] + b[j];  
-      }
+  // We implement ' vec_zz = a.inverse() * b ' as follows.
+  for (unsigned int i=0; i < face_size; ++i) {
+    for (unsigned int j=0; j < face_size; ++j) {
+      vec_zz[i] += m_inverse[i][j] * b[j];  
     }
+  }
 
 }
 
@@ -386,6 +400,7 @@ double Plt_be::potential_value(const Vector<double> v) {
 
   for (unsigned int k = 0; k < face_size; ++k) {
     phi += (phi_boundary[k]*D_2[k] - vec_zz[k]*D_1[k]);
+    //std::cout << phi_boundary[k] << " , " << D_2[k] << " , " << vec_zz[k] << " , " <<  D_1[k] << "\n";
   }
 
   return phi;
@@ -399,19 +414,25 @@ double Plt_be::potential_value(const Vector<double> v) {
 
 
 void Plt_be::start_spherical_test(){
+
+  verify_settings(); // TODO ONCE
+
+  FC_NULLPTR_CHECK(test_force_spherical)
+
   auto & face_id   = polyhedron -> polyhedron_handler -> polyhedron.face_id;
   for (auto && id : face_id)
     id = 1;
 
-  FC_NULLPTR_CHECK(test_force_spherical)
-  FC_NULLPTR_CHECK(atom_data)
+
   if (force_field_custom.size()<1) 
     error->all(FC_FILE_LINE_FUNC,"expected an electrostatic forcefield added");
   initialized = false;
 
 
   jacobian_calculation();
+
   make_inverse_matrix(); 
+
 
 }
 
@@ -423,7 +444,7 @@ void Plt_be::start_spherical_test(){
 
 
 void Plt_be::write_spherical_test(){
-
+///*
   set_potential_on_boundary();
   make_vec_zz(); 
 
@@ -455,9 +476,9 @@ void Plt_be::write_spherical_test(){
 
     p_sm = potential_value (r);
 
-    f_sm_d.x = - (p_sm_x - p_sm)*delta;
-    f_sm_d.y = - (p_sm_y - p_sm)*delta;
-    f_sm_d.z = - (p_sm_z - p_sm)*delta;
+    f_sm_d.x = - (p_sm_x - p_sm)/delta;
+    f_sm_d.y = - (p_sm_y - p_sm)/delta;
+    f_sm_d.z = - (p_sm_z - p_sm)/delta;
 
   } catch (...) {
     ignore_output = true;
@@ -480,7 +501,7 @@ void Plt_be::write_spherical_test(){
     auto p_err = std::abs((p_si + p_sm - p_an)/p_an);
     auto f_err = std::abs((f_si_norm + f_sm_norm - f_an_norm)/f_an_norm);
 
-    ofs_test_force_spherical << pos[0]    << " "
+    ofs_test_force_spherical << pos[0]    << " " // this is pos[0].x ,pos[0].y, pos[0].z 
                              << charge_i  << " "
                              << c         << " " 
                              << p_sm      << " "
@@ -495,7 +516,7 @@ void Plt_be::write_spherical_test(){
                              << f_err      << "\n";
 
   }
-
+//*/
 }
 
 //==================================================
@@ -540,15 +561,17 @@ bool Plt_be::read (caviar::interpreter::Parser *parser) {
       ofs_induced_charge.close();
     } else if (string_cmp(t,"boundary_id_value")) {
       int id = parser->get_literal_int();
-      if (id == 0) {
-        error->all (FC_FILE_LINE_FUNC_PARSE, "#boundary_id=0 is reserved for free boundary");
-      }
+
       double value = 0;
       GET_OR_CHOOSE_A_REAL(value,"","")
       //boundary_id_value.push_back(std::make_pair(id, value));
       //boundary_id_list.push_back(id);
       if (boundary_id_value.size() < static_cast<unsigned>(id+1)) boundary_id_value.resize(id+1);
       boundary_id_value[id] = value;
+
+      if (id == 0 && value != 0.0) {
+        error->all (FC_FILE_LINE_FUNC_PARSE, "#boundary_id=0 is reserved for free boundary");
+      }
 
     } /* else if (string_cmp(t,"make_grid")) {
       //make_grid();
@@ -641,148 +664,11 @@ bool Plt_be::read (caviar::interpreter::Parser *parser) {
   
   return in_file;
 }
+
 //==================================================
 //==================================================
 //==================================================
 /*
-void Plt_be::start_spherical_test() {
-  FC_NULLPTR_CHECK(test_force_spherical)
-  FC_NULLPTR_CHECK(atom_data)
-  if (force_field_custom.size()<1) 
-    error->all(FC_FILE_LINE_FUNC,"expected an electrostatic forcefield added");
-  initialized = false;
-  //if (!init_test_force_spherical) {
-  //  init_test_force_spherical = true;
-  //}
-  make_boundary_face_normals (); 
-  output_boundary_id_areas ();
-
-    switch(solve_type) {
-    case 0 :
-      sg_setup_system ();
-      sg_assemble_system ();
-      sg_solve ();      
-    break;
-
-    case 1 :
-      sa_setup_system ();
-      sa_assemble_system ();
-      sa_solve ();      
-    break;
-
-    case 2 :
-      fg_setup_system ();
-      fg_assemble_system ();
-      fg_solve ();      
-    break;
-
-    case 3 :
-      fa_setup_system ();
-      fa_assemble_system ();
-      fa_solve ();      
-    break;
-
-    }
-}
-//==================================================
-//==================================================
-//==================================================
-
-void Plt_be::write_spherical_test(){
-
-    if (time_step_count%time_step_solve==0) {
-      switch(solve_type) {
-      case 0 :
-        sg_setup_system ();
-        sg_assemble_system ();
-        sg_solve ();      
-      break;
-
-      case 1 :
-        sa_setup_system ();
-        sa_assemble_system ();
-        sa_solve ();      
-      break;
-
-      case 2 :
-        if (re_do_setup_assemble) {
-          fg_setup_system ();
-          fg_assemble_system ();
-        }
-        fg_solve ();      
-      break;
-
-      case 3 :
-        if (re_do_setup_assemble) {
-          fa_setup_system ();
-          fa_assemble_system ();
-        }
-        fa_solve ();      
-      break;
-      }
-    }
-
-  double c = calculate_induced_charge (0, 1);
-
-  const auto &pos = atom_data->owned.position;      
-  const auto type_i = atom_data -> owned.type [0] ;
-  const auto charge_i = atom_data -> owned.charge [ type_i ];
-
-  const dealii::Point<3> r = {pos[0].x, pos[0].y, pos[0].z};
-
-  double p_sm = 0.0;
-  dealii::Tensor<1, 3, double> f_sm_d;
-
-  // when the point is out of the mesh, we ignore the output
-  bool ignore_output = false;
-
-  try {
-    f_sm_d = - VectorTools::point_gradient (dof_handler, solution, r);
-    p_sm = VectorTools::point_value (dof_handler, solution,r);
-  } catch (...) {
-    ignore_output = true;
-  }
-  
-  if (ignore_output) {
-  } else {
-    //  Vector<double> f_sm = (f_sm_d[0], f_sm_d[1], f_sm_d[2]);
-    //auto f_sm_norm = std::sqrt(f_sm*f_sm);
-    auto f_sm_norm = std::sqrt(f_sm_d*f_sm_d);
-
-    auto p_an = test_force_spherical->potential(0);
-    auto f_an = test_force_spherical->field(0);
-    auto f_an_norm = std::sqrt(f_an*f_an);
-
-    auto p_si = force_field_custom[0]->potential(0);
-    auto f_si = force_field_custom[0]->field(0);
-    auto f_si_norm = std::sqrt(f_si*f_si);
-
-    auto p_err = std::abs((p_si + p_sm - p_an)/p_an);
-    auto f_err = std::abs((f_si_norm + f_sm_norm - f_an_norm)/f_an_norm);
-
-    ofs_test_force_spherical << pos[0]    << " "
-                             << charge_i  << " "
-                             << c         << " " 
-                             << p_sm      << " "
-                             << f_sm_norm << " "
-                             << p_si      << " "
-                             << f_si_norm << " "
-                             << p_an      << " "
-                             << f_an_norm << " "
-                             << p_si + p_sm           << " "
-                             << f_si_norm + f_sm_norm << " "
-                             << p_err      << " "
-                             << f_err      << "\n";
-;
-  }
-
-}
-
-//==================================================
-//==================================================
-//==================================================
-
-
 void Plt_be::output_vtk_solution (const std::string filename) const
 {
 #if defined(CAVIAR_WITH_MPI)
@@ -839,104 +725,6 @@ void Plt_be::output_vtk_solution (const int cycle) const
 //==================================================
 //==================================================
 
-
-void Plt_be::make_boundary_face_normals () {
-  bool non_planar_face_found = false;
-  face_area.clear ( );
-  face_normal.clear ( );
-  face_center.clear ( );
-  face_id.clear ( );
-
-  std::ofstream ofs;
-
-#if defined(CAVIAR_WITH_MPI)
-  if (my_mpi_rank == 0) 
-#endif
-    ofs.open("o_mesh_boundary_normals");
-
-
-
-    for (typename Triangulation<3,3>::active_cell_iterator
-         cell=triangulation.begin_active(); cell!=triangulation.end(); ++cell) {
-      auto cc = cell->center();         
-      
-      for (unsigned int f=0; f<GeometryInfo<3>::faces_per_cell; ++f) {
-        
-        if (cell->face(f)->at_boundary()) {
-        
-          auto boundary_id = static_cast<unsigned>(cell->face(f)->boundary_id());
-                              
-          if (boundary_id_max < boundary_id)          
-            boundary_id_max = boundary_id;  
-                  
-          auto fc = cell->face(f)->center();
-
-          // n_o: a vector (approximately) to the direction of normal         
-          auto n_o = cc - fc;
-          
-          // this is of type 'dealii::Tensor<1,3> '
-          const Tensor<1,3> v01 = cell->face(f)->vertex(1) - cell->face(f)->vertex(0);
-          const Tensor<1,3> v02 = cell->face(f)->vertex(2) - cell->face(f)->vertex(0);
-  
-          Tensor<1,3> normal = cross_product_3d(v01, v02);
-
-          auto dot = normal * n_o;
-          if (dot < 0 ) normal *= -1;
-          auto norm_n = std::sqrt(normal*normal);      
-          normal /= norm_n;
-
-          //
-
-          double area = cell->face(f)->measure ();
-          if (std::isinf(area) || std::isnan(area)) {
-
-
-            const Tensor<1,3> v03 = cell->face(f)->vertex(3) - cell->face(f)->vertex(0);
-         
-
-            double non_planar_measure = std::abs((v03 * normal) * (v03 * normal) /
-                       ((v03 * v03) * (v01 * v01) * (v02 * v02)));
-            if (non_planar_measure >=   1e-24)  {
-              non_planar_face_found = true;
-              //std::cout << "non planar face, measure : "<< non_planar_measure  << "\n";
-            }  
-
-
-            const Tensor<1,3> v12 = cell->face(f)->vertex(2) - cell->face(f)->vertex(1);          
-            Tensor<1,3> twice_area = cross_product_3d(v03, v12);
-            area =  0.5 * twice_area.norm();
-       
-          }
-          //
-
-          face_area.push_back (area);
-          face_normal.push_back (normal);
-          face_center.push_back (fc);
-          face_id.push_back (boundary_id);
-#if defined(CAVIAR_WITH_MPI)
-          if (my_mpi_rank == 0)                     
-#endif
-            ofs << fc(0) << " " << fc(1) << " " << fc(2) << " "
-                << normal[0]  << " " << normal[1]  << " " << normal[2]  << "\n";
-          //std::cout << "fa " << cell->face(f)->measure () << " fi " << boundary_id << "\n";
-          //std::cout << "fx:" << cell->face(f)->index() << std::endl;
-        }
-        
-      }
-    }
-
-#if defined(CAVIAR_WITH_MPI)
-  if (my_mpi_rank == 0) 
-#endif
-    ofs.close();
-  if (non_planar_face_found)
-    output->warning("Non planar face found in Plt_be.");
-
-}
-
-//==================================================
-//==================================================
-//==================================================
 
 void Plt_be::output_boundary_id_areas () {
 
