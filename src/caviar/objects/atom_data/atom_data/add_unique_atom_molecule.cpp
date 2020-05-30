@@ -71,6 +71,7 @@ bool Atom_data::add_molecule(caviar::objects::unique::Molecule &m) {
     }
   }
 
+
   // adding the atoms while recording the map of molecule's atom index to atom_data index
   std::vector <int> indices (pos.size(), -1);
   for (unsigned int i = 0; i < pos.size(); ++i) {

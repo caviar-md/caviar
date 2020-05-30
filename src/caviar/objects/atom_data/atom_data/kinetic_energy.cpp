@@ -49,7 +49,7 @@ double Atom_data::kinetic_energy () {
   } break;
 
   case (4): case (5): case (6): {
-    error->all(FC_FILE_LINE_FUNC,"not implemented.");    
+    //error->all(FC_FILE_LINE_FUNC,"not implemented.");    
   } break;
 
 

@@ -14,12 +14,5 @@
 //
 //========================================================================
 
-#include "caviar/objects/constraint/m_shake.h"
-#include "caviar/objects/constraint/shake.h"
-#include "caviar/objects/constraint/rattle.h"
 #include "caviar/objects/constraint/nve.h"
-#include "caviar/objects/constraint/nose_hoover.h"
-#include "caviar/objects/constraint/berendsen.h"
-#include "caviar/objects/constraint/atom_molarity.h"
-#include "caviar/objects/constraint/atoms_molarity.h"
-#include "caviar/objects/constraint/cm_motion.h"
+

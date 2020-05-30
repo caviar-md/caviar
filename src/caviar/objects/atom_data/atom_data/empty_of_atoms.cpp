@@ -71,6 +71,7 @@ bool Atom_data::empty_of_atoms(objects::unique::Molecule &m) {
   return true;
 }
 
+
 } //objects
 
 } // namespace caviar

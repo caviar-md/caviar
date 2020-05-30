@@ -15,4 +15,4 @@
 //========================================================================
 
 #include "caviar/objects/md_simulator/macro/basic.h"
-#include "caviar/objects/md_simulator/macro/polyatomic.h"
+

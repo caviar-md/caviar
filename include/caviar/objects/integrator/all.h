@@ -14,10 +14,5 @@
 //
 //========================================================================
 
-#include "caviar/objects/integrator/euler.h"
-#include "caviar/objects/integrator/verlet.h"
-#include "caviar/objects/integrator/verlet2.h"
 #include "caviar/objects/integrator/velocity_verlet.h"
-#include "caviar/objects/integrator/velocity_verlet_langevin.h"
-#include "caviar/objects/integrator/leap_frog.h"
-#include "caviar/objects/integrator/leap_frog2.h"
+
