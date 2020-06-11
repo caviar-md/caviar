@@ -30,6 +30,11 @@ void Unique::verify_settings () {
   
 }
 
+
+bool Unique::read (class caviar::interpreter::Parser *) {
+  
+}
+
 } //objects
 
 

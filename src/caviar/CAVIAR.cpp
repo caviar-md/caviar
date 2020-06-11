@@ -118,7 +118,7 @@ using namespace boost::python;
 BOOST_PYTHON_MODULE(_caviar)
 {
     class_<caviar::CAVIAR,boost::noncopyable>("caviar", init<std::string>())
-        .def("greet", &caviar::CAVIAR::execute)
+        .def("execute", &caviar::CAVIAR::execute)
 
     ;
 };
