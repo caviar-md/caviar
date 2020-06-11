@@ -23,6 +23,7 @@
 #include <iostream>
 #include <fstream>
 #include <map>
+#include <string>
 
 #if defined(CAVIAR_WITH_MPI)
 #include <mpi.h>
@@ -60,6 +61,8 @@ public:
    * Constructor in serial mode
    */
   CAVIAR (int, char**);
+
+  CAVIAR (std::string);
 #endif
 
   /**
@@ -89,6 +92,7 @@ public:
   bool log_flag, out_flag, err_flag;
   int argc;
   char **argv;
+  std::string construct_str;
 
   // these are some helper variables for the interpreter. Not for users.
   // They can be public.

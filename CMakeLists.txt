@@ -30,7 +30,11 @@ set (CAVIAR_MAJOR_VERSION 1)
 set (CAVIAR_MINOR_VERSION 0)
 set (CAVIAR_PATCH_VERSION 1)
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+#set(CMAKE_CXX_FLAGS "-Wall -Wextra") #without boostpython
+set(CMAKE_CXX_FLAGS "-Wall -Wextra  -fpic")  # boostpython #-Werror
+set(CMAKE_STATIC_LIBRARY_PREFIX "") # boostpython
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -shared -lm") #boostpython
+
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
@@ -75,6 +79,16 @@ print_stars()
 include(cmake/print_final_configuration.cmake)
 include(cmake/print_final_message_before_build.cmake)
 
+
+
+# =========================================
+# ======= find boost python =======
+# =========================================
+find_library(Bpython libboost_python36.so PATH /usr/local/lib) #boostpython
+link_directories(/usr/local/lib) #boostpython
+
+INCLUDE_DIRECTORIES(/usr/include/python3.6) #boostpython
+
 # =========================================
 # ======= configure cpp source file =======
 # =========================================
@@ -103,14 +117,19 @@ ENDFOREACH()
 # ======= executable and linking =======
 # ======================================
 
-ADD_EXECUTABLE(CAVIAR src/main_CAVIAR.cpp)
+#ADD_EXECUTABLE(CAVIAR src/main_CAVIAR.cpp)
+ADD_LIBRARY(_caviar SHARED src/caviar/CAVIAR.cpp) #boostpython
 
 if (CAVIAR_WITH_DEALII)
   DEAL_II_SETUP_TARGET(CAVIAR)
-  TARGET_LINK_LIBRARIES(CAVIAR CAVIAR_lib)  
+  #TARGET_LINK_LIBRARIES(CAVIAR CAVIAR_lib)  
+  TARGET_LINK_LIBRARIES(_caviar CAVIAR_lib ${Bpython}) #boostpython
 else ()  
-  TARGET_LINK_LIBRARIES(CAVIAR CAVIAR_lib)
+  #TARGET_LINK_LIBRARIES(CAVIAR CAVIAR_lib)  
+  TARGET_LINK_LIBRARIES(_caviar CAVIAR_lib ${Bpython}) #boostpython
 endif (CAVIAR_WITH_DEALII)
+
+set_target_properties(_caviar PROPERTIES PREFIX "") #boostpython # WHAT is this line?
 
 
 

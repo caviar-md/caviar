@@ -28,6 +28,7 @@ CAVIAR::CAVIAR (int argc, char **argv, MPI_Comm mpi_comm) :
 #else
 CAVIAR::CAVIAR (int argc, char **argv) :
 #endif
+
   comm {new interpreter::Communicator {this}},
   error {new interpreter::Error {this}},
   output {new interpreter::Output {this}},
@@ -52,6 +53,36 @@ CAVIAR::CAVIAR (int argc, char **argv) :
     interpreter_continue_called = false;
 }
 
+#if defined(CAVIAR_WITH_MPI)
+
+#else
+CAVIAR::CAVIAR (std::string str) :
+
+  comm {new interpreter::Communicator {this}},
+  error {new interpreter::Error {this}},
+  output {new interpreter::Output {this}},
+  input {new interpreter::Input {this}},
+  object_handler {new interpreter::Object_handler {this}},
+  object_container {new interpreter::Object_container {this}},
+  object_creator {new interpreter::Object_creator {this}},  
+  in {std::cin.rdbuf()},
+  out {std::cout.rdbuf()},
+  err {std::cerr.rdbuf()},
+  log_flag {true},
+  out_flag {true},
+  err_flag {true},
+  construct_str{str}
+  {
+    if (comm->me == 0) log.open ("log");
+
+    // this value is set to '1' because one input class is already constructed
+    interpreter_num_Input_class = 1;
+
+    interpreter_break_called = false;
+    interpreter_continue_called = false;
+}
+#endif
+
 CAVIAR::~CAVIAR () {
   delete input;
   delete output;
@@ -75,5 +106,20 @@ void CAVIAR::execute () {
   input->read ();
 }
 
+
 } // namespace caviar
+
+#include <boost/python.hpp>
+#include <boost/python/list.hpp>
+#include <boost/python/extract.hpp>
+
+using namespace boost::python;
+
+BOOST_PYTHON_MODULE(_caviar)
+{
+    class_<caviar::CAVIAR,boost::noncopyable>("caviar", init<std::string>())
+        .def("greet", &caviar::CAVIAR::execute)
+
+    ;
+};
 
