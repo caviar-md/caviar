@@ -15,6 +15,7 @@
 //========================================================================
 
 #include "caviar/objects/unique.h"
+#include <iostream>
 
 namespace caviar {
 
@@ -27,17 +28,15 @@ Unique::Unique (CAVIAR *fptr) : Pointers{fptr} {
 Unique::~Unique () {}
 
 void Unique::verify_settings () {
-  
+  std::cout << "HI there. I'm unique"  << std::endl;
 }
 
 
 bool Unique::read (class caviar::interpreter::Parser *) {
-  
+  return true;
 }
 
 } //objects
-
-
 
 } // namespace caviar
 

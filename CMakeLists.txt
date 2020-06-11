@@ -118,18 +118,18 @@ ENDFOREACH()
 # ======================================
 
 #ADD_EXECUTABLE(CAVIAR src/main_CAVIAR.cpp)
-ADD_LIBRARY(_caviar SHARED src/caviar/CAVIAR.cpp) #boostpython
+ADD_LIBRARY(caviarmd SHARED src/caviar/CAVIAR.cpp) #boostpython
 
 if (CAVIAR_WITH_DEALII)
   DEAL_II_SETUP_TARGET(CAVIAR)
   #TARGET_LINK_LIBRARIES(CAVIAR CAVIAR_lib)  
-  TARGET_LINK_LIBRARIES(_caviar CAVIAR_lib ${Bpython}) #boostpython
+  TARGET_LINK_LIBRARIES(caviarmd CAVIAR_lib ${Bpython}) #boostpython
 else ()  
   #TARGET_LINK_LIBRARIES(CAVIAR CAVIAR_lib)  
-  TARGET_LINK_LIBRARIES(_caviar CAVIAR_lib ${Bpython}) #boostpython
+  TARGET_LINK_LIBRARIES(caviarmd CAVIAR_lib ${Bpython}) #boostpython
 endif (CAVIAR_WITH_DEALII)
 
-set_target_properties(_caviar PROPERTIES PREFIX "") #boostpython # WHAT is this line?
+set_target_properties(caviarmd PROPERTIES PREFIX "") #boostpython # WHAT is this line?
 
 
 

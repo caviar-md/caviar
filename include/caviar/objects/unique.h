@@ -31,7 +31,9 @@ namespace objects {
 class Unique : public Pointers {
  public:
   Unique (class CAVIAR *);
-   virtual ~Unique ( );
+
+  virtual ~Unique ( );
+
   virtual bool read (class caviar::interpreter::Parser *);
 
   FC_BASE_OBJECT_COMMON_TOOLS
