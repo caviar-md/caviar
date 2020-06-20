@@ -47,15 +47,15 @@ class Distribution : public Unique {
 
   bool check_radius;
   
-  class Atom_data *atom_data;
-  class Shape *boundary_shape;
-  class Atom *atom;
-  class Atom_group *atom_group;
-  class Molecule *molecule;
-  class Molecule_group *molecule_group;
+  std::shared_ptr<class Atom_data > atom_data;
+  std::shared_ptr<class Shape > boundary_shape;
+  std::shared_ptr<class Atom > atom;
+  std::shared_ptr<class Atom_group > atom_group;
+  std::shared_ptr<class Molecule > molecule;
+  std::shared_ptr<class Molecule_group > molecule_group;
 
-  class Grid_1D *grid_1d_x, *grid_1d_y, *grid_1d_z;
-  class Random_1D *random_1d_x, *random_1d_y, *random_1d_z;
+  std::shared_ptr<class Grid_1D> grid_1d_x, grid_1d_y, grid_1d_z;
+  std::shared_ptr<class Random_1D > random_1d_x,  random_1d_y,  random_1d_z;
   
   std::vector<double> radius_vector;
 

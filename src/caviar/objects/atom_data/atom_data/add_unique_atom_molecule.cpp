@@ -32,24 +32,24 @@ namespace objects {
 
 
 
-bool Atom_data::add_atom(caviar::objects::unique::Atom &a) {
+bool Atom_data::add_atom(const std::shared_ptr<caviar::objects::unique::Atom> &a) {
 
   const auto id = get_global_id();
-  const auto t = a.type;
-  const auto pos = a.pos_tot ();
-  const auto vel = a.vel_tot ();
+  const auto t = a->type;
+  const auto pos = a->pos_tot ();
+  const auto vel = a->vel_tot ();
   return add_atom (id, t, pos, vel);    
 }
 
 bool Atom_data::add_atom(caviar::objects::unique::Atom_group &ag) {
-  for (auto&& a : ag.atoms)
-    add_atom(a);
+  //for (auto&& a : ag.atoms)
+  //  add_atom(a); XXX
   return true; 
 }
 
 bool Atom_data::add_atom(caviar::objects::unique::Atom_list &al) {
-  for (auto&& a : al.atoms)
-    add_atom(*a);
+  //for (auto&& a : al.atoms)
+    //add_atom(*a); // XXX
   return true; 
 }
 

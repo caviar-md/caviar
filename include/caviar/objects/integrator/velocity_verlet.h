@@ -18,6 +18,7 @@
 #define CAVIAR_OBJECTS_INTEGRATOR_VELOCITYVERLET_H
 
 #include "caviar/objects/integrator.h"
+//#include "caviar/utility/python_utils_dec.h"
 
 namespace caviar {
 namespace objects {
@@ -74,6 +75,8 @@ public:
   int type;
    
 };
+
+//void export_py_Velocity_verlet ();
 
 } //integrator
 } //objects

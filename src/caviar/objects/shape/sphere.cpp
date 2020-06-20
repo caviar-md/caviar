@@ -15,6 +15,7 @@
 //========================================================================
 
 #include "caviar/objects/shape/sphere.h"
+//#include "caviar/utility/python_utils_def.h"
 #include "caviar/utility/interpreter_io_headers.h"
 
 namespace caviar {
@@ -27,6 +28,7 @@ Sphere::Sphere (CAVIAR *fptr) : Shape {fptr} {
 Sphere::~Sphere() {}
     
 bool Sphere::read (caviar::interpreter::Parser * parser) {
+  /*
   FC_OBJECT_READ_INFO
   bool in_file = true;
      
@@ -39,7 +41,7 @@ bool Sphere::read (caviar::interpreter::Parser * parser) {
   }
 
   return in_file;;
-
+  */
 }
 
 
@@ -68,7 +70,34 @@ bool Sphere::in_contact(const Vector<double> &v, const double r, Vector<double> 
   contact_vector += tmp;
   return true;
 }
+
+/*
+FC_PYDEF_SETGET_PTR(Lj,atom_data,Atom_data);
+FC_PYDEF_SETGET_PTR(Lj,domain,Domain);
+FC_PYDEF_SETGET_PTR(Lj,neighborlist,Neighborlist);
+
+FC_PYDEF_SETGET_STDVEC2D(Lj,epsilon,Real_t);  
+FC_PYDEF_SETGET_STDVEC2D(Lj,sigma,Real_t);
+FC_PYDEF_SETGET_STDVEC(Lj,epsilon_atom,Real_t);  
+FC_PYDEF_SETGET_STDVEC(Lj,sigma_atom,Real_t);
+FC_PYDEF_SETGET_STDVEC2D(Lj,cutoff_list,Real_t);
+
+
+void export_py_Sphere () {
+
+  using namespace boost::python;
+
+  implicitly_convertible<std::shared_ptr<shape::Sphere>,          
+                         std::shared_ptr<Shape> >(); 
+
+  class_<shape::Sphere>("Sphere",init<caviar::CAVIAR*>())
+  ;
+
+
+}
+*/
   
+
 } //shape
 } //objects
 

@@ -18,6 +18,7 @@
 #define CAVIAR_OBJECTS_MDSIMULATOR_BASIC_H
 
 #include "caviar/objects/md_simulator.h"
+//#include "caviar/utility/python_utils_dec.h"
 
 namespace caviar {
 namespace objects {
@@ -48,6 +49,8 @@ class Basic : public Md_simulator {
 
 
 };
+
+//void export_py_Basic ();
 
 } //md_simulator
 } //objects

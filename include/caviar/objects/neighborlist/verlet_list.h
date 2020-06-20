@@ -18,6 +18,7 @@
 #define CAVIAR_OBJECTS_NEIGHBORLIST_VERLETLIST_H
 
 #include "caviar/objects/neighborlist.h"
+//#include "caviar/utility/python_utils_dec.h"
 
 namespace caviar {
 namespace objects {
@@ -38,6 +39,8 @@ class Verlet_list : public Neighborlist {
 //  double cutoff; // Defined in the base class
  public:
 };
+
+//void export_py_Verlet_list ();
 
 } //neighborlist
 } //objects

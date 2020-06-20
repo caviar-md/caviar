@@ -14,7 +14,9 @@
 //
 //========================================================================
 
+
 #include "caviar/objects/atom_data/basic.h"
+#include "caviar/utility/python_utils_def.h"
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/objects/unique/atom.h"
 #include "caviar/objects/unique/atom_group.h"
@@ -24,6 +26,7 @@
 #include "caviar/objects/unique/molecule_list.h"
 #include "caviar/objects/neighborlist/cell_list.h"
 #include "caviar/interpreter/object_handler/preprocessors_new.h"
+#include "caviar/objects/domain.h"
 
 namespace caviar {
 namespace objects {
@@ -49,12 +52,14 @@ void Basic::allocate () {
   std::map<std::string,caviar::interpreter::object_handler::Dictionary>::iterator ITERATOR_NAME;\
   FIND_UNIQUE_OBJECT_BY_NAME_NIC(OBJECT_TYPE,ITERATOR_NAME)
 */
-bool Basic::read (caviar::interpreter::Parser *parser) {
+bool Basic::read (caviar::interpreter::Parser *) {
+    /*
   FC_OBJECT_READ_INFO
   bool in_file = true;
   while(true) {
     GET_A_TOKEN_FOR_CREATION
     auto t = token.string_value;
+
     if (string_cmp(t,"ghost_cutoff")) {
       GET_OR_CHOOSE_A_REAL(ghost_cutoff,"","")
       if (ghost_cutoff < 0.0) error->all (FC_FILE_LINE_FUNC_PARSE, "ghost_cutoff have to non-negative."); 
@@ -170,14 +175,71 @@ bool Basic::read (caviar::interpreter::Parser *parser) {
     } else if (string_cmp(t,"n_r_df")) {
       GET_OR_CHOOSE_A_INT(n_r_df,"","")
     } else FC_ERR_UNDEFINED_VAR(t)
-
+   
   }
   return in_file;
+ */  
+  return true;
 }
 
 void Basic::output_data (int ) {
   
 }
+
+FC_PYDEF_SETGET_PTR(Basic,domain,Domain);
+/*
+FC_PYDEF_SETGET_PTR(Lj,atom_data,Atom_data);
+
+FC_PYDEF_SETGET_PTR(Lj,neighborlist,Neighborlist);
+
+FC_PYDEF_SETGET_STDVEC2D(Lj,epsilon,Real_t);  
+FC_PYDEF_SETGET_STDVEC2D(Lj,sigma,Real_t);
+FC_PYDEF_SETGET_STDVEC(Lj,epsilon_atom,Real_t);  
+FC_PYDEF_SETGET_STDVEC(Lj,sigma_atom,Real_t);
+FC_PYDEF_SETGET_STDVEC2D(Lj,cutoff_list,Real_t);
+
+adata.ghost_cutoff = 5
+adata.cutoff_extra = 0.01
+adata.set_domain(dom)
+adata.add_atom(a1)
+adata.add_atom(a2)
+adata.add_type_mass(0,1.0)
+adata.add_type_charge(0,0.0)
+
+*/
+
+//virtual bool add_atom(const std::shared_ptr<caviar::objects::unique::Atom> &a);
+//virtual bool add_atom(caviar::objects::unique::Atom_group &a);
+//virtual bool add_atom(caviar::objects::unique::Atom_list &a);
+
+// thin wrapper
+//bool add_atom1(const std::shared_ptr<caviar::objects::unique::Atom> &a) {
+//  return Basic::add_atom(a);
+//}
+// manual wrapper
+//bool (Basic::*add_atom_ptr1) (const std::shared_ptr<caviar::objects::unique::Atom> &a) = &Basic::add_atom;
+
+void export_py_Basic () {
+
+
+  
+
+  using namespace boost::python;
+
+  implicitly_convertible<std::shared_ptr<atom_data::Basic>,          
+                         std::shared_ptr<Atom_data> >(); 
+
+  class_<atom_data::Basic>("Basic",init<caviar::CAVIAR*>())
+    .def_readwrite("ghost_cutoff",&atom_data::Basic::ghost_cutoff)    
+    .def_readwrite("cutoff_extra",&atom_data::Basic::cutoff_extra)
+    .def("add_atom",&atom_data::Basic::add_atom_wrap1)
+    .def("add_type_mass",&atom_data::Basic::add_masses)
+    .def("add_type_charge",&atom_data::Basic::add_charges)
+    .add_property("domain",&atom_data::Basic::get_domain,&atom_data::Basic::set_domain)          
+  ;
+
+}
+
 
 } //atom_data
 } //objects

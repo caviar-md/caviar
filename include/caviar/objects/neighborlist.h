@@ -48,7 +48,7 @@ public:
   Vector<int> no_bins;
   double cutoff; 
 
-  class caviar::objects::Atom_data *atom_data;
+  std::shared_ptr <class caviar::objects::Atom_data> atom_data;
 
   FC_BASE_OBJECT_COMMON_TOOLS
 };

@@ -47,12 +47,13 @@ class Md_simulator : public Pointers {
   virtual void cleanup ();
   virtual bool boundary_condition();
 
-  class objects::Atom_data *atom_data;
-  class objects::Integrator *integrator;
-  std::vector<class objects::Neighborlist *> neighborlist;
-  std::vector<objects::Force_field *> force_field; 
-  std::vector<objects::Constraint *> constraint; 
-  std::vector<objects::Writer *> writer; 
+  std::shared_ptr<class objects::Atom_data >atom_data;
+  std::shared_ptr<class objects::Integrator > integrator;
+
+  std::vector<std::shared_ptr<class objects::Neighborlist >> neighborlist;
+  std::vector<std::shared_ptr<objects::Force_field >> force_field; 
+  std::vector<std::shared_ptr<objects::Constraint >> constraint; 
+  std::vector<std::shared_ptr<objects::Writer >> writer; 
 
   double time, dt;
   clock_t t_start, t_end;

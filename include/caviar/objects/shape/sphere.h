@@ -18,6 +18,7 @@
 #define CAVIAR_OBJECTS_SHAPE_SPHERE_H
 
 #include "caviar/objects/shape.h"
+//#include "caviar/utility/python_utils_dec.h"
 
 
 namespace caviar {
@@ -47,6 +48,8 @@ public:
   bool make_basis_vectors();
 
 };
+
+//void export_py_Sphere ();
 
 } //shape 
 } //objects

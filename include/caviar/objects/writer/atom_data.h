@@ -18,6 +18,7 @@
 #define CAVIAR_OBJECTS_WRITER_ATOMDATA_H
 
 #include "caviar/objects/writer.h"
+//#include "caviar/utility/python_utils_dec.h"
 
 namespace caviar {
 namespace objects {
@@ -52,10 +53,10 @@ class Atom_data : public Writer {
 /////////////
 
  
-  objects::Atom_data *atom_data;
+  std::shared_ptr<objects::Atom_data > atom_data;
 
   // used in msd calculations
-  objects::Domain *domain;
+  std::shared_ptr<objects::Domain > domain;
 
   void dump_energy (int); // dump energy to file 
   void dump_energy (int, double); // dump energy to file
@@ -92,6 +93,8 @@ class Atom_data : public Writer {
  public:
 
 };
+
+//void export_py_Atom_data ();
 
 } //writer
 } //objects

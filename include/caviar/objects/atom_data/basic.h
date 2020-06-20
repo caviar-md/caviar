@@ -18,6 +18,7 @@
 #define CAVIAR_OBJECTS_ATOMDATA_BASIC_H
 
 #include "caviar/objects/atom_data.h"
+#include "caviar/utility/python_utils_dec.h"
 
 namespace caviar {
 namespace objects {
@@ -37,7 +38,11 @@ public:
   void report();
 
   void allocate ();
+
+  FC_PYDEC_SETGET_PTR(domain,Domain);
 };
+
+void export_py_Basic ();
 
 } //atom_data
 } //objects

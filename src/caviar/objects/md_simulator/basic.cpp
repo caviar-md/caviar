@@ -15,6 +15,7 @@
 //========================================================================
 
 #include "caviar/objects/md_simulator/basic.h"
+//#include "caviar/utility/python_utils_def.h"
 #include "caviar/objects/integrator.h"
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/interpreter/communicator.h"
@@ -34,6 +35,7 @@ Basic::Basic (CAVIAR *fptr) : Md_simulator{fptr}
 Basic::~Basic () {}
 
 bool Basic::read (caviar::interpreter::Parser *parser) {
+  /*
   FC_OBJECT_READ_INFO
   bool in_file = true;
   while(true) {
@@ -82,6 +84,7 @@ bool Basic::read (caviar::interpreter::Parser *parser) {
     } else error->all (FC_FILE_LINE_FUNC_PARSE, "Unknown variable or command");
   }
   return in_file;
+  */
 }
 
 bool Basic::run () {
@@ -120,6 +123,32 @@ void Basic::verify_settings () {
   if (!(use_time || use_step))
     error->all ("simulator md: verify_settings: please assign 'time' or 'step' variables.");
 }
+
+/*
+FC_PYDEF_SETGET_PTR(Lj,atom_data,Atom_data);
+FC_PYDEF_SETGET_PTR(Lj,domain,Domain);
+FC_PYDEF_SETGET_PTR(Lj,neighborlist,Neighborlist);
+
+FC_PYDEF_SETGET_STDVEC2D(Lj,epsilon,Real_t);  
+FC_PYDEF_SETGET_STDVEC2D(Lj,sigma,Real_t);
+FC_PYDEF_SETGET_STDVEC(Lj,epsilon_atom,Real_t);  
+FC_PYDEF_SETGET_STDVEC(Lj,sigma_atom,Real_t);
+FC_PYDEF_SETGET_STDVEC2D(Lj,cutoff_list,Real_t);
+
+
+void export_py_Basic () {
+
+  using namespace boost::python;
+
+  implicitly_convertible<std::shared_ptr<md_simulator::Basic>,          
+                         std::shared_ptr<Md_simulator> >(); 
+
+  class_<md_simulator::Basic>("Basic",init<caviar::CAVIAR*>())
+  ;
+
+}
+*/
+
 
 } //md_simulator
 } //objects

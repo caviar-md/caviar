@@ -44,6 +44,7 @@ Atom_data::~Atom_data () {
 }
 
 bool Atom_data::read (caviar::interpreter::Parser *parser) {
+  /*
   FC_OBJECT_READ_INFO
   bool in_file = true;
   while(true) {
@@ -88,6 +89,7 @@ bool Atom_data::read (caviar::interpreter::Parser *parser) {
     else FC_ERR_UNDEFINED_VAR(t)
   }
   return in_file;
+  */
 }
 
 void Atom_data::initialize(){

@@ -18,6 +18,7 @@
 #define CAVIAR_OBJECTS_CONSTRAINT_NVE_H
 
 #include "caviar/objects/constraint.h"
+//#include "caviar/utility/python_utils_dec.h"
 
 namespace caviar {
 namespace objects {
@@ -58,6 +59,8 @@ class Nve : public Constraint {
   
 
 };
+
+//void export_py_Nve ();
 
 } //constraint
 } //objects

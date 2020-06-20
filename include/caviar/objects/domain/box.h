@@ -18,6 +18,7 @@
 #define CAVIAR_OBJECTS_DOMAIN_BOX_H
 
 #include "caviar/objects/domain.h"
+#include "caviar/utility/python_utils_dec.h"
 
 namespace caviar {
 namespace objects {
@@ -39,13 +40,25 @@ public:
   double fix_distance_y(double d);
   double fix_distance_z(double d);
 
-  caviar::Vector<double> fix_distance(caviar::Vector<double> v); 
+  Vector<double> fix_distance(caviar::Vector<double> v); 
 
   Vector <Real_t> half_edge;
+
+
+  FC_PYDEC_SETGET_CAVVEC(half_edge,Real_t);  
+
+  FC_PYDEC_SETGET_CAVVEC(upper_local,Real_t);  
+  FC_PYDEC_SETGET_CAVVEC(lower_local,Real_t);  
+  FC_PYDEC_SETGET_CAVVEC(upper_global,Real_t);  
+  FC_PYDEC_SETGET_CAVVEC(lower_global,Real_t);  
+
+  FC_PYDEC_SETGET_CAVVEC(boundary_condition,int);  
 
 public:
   
 };
+
+void export_py_Box ();
 
 } //domain
 } //objects

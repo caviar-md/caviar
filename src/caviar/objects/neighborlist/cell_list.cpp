@@ -15,6 +15,7 @@
 //========================================================================
 
 #include "caviar/objects/neighborlist/cell_list.h"
+//#include "caviar/utility/python_utils_def.h"
 #include "caviar/objects/atom_data.h"
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/objects/domain.h"
@@ -38,6 +39,7 @@ Cell_list::Cell_list (CAVIAR *fptr) : Neighborlist{fptr}, domain{nullptr}
 }
 
 bool Cell_list::read (caviar::interpreter::Parser *parser) {
+  /*
   FC_OBJECT_READ_INFO
   bool in_file = true;
   while(true) {
@@ -60,6 +62,7 @@ bool Cell_list::read (caviar::interpreter::Parser *parser) {
     } else error->all (FC_FILE_LINE_FUNC_PARSE, "Unknown variable or command");
   }
   return in_file;
+  */
 }
 
 void Cell_list::init () {
@@ -215,6 +218,33 @@ void Cell_list::make_neigh_bin () {
     }
   }
 }
+
+/*
+FC_PYDEF_SETGET_PTR(Lj,atom_data,Atom_data);
+FC_PYDEF_SETGET_PTR(Lj,domain,Domain);
+FC_PYDEF_SETGET_PTR(Lj,neighborlist,Neighborlist);
+
+FC_PYDEF_SETGET_STDVEC2D(Lj,epsilon,Real_t);  
+FC_PYDEF_SETGET_STDVEC2D(Lj,sigma,Real_t);
+FC_PYDEF_SETGET_STDVEC(Lj,epsilon_atom,Real_t);  
+FC_PYDEF_SETGET_STDVEC(Lj,sigma_atom,Real_t);
+FC_PYDEF_SETGET_STDVEC2D(Lj,cutoff_list,Real_t);
+
+
+
+void export_py_Cell_list () {
+
+  using namespace boost::python;
+
+  implicitly_convertible<std::shared_ptr<neighborlist::Cell_list>,          
+                         std::shared_ptr<Neighborlist> >(); 
+
+  class_<neighborlist::Cell_list>("Cell_list",init<caviar::CAVIAR*>())
+  ;
+
+}
+*/
+
 
 } //neighborlist
 } //objects

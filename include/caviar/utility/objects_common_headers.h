@@ -19,5 +19,7 @@
 #include "caviar/utility/objects_macro_functions.h"
 #include "caviar/utility/vector.h" // This is a common tool
 
+
 #include <vector> // This is a common tool
 #include <string> // This is used in every base object.
+#include <memory> // shared_ptr

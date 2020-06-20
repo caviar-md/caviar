@@ -15,6 +15,7 @@
 //========================================================================
 
 #include "caviar/objects/unique/atom.h"
+#include "caviar/utility/python_utils_def.h"
 #include "caviar/objects/unique/atom_group.h"
 #include "caviar/objects/unique/molecule.h"
 #include "caviar/utility/interpreter_io_headers.h"
@@ -53,7 +54,8 @@ Atom::Atom (const Atom & a) : Unique{a} {
 }
 
 
-bool Atom::read ( caviar::interpreter::Parser * parser) {
+bool Atom::read ( caviar::interpreter::Parser *) {
+  /*
   FC_OBJECT_READ_INFO
   while(true) {
     FC_IF_RAW_TOKEN_EOF_EOL
@@ -62,6 +64,7 @@ bool Atom::read ( caviar::interpreter::Parser * parser) {
     else FC_IF_GET_INT(type)
     else FC_ERR_UNDEFINED_VAR(ts)    
   }
+  */
   return true;
 }
 
@@ -91,6 +94,42 @@ Vector<double> Atom::vel_tot () const {
   if (part_of_a_molecule) return velocity + upper_level_molecule->vel_tot();
   else if (part_of_a_atom_group) return velocity + upper_level_atom_group->vel_tot();
   else return velocity;    
+}
+
+/*
+FC_PYDEF_SETGET_PTR(Lj,atom_data,Atom_data);
+FC_PYDEF_SETGET_PTR(Lj,domain,Domain);
+FC_PYDEF_SETGET_PTR(Lj,neighborlist,Neighborlist);
+
+FC_PYDEF_SETGET_STDVEC2D(Lj,epsilon,Real_t);  
+FC_PYDEF_SETGET_STDVEC2D(Lj,sigma,Real_t);
+FC_PYDEF_SETGET_STDVEC(Lj,epsilon_atom,Real_t);  
+FC_PYDEF_SETGET_STDVEC(Lj,sigma_atom,Real_t);
+FC_PYDEF_SETGET_STDVEC2D(Lj,cutoff_list,Real_t);
+*/
+
+FC_PYDEF_SETGET_CAVVEC(Atom,position,double);
+FC_PYDEF_SETGET_CAVVEC(Atom,velocity,double);
+
+
+
+void export_py_Atom () {
+
+  using namespace boost::python;
+
+  implicitly_convertible<std::shared_ptr<unique::Atom>,          
+                         std::shared_ptr<Atom> >(); 
+
+  class_<unique::Atom>("Atom",init<caviar::CAVIAR*>())
+  //class_<unique::Atom,boost::noncopyable>("Atom",init<caviar::CAVIAR*>())
+  //class_<unique::Atom,std::shared_ptr<unique::Atom>>("Atom",init<caviar::CAVIAR*>())
+  //class_<unique::Atom,A_Wrapper>("Atom",init<caviar::CAVIAR*>())
+    .def_readwrite("type",&unique::Atom::type)    
+    .add_property("position", &unique::Atom::get_position, &unique::Atom::set_position)
+    .add_property("velocity", &unique::Atom::get_velocity, &unique::Atom::set_velocity)
+  ;
+
+  register_ptr_to_python<std::shared_ptr<unique::Atom> > ();
 }
 
 

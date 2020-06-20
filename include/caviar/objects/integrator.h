@@ -39,7 +39,7 @@ public:
   virtual void step_part_I () = 0;
   virtual void step_part_II () = 0;
   virtual void step_part_III () = 0;
-  class objects::Atom_data *atom_data;
+  std::shared_ptr<class objects::Atom_data> atom_data;
 
   Real_t dt;
 

@@ -50,6 +50,7 @@ void Distribution::verify_settings () {
   
 
 bool Distribution::read (caviar::interpreter::Parser* parser) {
+  /*
   FC_OBJECT_READ_INFO
   bool in_file = true;
       
@@ -124,6 +125,7 @@ bool Distribution::read (caviar::interpreter::Parser* parser) {
     }
   }
   return in_file;
+  */
 }
   
 bool Distribution::distribute_grid_3D( ) {

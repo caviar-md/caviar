@@ -43,9 +43,9 @@ class Force_field  : public Pointers {
   virtual Vector<double> field (const Vector<double> &);
   virtual Vector<double> field (const int);
   double cutoff;
-  class objects::Atom_data *atom_data;
-  class objects::Domain *domain;
-  class objects::Neighborlist *neighborlist;
+  std::shared_ptr<class objects::Atom_data > atom_data;
+  std::shared_ptr<class objects::Domain > domain;
+  std::shared_ptr<class objects::Neighborlist > neighborlist;
 
   FC_BASE_OBJECT_COMMON_TOOLS
 };

@@ -15,8 +15,10 @@
 //========================================================================
 
 #include "caviar/objects/domain/box.h"
+#include "caviar/utility/python_utils_def.h"
 #include "caviar/interpreter/communicator.h"
 #include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/utility/python_utils_def.h"
 
 namespace caviar {
 namespace objects {
@@ -26,33 +28,8 @@ Box::Box (CAVIAR *fptr) : Domain{fptr} {
   FC_OBJECT_INITIALIZE_INFO
 }
 
-bool Box::read (caviar::interpreter::Parser *parser) {
-  FC_OBJECT_READ_INFO
-  bool in_file = true;
-  while(true) {
-    GET_A_TOKEN_FOR_CREATION
-    auto t = token.string_value;
-    if (string_cmp(t,"lower_global.x") || string_cmp(t,"xmin") ) {
-      GET_OR_CHOOSE_A_REAL(lower_global.x,"","")
-    } else if (string_cmp(t,"upper_global.x") || string_cmp(t,"xmax") ) {
-      GET_OR_CHOOSE_A_REAL(upper_global.x,"","")
-    } else if (string_cmp(t,"lower_global.y") || string_cmp(t,"ymin") ) {
-      GET_OR_CHOOSE_A_REAL(lower_global.y,"","")
-    } else if (string_cmp(t,"upper_global.y") || string_cmp(t,"ymax") ) {
-      GET_OR_CHOOSE_A_REAL(upper_global.y,"","")
-    } else if (string_cmp(t,"lower_global.z") || string_cmp(t,"zmin") ) {
-      GET_OR_CHOOSE_A_REAL(lower_global.z,"","")
-    } else if (string_cmp(t,"upper_global.z") || string_cmp(t,"zmax") ) {
-      GET_OR_CHOOSE_A_REAL(upper_global.z,"","")
-    } else if (string_cmp(t,"boundary_condition") || string_cmp(t,"bc") ) {
-      GET_OR_CHOOSE_A_INT_3D_VECTOR(boundary_condition,"","")
-    } else if (string_cmp(t,"me")) {
-      std::cout << "ME: " << me << std::endl;
-    } else if (string_cmp(t,"generate")) {
-      generate();
-    } else error->all (FC_FILE_LINE_FUNC_PARSE, "Unknown variable or command");
-  }
-  return in_file;
+bool Box::read (caviar::interpreter::Parser *) {
+  return true;
 }
 
 void Box::generate() {
@@ -136,6 +113,34 @@ caviar::Vector<double> Box::fix_distance(caviar::Vector<double> v) {
   return caviar::Vector<double>{fix_distance_x(v.x),
                                 fix_distance_y(v.y),
                                 fix_distance_z(v.z)};
+}
+
+
+FC_PYDEF_SETGET_CAVVEC(Box,half_edge,Real_t);  
+FC_PYDEF_SETGET_CAVVEC(Box,upper_local,Real_t);  
+FC_PYDEF_SETGET_CAVVEC(Box,lower_local,Real_t);  
+FC_PYDEF_SETGET_CAVVEC(Box,upper_global,Real_t);  
+FC_PYDEF_SETGET_CAVVEC(Box,lower_global,Real_t);  
+FC_PYDEF_SETGET_CAVVEC(Box,boundary_condition,int);  
+
+void export_py_Box () {
+
+  using namespace boost::python;
+
+  implicitly_convertible<std::shared_ptr<domain::Box>,          
+                         std::shared_ptr<Domain> >(); 
+
+
+  class_<domain::Box>("Box",init<caviar::CAVIAR*>())
+    .def("generate",&domain::Box::generate)      
+    .add_property("boundary_condition", &domain::Box::get_boundary_condition, &domain::Box::set_boundary_condition)
+    .add_property("lower_global", &domain::Box::get_lower_global, &domain::Box::set_lower_global)
+    .add_property("upper_global", &domain::Box::get_upper_global, &domain::Box::set_upper_global)
+    .add_property("lower_local", &domain::Box::get_lower_local, &domain::Box::set_lower_local)
+    .add_property("upper_local", &domain::Box::get_upper_local, &domain::Box::set_upper_local)
+    .add_property("half_edge", &domain::Box::get_half_edge, &domain::Box::set_half_edge)
+
+  ;
 }
 
 

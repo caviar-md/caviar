@@ -18,6 +18,7 @@
 #define CAVIAR_OBJECTS_NEIGHBORLIST_CELLLIST_H
 
 #include "caviar/objects/neighborlist.h"
+//#include "caviar/utility/python_utils_dec.h"
 
 namespace caviar {
 namespace objects {
@@ -42,7 +43,7 @@ class Cell_list : public Neighborlist {
   int neigh_bin_index (const Vector<double> &);
  public:
   void make_neigh_bin ();
-  class objects::Domain *domain;
+  std::shared_ptr<class objects::Domain > domain;
   bool domain_set;
 
   /**
@@ -52,6 +53,8 @@ class Cell_list : public Neighborlist {
 
   double cutoff_neighlist;
 };
+
+//void export_py_Cell_list ();
 
 } //neighborlist
 } //objects

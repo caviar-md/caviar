@@ -20,6 +20,7 @@
 #include "caviar/objects/unique.h"
 #include "caviar/utility/vector.h"
 #include <vector>
+#include "caviar/utility/python_utils_dec.h"
 
 namespace caviar {
 
@@ -56,7 +57,12 @@ class Atom  : public Unique {
   Vector<double> position, velocity;
   unsigned int type;
 
+  FC_PYDEC_SETGET_CAVVEC(position,double);
+  FC_PYDEC_SETGET_CAVVEC(velocity,double);
+
 };
+
+void export_py_Atom ();
 
 } //unique
 } //objects

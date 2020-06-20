@@ -14,7 +14,9 @@
 //
 //========================================================================
 
+
 #include "caviar/objects/constraint/nve.h"
+//#include "caviar/utility/python_utils_def.h"
 #include "caviar/objects/atom_data.h"
 #include "caviar/utility/interpreter_io_headers.h"
 
@@ -38,6 +40,7 @@ Nve::Nve (CAVIAR *fptr) : Constraint{fptr} {
 Nve::~Nve () {}
 
 bool Nve::read (caviar::interpreter::Parser *parser) {
+  /*
   FC_OBJECT_READ_INFO
   bool in_file = true;
   while(true) {
@@ -66,6 +69,7 @@ bool Nve::read (caviar::interpreter::Parser *parser) {
     }
   }
   return in_file;
+  */
 }
 
 void Nve::verify_settings () {
@@ -147,6 +151,33 @@ void Nve::step_part_I (int) {
   for (auto &&v : vel) v *= lambda;
   
 }
+
+
+/*
+FC_PYDEF_SETGET_PTR(Lj,atom_data,Atom_data);
+FC_PYDEF_SETGET_PTR(Lj,domain,Domain);
+FC_PYDEF_SETGET_PTR(Lj,neighborlist,Neighborlist);
+
+FC_PYDEF_SETGET_STDVEC2D(Lj,epsilon,Real_t);  
+FC_PYDEF_SETGET_STDVEC2D(Lj,sigma,Real_t);
+FC_PYDEF_SETGET_STDVEC(Lj,epsilon_atom,Real_t);  
+FC_PYDEF_SETGET_STDVEC(Lj,sigma_atom,Real_t);
+FC_PYDEF_SETGET_STDVEC2D(Lj,cutoff_list,Real_t);
+
+
+void export_py_Nve () {
+
+  using namespace boost::python;
+
+  implicitly_convertible<std::shared_ptr<constraint::Nve>,          
+                         std::shared_ptr<Constraint> >(); 
+
+  class_<constraint::Nve>("Nve",init<caviar::CAVIAR*>())
+
+  ;
+
+}
+*/
 
 
 } //constraint

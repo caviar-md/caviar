@@ -45,9 +45,9 @@ class Constraint : public Pointers {
    *  matters for the constraint integration.
    */
   int integrator_type;
-  class Integrator *integrator;
+  std::shared_ptr<class Integrator > integrator;
 
-  class objects::Atom_data *atom_data;
+  std::shared_ptr<class objects::Atom_data > atom_data;
  public:
 
   FC_BASE_OBJECT_COMMON_TOOLS

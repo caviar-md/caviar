@@ -117,10 +117,13 @@ public:
   /**
    * add unique::Atom to the owned data
    */
-  virtual bool add_atom(caviar::objects::unique::Atom &a);
+  virtual bool add_atom(const std::shared_ptr<caviar::objects::unique::Atom> &a);
   virtual bool add_atom(caviar::objects::unique::Atom_group &a);
   virtual bool add_atom(caviar::objects::unique::Atom_list &a);
 
+  virtual bool add_atom_wrap1(const std::shared_ptr<caviar::objects::unique::Atom> &a) {
+    return add_atom(a);
+  }
   /**
    * add unique::Molecule to the owned data
    */
@@ -397,12 +400,13 @@ public:
   /**
    * usage
    */
-  class objects::Domain *domain;
+  std::shared_ptr<class objects::Domain > domain;
+
 
   /**
    * usage in 'empty_of_atoms()' functions.
    */
-  class objects::neighborlist::Cell_list *cell_list;
+  std::shared_ptr<class objects::neighborlist::Cell_list > cell_list;
 
   FC_BASE_OBJECT_COMMON_TOOLS
 
