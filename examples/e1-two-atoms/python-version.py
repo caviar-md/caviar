@@ -51,7 +51,7 @@ adata.add_type_charge(0,0.0)
 #===== Neighborlist
 
 neigh_verlet = caviarmd.neighborlist.Verlet_list(c)
-neigh_verlet.set_atom_data = adata
+neigh_verlet.atom_data = adata
 neigh_verlet.cutoff = 15
 neigh_verlet.dt = 0.001
 
@@ -60,7 +60,7 @@ neigh_verlet.dt = 0.001
 neigh_cell = caviarmd.neighborlist.Cell_list(c)
 neigh_cell.atom_data = adata
 neigh_cell.cutoff = 15
-neigh_cell.set_domain = dom
+neigh_cell.domain = dom
 neigh_cell.make_neighlist = True
 neigh_cell.cutoff_neighlist = 10
 
@@ -80,11 +80,13 @@ f_lj.atom_data = adata
 integ2 = caviarmd.integrator.Velocity_verlet  (c)
 integ2.atom_data = adata
 integ2.dt = 0.001
+integ2.atom_data = adata
 
 #====== writer 
 w1 = caviarmd.writer.Atom_data  (c)
 w1.atom_data = adata
 w1.xyz_step = 200
+w1.output_xyz = True
 
 #=====  simulator
 
