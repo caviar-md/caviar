@@ -131,7 +131,7 @@ void export_py_Box () {
                          std::shared_ptr<Domain> >(); 
 
 
-  class_<domain::Box>("Box",init<caviar::CAVIAR*>())
+  class_<domain::Box,boost::noncopyable>("Box",init<caviar::CAVIAR*>())
     .def("generate",&domain::Box::generate)      
     .add_property("boundary_condition", &domain::Box::get_boundary_condition, &domain::Box::set_boundary_condition)
     .add_property("lower_global", &domain::Box::get_lower_global, &domain::Box::set_lower_global)

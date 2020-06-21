@@ -15,6 +15,7 @@
 //========================================================================
 
 #include "caviar/objects/writer/force_field.h"
+#include "caviar/utility/python_utils_def.h"
 #include "caviar/utility/interpreter_io_headers.h"
 //#include "caviar/objects/atom_data.h"
 //#include <ctime>
@@ -30,20 +31,23 @@ Force_field::Force_field (CAVIAR *fptr) : Writer{fptr}
 
 Force_field::~Force_field () {}
 
-bool Force_field::read (caviar::interpreter::Parser *parser) {
-FC_OBJECT_READ_INFO
+bool Force_field::read (caviar::interpreter::Parser *) {
+  /*
+  FC_OBJECT_READ_INFO
   bool in_file = true;
   while(true) {
     GET_A_TOKEN_FOR_CREATION
     auto t = token.string_value;
     if (string_cmp(t,"output_all_acc")) {
       write();
-    }/* else  if (string_cmp(t,"set_atom_data") || string_cmp(t,"atom_data")) {
-      FIND_OBJECT_BY_NAME(atom_data,it)
-      atom_data = object_container->atom_data[it->second.index];
-    } */
+    } //else  if (string_cmp(t,"set_atom_data") || string_cmp(t,"atom_data")) {
+      //FIND_OBJECT_BY_NAME(atom_data,it)
+      //atom_data = object_container->atom_data[it->second.index];
+    } 
   }
   return in_file;
+  */
+  return true;
 }
 
 void Force_field::initialize(){}
@@ -60,6 +64,21 @@ void Force_field::write(double){} // current time
 void Force_field::write(int, double){} //time_step and time
 void Force_field::start_new_files(){} //add_time_to_previous
 void Force_field::start_new_files(std::string &){} //add_time_to_previous
+
+void export_py_Force_field () {
+
+  using namespace boost::python;
+
+  implicitly_convertible<std::shared_ptr<writer::Force_field>,          
+                         std::shared_ptr<Writer> >(); 
+
+
+
+
+  class_<writer::Force_field,boost::noncopyable>("Force_field",init<caviar::CAVIAR*>());
+
+
+}
 
 } //Force_field
 } //objects

@@ -18,7 +18,7 @@
 #define CAVIAR_OBJECTS_NEIGHBORLIST_CELLLIST_H
 
 #include "caviar/objects/neighborlist.h"
-//#include "caviar/utility/python_utils_dec.h"
+#include "caviar/utility/python_utils_dec.h"
 
 namespace caviar {
 namespace objects {
@@ -52,9 +52,12 @@ class Cell_list : public Neighborlist {
   bool make_neighlist; 
 
   double cutoff_neighlist;
+
+  FC_PYDEC_SETGET_PTR(atom_data,Atom_data);
+  FC_PYDEC_SETGET_PTR(domain,Domain);
 };
 
-//void export_py_Cell_list ();
+void export_py_Cell_list ();
 
 } //neighborlist
 } //objects

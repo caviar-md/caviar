@@ -229,7 +229,7 @@ void export_py_Basic () {
   implicitly_convertible<std::shared_ptr<atom_data::Basic>,          
                          std::shared_ptr<Atom_data> >(); 
 
-  class_<atom_data::Basic>("Basic",init<caviar::CAVIAR*>())
+  class_<atom_data::Basic,boost::noncopyable>("Basic",init<caviar::CAVIAR*>())
     .def_readwrite("ghost_cutoff",&atom_data::Basic::ghost_cutoff)    
     .def_readwrite("cutoff_extra",&atom_data::Basic::cutoff_extra)
     .def("add_atom",&atom_data::Basic::add_atom_wrap1)

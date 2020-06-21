@@ -18,7 +18,7 @@
 #define CAVIAR_OBJECTS_MDSIMULATOR_BASIC_H
 
 #include "caviar/objects/md_simulator.h"
-//#include "caviar/utility/python_utils_dec.h"
+#include "caviar/utility/python_utils_dec.h"
 
 namespace caviar {
 namespace objects {
@@ -47,10 +47,17 @@ class Basic : public Md_simulator {
   bool boundary_condition ();
 */
 
+  FC_PYDEC_SETGET_PTR(atom_data,Atom_data);
+  FC_PYDEC_SETGET_PTR(integrator,Integrator);
 
+
+  void add_neighborlist (const std::shared_ptr<objects::Neighborlist > &);
+  void add_force_field (const std::shared_ptr<objects::Force_field > &);
+  void add_constraint (const std::shared_ptr<objects::Constraint > &);
+  void add_writer (const std::shared_ptr<objects::Writer > &);
 };
 
-//void export_py_Basic ();
+void export_py_Basic ();
 
 } //md_simulator
 } //objects

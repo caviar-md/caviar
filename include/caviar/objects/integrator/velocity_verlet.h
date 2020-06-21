@@ -18,7 +18,7 @@
 #define CAVIAR_OBJECTS_INTEGRATOR_VELOCITYVERLET_H
 
 #include "caviar/objects/integrator.h"
-//#include "caviar/utility/python_utils_dec.h"
+#include "caviar/utility/python_utils_dec.h"
 
 namespace caviar {
 namespace objects {
@@ -73,10 +73,11 @@ public:
   void step_part_II ();
   void step_part_III ();
   int type;
-   
+
+  FC_PYDEC_SETGET_PTR(atom_data,Atom_data);
 };
 
-//void export_py_Velocity_verlet ();
+void export_py_Velocity_verlet ();
 
 } //integrator
 } //objects

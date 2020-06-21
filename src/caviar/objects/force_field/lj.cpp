@@ -16,7 +16,7 @@
 
 
 #include "caviar/objects/force_field/lj.h"
-//#include "caviar/utility/python_utils_def.h"
+#include "caviar/utility/python_utils_def.h"
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/objects/neighborlist.h"
 #include "caviar/objects/atom_data.h"
@@ -309,7 +309,7 @@ void Lj::calculate_acceleration () {
 
 }
 
-/*
+
 FC_PYDEF_SETGET_PTR(Lj,atom_data,Atom_data);
 FC_PYDEF_SETGET_PTR(Lj,domain,Domain);
 FC_PYDEF_SETGET_PTR(Lj,neighborlist,Neighborlist);
@@ -327,25 +327,25 @@ void export_py_Lj () {
   implicitly_convertible<std::shared_ptr<force_field::Lj>,          
                          std::shared_ptr<Force_field> >(); 
 
-  class_<force_field::Lj>("Lj",init<caviar::CAVIAR*>())
+  class_<force_field::Lj,boost::noncopyable>("Lj",init<caviar::CAVIAR*>())
     .def("calculate_acceleration",&force_field::Lj::calculate_acceleration)      
-    .def("set_domain",&force_field::Lj::set_domain)      
-    .def("get_domain",&force_field::Lj::get_domain)      
+
     .def_readwrite("make_off_diagonal_vectors",&force_field::Lj::make_off_diagonal_vectors)      
     .def_readwrite("wca",&force_field::Lj::wca)      
     .def_readwrite("cutoff",&force_field::Lj::cutoff)      
-    //.def_readwrite("epsilon_atom",&force_field::Lj::epsilon_atom)      
+
     .add_property("atom_data", &force_field::Lj::get_atom_data, &force_field::Lj::set_atom_data)
     .add_property("domain", &force_field::Lj::get_domain, &force_field::Lj::set_domain)
     .add_property("neighborlist", &force_field::Lj::get_neighborlist, &force_field::Lj::set_neighborlist)
     .add_property("epsilon", &force_field::Lj::get_epsilon, &force_field::Lj::set_epsilon)
+    .add_property("epsilon_atom",&force_field::Lj::get_epsilon_atom,&force_field::Lj::set_epsilon_atom)      
     .add_property("sigma", &force_field::Lj::get_sigma, &force_field::Lj::set_sigma)
     .add_property("sigma_atom", &force_field::Lj::get_sigma_atom, &force_field::Lj::set_sigma_atom)
     .add_property("epsilon_atom", &force_field::Lj::get_epsilon_atom, &force_field::Lj::set_epsilon_atom)
     .add_property("cutoff_list", &force_field::Lj::get_cutoff_list, &force_field::Lj::set_cutoff_list)
   ;
 }
-*/
+
 
 } //force_field
 } //objects

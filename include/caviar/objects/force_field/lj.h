@@ -19,7 +19,7 @@
 
 
 #include "caviar/objects/force_field.h"
-//#include "caviar/utility/python_utils_dec.h"
+#include "caviar/utility/python_utils_dec.h"
 
 namespace caviar {
 namespace objects {
@@ -64,7 +64,7 @@ public:
   bool cutoff_list_activated;
   std::vector<std::vector<Real_t>> cutoff_list; // list of cutoffs when it is needed.
                                                 // for example in WCA potentials
-/*
+
   FC_PYDEC_SETGET_PTR(atom_data,Atom_data);
   FC_PYDEC_SETGET_PTR(domain,Domain);
   FC_PYDEC_SETGET_PTR(neighborlist,Neighborlist);
@@ -74,10 +74,10 @@ public:
   FC_PYDEC_SETGET_STDVEC(epsilon_atom,Real_t);  
   FC_PYDEC_SETGET_STDVEC(sigma_atom,Real_t);
   FC_PYDEC_SETGET_STDVEC2D(cutoff_list,Real_t);
-*/
+
 };
 
-//void export_py_Lj ();
+void export_py_Lj ();
 
 } //force_field
 } //objects

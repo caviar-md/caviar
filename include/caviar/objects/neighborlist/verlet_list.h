@@ -18,10 +18,13 @@
 #define CAVIAR_OBJECTS_NEIGHBORLIST_VERLETLIST_H
 
 #include "caviar/objects/neighborlist.h"
-//#include "caviar/utility/python_utils_dec.h"
+#include "caviar/utility/python_utils_dec.h"
 
 namespace caviar {
 namespace objects {
+
+class Atom_data;
+
 namespace neighborlist {
 
 /**
@@ -38,9 +41,11 @@ class Verlet_list : public Neighborlist {
   double cutoff_extra_coef;
 //  double cutoff; // Defined in the base class
  public:
+  FC_PYDEC_SETGET_PTR(atom_data,Atom_data);
+
 };
 
-//void export_py_Verlet_list ();
+void export_py_Verlet_list ();
 
 } //neighborlist
 } //objects

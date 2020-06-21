@@ -15,7 +15,9 @@
 //========================================================================
 
 #include "caviar/objects/writer/atom_data.h"
+#include "caviar/utility/python_utils_def.h"
 #include "caviar/objects/atom_data.h"
+#include "caviar/objects/domain.h"
 #include "caviar/utility/interpreter_io_headers.h"
 #include <ctime>
 #include <sys/stat.h> // used for mkdir()
@@ -43,7 +45,7 @@ Atom_data::~Atom_data () {
   if (ofs_msd.is_open())    ofs_msd.close();
 }
 
-bool Atom_data::read (caviar::interpreter::Parser *parser) {
+bool Atom_data::read (caviar::interpreter::Parser *) {
   /*
   FC_OBJECT_READ_INFO
   bool in_file = true;
@@ -90,6 +92,7 @@ bool Atom_data::read (caviar::interpreter::Parser *parser) {
   }
   return in_file;
   */
+  return true;
 }
 
 void Atom_data::initialize(){
@@ -207,6 +210,69 @@ void Atom_data::write(int i, double t){
 
 void Atom_data::start_new_files(){} //add_time_to_previous
 void Atom_data::start_new_files(std::string &){} //add_time_to_previous
+
+
+
+FC_PYDEF_SETGET_PTR(Atom_data,atom_data,objects::Atom_data);
+FC_PYDEF_SETGET_PTR(Atom_data,domain,objects::Domain);
+
+/*
+FC_PYDEF_SETGET_STDVEC2D(Atom_data,epsilon,Real_t);  
+FC_PYDEF_SETGET_STDVEC2D(Atom_data,sigma,Real_t);
+FC_PYDEF_SETGET_STDVEC(Atom_data,epsilon_atom,Real_t);  
+FC_PYDEF_SETGET_STDVEC(Atom_data,sigma_atom,Real_t);
+FC_PYDEF_SETGET_STDVEC2D(Atom_data,cutoff_list,Real_t);
+*/
+void export_py_Atom_data () {
+
+  using namespace boost::python;
+
+  implicitly_convertible<std::shared_ptr<writer::Atom_data>,          
+                         std::shared_ptr<Writer> >(); 
+
+
+
+
+  class_<writer::Atom_data,boost::noncopyable>("Atom_data",init<caviar::CAVIAR*>())
+
+    .def("open_files",&writer::Atom_data::open_files)      
+    .def("close_files",&writer::Atom_data::close_files)      
+
+
+    .def_readwrite("povray_step",&writer::Atom_data::povray_step)      
+    .def_readwrite("output_povray",&writer::Atom_data::output_povray)            
+
+    .def_readwrite("xyz_step",&writer::Atom_data::xyz_step)
+    .def_readwrite("output_xyz",&writer::Atom_data::output_xyz)            
+
+    .def_readwrite("energy_step",&writer::Atom_data::energy_step)            
+    .def_readwrite("output_energy",&writer::Atom_data::output_energy)            
+
+    .def_readwrite("msd_step",&writer::Atom_data::msd_step)            
+    .def_readwrite("msd_initial_step",&writer::Atom_data::msd_initial_step)            
+    .def_readwrite("output_msd",&writer::Atom_data::output_msd)            
+
+    .def_readwrite("output_velocity",&writer::Atom_data::output_velocity)            
+
+    .add_property("atom_data", &writer::Atom_data::get_atom_data, &writer::Atom_data::set_atom_data)
+    .add_property("domain", &writer::Atom_data::get_domain, &writer::Atom_data::set_domain)
+
+
+  ;
+}
+
+
+/* //XXX
+    } else  if (string_cmp(t,"output_acceleration")) {
+      //output_acceleration = true;
+      std::ofstream ofs ("o_acc");
+      const auto &pos = atom_data -> owned.position;  
+      const auto &acc = atom_data -> owned.acceleration;  
+      for (unsigned int i=0;i<pos.size();++i) {
+        ofs << i << " " << acc[i].x << "\t" << acc[i].y << "\t" << acc[i].z << "\n" ;
+      }
+    } 
+*/
 
 } //Atom_data
 } //objects

@@ -15,7 +15,7 @@
 //========================================================================
 
 #include "caviar/objects/integrator/velocity_verlet.h"
-//#include "caviar/utility/python_utils_def.h"
+#include "caviar/utility/python_utils_def.h"
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/objects/neighborlist.h"
 #include "caviar/objects/atom_data.h"
@@ -33,7 +33,7 @@ Velocity_verlet::Velocity_verlet (CAVIAR *fptr) : Integrator{fptr} {
 
 Velocity_verlet::~Velocity_verlet (){}
 
-bool Velocity_verlet::read (caviar::interpreter::Parser *parser) {
+bool Velocity_verlet::read (caviar::interpreter::Parser *) {
   /*
   FC_OBJECT_READ_INFO
   bool in_file = true;
@@ -51,9 +51,14 @@ bool Velocity_verlet::read (caviar::interpreter::Parser *parser) {
   }
   return in_file;
   */
+  return true;
 }
 
 void Velocity_verlet::verify_settings (){
+  std::cout << "XXXX  ATOM data "<< std::endl;
+  std::cout << atom_data << std::endl;;
+  std::cout << "XXXX  ATOM data "<< std::endl;
+
   FC_NULLPTR_CHECK(atom_data)
 
   switch (type) {
@@ -148,16 +153,9 @@ void Velocity_verlet::step_part_III () {
  
 }
 
-/*
-FC_PYDEF_SETGET_PTR(Lj,atom_data,Atom_data);
-FC_PYDEF_SETGET_PTR(Lj,domain,Domain);
-FC_PYDEF_SETGET_PTR(Lj,neighborlist,Neighborlist);
 
-FC_PYDEF_SETGET_STDVEC2D(Lj,epsilon,Real_t);  
-FC_PYDEF_SETGET_STDVEC2D(Lj,sigma,Real_t);
-FC_PYDEF_SETGET_STDVEC(Lj,epsilon_atom,Real_t);  
-FC_PYDEF_SETGET_STDVEC(Lj,sigma_atom,Real_t);
-FC_PYDEF_SETGET_STDVEC2D(Lj,cutoff_list,Real_t);
+FC_PYDEF_SETGET_PTR(Velocity_verlet,atom_data,Atom_data);
+
 
 void export_py_Velocity_verlet () {
 
@@ -166,11 +164,16 @@ void export_py_Velocity_verlet () {
   implicitly_convertible<std::shared_ptr<integrator::Velocity_verlet>,          
                          std::shared_ptr<Integrator> >(); 
 
-  class_<integrator::Velocity_verlet>("Velocity_verlet",init<caviar::CAVIAR*>())
+  class_<integrator::Velocity_verlet,boost::noncopyable>("Velocity_verlet",init<caviar::CAVIAR*>())
+    .def_readwrite("dt",&integrator::Velocity_verlet::dt)      
+    .def_readwrite("type",&integrator::Velocity_verlet::type)
+
+    .def("set_atom_data", &integrator::Velocity_verlet::set_atom_data)     
+
+    .add_property("atom_data", &integrator::Velocity_verlet::get_atom_data, &integrator::Velocity_verlet::set_atom_data)
   ;
 
 }
-*/
 
 
 } //integrator

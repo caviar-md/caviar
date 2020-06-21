@@ -120,7 +120,7 @@ void export_py_Atom () {
   implicitly_convertible<std::shared_ptr<unique::Atom>,          
                          std::shared_ptr<Atom> >(); 
 
-  class_<unique::Atom>("Atom",init<caviar::CAVIAR*>())
+  class_<unique::Atom,boost::noncopyable>("Atom",init<caviar::CAVIAR*>())
   //class_<unique::Atom,boost::noncopyable>("Atom",init<caviar::CAVIAR*>())
   //class_<unique::Atom,std::shared_ptr<unique::Atom>>("Atom",init<caviar::CAVIAR*>())
   //class_<unique::Atom,A_Wrapper>("Atom",init<caviar::CAVIAR*>())

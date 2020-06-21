@@ -15,8 +15,9 @@
 //========================================================================
 
 #include "caviar/objects/md_simulator/basic.h"
-//#include "caviar/utility/python_utils_def.h"
+#include "caviar/utility/python_utils_def.h"
 #include "caviar/objects/integrator.h"
+#include "caviar/objects/atom_data.h"
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/interpreter/communicator.h"
 #include <ctime>
@@ -34,7 +35,7 @@ Basic::Basic (CAVIAR *fptr) : Md_simulator{fptr}
 
 Basic::~Basic () {}
 
-bool Basic::read (caviar::interpreter::Parser *parser) {
+bool Basic::read (caviar::interpreter::Parser *) {
   /*
   FC_OBJECT_READ_INFO
   bool in_file = true;
@@ -85,6 +86,7 @@ bool Basic::read (caviar::interpreter::Parser *parser) {
   }
   return in_file;
   */
+  return true;
 }
 
 bool Basic::run () {
@@ -124,17 +126,34 @@ void Basic::verify_settings () {
     error->all ("simulator md: verify_settings: please assign 'time' or 'step' variables.");
 }
 
-/*
-FC_PYDEF_SETGET_PTR(Lj,atom_data,Atom_data);
-FC_PYDEF_SETGET_PTR(Lj,domain,Domain);
-FC_PYDEF_SETGET_PTR(Lj,neighborlist,Neighborlist);
 
-FC_PYDEF_SETGET_STDVEC2D(Lj,epsilon,Real_t);  
-FC_PYDEF_SETGET_STDVEC2D(Lj,sigma,Real_t);
-FC_PYDEF_SETGET_STDVEC(Lj,epsilon_atom,Real_t);  
-FC_PYDEF_SETGET_STDVEC(Lj,sigma_atom,Real_t);
-FC_PYDEF_SETGET_STDVEC2D(Lj,cutoff_list,Real_t);
+void Basic::add_neighborlist (const std::shared_ptr<objects::Neighborlist > &obj) {
+  neighborlist.emplace_back(obj);
+}
 
+void Basic::add_force_field (const std::shared_ptr<objects::Force_field > &obj) {
+  force_field.emplace_back(obj);
+}
+
+void Basic::add_constraint (const std::shared_ptr<objects::Constraint > &obj) {
+  constraint.emplace_back(obj);
+}
+
+void Basic::add_writer (const std::shared_ptr<objects::Writer > &obj) {
+  writer.emplace_back(obj);
+}
+
+
+FC_PYDEF_SETGET_PTR(Basic,atom_data,Atom_data);
+FC_PYDEF_SETGET_PTR(Basic,integrator,Integrator);
+
+
+  double time, dt;
+  clock_t t_start, t_end;
+  double initial_time, final_time;
+  bool use_time, use_step;
+  int initial_step, final_step;
+  bool initialized;
 
 void export_py_Basic () {
 
@@ -143,11 +162,29 @@ void export_py_Basic () {
   implicitly_convertible<std::shared_ptr<md_simulator::Basic>,          
                          std::shared_ptr<Md_simulator> >(); 
 
-  class_<md_simulator::Basic>("Basic",init<caviar::CAVIAR*>())
+  class_<md_simulator::Basic,boost::noncopyable>("Basic",init<caviar::CAVIAR*>())
+    .def("run",&md_simulator::Basic::run)
+    .def("add_neighborlist",&md_simulator::Basic::add_neighborlist)
+    .def("add_force_field",&md_simulator::Basic::add_force_field)
+    .def("add_constraint",&md_simulator::Basic::add_constraint)
+    .def("add_writer",&md_simulator::Basic::add_writer)
+
+    .def_readwrite("time",&md_simulator::Basic::time)      
+    .def_readwrite("dt",&md_simulator::Basic::dt) 
+    .def_readwrite("initial_step",&md_simulator::Basic::initial_step) 
+    .def_readwrite("final_step",&md_simulator::Basic::final_step) 
+    .def_readwrite("initial_time",&md_simulator::Basic::initial_time) 
+    .def_readwrite("final_time",&md_simulator::Basic::final_time) 
+    .def_readwrite("initialized",&md_simulator::Basic::initialized) 
+    .def_readwrite("use_time",&md_simulator::Basic::use_time)      
+    .def_readwrite("use_step",&md_simulator::Basic::use_step)      
+
+    .add_property("atom_data", &md_simulator::Basic::get_atom_data, &md_simulator::Basic::set_atom_data)
+    .add_property("integrator", &md_simulator::Basic::get_integrator, &md_simulator::Basic::set_integrator)
   ;
 
 }
-*/
+
 
 
 } //md_simulator

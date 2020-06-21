@@ -15,7 +15,7 @@
 //========================================================================
 
 #include "caviar/objects/neighborlist/verlet_list.h"
-//#include "caviar/utility/python_utils_def.h"
+#include "caviar/utility/python_utils_def.h"
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/objects/atom_data.h"
 
@@ -33,7 +33,7 @@ Verlet_list::Verlet_list (CAVIAR *fptr) : Neighborlist{fptr}
   cutoff_extra_coef = 30.0;
 }
 
-bool Verlet_list::read (caviar::interpreter::Parser *parser) {
+bool Verlet_list::read (caviar::interpreter::Parser *) {
   /*
   FC_OBJECT_READ_INFO
   bool in_file = true;
@@ -58,6 +58,7 @@ bool Verlet_list::read (caviar::interpreter::Parser *parser) {
 
   return in_file;
   */
+  return true;
 }
 
 void Verlet_list::init () {
@@ -139,8 +140,10 @@ void Verlet_list::build_neighlist () {
 
 }
 
+FC_PYDEF_SETGET_PTR(Verlet_list,atom_data,Atom_data);
+
 /*
-FC_PYDEF_SETGET_PTR(Lj,atom_data,Atom_data);
+
 FC_PYDEF_SETGET_PTR(Lj,domain,Domain);
 FC_PYDEF_SETGET_PTR(Lj,neighborlist,Neighborlist);
 
@@ -149,8 +152,7 @@ FC_PYDEF_SETGET_STDVEC2D(Lj,sigma,Real_t);
 FC_PYDEF_SETGET_STDVEC(Lj,epsilon_atom,Real_t);  
 FC_PYDEF_SETGET_STDVEC(Lj,sigma_atom,Real_t);
 FC_PYDEF_SETGET_STDVEC2D(Lj,cutoff_list,Real_t);
-
-
+*/
 
 
 void export_py_Verlet_list () {
@@ -160,11 +162,14 @@ void export_py_Verlet_list () {
   implicitly_convertible<std::shared_ptr<neighborlist::Verlet_list>,          
                          std::shared_ptr<Neighborlist> >(); 
 
-  class_<neighborlist::Verlet_list>("Verlet_list",init<caviar::CAVIAR*>())
+  class_<neighborlist::Verlet_list,boost::noncopyable>("Verlet_list",init<caviar::CAVIAR*>())
+      .def_readwrite("cutoff",&neighborlist::Verlet_list::cutoff)
+      .def_readwrite("dt",&neighborlist::Verlet_list::dt)
+      .add_property("atom_data", &neighborlist::Verlet_list::get_atom_data, &neighborlist::Verlet_list::set_atom_data)
   ;
 
 }
-*/
+
 
 
 } //neighborlist

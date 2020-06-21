@@ -117,7 +117,8 @@ void CAVIAR::execute () {
 //#include <boost/python/list.hpp>
 //#include <boost/python/extract.hpp>
 
-/*
+
+// This struct 'iterable_converter'  is used to convert a 2D python::list, for example  [[1,3],[1,2]] ,   to a std::vector<std::vector<double>>.
 /// @brief Type that allows for registration of conversions from
 ///        python iterable types.
 struct iterable_converter
@@ -181,7 +182,7 @@ struct iterable_converter
 };
 
 
-*/
+
 
 using namespace boost::python;
 #include "caviar/objects/unique.h"
@@ -199,14 +200,13 @@ using namespace boost::python;
 void  export_unique();
 void  export_domain();
 void  export_atom_data();
-/*
-
-void  export_force_field();
-
-void  export_writer();
-void  export_md_simulator();
 void  export_neighborlist();
-*/
+void  export_force_field();
+void  export_writer();
+
+void  export_integrator();
+void  export_md_simulator();
+
 
 BOOST_PYTHON_MODULE(caviarmd)
 {
@@ -227,29 +227,41 @@ BOOST_PYTHON_MODULE(caviarmd)
         .def(vector_indexing_suite<std::vector<unsigned int> >())
     ;
 
-
- // Register interable conversions. Used in setters
+     */
+ // Register interable conversions. Used in setters for std::vector<std::vector<double> >. 
   iterable_converter()
     // Build-in type.
-    .from_python<std::vector<double> >()
-    .from_python<std::vector<int> >()
-    .from_python<std::vector<unsigned int> >()
+
+    // Both of these lines are necessary to make the std::vector<std::vector<double> > converter available.
+    .from_python<std::vector<double> >()  
+    .from_python<std::vector<std::vector<double> > >()
+
+    .from_python<std::vector<int> >()  
+    .from_python<std::vector<std::vector<int> > >()
+
+    .from_python<std::vector<unsigned int> >()  
+    .from_python<std::vector<std::vector<unsigned int> > >()
+
+    //.from_python<std::vector<int> >()
+    //.from_python<std::vector<unsigned int> >()
     // Each dimension needs to be convertable.
-    .from_python<std::vector<std::string> >()
-    .from_python<std::vector<std::vector<std::string> > >()
+    //.from_python<std::vector<std::string> >()
+    //.from_python<std::vector<std::vector<std::string> > >()
+
     // User type.
     //.from_python<std::list<foo> >()
     ;
 
 
-     */
+
     export_unique();
     export_domain();
     export_atom_data();
-    //export_force_field();
-    //export_writer();
-    //export_neighborlist();
-    //export_md_simulator();
+    export_neighborlist();
+    export_force_field();
+    export_writer();    
+    export_integrator();    
+    export_md_simulator();
 
 
 };
@@ -315,24 +327,6 @@ void export_atom_data()
 
 }
 
-/*
-
-void export_force_field()
-{
-    namespace bp = boost::python;
-    // map the force_field namespace to a sub-module
-    // make "from mypackage.force_field import <whatever>" work
-    bp::object force_fieldModule(bp::handle<>(bp::borrowed(PyImport_AddModule("caviarmd.force_field"))));
-    // make "from mypackage import force_field" work
-    bp::scope().attr("force_field") = force_fieldModule;
-    // set the current scope to the new sub-module
-    bp::scope force_field_scope = force_fieldModule;
-    // export stuff in the force_field namespace
-
-    caviar::objects::force_field::export_py_Lj ();
-
-
-}
 
 
 void export_neighborlist()
@@ -353,21 +347,22 @@ void export_neighborlist()
 }
 
 
-void export_md_simulator()
+void export_force_field()
 {
     namespace bp = boost::python;
-    // map the md_simulator namespace to a sub-module
-    // make "from mypackage.md_simulator import <whatever>" work
-    bp::object md_simulatorModule(bp::handle<>(bp::borrowed(PyImport_AddModule("caviarmd.md_simulator"))));
-    // make "from mypackage import md_simulator" work
-    bp::scope().attr("md_simulator") = md_simulatorModule;
+    // map the force_field namespace to a sub-module
+    // make "from mypackage.force_field import <whatever>" work
+    bp::object force_fieldModule(bp::handle<>(bp::borrowed(PyImport_AddModule("caviarmd.force_field"))));
+    // make "from mypackage import force_field" work
+    bp::scope().attr("force_field") = force_fieldModule;
     // set the current scope to the new sub-module
-    bp::scope md_simulator_scope = md_simulatorModule;
-    // export stuff in the md_simulator namespace
+    bp::scope force_field_scope = force_fieldModule;
+    // export stuff in the force_field namespace
 
-    caviar::objects::md_simulator::export_py_Basic ();
+    caviar::objects::force_field::export_py_Lj ();
+
+
 }
-
 
 
 void export_writer()
@@ -383,7 +378,48 @@ void export_writer()
     bp::scope writer_scope = writerModule;
     // export stuff in the writer namespace
 
+    caviar::objects::writer::export_py_Atom_data ();
+    caviar::objects::writer::export_py_Force_field ();
+
+}
+
+void export_integrator()
+{
+
+    namespace bp = boost::python;
+    // map the writer namespace to a sub-module
+    // make "from mypackage.writer import <whatever>" work
+    bp::object writerModule(bp::handle<>(bp::borrowed(PyImport_AddModule("caviarmd.integrator"))));
+    // make "from mypackage import writer" work
+    bp::scope().attr("integrator") = writerModule;
+    // set the current scope to the new sub-module
+    bp::scope writer_scope = writerModule;
+    // export stuff in the writer namespace
+
+    caviar::objects::integrator::export_py_Velocity_verlet ();
+
+}
+
+
+
+void export_md_simulator()
+{
+
+    namespace bp = boost::python;
+    // map the md_simulator namespace to a sub-module
+    // make "from mypackage.md_simulator import <whatever>" work
+    bp::object md_simulatorModule(bp::handle<>(bp::borrowed(PyImport_AddModule("caviarmd.md_simulator"))));
+    // make "from mypackage import md_simulator" work
+    bp::scope().attr("md_simulator") = md_simulatorModule;
+    // set the current scope to the new sub-module
+    bp::scope md_simulator_scope = md_simulatorModule;
+    // export stuff in the md_simulator namespace
+
+    caviar::objects::md_simulator::export_py_Basic ();
 
 
 }
-*/
+
+
+
+

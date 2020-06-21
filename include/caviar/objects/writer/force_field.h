@@ -18,7 +18,7 @@
 #define CAVIAR_OBJECTS_WRITER_FORCEFIELD_H
 
 #include "caviar/objects/writer.h"
-//#include "caviar/utility/python_utils_dec.h"
+#include "caviar/utility/python_utils_dec.h"
 
 namespace caviar {
 namespace objects {
@@ -46,7 +46,7 @@ class Force_field : public Writer {
 
 };
 
-//void export_py_Force_field ();
+void export_py_Force_field ();
 
 } //writer
 } //objects

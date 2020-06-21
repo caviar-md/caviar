@@ -50,54 +50,55 @@ adata.add_type_charge(0,0.0)
 
 #===== Neighborlist
 
-#neigh_verlet = caviarmd.neighborlist.Verlet_list(c)
-#neigh_verlet.set_atom_data(adata)
-#neigh_verlet.cutoff = 15
-#neigh_verlet.dt = 0.001
+neigh_verlet = caviarmd.neighborlist.Verlet_list(c)
+neigh_verlet.set_atom_data = adata
+neigh_verlet.cutoff = 15
+neigh_verlet.dt = 0.001
 
 #===== Neighborlist
 
-#neigh_cell = caviarmd.neighborlist.Cell_list(c)
-#neigh_cell.set_atom_data(adata)
-#neigh_cell.cutoff=15
-#neigh_cell.set_domain(dom)
-#neigh_cell.make_neighlist = True
-#neigh_cell.cutoff_neighlist=10
+neigh_cell = caviarmd.neighborlist.Cell_list(c)
+neigh_cell.atom_data = adata
+neigh_cell.cutoff = 15
+neigh_cell.set_domain = dom
+neigh_cell.make_neighlist = True
+neigh_cell.cutoff_neighlist = 10
+
 #===== force_field
 
-#f_lj= caviarmd.force_field.Lj (c)
-
-#f_lj.cutoff = 10.0
-#f_lj.epsilon = [1.0]
-#f_lj.sigma = [1.0]
-#f_lj.set_neighborlist(neigh_verlet)
-#f_lj.set_neighborlist(neigh_cell)
-#f_lj.set_atom_data(adata)
+f_lj= caviarmd.force_field.Lj (c)
+f_lj.cutoff = 10.0
+f_lj.epsilon =[ [1.0]]
+f_lj.sigma = [[1.0]]
+f_lj.neighborlist = neigh_verlet
+#f_lj.neighborlist = neigh_cell
+f_lj.atom_data = adata
 
 
 #==== Integrator =====
 
-#integ2 = caviarmd.integrator.Velocity_verlet  (c)
-#integ2.set_atom_data(adata)
-#integ2.dt=0.001
+integ2 = caviarmd.integrator.Velocity_verlet  (c)
+integ2.atom_data = adata
+integ2.dt = 0.001
 
 #====== writer 
-#w1 = caviarmd.writer.Atom_data  (c)
-#w1.set_atom_data (adata)
-#w1.xyz_step = 200
+w1 = caviarmd.writer.Atom_data  (c)
+w1.atom_data = adata
+w1.xyz_step = 200
 
 #=====  simulator
 
-#sim = caviarmd.md_simulator.Basic  (c)
-#sim.set_integrator(integ2)
-#sim.set_atom_data(adata)
-#sim.add_force_field(f_lj)
-#sim.add_neighborlist(neigh_verlet)
-#sim.add_writer(w1)
-#sim.initial_step = 0
-#sim.final_step = 20000
-#sim.dt = 0.001 
-#sim.run()
+sim = caviarmd.md_simulator.Basic  (c)
+sim.integrator = integ2
+sim.atom_data = adata
+sim.add_force_field(f_lj)
+sim.add_neighborlist(neigh_verlet)
+sim.add_writer(w1)
+sim.initial_step = 0
+sim.final_step = 20000
+sim.use_step = True;
+sim.dt = 0.001 
+sim.run()
 
 
 

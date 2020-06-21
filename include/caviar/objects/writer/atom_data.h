@@ -18,7 +18,7 @@
 #define CAVIAR_OBJECTS_WRITER_ATOMDATA_H
 
 #include "caviar/objects/writer.h"
-//#include "caviar/utility/python_utils_dec.h"
+#include "caviar/utility/python_utils_dec.h"
 
 namespace caviar {
 namespace objects {
@@ -92,9 +92,12 @@ class Atom_data : public Writer {
 
  public:
 
+  FC_PYDEC_SETGET_PTR(atom_data,objects::Atom_data);
+  FC_PYDEC_SETGET_PTR(domain,objects::Domain);
+
 };
 
-//void export_py_Atom_data ();
+void export_py_Atom_data ();
 
 } //writer
 } //objects

@@ -15,7 +15,7 @@
 //========================================================================
 
 #include "caviar/objects/neighborlist/cell_list.h"
-//#include "caviar/utility/python_utils_def.h"
+#include "caviar/utility/python_utils_def.h"
 #include "caviar/objects/atom_data.h"
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/objects/domain.h"
@@ -38,7 +38,7 @@ Cell_list::Cell_list (CAVIAR *fptr) : Neighborlist{fptr}, domain{nullptr}
   make_neighlist = false;
 }
 
-bool Cell_list::read (caviar::interpreter::Parser *parser) {
+bool Cell_list::read (caviar::interpreter::Parser *) {
   /*
   FC_OBJECT_READ_INFO
   bool in_file = true;
@@ -63,6 +63,7 @@ bool Cell_list::read (caviar::interpreter::Parser *parser) {
   }
   return in_file;
   */
+  return true;
 }
 
 void Cell_list::init () {
@@ -219,17 +220,8 @@ void Cell_list::make_neigh_bin () {
   }
 }
 
-/*
-FC_PYDEF_SETGET_PTR(Lj,atom_data,Atom_data);
-FC_PYDEF_SETGET_PTR(Lj,domain,Domain);
-FC_PYDEF_SETGET_PTR(Lj,neighborlist,Neighborlist);
-
-FC_PYDEF_SETGET_STDVEC2D(Lj,epsilon,Real_t);  
-FC_PYDEF_SETGET_STDVEC2D(Lj,sigma,Real_t);
-FC_PYDEF_SETGET_STDVEC(Lj,epsilon_atom,Real_t);  
-FC_PYDEF_SETGET_STDVEC(Lj,sigma_atom,Real_t);
-FC_PYDEF_SETGET_STDVEC2D(Lj,cutoff_list,Real_t);
-
+FC_PYDEF_SETGET_PTR(Cell_list,atom_data,Atom_data);
+FC_PYDEF_SETGET_PTR(Cell_list,domain,Domain);
 
 
 void export_py_Cell_list () {
@@ -239,11 +231,16 @@ void export_py_Cell_list () {
   implicitly_convertible<std::shared_ptr<neighborlist::Cell_list>,          
                          std::shared_ptr<Neighborlist> >(); 
 
-  class_<neighborlist::Cell_list>("Cell_list",init<caviar::CAVIAR*>())
+  class_<neighborlist::Cell_list,boost::noncopyable>("Cell_list",init<caviar::CAVIAR*>())    
+      .def_readwrite("cutoff",&neighborlist::Cell_list::cutoff)
+      .def_readwrite("cutoff_neighlist",&neighborlist::Cell_list::cutoff_neighlist)
+      .def_readwrite("make_neighlist",&neighborlist::Cell_list::make_neighlist)
+      .add_property("domain", &neighborlist::Cell_list::get_domain, &neighborlist::Cell_list::set_domain)
+      .add_property("atom_data", &neighborlist::Cell_list::get_atom_data, &neighborlist::Cell_list::set_atom_data)
   ;
 
 }
-*/
+
 
 
 } //neighborlist
