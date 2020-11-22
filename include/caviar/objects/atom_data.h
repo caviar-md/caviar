@@ -20,6 +20,7 @@
 #include "caviar/utility/objects_common_headers.h"
 #include "caviar/objects/atom_data/utility/bond.h"
 #include "caviar/objects/atom_data/utility/angle.h"
+#include "caviar/objects/atom_data/utility/proper_dihedral.h"
 
 
 namespace caviar {
@@ -312,6 +313,10 @@ public:
      * and a list of atoms which are in the molecule
      */
     std::vector <std::vector<int>> atomic_angle_index_vector;  
+
+    std::vector <std::vector<objects::atom_data::Proper_dihedral>> atomic_properdihedral_vector;
+    std::vector <std::vector<int>> atomic_properdihedral_index_vector; 
+ 
   }  
   /**
    * There are two types of this unnamed interpreter: owned and ghost. 'owned' atoms

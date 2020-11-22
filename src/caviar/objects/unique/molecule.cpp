@@ -40,7 +40,9 @@ Molecule::Molecule (const Molecule & m) : Unique{m},
 atomic_bond{m.atomic_bond},
 atomic_bond_index{m.atomic_bond_index},
 atomic_angle{m.atomic_angle},
-atomic_angle_index{m.atomic_angle_index}
+atomic_angle_index{m.atomic_angle_index},
+atomic_properdihedral{m.atomic_properdihedral},
+atomic_properdihedral_index{m.atomic_properdihedral_index}
 {
   position = m.position;
   velocity = m.velocity;
@@ -117,6 +119,37 @@ bool Molecule::read ( caviar::interpreter::Parser * parser) {
       if (!index_1_exist) atomic_angle_index.push_back(b.index_1);
       if (!index_2_exist) atomic_angle_index.push_back(b.index_2);
       if (!index_3_exist) atomic_angle_index.push_back(b.index_3);
+
+
+    } else if (string_cmp(ts,"add_atomic_properdihedral") || string_cmp(ts,"atomic_properdihedral") ) {
+      objects::atom_data::Proper_dihedral b;
+      GET_OR_CHOOSE_A_INT(b.index_1,"","")
+      GET_OR_CHOOSE_A_INT(b.index_2,"","")
+      GET_OR_CHOOSE_A_INT(b.index_3,"","")
+      GET_OR_CHOOSE_A_INT(b.index_4,"","")
+      GET_OR_CHOOSE_A_REAL(b.type,"","")
+
+      atomic_properdihedral.push_back(b);
+
+
+      if (b.index_1 == b.index_2 || b.index_1 == b.index_3 || b.index_1 == b.index_4 || b.index_2 == b.index_3 || b.index_2 == b.index_4 || b.index_3 == b.index_4)
+        error->all (FC_FILE_LINE_FUNC_PARSE, "properdihedral indices cannot be similar.");
+
+      bool index_1_exist = false;
+      bool index_2_exist = false;
+      bool index_3_exist = false;
+      bool index_4_exist = false;
+      for (unsigned int i = 0; i < atomic_properdihedral_index.size(); ++i) {
+        if (atomic_properdihedral_index[i]==b.index_1) index_1_exist = true;
+        if (atomic_properdihedral_index[i]==b.index_2) index_2_exist = true;
+        if (atomic_properdihedral_index[i]==b.index_3) index_3_exist = true;
+        if (atomic_properdihedral_index[i]==b.index_4) index_4_exist = true;
+      }
+      if (!index_1_exist) atomic_properdihedral_index.push_back(b.index_1);
+      if (!index_2_exist) atomic_properdihedral_index.push_back(b.index_2);
+      if (!index_3_exist) atomic_properdihedral_index.push_back(b.index_3);
+      if (!index_4_exist) atomic_properdihedral_index.push_back(b.index_4);
+
 
 
     } else if (string_cmp(ts,"output_xyz")) {

@@ -119,6 +119,25 @@ bool Atom_data::add_molecule(caviar::objects::unique::Molecule &m) {
   owned.atomic_angle_vector.push_back(dummy_atomic_angle);
   owned.atomic_angle_index_vector.push_back(dummy_atomic_angle_index);
 
+
+  auto dummy_atomic_properdihedral = m.atomic_properdihedral;
+  for (unsigned int j = 0;j<dummy_atomic_properdihedral.size(); ++j) {
+    dummy_atomic_properdihedral[j].index_1 = indices[dummy_atomic_properdihedral[j].index_1];
+    dummy_atomic_properdihedral[j].index_2 = indices[dummy_atomic_properdihedral[j].index_2];
+    dummy_atomic_properdihedral[j].index_3 = indices[dummy_atomic_properdihedral[j].index_3];
+    dummy_atomic_properdihedral[j].index_4 = indices[dummy_atomic_properdihedral[j].index_4];
+  }
+
+  auto dummy_atomic_properdihedral_index = m.atomic_properdihedral_index;    
+
+  for (unsigned int j = 0;j<dummy_atomic_properdihedral_index.size(); ++j) {
+    dummy_atomic_properdihedral_index[j] = indices[dummy_atomic_properdihedral_index[j]];
+  }
+
+  owned.atomic_properdihedral_vector.push_back(dummy_atomic_properdihedral);
+  owned.atomic_properdihedral_index_vector.push_back(dummy_atomic_properdihedral_index);
+
+
   return true;
 }
 

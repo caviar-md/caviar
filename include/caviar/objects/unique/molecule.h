@@ -20,6 +20,7 @@
 #include "caviar/objects/unique.h"
 #include "caviar/objects/atom_data/utility/bond.h"
 #include "caviar/objects/atom_data/utility/angle.h"
+#include "caviar/objects/atom_data/utility/proper_dihedral.h"
 
 namespace caviar {
 
@@ -73,6 +74,9 @@ class Molecule : public Unique {
 
   std::vector<objects::atom_data::Angle> atomic_angle; 
   std::vector<int> atomic_angle_index; 
+
+  std::vector<objects::atom_data::Proper_dihedral> atomic_properdihedral; 
+  std::vector<int> atomic_properdihedral_index;
 
   
 };

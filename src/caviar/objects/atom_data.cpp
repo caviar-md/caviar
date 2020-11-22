@@ -93,8 +93,12 @@ int Atom_data::degree_of_freedoms () {
   for (auto && i : owned.atomic_angle_vector)
     sum_of_angles += i.size();
 
+  auto sum_of_dihedrals = 0;
+  for (auto && i : owned.atomic_properdihedral_vector)
+    sum_of_dihedrals += i.size();
 
-  return df - sum_of_bonds - sum_of_angles - get_n_r_df();
+
+  return df - sum_of_bonds - sum_of_angles - sum_of_dihedrals - get_n_r_df();
 }
 
 
@@ -129,7 +133,7 @@ Vector<Real_t> Atom_data::owned_velocity_cm () {
 Vector<Real_t> Atom_data::owned_angular_momentum_cm () {
   Vector<Real_t> am_cm {0.0,0.0,0.0};
   error->all(FC_FILE_LINE_FUNC,"not implemented.");
-    return am_cm;
+  return am_cm;
 }
 
 std::vector<std::vector<Real_t> > Atom_data::owned_inertia_tensor_cm () {
