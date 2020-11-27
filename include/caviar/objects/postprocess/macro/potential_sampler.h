@@ -14,14 +14,7 @@
 //
 //========================================================================
 
-#include "caviar/objects/atom_data.h"
-#include "caviar/objects/domain.h"
-#include "caviar/objects/force_field.h"
-#include "caviar/objects/integrator.h"
-#include "caviar/objects/neighborlist.h"
-#include "caviar/objects/shape.h"
-#include "caviar/objects/md_simulator.h"
-#include "caviar/objects/writer.h"
-#include "caviar/objects/constraint.h"
-#include "caviar/objects/unique.h"
-#include "caviar/objects/postprocess.h"
+#ifdef FC_CHECK_AND_CREATE_ACTIVATED
+FC_CHECK_AND_CREATE(Atom,atom,objects::postprocess::Potential_sampler)
+#endif
+

@@ -289,24 +289,29 @@ unique grid_1d gr1
 unique grid_1d gr2
 unique grid_1d gr3
 
+
 gr1 min -10.0 max 10 segment 160#7
 gr2 min -5 max 5 segment 80#7
 gr3 min 2.5 max 3.0 increment 1#7  
+
 
 gr1 generate
 gr2 generate
 gr3 generate
 
-unique debay_calculator dc
-dc field_direction x
-dc grid_field gr1
-dc grid_perpendicular_1 gr2
-dc grid_perpendicular_2 gr3
-dc xyz_file_name "output.xyz"
-dc starting_frame 1000
-dc set_md_simulator sim
-dc set_atom_data adata
-dc generate
+
+postprocess potential_sampler ps
+ps grid_1d_x gr1
+ps grid_1d_y gr2
+ps grid_1d_z gr3
+ps input_xyz_file_name "output.xyz"
+ps output_file_name "output.xyz"
+ps set_md_simulator sim
+ps add_force_field plt_dealii
+ps add_force_field electrostatic_ewald1d
+ps frame_start 10
+ps frame_end 100
+ps run
 
 
 
