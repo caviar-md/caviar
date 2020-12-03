@@ -115,7 +115,7 @@ double Grid_1D::give_point (int i) {
   }
 }
 
-double Grid_1D::reset () 
+void Grid_1D::reset () 
 {
   no_given_points = 0;
 }

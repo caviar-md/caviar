@@ -15,6 +15,6 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Atom,atom,objects::postprocess::Potential_sampler)
+FC_CHECK_AND_CREATE(Potential_sampler,potential_sampler,objects::postprocess::Potential_sampler)
 #endif
 

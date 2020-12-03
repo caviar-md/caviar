@@ -212,18 +212,28 @@ public:
    */
   virtual void initialize_reading_xyz_frames(std::string input_file_name);
   
+  
   /**
-   * This filename is used for postprocessing, reading frame
-   * by frame.
+   * This function is called after reading an xyz file,
+   * 
+   * 
    */
-  std::string input_xyz_file_name_for_postprocess;
+  virtual void finalize_reading_xyz_frames();
+  
+  
+  /**
+   * used by 'read_next_xyz_frame'. It is initialized in 'initialize_reading_xyz_frames'
+   * 
+   */
+  std::ifstream ifs_xyz_postprocess;
+  
   
   /**
    * This function reads the next frame of xyz file.
    * it only sets the frame into atom_data if the 'set_frame'
    * argument is true.
    */
-  virtual int read_next_xyz_frame(bool set_frame);
+  virtual int read_next_xyz_frame(bool set_frame, bool read_velocity);
   
   
   

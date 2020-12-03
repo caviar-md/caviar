@@ -17,7 +17,7 @@
 #ifndef CAVIAR_OBJECTS_POSTPROCESS_POTENTIALSAMPLER_H
 #define CAVIAR_OBJECTS_POSTPROCESS_POTENTIALSAMPLER_H
 
-#include "caviar/objects/unique.h"
+#include "caviar/objects/postprocess.h"
 #include "caviar/utility/vector.h"
 #include <vector>
 
@@ -26,6 +26,7 @@ namespace caviar {
 namespace objects {
 class Atom_data;
 class Md_simulator;
+class Force_field;
 
 namespace unique {
 class Grid_1D;
@@ -53,15 +54,19 @@ class Potential_sampler  : public Postprocess {
 
   // this function reads the next frame of the input file and 
   // set the coordinates of the atoms into the atom_data
-  void read_next_frame(bool set_the_frame);
+  int read_next_frame(bool set_the_frame, bool read_velocity);
   
   void sample_potential();
+  
+  void set_positions_vectors();
   
   int step_current;
   
   int step_start;
   int step_end;
   int step_increment;
+  
+  bool read_velocity;
   
   std::string input_xyz_file_name;
   std::string output_file_name;
@@ -71,9 +76,9 @@ class Potential_sampler  : public Postprocess {
   
   std::vector<objects::Force_field *> force_field; 
   
-  class caviar::objects::unique::Grid_1d *grid_x;
-  class caviar::objects::unique::Grid_1d *grid_y;
-  class caviar::objects::unique::Grid_1d *grid_z;
+  class caviar::objects::unique::Grid_1D *grid_x;
+  class caviar::objects::unique::Grid_1D *grid_y;
+  class caviar::objects::unique::Grid_1D *grid_z;
 
   std::ofstream ofs_out;
 };

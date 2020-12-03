@@ -26,7 +26,7 @@ Postprocess::Postprocess (CAVIAR *fptr) : Pointers{fptr} {
 
 Postprocess::~Postprocess () {}
 
-void Unique::verify_settings () {
+void Postprocess::verify_settings () {
   
 }
 

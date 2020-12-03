@@ -24,3 +24,4 @@
 #include "caviar/objects/writer/all.h"
 #include "caviar/objects/constraint/all.h"
 #include "caviar/objects/unique/all.h"
+#include "caviar/objects/postprocess/all.h"

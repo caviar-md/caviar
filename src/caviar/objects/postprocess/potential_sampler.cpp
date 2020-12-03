@@ -16,6 +16,10 @@
 
 #include "caviar/objects/postprocess/potential_sampler.h"
 #include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/objects/atom_data.h"
+#include "caviar/objects/force_field.h"
+#include "caviar/objects/md_simulator.h"
+#include "caviar/objects/unique/grid_1d.h"
 
 namespace caviar {
 namespace objects {
@@ -27,6 +31,7 @@ Potential_sampler::Potential_sampler (CAVIAR *fptr) : Postprocess{fptr} {
   step_start = 0;
   step_end = -1;  
   output_file_name = "o_potential_sampler";
+  read_velocity = false;
 }
      
 
@@ -39,7 +44,9 @@ bool Potential_sampler::read (caviar::interpreter::Parser* parser) {
   bool in_file = true;
   while(true) {
     GET_A_TOKEN_FOR_CREATION
-    if (token.string_value=="run") {run(); break;}      
+    auto t = token.string_value;
+
+    if (t=="run") {run(); break;}      
     else if (string_cmp(t,"input_xyz_file_name")) {
       const auto token = parser->get_val_token();
       const auto file_name = token.string_value;
@@ -64,7 +71,7 @@ bool Potential_sampler::read (caviar::interpreter::Parser* parser) {
 void Potential_sampler::run () {
   std::cout << "info: Potential_sampler::run () " << std::endl;
   
-  set_positions_vector();  
+  set_positions_vectors();  
   
   atom_data->initialize_reading_xyz_frames(input_xyz_file_name);
   
@@ -80,32 +87,34 @@ void Potential_sampler::run () {
       
     bool set_step = (step_current >= step_start);
       
-    int read_result = atom_data->read_next_xyz_frame(set_frame);
+    int read_result = atom_data->read_next_xyz_frame(set_step, read_velocity);
       
     if (read_result == -1)  break; 
       
     if (set_step) {
       std::cout << "info: Potential_sampler::run: processing step "<< step_current << std::endl; 
       
-      md_simulator->step(step_current); // check the position of water after 
+      md_simulator->step(step_current); // check the position of water after applying bond constraints
       
       sample_potential(); // done
     }
   }
   
+  atom_data->finalize_reading_xyz_frames();
+  
   ofs_out.close();
 }
 
 
-int Potential_sampler::read_next_frame (bool set_frame) {
-  atom_data->read_next_xyz_frame(set_frame);
+int Potential_sampler::read_next_frame (bool , bool ) {
+  //atom_data->read_next_xyz_frame(set_frame, read_velocity);
   return 0; 
 }
 
 
 void Potential_sampler::sample_potential() {
   
-  int no_forces = force_field->size();  
+  //int no_forces = force_field.size();  
     
   ofs_out << step_current << " ";
   
@@ -116,13 +125,13 @@ void Potential_sampler::sample_potential() {
     
     ofs_out << i << " ";
     
-    ofs_out << sampling_position_index.x << " " 
-            << sampling_position_index.y << " " 
-            << sampling_position_index.z << " ";
+    ofs_out << sampling_position_index[i].x << " " 
+            << sampling_position_index[i].y << " " 
+            << sampling_position_index[i].z << " ";
             
-    ofs_out << sampling_position.x << " " 
-            << sampling_position.y << " " 
-            << sampling_position.z << " ";
+    ofs_out << pos.x << " " 
+            << pos.y << " " 
+            << pos.z << " ";
             
             
     double sum_pots = 0.0;    
@@ -160,14 +169,14 @@ void Potential_sampler::set_positions_vectors () {
   grid_y->reset();
   grid_z->reset();
   
-  for (unsigned int i = 0; i < grid_x->no_points(); ++i) {
+  for (int i = 0; i < (int) grid_x->no_points(); ++i) {
   double x = grid_x->give_point(i);
-  for (unsigned int j = 0; j < grid_y->no_points(); ++j) {
+  for (int j = 0; j < (int) grid_y->no_points(); ++j) {
   double y = grid_y->give_point(j);      
-  for (unsigned int k = 0; k < grid_z->no_points(); ++k) {  
+  for (int k = 0; k < (int) grid_z->no_points(); ++k) {  
     double z = grid_z->give_point(k);
     sampling_position.push_back(caviar::Vector<double>{x,y,z});
-    sampling_position_index.push_back(caviar::Vector<double>{i,j,k});
+    sampling_position_index.push_back(caviar::Vector<int>{i,j,k});
     
   }
   }

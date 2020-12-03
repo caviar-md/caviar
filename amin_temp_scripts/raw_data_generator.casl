@@ -310,7 +310,7 @@ ps set_md_simulator sim
 ps add_force_field plt_dealii
 ps add_force_field electrostatic_ewald1d
 ps frame_start 10
-ps frame_end 100
+#ps frame_end 100
 ps run
 
 
