@@ -277,7 +277,9 @@ void Atom_data::add_random_velocity() {
 
 
 void Atom_data::initialize_reading_xyz_frames(std::string input_file_name) {
+  std::cout << "ai 1 : input_file_name : " << input_file_name << std::endl;
   ifs_xyz_postprocess.open(input_file_name.c_str());
+  std::cout << "ai 2 : input_file_name : " << input_file_name << std::endl;
 }
   
 void Atom_data::finalize_reading_xyz_frames() {
@@ -321,7 +323,7 @@ int Atom_data::read_next_xyz_frame (bool set_frame, bool read_velocity) {
     
     ifs.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
       
-    std::cout << x << " " << y << " " << z <<  "\n";              
+    std::cout <<type << " " << x << " " << y << " " << z <<  "\n";              
     
     if (set_frame)
     {

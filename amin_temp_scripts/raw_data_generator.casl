@@ -307,6 +307,7 @@ ps grid_1d_z gr3
 ps input_xyz_file_name "output.xyz"
 ps output_file_name "output.xyz"
 ps set_md_simulator sim
+ps set_atom_data adata
 ps add_force_field plt_dealii
 ps add_force_field electrostatic_ewald1d
 ps frame_start 10

@@ -32,6 +32,11 @@ Potential_sampler::Potential_sampler (CAVIAR *fptr) : Postprocess{fptr} {
   step_end = -1;  
   output_file_name = "o_potential_sampler";
   read_velocity = false;
+  atom_data = nullptr;
+  md_simulator = nullptr;
+  grid_x = nullptr;
+  grid_y = nullptr;
+  grid_z = nullptr;  
 }
      
 
@@ -59,6 +64,26 @@ bool Potential_sampler::read (caviar::interpreter::Parser* parser) {
       FIND_OBJECT_BY_NAME(force_field,it)
       force_field.push_back(object_container->force_field[it->second.index]);
     } 
+    else if (string_cmp(t,"grid_1d_x")) {
+      FIND_OBJECT_BY_NAME(unique,it)        
+      grid_x = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+    } 
+    else if (string_cmp(t,"grid_1d_y")) {
+      FIND_OBJECT_BY_NAME(unique,it)        
+      grid_y = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+    } 
+    else if (string_cmp(t,"grid_1d_z")) {
+      FIND_OBJECT_BY_NAME(unique,it)        
+      grid_z = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+    } 
+    else if (string_cmp(t,"set_md_simulator") || string_cmp(t,"md_simulator")) {
+      FIND_OBJECT_BY_NAME(md_simulator,it)
+      md_simulator = object_container->md_simulator[it->second.index];
+    } 
+    else if (string_cmp(t,"set_atom_data") || string_cmp(t,"atom_data")) {
+      FIND_OBJECT_BY_NAME(atom_data,it)
+      atom_data = object_container->atom_data[it->second.index];
+    }
     else ASSIGN_INT(step_start,"GRID_1D Read: ","")  
     else ASSIGN_INT(step_end,"GRID_1D Read: ","")  
     else ASSIGN_INT(step_increment,"GRID_1D Read: ","")  
@@ -71,8 +96,13 @@ bool Potential_sampler::read (caviar::interpreter::Parser* parser) {
 void Potential_sampler::run () {
   std::cout << "info: Potential_sampler::run () " << std::endl;
   
+  FC_NULLPTR_CHECK(atom_data)
+  FC_NULLPTR_CHECK(md_simulator)
+
+    
   set_positions_vectors();  
   
+  std::cout << "r1 : input_xyz_file_name : " << input_xyz_file_name << std::endl;
   atom_data->initialize_reading_xyz_frames(input_xyz_file_name);
   
   step_current = -1;
@@ -116,14 +146,13 @@ void Potential_sampler::sample_potential() {
   
   //int no_forces = force_field.size();  
     
-  ofs_out << step_current << " ";
-  
+    
   int i = -1;
   for (auto &pos : sampling_position)
   {
-    i = 0;
+    i++;
     
-    ofs_out << i << " ";
+    ofs_out << step_current << " " << i << " ";
     
     ofs_out << sampling_position_index[i].x << " " 
             << sampling_position_index[i].y << " " 
@@ -151,11 +180,10 @@ void Potential_sampler::sample_potential() {
 }
 
 void Potential_sampler::set_positions_vectors () {
-  if (grid_x==nullptr||grid_y==nullptr||grid_z==nullptr)
-  {
-    error->all(FC_FILE_LINE_FUNC,"Grid(s) is not set");
-    return;
-  }
+  
+  FC_NULLPTR_CHECK(grid_x)
+  FC_NULLPTR_CHECK(grid_y)
+  FC_NULLPTR_CHECK(grid_z)
   
   sampling_position.clear();
   sampling_position_index.clear();
