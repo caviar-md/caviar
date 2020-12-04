@@ -415,42 +415,8 @@ sim add_constraint c_nve
 sim initial_step 0
 sim final_step 5
 sim dt global_dt
-#sim run
+sim run
 
 #exit
-
-
-
-unique grid_1d gr1
-unique grid_1d gr2
-unique grid_1d gr3
-
-
-gr1 min -9.0 max 9.0 segment 50
-gr2 min -9.0 max 9.0 segment 4
-gr3 min -9.0 max 9.0 segment 4
-
-
-gr1 generate
-gr2 generate
-gr3 generate
-
-
-postprocess potential_sampler ps
-ps grid_1d_x gr1
-ps grid_1d_y gr2
-ps grid_1d_z gr3
-ps input_xyz_file_name "o1_xyz.xyz"
-ps output_file_name "output_pot_2"
-ps set_md_simulator sim
-ps set_atom_data adata
-ps add_force_field f_plt
-ps add_force_field f_ewr
-ps add_force_field f_ewk
-ps step_start 10
-ps run
-
-
-
 
 
