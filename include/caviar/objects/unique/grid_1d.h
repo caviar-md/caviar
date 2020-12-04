@@ -40,6 +40,7 @@ class Grid_1D : public Unique {
     double give_point ();
     double give_point (int);
     
+    void reset();
 
     double min, max, increment;
 

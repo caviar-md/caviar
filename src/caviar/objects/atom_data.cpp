@@ -278,6 +278,78 @@ void Atom_data::add_random_velocity() {
   }
 }
 
+
+
+void Atom_data::initialize_reading_xyz_frames(std::string input_file_name) {
+  std::cout << "ai 1 : input_file_name : " << input_file_name << std::endl;
+  ifs_xyz_postprocess.open(input_file_name.c_str());
+  std::cout << "ai 2 : input_file_name : " << input_file_name << std::endl;
+}
+  
+void Atom_data::finalize_reading_xyz_frames() {
+  ifs_xyz_postprocess.close();
+}   
+
+int Atom_data::read_next_xyz_frame (bool set_frame, bool read_velocity) {
+  
+
+  auto & ifs = ifs_xyz_postprocess;
+
+
+
+  int num_of_atoms = 0;
+  
+  ifs >> num_of_atoms;
+  
+  if (ifs.eof()) return -1; // don't repeat the last line
+
+  {
+    // Ignore the second line    
+    std::string dummyLine;
+    getline(ifs, dummyLine);
+    getline(ifs, dummyLine);
+  } 
+
+  std::cout << "====================\n====================\n";
+  
+  for (int j = 0; j < num_of_atoms; ++j) {
+  
+    int type;
+    
+    ifs >> type;
+    
+    double x = 0, y = 0, z = 0, vx = 0, vy = 0, vz = 0;        
+    
+    ifs >> x >> y >> z;
+    
+    if (read_velocity)
+        ifs >> vx >> vy >> vz;
+    
+    ifs.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+      
+    std::cout <<type << " " << x << " " << y << " " << z <<  "\n";              
+    
+    if (set_frame)
+    {
+      owned.position[j].x = x;
+      owned.position[j].y = y;
+      owned.position[j].z = z;
+      
+      if (read_velocity) {
+        owned.velocity[j].x = vx;
+        owned.velocity[j].y = vy;
+        owned.velocity[j].z = vz;
+      }
+    }
+    
+  }
+
+    
+
+
+  return 0;
+}
+
 } //objects
 
 } // namespace caviar

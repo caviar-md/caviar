@@ -206,6 +206,38 @@ public:
    */
   virtual void reset_owned_acceleration();
 
+  /**
+   * This function is called before reading an xyz file,
+   * frame by frame. It is developed for postprocessing an
+   * xyz file.
+   */
+  virtual void initialize_reading_xyz_frames(std::string input_file_name);
+  
+  
+  /**
+   * This function is called after reading an xyz file,
+   * 
+   * 
+   */
+  virtual void finalize_reading_xyz_frames();
+  
+  
+  /**
+   * used by 'read_next_xyz_frame'. It is initialized in 'initialize_reading_xyz_frames'
+   * 
+   */
+  std::ifstream ifs_xyz_postprocess;
+  
+  
+  /**
+   * This function reads the next frame of xyz file.
+   * it only sets the frame into atom_data if the 'set_frame'
+   * argument is true.
+   */
+  virtual int read_next_xyz_frame(bool set_frame, bool read_velocity);
+  
+  
+  
   /**  
    * Here we define an unnamed interpreter and make two of it. It can have a name
    * but since it is used only once here, its name won't be of any use. Also 

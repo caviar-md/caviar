@@ -14,14 +14,16 @@
 //
 //========================================================================
 
-#include "caviar/objects/atom_data/all.h"
-#include "caviar/objects/domain/all.h"
-#include "caviar/objects/force_field/all.h"
-#include "caviar/objects/integrator/all.h"
-#include "caviar/objects/neighborlist/all.h"
-#include "caviar/objects/shape/all.h"
-#include "caviar/objects/md_simulator/all.h"
-#include "caviar/objects/writer/all.h"
-#include "caviar/objects/constraint/all.h"
-#include "caviar/objects/unique/all.h"
-#include "caviar/objects/postprocess/all.h"
+
+#ifdef FC_OBJECT_CREATOR_FUNCTION_DEFINITON
+FC_OBJECT_CREATOR_DEFAULT_FUNCTION(postprocess) {
+
+  FC_GET_OBJECT_TYPE_AND_NAME
+
+  objects::Postprocess * p_sh = nullptr; 
+
+#include "caviar/objects/postprocess/macro/all.h"
+
+  FC_ADD_OBJECT_TO_CONTAINER(postprocess)
+}
+#endif

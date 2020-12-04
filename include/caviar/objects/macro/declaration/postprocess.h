@@ -14,14 +14,17 @@
 //
 //========================================================================
 
-#include "caviar/objects/atom_data/all.h"
-#include "caviar/objects/domain/all.h"
-#include "caviar/objects/force_field/all.h"
-#include "caviar/objects/integrator/all.h"
-#include "caviar/objects/neighborlist/all.h"
-#include "caviar/objects/shape/all.h"
-#include "caviar/objects/md_simulator/all.h"
-#include "caviar/objects/writer/all.h"
-#include "caviar/objects/constraint/all.h"
-#include "caviar/objects/unique/all.h"
-#include "caviar/objects/postprocess/all.h"
+
+#ifdef FC_GENERAL_CLASSNAME_MACRO_ACTIVATED
+FC_GENERAL_CLASSNAME_MACRO(Postprocess,postprocess,objects::Postprocess)
+#endif
+
+#ifdef FC_COMPLETE_FORWARD_DECLERATION
+namespace caviar {
+namespace objects {
+class Postprocess;
+}
+} // namespace caviar
+#endif
+
+

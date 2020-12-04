@@ -24,3 +24,5 @@
 #include "caviar/objects/macro/declaration/writer.h"
 #include "caviar/objects/macro/declaration/constraint.h"
 #include "caviar/objects/macro/declaration/unique.h"
+#include "caviar/objects/macro/declaration/postprocess.h"
+
