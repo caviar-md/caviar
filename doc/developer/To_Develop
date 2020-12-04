@@ -1,0 +1,12 @@
+
+This file is a list of development goals that has to be done. 
+There's no priority.
+
+(      ) - Complete the Boundary Element Method class.
+
+(      ) - Complete Boost-Python interpreter.
+
+(      ) - Add bond export and import for polymers.
+
+( Done ) - Add post-process class.
+
