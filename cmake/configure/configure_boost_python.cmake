@@ -14,28 +14,35 @@
 #
 #=======================================================================
 
-# ===================================================
-# ======= print_final_caviar_configuration =======
-# ===================================================
+# =====================================================
+# =======  CHECK MPI REALATED FLAG DEPENDENCIES =======
+# =====================================================
 
 
-print_stars()
+# =======================================
+# =======  CONFIGURE BOOST PYTHON =======
+# =======================================
+
+if (CAVIAR_WITH_BOOST_PYTHON)
+  set (CAVIAR_WITH_BOOST_PYTHON ON)
+
+  find_package(BOOSTPYTHON)
   
-message("Final CAVIAR configuration:")
-message("")
-print_flag_value(CAVIAR_DEBUG_VERSION)
-print_flag_value(CMAKE_BUILD_TYPE)
-message("")
-print_flag_value(CAVIAR_WITH_MPI)
-print_flag_value(CAVIAR_SINGLE_MPI_MD_DOMAIN)
-message("")
-print_flag_value(CAVIAR_WITH_DEALII)
-print_flag_value(CAVIAR_WITH_DEALII_MPI)
-message("")
-print_flag_value(CAVIAR_WITH_EIGEN)
-message("")
+  find_package(PYTHON)
+
+  add_definitions (-DCAVIAR_WITH_BOOST_PYTHON)
+
+  #set (CMAKE_CXX_COMPILER ${MPI_CXX_COMPILER})
+  #set (CMAKE_C_COMPILER ${MPI_C_COMPILER}) 
+
+  #message (STATUS "Set CXX_COMPILER TO ${MPI_CXX_COMPILER}")  
+else ()
+  set (CAVIAR_WITH_BOOST_PYTHON OFF)
+endif ()
+
 print_flag_value(CAVIAR_WITH_BOOST_PYTHON)
-message("")
+
+
 # ===============================
 # =======                 =======
 # ===============================

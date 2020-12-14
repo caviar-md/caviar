@@ -38,6 +38,8 @@ set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -shared -lm") #boost
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
+set(MAKE_EXECUTABLE_CAVIAR OFF)
+
 # =======================================
 # ======= add modules to the path =======
 # =======================================
@@ -73,6 +75,7 @@ print_stars()
 include(cmake/configure/configure_mpi.cmake)
 include(cmake/configure/configure_dealii.cmake)
 include(cmake/configure/configure_eigen.cmake)
+include(cmake/configure/configure_boost_python.cmake)
 
 print_stars()
 
@@ -80,14 +83,6 @@ include(cmake/print_final_configuration.cmake)
 include(cmake/print_final_message_before_build.cmake)
 
 
-
-# =========================================
-# ======= find boost python =======
-# =========================================
-find_library(Bpython libboost_python36.so PATH /usr/local/lib) #boostpython
-link_directories(/usr/local/lib) #boostpython
-
-INCLUDE_DIRECTORIES(/usr/include/python3.6) #boostpython
 
 # =========================================
 # ======= configure cpp source file =======
@@ -117,20 +112,33 @@ ENDFOREACH()
 # ======= executable and linking =======
 # ======================================
 
-#ADD_EXECUTABLE(CAVIAR src/main_CAVIAR.cpp)
+if (MAKE_EXECUTABLE_CAVIAR)
+
+  ADD_EXECUTABLE(CAVIAR src/main_CAVIAR.cpp)
+
+  if (CAVIAR_WITH_DEALII)
+    DEAL_II_SETUP_TARGET(CAVIAR)
+  endif (CAVIAR_WITH_DEALII)
+
+  TARGET_LINK_LIBRARIES(CAVIAR CAVIAR_lib)  
+
+endif()
+# ===========================================
+# ====== shared library for boost_python ====
+# ===========================================
+
+
 ADD_LIBRARY(caviarmd SHARED src/caviar/CAVIAR.cpp) #boostpython
 
 if (CAVIAR_WITH_DEALII)
-  DEAL_II_SETUP_TARGET(CAVIAR)
-  #TARGET_LINK_LIBRARIES(CAVIAR CAVIAR_lib)  
-  TARGET_LINK_LIBRARIES(caviarmd CAVIAR_lib ${Bpython}) #boostpython
-else ()  
-  #TARGET_LINK_LIBRARIES(CAVIAR CAVIAR_lib)  
-  TARGET_LINK_LIBRARIES(caviarmd CAVIAR_lib ${Bpython}) #boostpython
+  DEAL_II_SETUP_TARGET(caviarmd)  
 endif (CAVIAR_WITH_DEALII)
 
-set_target_properties(caviarmd PROPERTIES PREFIX "") #boostpython # WHAT is this line?
+#TARGET_LINK_LIBRARIES(caviarmd CAVIAR_lib ${Bpython}) #boostpython
 
+#TARGET_LINK_LIBRARIES(caviarmd CAVIAR_lib boost_python36) #boostpython
+TARGET_LINK_LIBRARIES(caviarmd ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
+set_target_properties(caviarmd PROPERTIES PREFIX "") #boostpython # WHAT is this line?
 
 
 # ========================================
