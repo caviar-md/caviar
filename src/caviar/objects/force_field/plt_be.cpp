@@ -23,6 +23,7 @@
 
 #if defined(CAVIAR_WITH_EIGEN)
  #include <Eigen/Dense>
+ #include <Eigen/Cholesky>
 #endif
 
 #include "caviar/objects/shape/polyhedron.h"
@@ -265,7 +266,21 @@ void Plt_be::make_inverse_matrix() {
       }
     }
 
+      std::vector <double> b (face_size);
 
+  for (unsigned int m = 0; m < face_size; ++m) {
+    double sum=0;
+    for (unsigned int k = 0; k < face_size; ++k) {
+      double delta_mk = (m==k ? 1 : 0);
+      sum += phi_boundary[k] * (-D2[m][k] + 0.5*delta_mk);            
+    }
+    b[m] = sum ;
+  }
+
+  vec_zz.clear();
+  vec_zz.resize(face_size, 0);
+  vec_zz = a.llt().solve(b);
+/*
     auto a_inv = a.inverse(); // XXX FIX: does a.inverse() makes 'a' inverse or makes a copy and gives a pointer?
 
     m_inverse.clear();
@@ -275,11 +290,12 @@ void Plt_be::make_inverse_matrix() {
       for (unsigned int j = 0; j < face_size; ++j) {
         m_inverse[i][j] = a_inv(i,j);  // XXX It may needs a transpose (converted from Fortran).
       }
-    }
+    }*/
 #else
   error->all(FC_FILE_LINE_FUNC,"This function needs a Linear algebra solver. Recompile the code with EIGEN library"
             " ( CAVIAR_WITH_EIGEN ) to use this feature.");
 #endif
+
 
 }
 
@@ -338,7 +354,7 @@ void Plt_be::set_potential_on_boundary() {
 //---------  
 // part IV
 //---------  
-void Plt_be::make_vec_zz() {
+/*void Plt_be::make_vec_zz() {
 
   std::vector <double> b (face_size);
 
@@ -361,7 +377,7 @@ void Plt_be::make_vec_zz() {
     }
   }
 
-}
+}*/
 
 
 //---------  
@@ -517,7 +533,7 @@ void Plt_be::write_spherical_test(){
 
   }
 //*/
-}
+}*/
 
 //==================================================
 //==================================================
