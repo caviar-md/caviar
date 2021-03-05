@@ -265,7 +265,7 @@ void Plt_be::make_inverse_matrix() {
             a(i,j) = -D1[i][j]; // XXX It may needs a transpose (converted from Fortran).
       }
     }
-
+/*
       std::vector <double> b (face_size);
 
   for (unsigned int m = 0; m < face_size; ++m) {
@@ -276,10 +276,12 @@ void Plt_be::make_inverse_matrix() {
     }
     b[m] = sum ;
   }
-
-  vec_zz.clear();
-  vec_zz.resize(face_size, 0);
-  vec_zz = a.llt().solve(b);
+*/
+  Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic>a_inverse;
+  a_inverse.resize(face_size,face_size);
+ // vec_zz.clear();
+ // vec_zz.resize(face_size, 0);
+  a_inverse = a.llt().solve(Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>::Identity(face_size,face_size));
 /*
     auto a_inv = a.inverse(); // XXX FIX: does a.inverse() makes 'a' inverse or makes a copy and gives a pointer?
 
@@ -354,9 +356,11 @@ void Plt_be::set_potential_on_boundary() {
 //---------  
 // part IV
 //---------  
-/*void Plt_be::make_vec_zz() {
+void Plt_be::make_vec_zz() {
 
-  std::vector <double> b (face_size);
+  Eigen::Matrix <double,Eigen::Dynamic,1> b ;
+  Eigen::Matrix<double,Eigen::Dynamic,1>vec_zz;
+  b.resize(face_size);
 
   for (unsigned int m = 0; m < face_size; ++m) {
     double sum=0;
@@ -368,16 +372,18 @@ void Plt_be::set_potential_on_boundary() {
   }
 
   vec_zz.clear();
-  vec_zz.resize(face_size, 0);
+  vec_zz.resize(face_size);
 
-  // We implement ' vec_zz = a.inverse() * b ' as follows.
+ /* // We implement ' vec_zz = a.inverse() * b ' as follows.
   for (unsigned int i=0; i < face_size; ++i) {
     for (unsigned int j=0; j < face_size; ++j) {
       vec_zz[i] += m_inverse[i][j] * b[j];  
     }
   }
+*/
+  vec_zz=a_inverse*b;
 
-}*/
+}
 
 
 //---------  
@@ -388,6 +394,7 @@ double Plt_be::potential_value(const Vector<double> v) {
 
   std::vector <double> D_1 (face_size,0);
   std::vector <double> D_2 (face_size,0);
+
 
   for (unsigned int i = 0; i < face_size; ++i)   {
 
@@ -463,6 +470,7 @@ void Plt_be::write_spherical_test(){
 ///*
   set_potential_on_boundary();
   make_vec_zz(); 
+  //make_inverse_matrix();
 
   double c = 0.0;  //calculate_induced_charge (0, 1);
 
