@@ -104,16 +104,23 @@ void Electrostatic_ewald_slab_correction::make_slab_k_vectors () {
   const auto lx_inv = 1.0/lx;
   const auto ly_inv = 1.0/ly;
 
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for
+#endif   
   for (auto ix = 0; ix < kx_max; ++ix) {
     kx[ix] = FC_2PI*(ix+1)*lx_inv;
     kx_coef[ix] = 1.0/(kx[ix]*(std::exp(kx[ix]*lz) - 1.0));
   }
 
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for
+#endif   
   for (auto iy = 0; iy < ky_max; ++iy) {
     ky[iy] = FC_2PI*(iy+1)*ly_inv;
     ky_coef[iy] = 1.0/(ky[iy]*(std::exp(ky[iy]*lz) - 1.0));
   }
 
+  // XXX no parallel with openMP due  to external counter
   int ip = 0;
   for (auto ix = 0; ix <kx_max; ++ix) {
   for (auto iy = 0; iy <ky_max; ++iy) {
@@ -170,6 +177,8 @@ void Electrostatic_ewald_slab_correction::make_slab_chi_vectors () {
   const auto &type = atom_data->owned.type;
   const auto &charge = atom_data->owned.charge;
   const auto pos_size = pos.size();
+
+  // XXX No openMP Parallel due to array reduction and boolean flag
   for (unsigned int j=0; j<pos_size; ++j) {
     const auto q = charge[ type[j] ];
     const auto p = give_slab_local_coordinates(pos[j]);

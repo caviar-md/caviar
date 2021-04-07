@@ -39,6 +39,9 @@ double Electrostatic_ewald_slab_correction::energy () {
 
 // ======= kp sum
 
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:sum_e)
+#endif     
   for (auto ip=0; ip < kx_max*ky_max; ++ip) {
 
     const double sum_chi = 
@@ -52,7 +55,9 @@ double Electrostatic_ewald_slab_correction::energy () {
   }
 
 //========== kx sum
-
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:sum_e)
+#endif     
   for (auto ix=0; ix < kx_max; ++ix) {
 
     const double sum_chi = 
@@ -66,7 +71,9 @@ double Electrostatic_ewald_slab_correction::energy () {
   }
 
 //===========ky sum
-
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:sum_e)
+#endif     
   for (auto iy=0; iy < ky_max; ++iy) {
 
     const double sum_chi =

@@ -133,6 +133,9 @@ void Velocity_verlet_langevin::step_part_I () {
   eta_y.resize(psize);
   eta_z.resize(psize);
 
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp parallel for
+#endif
   for (unsigned int i=0; i<psize; i++) { 
 
 
@@ -153,6 +156,9 @@ void Velocity_verlet_langevin::step_part_II () {
   auto &vel = atom_data -> owned.velocity;
   const auto psize = pos.size();
 
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp parallel for
+#endif
   for (unsigned int i=0; i<psize; i++) { 
     pos [i] += vel [i] * c;
   }
@@ -162,7 +168,10 @@ void Velocity_verlet_langevin::step_part_III () {
 
   auto &vel = atom_data -> owned.velocity;
   auto &acc = atom_data -> owned.acceleration;
-   
+
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp parallel for
+#endif
   for (unsigned int i=0; i<vel.size(); i++) {
     const auto eta = Vector<double>{eta_x[i], eta_y[i], eta_z[i]};
     vel [i] = a * vel [i] + b * eta + 0.5 * acc [i] * dt;

@@ -69,6 +69,7 @@ print_stars()
 include(cmake/configure/configure_mpi.cmake)
 include(cmake/configure/configure_dealii.cmake)
 include(cmake/configure/configure_eigen.cmake)
+include(cmake/configure/configure_openmp.cmake)
 
 print_stars()
 
@@ -105,6 +106,7 @@ ENDFOREACH()
 
 ADD_EXECUTABLE(CAVIAR src/main_CAVIAR.cpp)
 
+
 if (CAVIAR_WITH_DEALII)
   DEAL_II_SETUP_TARGET(CAVIAR)
   TARGET_LINK_LIBRARIES(CAVIAR CAVIAR_lib)  
@@ -112,6 +114,10 @@ else ()
   TARGET_LINK_LIBRARIES(CAVIAR CAVIAR_lib)
 endif (CAVIAR_WITH_DEALII)
 
+
+if (CAVIAR_WITH_OPENMP)
+target_link_libraries(CAVIAR OpenMP::OpenMP_CXX)
+endif()
 
 
 # ========================================

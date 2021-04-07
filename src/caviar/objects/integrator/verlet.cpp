@@ -82,6 +82,9 @@ void Verlet::step_part_II () {
 
   const auto two_dt_inv = 1.0/(2.0*dt);
 
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp parallel for
+#endif
   for (unsigned int i=0; i<psize; i++) { 
     // r (t + dt) = 2*r(t) − r (t − dt) + a(t) * dt^2 
     pos [i] = (2.0*pos[i]) - pos_old[i]  + acc [i] * dt * dt; 

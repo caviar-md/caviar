@@ -73,6 +73,9 @@ void Lj_cell_list::calculate_acceleration () {
   const auto &binlist = neighborlist -> binlist;
   const auto &nb = neighborlist -> neigh_bin;
 
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp parallel for
+#endif
   for (unsigned int i=0; i<pos.size (); ++i) {
     const auto &pos_i = atom_data -> owned.position [i];
     const auto type_i = atom_data -> owned.type [i];

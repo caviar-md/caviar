@@ -63,6 +63,9 @@ void Electrostatic_spherical_boundary::calculate_image_charges() {
 
   const auto &pos = atom_data -> owned.position;  
   const auto rad_sq = radius*radius;
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for
+#endif         
   for (unsigned int i = 0; i < pos.size(); ++i) {
     auto type_i = atom_data -> owned.type[i];
     double charge_i = atom_data -> owned.charge[type_i];

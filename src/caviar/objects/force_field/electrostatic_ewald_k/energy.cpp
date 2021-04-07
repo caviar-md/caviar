@@ -31,6 +31,9 @@ namespace force_field {
 double Electrostatic_ewald_k::self_energy () {
   const auto &pos = atom_data -> owned.position;    
   double sum_j {0};
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:sum_j)
+#endif  
   for (unsigned int j=0;j<pos.size();++j) {
     const auto type_j = atom_data -> owned.type [j] ;  
     const auto charge_j = atom_data -> owned.charge [ type_j ];
@@ -76,6 +79,9 @@ double Electrostatic_ewald_k::k_space_energy () {
 ///*
   const auto &pos = atom_data -> owned.position;    
   double energy_k = 0;
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:energy_k)
+#endif  
   for (unsigned int j=0;j<pos.size();++j) {
     const auto type_j = atom_data -> owned.type [j] ;  
     const auto charge_j = atom_data -> owned.charge [ type_j ];

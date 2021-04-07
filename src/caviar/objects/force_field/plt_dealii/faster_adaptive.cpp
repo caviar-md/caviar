@@ -23,6 +23,7 @@
 
 #include "caviar/objects/force_field/plt_dealii.h"
 #include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/utility/time_utility.h"
 
 
 #include <deal.II/grid/tria.h>
@@ -235,80 +236,83 @@ void Plt_dealii::fa_solve () // XXX note of two of them
 void Plt_dealii::fa_solve_time_profile () // XXX note the time profile
 {
 
-    clock_t t1=0, t2=0, t3=0, t4=0, t5=0, t6=0;
-    clock_t t7=0, t8=0, t9=0, t10=0, t11=0, t12=0;
-    clock_t t13=0, t14=0, t15=0, t16=0, t17=0;
+  double t1=0, t2=0, t3=0, t4=0, t5=0, t6=0;
+  double t7=0, t8=0, t9=0, t10=0, t11=0, t12=0;
+  double t13=0, t14=0, t15=0, t16=0, t17=0;
+  
   std::map<types::global_dof_index,double> boundary_values;
-  t1 = clock();  
+  t1 = get_wall_time();   
   for (auto&& i : boundary_id_value) {
-          t2 = clock();
-      VectorTools::interpolate_boundary_values (dof_handler,
-        i.first,
-        plt_dealii::BoundaryValues(i.second, this),
-        boundary_values); 
-          t3 = clock();
-  std::cout << "boundary_id " << i.second << "  : "    << (double)(t3 - t2)/CLOCKS_PER_SEC << "\n";
+    t2 = get_wall_time();   
+    VectorTools::interpolate_boundary_values (dof_handler,
+    i.first,
+    plt_dealii::BoundaryValues(i.second, this),
+    boundary_values); 
+    t3 = get_wall_time();   
+    std::cout << "boundary_id " << i.second << "  : "    << (t3 - t2) << "\n";
   }                                            
-  t4 = clock();                                            
-  std::cout << "total_boundary_id: "   << (double)(t4 - t1)/CLOCKS_PER_SEC << "\n";
+  t4 = get_wall_time();                                               
+  std::cout << "total_boundary_id: "   << (t4 - t1) << "\n";
 
   // matrix and boundary value constraints
   FilteredMatrix<dealii::Vector<double> > filtered_A (system_matrix);
-          t5 = clock();
+  t5 = get_wall_time();   
   filtered_A.add_constraints (boundary_values);
-          t6 = clock();
+  t6 = get_wall_time();   
 
   // set up a linear solver
   SolverControl solver_control (solver_control_maximum_iteration, solver_control_tolerance, false, false);
-          t7 = clock();
+  t7 = get_wall_time();   
 
   //SolverControl solver_control (1000, 1.e-10);  
   GrowingVectorMemory<dealii::Vector<double> > mem;
-          t8 = clock();
+  t8 = get_wall_time();   
+  
   SolverCG<dealii::Vector<double> > solver (solver_control, mem);
-          t9 = clock();
+  t9 = get_wall_time();
 
  
   
   if (use_preconditioner) {  
     // set up a preconditioner object
-          t10 = clock();
+    t10 = get_wall_time();
     PreconditionJacobi<SparseMatrix<double> > prec;
     prec.initialize (system_matrix, preconditioner_relaxation);
-          t11 = clock();
+    t11 = get_wall_time();
     FilteredMatrix<dealii::Vector<double> > filtered_prec (prec);
-          t12 = clock();
+    t12 = get_wall_time();
     filtered_prec.add_constraints (boundary_values);
-            t13 = clock();
-  
+      t13 = get_wall_time();
+
     // compute modification of right hand side
     auto system_rhs_tmp = system_rhs;
-          t14 = clock();
+    t14 = get_wall_time();
     filtered_A.apply_constraints (system_rhs_tmp);
-          t15 = clock();
+    t15 = get_wall_time();
     // solve for solution vector x
     solver.solve (filtered_A, solution, system_rhs_tmp, filtered_prec);
-          t16 = clock();
+    t16 = get_wall_time();
   } else {
     error->all(FC_FILE_LINE_FUNC,"not implemented yet. Use it with preconditioner.");
   }
 
  
   constraints.distribute (solution);
-          t17 = clock();
-  std::cout << "t5  - t4: "   << (double)(t5 - t4)/CLOCKS_PER_SEC << "\n";
-  std::cout << "t6  - t5: "   << (double)(t6 - t5)/CLOCKS_PER_SEC << "\n";
-  std::cout << "t7  - t6: "   << (double)(t7 - t6)/CLOCKS_PER_SEC << "\n";
-  std::cout << "t8  - t7: "   << (double)(t8 - t7)/CLOCKS_PER_SEC << "\n";
-  std::cout << "t9  - t8: "   << (double)(t9 - t8)/CLOCKS_PER_SEC << "\n";
-  std::cout << "t10 - t9: "   << (double)(t10 - t9)/CLOCKS_PER_SEC << "\n";
-  std::cout << "t11 - t10: "   << (double)(t11 - t10)/CLOCKS_PER_SEC << "\n";
-  std::cout << "t12 - t11: "   << (double)(t12 - t11)/CLOCKS_PER_SEC << "\n";
-  std::cout << "t13 - t12: "   << (double)(t13 - t12)/CLOCKS_PER_SEC << "\n";
-  std::cout << "t14 - t13: "   << (double)(t14 - t13)/CLOCKS_PER_SEC << "\n";
-  std::cout << "t15 - t14: "   << (double)(t15 - t14)/CLOCKS_PER_SEC << "\n";
-  std::cout << "t16 - t15: "   << (double)(t16 - t15)/CLOCKS_PER_SEC << "\n";
-  std::cout << "t17 - t16: "   << (double)(t17 - t16)/CLOCKS_PER_SEC << "\n";
+  t17 = get_wall_time();
+  
+  std::cout << "t5  - t4: "   << (t5 - t4)    << "\n";
+  std::cout << "t6  - t5: "   << (t6 - t5)    << "\n";
+  std::cout << "t7  - t6: "   << (t7 - t6)    << "\n";
+  std::cout << "t8  - t7: "   << (t8 - t7)    << "\n";
+  std::cout << "t9  - t8: "   << (t9 - t8)    << "\n";
+  std::cout << "t10 - t9: "   << (t10 - t9)   << "\n";
+  std::cout << "t11 - t10: "   << (t11 - t10) << "\n";
+  std::cout << "t12 - t11: "   << (t12 - t11) << "\n";
+  std::cout << "t13 - t12: "   << (t13 - t12) << "\n";
+  std::cout << "t14 - t13: "   << (t14 - t13) << "\n";
+  std::cout << "t15 - t14: "   << (t15 - t14) << "\n";
+  std::cout << "t16 - t15: "   << (t16 - t15) << "\n";
+  std::cout << "t17 - t16: "   << (t17 - t16) << "\n";
 
 }
 

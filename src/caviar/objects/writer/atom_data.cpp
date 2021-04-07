@@ -17,6 +17,7 @@
 #include "caviar/objects/writer/atom_data.h"
 #include "caviar/objects/atom_data.h"
 #include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/utility/time_utility.h"
 #include <ctime>
 #include <sys/stat.h> // used for mkdir()
 
@@ -33,7 +34,7 @@ Atom_data::Atom_data (CAVIAR *fptr) : Writer{fptr},
 {
   FC_OBJECT_INITIALIZE_INFO
   msd_initial_step = 0;
-  tStart1 = clock();
+  wallTimeXyzDump1 = get_wall_time();
 }
 
 Atom_data::~Atom_data () {

@@ -38,7 +38,10 @@ double Electrostatic_ewald_r::potential (const Vector<double> &r) {
   const int pos_size = pos.size();
 
   const auto pos_i = r;
-
+  
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:potential_r)
+#endif 
   for (unsigned nb_j = 0; nb_j < nb[nb_i].size(); ++nb_j) {
     const auto &nb_ij = nb[nb_i][nb_j];
 
@@ -85,8 +88,13 @@ double Electrostatic_ewald_r::potential (const int i) {
   const unsigned pos_size = pos.size();
 
   const auto &pos_i = atom_data -> owned.position [i];
-
-  for (auto j : nlist[i]) {
+  
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:potential_r)
+#endif   
+  for (unsigned int k = 0; k < nlist[i].size(); ++k) {
+      auto j = nlist[i][k];
+    
       double coef = 2.0; // ewald: 'coef=2' for owned in 'neighlist'. Not for binlist.
       bool is_ghost = j >= pos_size;
 

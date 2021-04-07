@@ -91,7 +91,9 @@ void Granular::calculate_acceleration () {
 
   auto cutoff_sq = cutoff * cutoff;
   const auto &nlist = neighborlist -> neighlist;
-
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp parallel for
+#endif
   for (unsigned i=0; i<nlist.size (); ++i) {
     const auto &pos_i = atom_data -> owned.position [i];
     const auto &vel_i = atom_data -> owned.velocity [i];

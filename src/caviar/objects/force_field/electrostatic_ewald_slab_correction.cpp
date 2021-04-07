@@ -108,6 +108,9 @@ void Electrostatic_ewald_slab_correction::calculate_acceleration () {
   const auto &pos = atom_data -> owned.position;
   const unsigned pos_size = pos.size();
 
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp parallel for
+#endif  
   for (unsigned i = 0; i < pos_size; ++i) {
     const auto pos_i = atom_data->owned.position [i];
     const auto type_i = atom_data -> owned.type [ i ];      

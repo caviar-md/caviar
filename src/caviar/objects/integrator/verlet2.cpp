@@ -62,10 +62,14 @@ void Verlet2::step_part_I () {
 
   const auto psize = pos.size();
 
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp parallel for
+#endif
   for (unsigned int i=0; i<psize; i++) { 
     pos [i] += vel [i] * dt + 0.5 * acc [i] * dt * dt;
 
   }
+
 
 }
 
@@ -75,6 +79,9 @@ void Verlet2::step_part_II () {
   auto &acc = atom_data -> owned.acceleration;
   auto &acc_old = atom_data -> owned.acceleration_old; // Move it to M_shake    
 
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp parallel for
+#endif
   for (unsigned int i=0; i<vel.size(); i++) {
     vel [i] += 0.5 * dt * (acc [i] + acc_old[i]);
   }

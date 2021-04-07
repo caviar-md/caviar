@@ -41,6 +41,9 @@ Vector<double> Electrostatic_ewald_r::field (const Vector<double> &r) {
   const auto &nb = neighborlist -> neigh_bin;
   const auto nb_i = neighborlist -> neigh_bin_index (r);
 
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:field)
+#endif     
   for (unsigned nb_j = 0; nb_j < nb[nb_i].size(); ++nb_j) {
     const auto &nb_ij = nb[nb_i][nb_j];
 
@@ -97,7 +100,11 @@ Vector<double> Electrostatic_ewald_r::field (const int i) {
 
   const auto pos_i = atom_data->owned.position [i];
 
-  for (auto j : nlist[i]) {
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:field)
+#endif 
+  for (unsigned int k = 0; k < nlist[i].size(); ++k) {
+      auto j = nlist[i][k];
       double coef = 2.0; // ewald: 'coef=2' for owned in 'neighlist'. Not for binlist.
       bool is_ghost = j >= pos_size;
       Vector<Real_t> pos_j;

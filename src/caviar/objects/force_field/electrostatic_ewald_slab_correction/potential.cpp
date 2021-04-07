@@ -37,6 +37,8 @@ double Electrostatic_ewald_slab_correction::potential (const Vector<double> &r) 
   const auto &type = atom_data->owned.type;
   const auto &charge = atom_data->owned.charge;
   const auto pos_size = pos.size();
+
+  // XXX no OpenMP parallel yet (due to boolean flag)
   for (unsigned int j = 0; j < pos_size; ++j) {
 
     const auto p = give_slab_local_coordinates(r-pos[j]); 

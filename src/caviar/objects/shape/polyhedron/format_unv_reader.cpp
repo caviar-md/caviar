@@ -143,7 +143,8 @@ void Format_unv_reader::import_udn_2412 (shape::polyhedron::Polyhedron &p_object
         //std::cout <<  dummy_[0] << " " << dummy_[1] << " " << dummy_[2]  << "\n";
 
         
-        int field[num_of_elements];
+        //int field[num_of_elements];
+        std::vector<int> field(num_of_elements);
         for (unsigned int i = 0; i < num_of_elements; ++i)
           ifs >> field[i];
 
@@ -152,7 +153,8 @@ void Format_unv_reader::import_udn_2412 (shape::polyhedron::Polyhedron &p_object
           //std::cout << "\n";
          
       } else {
-        int field[num_of_elements];
+        //int field[num_of_elements];
+        std::vector<int> field(num_of_elements);
         for (unsigned int i = 0; i < num_of_elements; ++i) {
           ifs >> field[i];
         }

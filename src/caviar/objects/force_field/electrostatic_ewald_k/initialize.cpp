@@ -79,6 +79,10 @@ void Electrostatic_ewald_k::initialize () {
 void Electrostatic_ewald_k::calculate_dipole_sum() {
     const auto &pos = atom_data -> owned.position;
     dipole_sum = Vector<double> {0, 0, 0};
+#ifdef CAVIAR_WITH_OPENMP  
+  //#pragma omp parallel for reduction (+:dipole_sum) //weird error in gavazang compiler but no error in my laptop
+    //  error: ‘caviar::objects::force_field::Electrostatic_ewald_k::dipole_sum’ is not a variable in clause ‘reduction’
+#endif    
     for (unsigned int j=0;j<pos.size();++j) {
       const auto type_j = atom_data -> owned.type [j] ;
       const auto charge_j = atom_data -> owned.charge [ type_j ];   
@@ -93,6 +97,9 @@ void Electrostatic_ewald_k::calculate_potential_k_coef_cmplx() {
   const auto pos_size = pos.size();
   potential_k_coef_cmplx.resize(n_k_vectors);
 
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for
+#endif  
   for (int k = 0; k < n_k_vectors; ++k) {
     const auto k_vector_k = k_vector[k];
 
@@ -160,8 +167,9 @@ void Electrostatic_ewald_k::make_k_vectors () {
   const auto alpha_sq = alpha*alpha;
   const auto four_alpha2_inv = 1.0/(4.0*alpha_sq);
 
+  //  XXX Do Not Parallel this part. The vectors have to be made in order
   for (auto kx = -kx_max; kx <=kx_max; ++kx) {
-  for (auto ky = -ky_max; ky <=ky_max; ++ky) {
+  for (auto ky = -ky_max; ky <=ky_max; ++ky) {   
   for (auto kz = -kz_max; kz <=kz_max; ++kz) {
 
     Vector<double> k_vec {FC_2PI*kx*lx_inv, FC_2PI*ky*ly_inv, FC_2PI*kz*lz_inv};

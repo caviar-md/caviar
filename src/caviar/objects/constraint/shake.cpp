@@ -124,14 +124,14 @@ void Shake::bond_fix () {
     auto Nc = atomic_bond_index_vector[i].size();
     if (Nc==0) continue;
 
-  	std::vector<double> l(Nc,0);
-	  std::vector<double> C(Nc,0);
+    std::vector<double> l(Nc,0);
+    std::vector<double> C(Nc,0);
 
-		double sum_err = 1.0;
+    double sum_err = 1.0;
 
-		while(sum_err>error_tolerance) {
-			
-		
+    while(sum_err>error_tolerance) {
+
+          
       for (unsigned int j=0; j<atomic_bond_vector[i].size(); j++) { 
         int k1 = atomic_bond_vector[i][j].index_1, k2 = atomic_bond_vector[i][j].index_2;
 
@@ -160,9 +160,8 @@ void Shake::bond_fix () {
         pos[k2] += fc * mass_inv_k2;
 
       }
-	
-		
 
+      
       sum_err = 0.0;
       for (unsigned int j=0; j<atomic_bond_vector[i].size(); j++) { 
         int k1 = atomic_bond_vector[i][j].index_1, k2 = atomic_bond_vector[i][j].index_2;
@@ -173,20 +172,19 @@ void Shake::bond_fix () {
 
         auto r2 = dr * dr;
 
-				C[j] = (r2 - d*d)/(2*d*d);
+        C[j] = (r2 - d*d)/(2*d*d);
 
-				sum_err += C[j];
-			}
+        sum_err += C[j];
+      }
       sum_err = abs( sum_err );
 
-		
-		}
-			
-	}
+          
+    }
+              
+  }
 }
-	
-		
-	
+
+
 
 } //constraint
 } //objects

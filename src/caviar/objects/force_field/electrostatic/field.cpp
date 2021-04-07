@@ -28,6 +28,9 @@ Vector<double> Electrostatic::field (const Vector<double> &r) {
 
   Vector<double> field_sum {0,0,0};
   const auto &pos = atom_data -> owned.position;  
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:field_sum)
+#endif
   for (unsigned int j=0;j<pos.size();++j) {
 
     const auto type_j = atom_data -> owned.type [j] ;
@@ -44,6 +47,9 @@ Vector<double> Electrostatic::field (const Vector<double> &r) {
 Vector<double> Electrostatic::field (const int i) {
   Vector<double> field_sum {0,0,0};
   const auto &pos = atom_data -> owned.position;  
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:field_sum)
+#endif  
   for (unsigned int j=0;j<pos.size();++j) {
     if (i==static_cast<int>(j)) continue;
     const auto type_j = atom_data -> owned.type [j] ;

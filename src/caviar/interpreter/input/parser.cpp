@@ -125,6 +125,7 @@ Token Parser::get_val_token () {
         default:
           error->all (FC_FILE_LINE_FUNC_LINE_COL, "Unexpected token");
       }
+      break;
     
     case Kind::minus:
       token = get_raw_token ();
@@ -146,7 +147,7 @@ Token Parser::get_val_token () {
       error->all (FC_FILE_LINE_FUNC_LINE_COL, "Unexpected token");
       return token; // WARNING      
   }
-
+  return token; // -Wreturn-type
 }
 
 
@@ -177,7 +178,7 @@ std::string Parser::get_command_identifier () {
       return "quit";
     default:
       error->all (FC_FILE_LINE_FUNC_LINE_COL, "Expected command identifier");
-      return ""; //WARNING
+      return ""; //-Wreturn-type
   }  
 */
   return "";
@@ -187,7 +188,7 @@ std::string Parser::get_identifier () {
   auto token = get_raw_token();
   if (token.kind == caviar::interpreter::Kind::identifier) return token.string_value;
   else error->all (FC_FILE_LINE_FUNC_LINE_COL, "Expected identifier");
-  return ""; //WARNING  
+  return ""; //-Wreturn-type  
 }
 
 bool Parser::compare_int () {
@@ -344,11 +345,12 @@ bool Parser::get_bool() {
         error->all (FC_FILE_LINE_FUNC_LINE_COL, tmp);
       } 
     }
+    break;
       
     default:
       error->all (FC_FILE_LINE_FUNC_LINE_COL, "Expected boolean number literal");
   }
-  return 0;//WARNING  
+  return 0;//-Wreturn-type  
 }
 
 // almost the same as above
@@ -369,7 +371,7 @@ bool Parser::get_literal_bool() {
       if (s == "on" || s == "ON" || s == "TRUE" || s == "true")
         return true;
       error->all (FC_FILE_LINE_FUNC_LINE_COL, "Expected 'true' or 'false' as a bool");
-
+      break;
       
     default:
       error->all (FC_FILE_LINE_FUNC_LINE_COL, "Expected boolean number literal");
@@ -414,7 +416,7 @@ int Parser::get_literal_int () {
   auto token = get_val_token();
   if (token.kind == caviar::interpreter::Kind::int_number) return token.int_value;
   else error->all (FC_FILE_LINE_FUNC_LINE_COL, "Expected integer literal");
-  return 0;//WARNING  
+  return 0;//-Wreturn-type  
 }
 
 Real_t Parser::get_literal_real () {
@@ -429,14 +431,14 @@ Real_t Parser::get_literal_real () {
     default:
       error->all (FC_FILE_LINE_FUNC_LINE_COL, "Expected real number literal");
   }
-  return 0;//WARNING  
+  return 0;//-Wreturn-type  
 }
 
 std::string Parser::get_literal_string () {
   auto token = get_val_token();
   if (token.kind == caviar::interpreter::Kind::string) return token.string_value;
   else error->all (FC_FILE_LINE_FUNC_LINE_COL, "Expected string literal");
-  return ""; //WARNING
+  return ""; //-Wreturn-type
 }
 
 double Parser::expression (bool get) {
@@ -454,7 +456,7 @@ double Parser::expression (bool get) {
         return left;
     }
   }
-  return 0;//WARNING  
+  return 0; //-Wreturn-type  
 }
 
 double Parser::term (bool get) {
@@ -470,6 +472,8 @@ double Parser::term (bool get) {
           break;
         }
         error->all (FC_FILE_LINE_FUNC_LINE_COL, "division by zero");
+        break;
+        
       case Kind::truediv:
         if (auto d = primary(true)) {
           left /= d;
@@ -477,12 +481,16 @@ double Parser::term (bool get) {
           break;
         }
         error->all (FC_FILE_LINE_FUNC_LINE_COL, "division by zero");
+        break;
+        
       case Kind::modulus:
         if (auto d = primary(true)) {
           left = std::fmod (left, d);
           break;
         }
         error->all (FC_FILE_LINE_FUNC_LINE_COL, "division by zero");
+        break;
+      
       default:
         return left;
     }
@@ -523,6 +531,7 @@ double Parser::primary (bool get) {
         error->all (FC_FILE_LINE_FUNC_LINE_COL, tmp);
       } 
     }
+    break; // -Wimplicit-fallthrough
     
     case Kind::minus:
       return -primary(true);

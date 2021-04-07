@@ -22,6 +22,13 @@
 #include <cmath>
 #include <iomanip>
 
+
+#ifdef CAVIAR_WITH_OPENMP  
+
+  #pragma omp declare reduction(+: std::complex<double>: \
+      omp_out += omp_in)
+#endif
+
 namespace caviar {
 namespace objects {
 namespace force_field {
@@ -36,6 +43,9 @@ Vector<double> Electrostatic_ewald_k::k_space_field (const int i) {
   std::complex<double> sum_ky (0.0, 0.0);
   std::complex<double> sum_kz (0.0, 0.0);
 
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:sum_kx,sum_ky,sum_kz)
+#endif
   for (int k = 0; k<n_k_vectors; ++k) {
 
     const auto sum_j_c = std::conj(potential_k_coef_cmplx[k]);
@@ -69,6 +79,9 @@ Vector<double> Electrostatic_ewald_k::k_space_field (const Vector<double> &r) {
   std::complex<double> sum_ky (0.0, 0.0);
   std::complex<double> sum_kz (0.0, 0.0);
 
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:sum_kx,sum_ky,sum_kz)
+#endif
   for (int k = 0; k<n_k_vectors; ++k) {
 
     const auto sum_j_c = std::conj(potential_k_coef_cmplx[k]);

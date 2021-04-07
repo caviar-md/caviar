@@ -48,6 +48,9 @@ double Electrostatic_spherical_boundary::potential (const Vector<double> &r) {
   */
 
   // image-particle interaction
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:potential_sum)
+#endif         
   for (unsigned int j=0;j<image.position.size();++j) {
     const auto charge_j = image.charge [ j ];      
     const auto dr = r - image.position[j]; 
@@ -82,6 +85,9 @@ double Electrostatic_spherical_boundary::potential (const int i) {
   */
 
   // image-particle interaction
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:potential_sum)
+#endif         
   for (unsigned int j=0;j<image.position.size();++j) {
     const auto charge_j = image.charge [ j ];      
     const auto dr = pos[i] - image.position[j]; 

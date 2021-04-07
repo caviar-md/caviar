@@ -77,6 +77,9 @@ void Electrostatic_ewald_r::calculate_acceleration () {
   const auto alpha_sq = alpha*alpha;
 
   const auto &nlist = neighborlist -> neighlist;
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp parallel for
+#endif  
   for (unsigned i = 0; i < pos_size; ++i) {
     const auto pos_i = atom_data->owned.position [i];
     const auto type_i = atom_data -> owned.type [ i ];      

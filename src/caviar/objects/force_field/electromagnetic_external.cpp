@@ -75,6 +75,9 @@ void Electromagnetic_external::calculate_acceleration () {
   const auto &pos = atom_data -> owned.position;  
   const auto &vel = atom_data -> owned.position;
 
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp parallel for
+#endif
   for (unsigned int i=0;i<pos.size();++i) {
     const auto type_i = atom_data -> owned.type [i] ;
     const auto mass_inv_i = atom_data -> owned.mass_inv [ type_i ];

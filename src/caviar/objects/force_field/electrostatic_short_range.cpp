@@ -91,6 +91,9 @@ void Electrostatic_short_range::calculate_acceleration () {
 
 
   const auto &nlist = neighborlist -> neighlist;
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp parallel for
+#endif
   for (unsigned int i=0; i<nlist.size (); ++i) {
     const auto type_i = atom_data -> owned.type [i] ;
     const auto mass_inv_i = atom_data -> owned.mass_inv [ type_i ];

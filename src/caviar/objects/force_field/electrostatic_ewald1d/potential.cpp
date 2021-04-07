@@ -53,6 +53,9 @@ double Electrostatic_ewald1d::potential_r (const Vector<double> &r) {
 
   const auto pos_i = r;
   const auto sigma_sq = sigma*sigma;
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:potential_value)
+#endif  
   for (unsigned nb_j = 0; nb_j < nb[nb_i].size(); ++nb_j) {
     const auto &nb_ij = nb[nb_i][nb_j];
 
@@ -102,7 +105,12 @@ double Electrostatic_ewald1d::potential_r (const int i) {
 
   const auto &pos_i = atom_data -> owned.position [i];
   const auto sigma_sq = sigma*sigma;
-  for (auto j : nlist[i]) {
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:potential_value)
+#endif  
+    //for (auto j : nlist[i]) {
+  for (unsigned int k=0; k < nlist[i].size(); ++k) {    
+      auto j = nlist[i][k];
       double coef = 2.0; // ewald: 'coef=2' for owned in 'neighlist'. Not for binlist.
       bool is_ghost = j >= pos_size;
 
@@ -139,6 +147,9 @@ double Electrostatic_ewald1d::potential_k (const Vector<double> &r) {
   const auto &pos = atom_data -> owned.position;
   const auto lattice_vec_size = lattice_vec.size();
   const auto sigma_sq = sigma*sigma;
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:potential_value)
+#endif    
   for (unsigned int j=0;j<pos.size();++j) {
     const auto type_j = atom_data -> owned.type [j] ;
     const auto charge_j = atom_data -> owned.charge [ type_j ];
@@ -161,6 +172,9 @@ double Electrostatic_ewald1d::potential_k (const int i) {
   const auto &pos = atom_data -> owned.position;
   const auto lattice_vec_size = lattice_vec.size();
   const auto sigma_sq = sigma*sigma;
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:potential_value)
+#endif    
   for (unsigned int j=0;j<pos.size();++j) {
     const auto type_j = atom_data -> owned.type [j] ;
     const auto charge_j = atom_data -> owned.charge [ type_j ];

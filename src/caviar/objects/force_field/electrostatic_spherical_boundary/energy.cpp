@@ -28,6 +28,9 @@ double Electrostatic_spherical_boundary::energy () {
   // XXX scheme using potential formula.
   const auto &pos = atom_data -> owned.position;    
   double energy_r = 0 ;
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:energy_r)
+#endif         
   for (unsigned int j=0;j<pos.size();++j) {
     const auto type_j = atom_data -> owned.type [j] ;  
     const auto charge_j = atom_data -> owned.charge [ type_j ];

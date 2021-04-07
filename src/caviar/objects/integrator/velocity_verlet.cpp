@@ -85,6 +85,9 @@ void Velocity_verlet::step_part_II () {
 
 
   case 1: {
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp parallel for
+#endif
     for (unsigned int i=0; i<psize; i++) { 
       // r(t+dt) = r(t) + v(t)*dt + 1/2 * a(t) * dt^2
       pos [i] += vel [i] * dt  +  0.5 * acc[i] * dt * dt;
@@ -98,7 +101,9 @@ void Velocity_verlet::step_part_II () {
 
   case 2:{
 
-
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp parallel for
+#endif
     for (unsigned int i=0; i<psize; i++) { 
       // r(t+dt) = r(t) + v(t)*dt + 1/2 * a(t) * dt^2
       pos [i] += vel [i] * dt  +  0.5 * acc[i] * dt * dt;
@@ -125,6 +130,9 @@ void Velocity_verlet::step_part_III () {
 
 
   case 1: {
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp parallel for
+#endif    
     for (unsigned int i=0; i<vel.size(); i++) {
       // v(t+dt) = v(t+dt/2) + (a(t+dt) ) * dt / 2
       vel [i] += 0.5 * dt * (acc [i]);
@@ -133,6 +141,9 @@ void Velocity_verlet::step_part_III () {
   break;
 
   case 2:{
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp parallel for
+#endif    
     for (unsigned int i=0; i<vel.size(); i++) {
       // v(t+dt) = v(t) + ( a(t+dt) + a(t) ) * dt / 2
       vel [i] += 0.5 * dt * (acc [i] + acc_old[i]);

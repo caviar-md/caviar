@@ -65,12 +65,16 @@ void Euler::step_part_II () {
   auto &acc = atom_data -> owned.acceleration;
 
   const auto psize = pos.size();
-
+  
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp parallel for
+#endif
   for (unsigned int i=0; i<psize; i++) { 
     pos [i] += vel [i] * dt + 0.5 * acc [i] * dt * dt; // r (t+dt) = r(t) + v(t)*dt + 1/2 * a(t) * dt^2
     vel [i] += acc [i] * dt;                           // v (t+dt) = v(t) + a(t)*dt;
 
   }
+
 
 }
 

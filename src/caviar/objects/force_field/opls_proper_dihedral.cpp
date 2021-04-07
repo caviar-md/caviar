@@ -88,7 +88,9 @@ void Opls_proper_dihedral::calculate_acceleration () {
   auto &atomic_properdihedral_index_vector = atom_data -> owned.atomic_properdihedral_index_vector;
   auto &atomic_properdihedral_vector = atom_data -> owned.atomic_properdihedral_vector;
 
-
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp parallel for
+#endif
   for (unsigned int i=0; i<atomic_properdihedral_index_vector.size(); i++) { 
 
     auto Nc = atomic_properdihedral_index_vector[i].size();

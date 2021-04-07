@@ -45,6 +45,9 @@ Vector<double> Electrostatic_spherical_boundary::field (const Vector<double> &r)
   */
 
   // image-particle interaction .
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:field_sum)
+#endif         
   for (unsigned int j=0;j<image.position.size();++j) {
     const auto charge_j = image.charge [j];      
     const auto dr = r - image.position[j]; 
@@ -77,6 +80,9 @@ Vector<double> Electrostatic_spherical_boundary::field (const int i) {
   */
 
   // image-particle interaction part.
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:field_sum)
+#endif         
   for (unsigned int j=0;j<image.position.size();++j) {
     const auto charge_j = image.charge [j];      
     const auto dr = pos[i] - image.position[j]; 

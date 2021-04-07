@@ -79,7 +79,10 @@ void Electrostatic_spherical_boundary::calculate_acceleration () {
  
   // force-field calculations
 
-  const auto &pos = atom_data -> owned.position;  
+  const auto &pos = atom_data -> owned.position;
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp parallel for
+#endif  
   for (unsigned int i=0;i<pos.size();++i) {
 
     const auto type_i = atom_data -> owned.type [i] ;

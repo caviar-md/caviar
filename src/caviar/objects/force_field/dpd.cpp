@@ -89,6 +89,9 @@ void Dpd::calculate_acceleration () {
   auto cutoff_sq = cutoff * cutoff;
   auto dt_sq_inv = 1.0 / std::sqrt(dt);
   const auto &nlist = neighborlist -> neighlist;
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp parallel for
+#endif
   for (unsigned int i=0; i<nlist.size (); ++i) {
     const auto &pos_i = atom_data -> owned.position [i];
     const auto &vel_i = atom_data -> owned.velocity [i];

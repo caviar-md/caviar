@@ -18,6 +18,10 @@
 
 #include <string>
 
+#ifdef CAVIAR_WITH_OPENMP
+#include <omp.h>
+#endif
+
 #include "caviar/interpreter/all.h"
 
 namespace caviar {
@@ -69,9 +73,12 @@ void CAVIAR::execute () {
   greeting += std::to_string (CAVIAR_MINOR_VERSION);
   greeting += ".";
   greeting += std::to_string (CAVIAR_PATCH_VERSION);
-    
+
   output->info(greeting);
-    
+  
+#ifdef CAVIAR_WITH_OPENMP
+  output->info("CAVIAR is started with OpenMP. Max number of threads is " + std::to_string(omp_get_max_threads()));
+#endif
   input->read ();
 }
 

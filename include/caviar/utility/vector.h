@@ -139,6 +139,30 @@ constexpr T norm (const Vector<T> &v1) {
   return  std::sqrt(v1.x*v1.x + v1.y*v1.y + v1.z*v1.z);
 }
 
+//https://software.intel.com/en-us/node/583439
+//page 180 of: http://www.openmp.org/mp-documents/OpenMP4.0.0.pdf
+#ifdef CAVIAR_WITH_OPENMP  
+
+  #pragma omp declare reduction(+: caviar::Vector<int64_t>: \
+      omp_out += omp_in)
+
+  #pragma omp declare reduction(+: caviar::Vector<uint64_t>: \
+      omp_out += omp_in)
+
+  #pragma omp declare reduction(+: caviar::Vector<int32_t>: \
+      omp_out += omp_in)
+
+  #pragma omp declare reduction(+: caviar::Vector<double>: \
+      omp_out += omp_in)
+
+  #pragma omp declare reduction(+: caviar::Vector<float>: \
+      omp_out += omp_in)
+
+  #pragma omp declare reduction(+: caviar::Vector<uint32_t>: \
+      omp_out += omp_in)
+
+
+#endif
 
 } // namespace caviar
 

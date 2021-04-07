@@ -23,6 +23,7 @@
 #include "caviar/objects/atom_data.h"
 #include "caviar/objects/neighborlist.h"
 #include "caviar/utility/macro_constants.h"
+#include "caviar/utility/time_utility.h"
 #include "caviar/objects/unique/grid_1d.h"
 
 #ifdef CAVIAR_WITH_DEALII
@@ -856,7 +857,7 @@ double Plt_dealii::calculate_induced_charge (int t, const int requested_id) {
   std::vector<double> induced_charge(boundary_id_max + 1, 0);  
 
 
-
+  // Not sure if this loop can or should be parallelized with openmp
   for (unsigned int f = 0; f < face_id.size(); ++f) {
 
     if (face_id[f]==0) continue;
@@ -1082,116 +1083,116 @@ void Plt_dealii::run_time_profile ()
     make_boundary_face_normals (); 
     output_boundary_id_areas ();
 
-    clock_t t1=0, t2=0, t3=0, t4=0, t5=0, t6=0;
+    double t1=0, t2=0, t3=0, t4=0, t5=0, t6=0;
     switch(solve_type) {
     case 0 :
-      t1 = clock();
+      t1 = get_wall_time();
       sg_setup_system ();
-      t2 = clock();
+      t2 = get_wall_time();
       sg_assemble_system ();
-      t3 = clock();
+      t3 = get_wall_time();
       sg_solve ();      
-      t4 = clock();
+      t4 = get_wall_time();
     break;
 
     case 1 :
-      t1 = clock();
+      t1 = get_wall_time();
       sa_setup_system ();
-      t2 = clock();
+      t2 = get_wall_time();
       sa_assemble_system ();
-      t3 = clock();
+      t3 = get_wall_time();
       sa_solve ();      
-      t4 = clock();
+      t4 = get_wall_time();
     break;
 
     case 2 :
-      t1 = clock();
+      t1 = get_wall_time();
       fg_setup_system ();
-      t2 = clock();
+      t2 = get_wall_time();
       fg_assemble_system ();
-      t3 = clock();
+      t3 = get_wall_time();
       fg_solve ();      
-      t4 = clock();
+      t4 = get_wall_time();
     break;
 
     case 3 :
-      t1 = clock();
+      t1 = get_wall_time();
       fa_setup_system ();
-      t2 = clock();
+      t2 = get_wall_time();
       fa_assemble_system ();
-      t3 = clock();
+      t3 = get_wall_time();
       fa_solve_time_profile ();      
-      t4 = clock();
+      t4 = get_wall_time();
     break;
 
     }
 
     output_vtk_solution (0); 
 
-    t5 = clock();
+    t5 = get_wall_time();
     if (output_induced_charge) 
       calculate_induced_charge (0);
-    t6 = clock();
+    t6 = get_wall_time();
 
-    std::cout << "setup: "    << (double)(t2 - t1)/CLOCKS_PER_SEC << "\n";
-    std::cout << "assemble: " << (double)(t3 - t2)/CLOCKS_PER_SEC << "\n";
-    std::cout << "solve: "    << (double)(t4 - t3)/CLOCKS_PER_SEC << "\n";
-    std::cout << "induced_charge: " << (double)(t6 - t5)/CLOCKS_PER_SEC << "\n";
+    std::cout << "setup: "    << (t2 - t1) << "\n";
+    std::cout << "assemble: " << (t3 - t2) << "\n";
+    std::cout << "solve: "    << (t4 - t3) << "\n";
+    std::cout << "induced_charge: " << (t6 - t5) << "\n";
 
 
   } else {
 
     ++time_step_count;
-      clock_t t1=0, t2=0, t3=0, t4=0, t5=0, t6=0;
+      double t1=0, t2=0, t3=0, t4=0, t5=0, t6=0;
     if (time_step_count%time_step_solve==0) {
 
-      t1 = clock();
-      t2 = clock();
+      t1 = get_wall_time();
+      t2 = get_wall_time();
       switch(solve_type) {
       case 0 :
-        t1 = clock();
+        t1 = get_wall_time();
         sg_setup_system ();
-        t2 = clock();
+        t2 = get_wall_time();
         sg_assemble_system ();
-        t3 = clock();
+        t3 = get_wall_time();
         sg_solve ();      
-        t4 = clock();
+        t4 = get_wall_time();
       break;
 
       case 1 :
-        t1 = clock();
+        t1 = get_wall_time();
         sa_setup_system ();
-        t2 = clock();
+        t2 = get_wall_time();
         sa_assemble_system ();
-        t3 = clock();
+        t3 = get_wall_time();
         sa_solve ();      
-        t4 = clock();
+        t4 = get_wall_time();
       break;
 
       case 2 :
         if (re_do_setup_assemble) {
-          t1 = clock();
+          t1 = get_wall_time();
           fg_setup_system ();
-          t2 = clock();
+          t2 = get_wall_time();
           fg_assemble_system ();
-          t3 = clock();
+          t3 = get_wall_time();
         }
-        t3 = clock();
+        t3 = get_wall_time();
         fg_solve ();      
-        t4 = clock();
+        t4 = get_wall_time();
       break;
 
       case 3 :
         if (re_do_setup_assemble) {
-          t1 = clock();
+          t1 = get_wall_time();
           fa_setup_system ();
-          t2 = clock();
+          t2 = get_wall_time();
           fa_assemble_system ();
-          t3 = clock();
+          t3 = get_wall_time();
         }
-        t3 = clock();
+        t3 = get_wall_time();
         fa_solve_time_profile ();      
-        t4 = clock();
+        t4 = get_wall_time();
       break;
       }
     }     
@@ -1199,15 +1200,15 @@ void Plt_dealii::run_time_profile ()
     if (output_vtk && time_step_count%time_step_output_vtk==0) 
       output_vtk_solution (time_step_count);
 
-    t5 = clock();
+    t5 = get_wall_time();
     if (output_induced_charge && time_step_count%time_step_induced_charge==0) 
       calculate_induced_charge (time_step_count);
-    t6 = clock();
+    t6 = get_wall_time();
 
-    std::cout << "setup: "    << (double)(t2 - t1)/CLOCKS_PER_SEC << "\n";
-    std::cout << "assemble: " << (double)(t3 - t2)/CLOCKS_PER_SEC << "\n";
-    std::cout << "solve: "    << (double)(t4 - t3)/CLOCKS_PER_SEC << "\n";
-    std::cout << "induced_charge: " << (double)(t6 - t5)/CLOCKS_PER_SEC << "\n";
+    std::cout << "setup: "    << (t2 - t1) << "\n";
+    std::cout << "assemble: " << (t3 - t2) << "\n";
+    std::cout << "solve: "    << (t4 - t3) << "\n";
+    std::cout << "induced_charge: " << (t6 - t5) << "\n";
   }
 
 }
@@ -1229,20 +1230,17 @@ void Plt_dealii::calculate_acceleration () {
   FC_OBJECT_VERIFY_SETTINGS
 
   if (time_profile) {
-    clock_t t1 = clock();
+    double t1 = get_wall_time();
 
     run_time_profile ();
-    clock_t t2 = clock();
+    double t2 = get_wall_time();
 
     calculate_all_particles_mesh_force_acc();
 
-    clock_t t3 = clock();
-
-    double t2_1= (double)(t2 - t1)/CLOCKS_PER_SEC;
-    double t3_2= (double)(t3 - t2)/CLOCKS_PER_SEC;
-
-    std::cout << "total_run      : " << t2_1 << "\n";
-    std::cout << "mesh_force_acc : " << t3_2 << "\n";
+    double t3 = get_wall_time();
+    
+    std::cout << "total_run      : " << (t2 - t1) << "\n";
+    std::cout << "mesh_force_acc : " << (t3 - t2) << "\n";
   } else {
     run ();
 
@@ -1345,6 +1343,9 @@ void Plt_dealii::calculate_acceleration () {
 
 void Plt_dealii::calculate_all_particles_mesh_force_acc() {
   const auto &pos = atom_data -> owned.position;    
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp parallel for
+#endif  
   for (unsigned int i=0;i<pos.size();++i) {
     const auto type_i = atom_data -> owned.type [i] ;
     const auto mass_inv_i = atom_data -> owned.mass_inv [ type_i ];

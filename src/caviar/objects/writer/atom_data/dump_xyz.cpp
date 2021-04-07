@@ -18,7 +18,7 @@
 #include "caviar/objects/atom_data.h"
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/interpreter/communicator.h"
-
+#include "caviar/utility/time_utility.h"
 
 namespace caviar {
 
@@ -200,13 +200,14 @@ void Atom_data::dump_xyz (int i) {
   ofs_xyz << std::flush;
   //}
 #endif
-
-  clock_t tStart2 = clock();
-  double dtstart= (double)(tStart2 - tStart1)/CLOCKS_PER_SEC;
+  
+  double wallTimeXyzDump2 = get_wall_time();      
+  
+  double dtstart= wallTimeXyzDump2 - wallTimeXyzDump1;
   std::string s = "writer::atom_data:: dump_xyz at step " + std::to_string(i) +
                 + " . Elapsed time since previous xyz dump: " + std::to_string(dtstart);
   output->info (s, 2);
-  tStart1 = tStart2;
+  wallTimeXyzDump1 = wallTimeXyzDump2;
 }
 
 

@@ -61,6 +61,9 @@ void Leap_frog2::step_part_I () {
 
   const auto psize = vel.size();
 
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp parallel for
+#endif
   for (unsigned int i=0; i<psize; i++) { 
     vel [i] += dt * acc[i];             // v (t + dt/2) = v  (t − dt/2) + dt * a  (t) // XXX
   }
@@ -75,7 +78,9 @@ void Leap_frog2::step_part_II () {
 
   const auto psize = pos.size();
 
-
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp parallel for
+#endif
   for (unsigned int i=0; i<psize; i++) { 
     pos [i] +=  dt * vel [i];         // r (t + dt) = r (t) + dt * v (t + dt/2)
   }

@@ -105,6 +105,9 @@ double Electrostatic_ewald_k::k_space_potential (const Vector<double> &r) {
 
   static std::complex<double> ii(0.0, 1.0);    
 
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:sum_k)
+#endif        
   for (int k = 0; k < n_k_vectors; ++k) {
     const auto k_vector_k = k_vector[k];
     const auto field_k_coef_k = field_k_coef[k];

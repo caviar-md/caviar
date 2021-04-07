@@ -17,7 +17,12 @@
 #include "caviar/objects/md_simulator/basic.h"
 #include "caviar/objects/integrator.h"
 #include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/utility/time_utility.h"
 #include "caviar/interpreter/communicator.h"
+#ifdef CAVIAR_WITH_OPENMP
+#include <omp.h>
+#endif
+
 #include <ctime>
 
 namespace caviar {
@@ -86,29 +91,42 @@ bool Basic::read (caviar::interpreter::Parser *parser) {
 
 bool Basic::run () {
   output->info ("MD started.");
+#ifdef CAVIAR_WITH_OPENMP
+  output->info("CAVIAR is started with OpenMP. Max number of threads is " + std::to_string(omp_get_max_threads()));
+#endif  
   verify_settings ();
-
-  t_start = clock();
+  
+  double wall0 = get_wall_time();
+  //double cpu0  = get_cpu_time();
+      
+  //t_start = clock();
 
   for (auto i = initial_step; i < final_step; ++i) 
     step(i);
 
+  double wall1 = get_wall_time();
+  //double cpu1  = get_cpu_time();
+      
   cleanup(); 
 
   output->info ("MD finished.");
 
-  t_end = clock();
-  double simulation_time =  ( (float)t_end - (float)t_start ) / CLOCKS_PER_SEC;
+  //t_end = clock();
+  //double simulation_time =  ( (float)t_end - (float)t_start ) / CLOCKS_PER_SEC;
 
 
-#if defined (CAVIAR_WITH_MPI) 
-  std::string s = "process " + std::to_string(comm->me) + " : ";
-#else
-  std::string s = "";
-#endif
-  s += "simulation time: " + std::to_string(simulation_time) + " (seconds)";
-  std::cout << s << std::endl;
-  //output->info (s, 3);
+  // #if defined (CAVIAR_WITH_MPI) 
+  //   std::string s = "MPI process number" + std::to_string(comm->me) + " : ";
+  // #else
+  //   std::string s = "";
+  // #endif  
+  
+  std::string s = "md_simulation run call:" ;
+  s += "Wall Time = " + std::to_string(wall1 - wall0) + " sec. , ";  
+  //s += "CPU Time  = " + std::to_string(cpu1  - cpu0) + " sec. ";                      
+   
+  output->info (s);
+  
   return true; //WARNING
 }
 

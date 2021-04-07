@@ -85,7 +85,8 @@ class Atom_data : public Writer {
 
   std::vector<caviar::Vector<double>> msd_initial_position; 
 
-  clock_t tStart1;
+  // records previous wallTime of XYZ dump.
+  double wallTimeXyzDump1;
 
 /////////
 

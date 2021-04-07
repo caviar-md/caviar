@@ -31,6 +31,9 @@ double Electrostatic_short_range::potential (const Vector<double> &r) {
   double potential_shifted_sum = 0 ;
 
   const auto &pos = atom_data -> owned.position;  
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:potential_shifted_sum)
+#endif       
   for (unsigned int j=0;j<pos.size();++j) {
 
     const auto type_j = atom_data -> owned.type [j] ;
@@ -51,6 +54,9 @@ double Electrostatic_short_range::potential (const int i) {
   double potential_shifted_sum = 0 ;
 
   const auto &pos = atom_data -> owned.position;  
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:potential_shifted_sum)
+#endif         
   for (unsigned int j=0;j<pos.size();++j) {
     if (i==static_cast<int>(j)) continue;
     const auto type_j = atom_data -> owned.type [j] ;

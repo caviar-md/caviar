@@ -77,7 +77,9 @@ void Spring_bond::calculate_acceleration () {
   auto &atomic_bond_index_vector = atom_data -> owned.atomic_bond_index_vector;
   auto &atomic_bond_vector = atom_data -> owned.atomic_bond_vector;
 
-
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp parallel for
+#endif
   for (unsigned int i=0; i<atomic_bond_index_vector.size(); i++) { 
 
     auto Nc = atomic_bond_index_vector[i].size();
