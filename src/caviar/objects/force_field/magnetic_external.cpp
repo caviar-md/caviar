@@ -76,6 +76,9 @@ void Magnetic_external::calculate_acceleration () {
 
 
     const auto a = amplitude * (cross_product(vel[i], direction)) * mass_inv_i;
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp critical
+#endif
     atom_data -> owned.acceleration [i] += a;
     
   }  

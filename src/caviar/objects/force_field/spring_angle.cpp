@@ -145,9 +145,14 @@ void Spring_angle::calculate_acceleration () {
         auto force_12 = torque*f12* p21_size_inv;
         auto force_32 = torque*f32* p23_size_inv;
 
-        atom_data -> owned.acceleration [k1] += force_12 * mass_inv[type[k1]];
-        atom_data -> owned.acceleration [k3] += force_32 * mass_inv[type[k3]];        
-        atom_data -> owned.acceleration [k2] -= (force_12 + force_32)* mass_inv[type[k2]];        
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp critical
+#endif   
+        {
+          atom_data -> owned.acceleration [k1] += force_12 * mass_inv[type[k1]];
+          atom_data -> owned.acceleration [k3] += force_32 * mass_inv[type[k3]];        
+          atom_data -> owned.acceleration [k2] -= (force_12 + force_32)* mass_inv[type[k2]];        
+        }
     }
 
   }

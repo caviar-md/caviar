@@ -148,14 +148,16 @@ void Electrostatic_ewald1d::calculate_acceleration () {
 
       atom_data -> owned.acceleration[i] += force * mass_inv_i;
       if (!is_ghost)
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp critical
+#endif        
         atom_data -> owned.acceleration[j] -= force * mass_inv_j;        
     
     }
 
 ///*
     // long range part
-    Vector<double> field {0,0,0};
-
+    Vector<double> field {0,0,0};  
     for (unsigned int j=0;j<pos.size();++j) {
       const auto type_j = atom_data -> owned.type [j] ;
       const auto charge_j = atom_data -> owned.charge [ type_j ];

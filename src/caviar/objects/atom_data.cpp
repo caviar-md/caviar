@@ -106,6 +106,9 @@ Vector<Real_t> Atom_data::owned_position_cm () {
   Vector<Real_t> p_cm {0.0,0.0,0.0};
   double mass_sum = 0.0;
   auto p_size = owned.position.size();
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:p_cm,mass_sum)
+#endif     
   for (unsigned int i = 0; i < p_size; ++i) {
     auto type_i = owned.type[i];
     auto mass_i = owned.mass[type_i];
@@ -120,6 +123,9 @@ Vector<Real_t> Atom_data::owned_velocity_cm () {
   Vector<Real_t> v_cm {0.0,0.0,0.0};
   double mass_sum = 0.0;
   auto p_size = owned.velocity.size();
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:v_cm,mass_sum)
+#endif     
   for (unsigned int i = 0; i < p_size; ++i) {
     auto type_i = owned.type[i];
     auto mass_i = owned.mass[type_i];

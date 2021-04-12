@@ -149,10 +149,15 @@ void Opls_proper_dihedral::calculate_acceleration () {
 
         auto force_3 = (o3_size_inv)*(o3_size_inv)*cross_product(tc , o3);
 
-        atom_data -> owned.acceleration [k1] += force_1 * mass_inv[type[k1]];
-        atom_data -> owned.acceleration [k4] += force_4 * mass_inv[type[k4]];    
-        atom_data -> owned.acceleration [k3] += force_3 * mass_inv[type[k3]];    
-        atom_data -> owned.acceleration [k2] -= (force_1 + force_3 + force_4)* mass_inv[type[k2]];        
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp critical
+#endif
+        {
+          atom_data -> owned.acceleration [k1] += force_1 * mass_inv[type[k1]];
+          atom_data -> owned.acceleration [k4] += force_4 * mass_inv[type[k4]];    
+          atom_data -> owned.acceleration [k3] += force_3 * mass_inv[type[k3]];    
+          atom_data -> owned.acceleration [k2] -= (force_1 + force_3 + force_4)* mass_inv[type[k2]];        
+        }
     }
 
   }

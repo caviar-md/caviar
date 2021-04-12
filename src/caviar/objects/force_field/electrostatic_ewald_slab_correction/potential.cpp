@@ -39,6 +39,9 @@ double Electrostatic_ewald_slab_correction::potential (const Vector<double> &r) 
   const auto pos_size = pos.size();
 
   // XXX no OpenMP parallel yet (due to boolean flag)
+#ifdef CAVIAR_WITH_OPENMP  
+  //#pragma omp parallel for reduction (+:sum_p)
+#endif   
   for (unsigned int j = 0; j < pos_size; ++j) {
 
     const auto p = give_slab_local_coordinates(r-pos[j]); 

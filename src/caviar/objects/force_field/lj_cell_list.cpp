@@ -84,49 +84,52 @@ void Lj_cell_list::calculate_acceleration () {
     const auto nb_i = neighborlist -> neigh_bin_index (pos_i);
 
     for (unsigned nb_j = 0; nb_j < nb[nb_i].size(); ++nb_j) {
-    const auto &nb_ij = nb[nb_i][nb_j];
+      const auto &nb_ij = nb[nb_i][nb_j];
 
-    for (unsigned nb_k = 0; nb_k < binlist [nb_ij.x] [nb_ij.y] [nb_ij.z].size(); ++nb_k) {
+      for (unsigned nb_k = 0; nb_k < binlist [nb_ij.x] [nb_ij.y] [nb_ij.z].size(); ++nb_k) {
 
-      unsigned j = binlist[nb_ij.x] [nb_ij.y] [nb_ij.z][nb_k];
+        unsigned j = binlist[nb_ij.x] [nb_ij.y] [nb_ij.z][nb_k];
 
-      bool is_ghost = j >= pos_size;
-      Vector<Real_t> pos_j;
-      Real_t type_j, mass_inv_j;
-      if (is_ghost) {
-        j -= pos_size;
-        pos_j = atom_data->ghost.position [j];
-        type_j = atom_data->ghost.type [j];
-      } else {
-        pos_j = atom_data->owned.position [j];
-        type_j = atom_data->owned.type [j];
-        if (!(i<j)) continue; // XXX CELL_LIST additional condition XXX//
-      }
-      mass_inv_j = atom_data->owned.mass_inv [ type_j ];
-    
-      auto dr = pos_j - pos_i; 
-      auto dr_sq = dr*dr;
-      if (dr_sq > cutoff_sq) continue;
-      const auto eps_ij = epsilon [type_i] [type_j];
-      const auto sigma_ij =  sigma [type_i] [type_j];
+        bool is_ghost = j >= pos_size;
+        Vector<Real_t> pos_j;
+        Real_t type_j, mass_inv_j;
+        if (is_ghost) {
+          j -= pos_size;
+          pos_j = atom_data->ghost.position [j];
+          type_j = atom_data->ghost.type [j];
+        } else {
+          pos_j = atom_data->owned.position [j];
+          type_j = atom_data->owned.type [j];
+          if (!(i<j)) continue; // XXX CELL_LIST additional condition XXX//
+        }
+        mass_inv_j = atom_data->owned.mass_inv [ type_j ];
+      
+        auto dr = pos_j - pos_i; 
+        auto dr_sq = dr*dr;
+        if (dr_sq > cutoff_sq) continue;
+        const auto eps_ij = epsilon [type_i] [type_j];
+        const auto sigma_ij =  sigma [type_i] [type_j];
 
-      auto r_c_sq_inv = 1/(cutoff*cutoff); // XXX revise this after cutoff_list_activated addition
-      auto rho_c_sq_inv = sigma_ij*sigma_ij*r_c_sq_inv;
-      auto rho_c_6_inv = rho_c_sq_inv*rho_c_sq_inv*rho_c_sq_inv;
-      auto rho_c_12_inv = rho_c_6_inv*rho_c_6_inv;
-      auto dr_sq_inv = 1/dr_sq;
-      auto rho_sq_inv = sigma_ij*sigma_ij*dr_sq_inv;
-      auto rho_6_inv = rho_sq_inv*rho_sq_inv*rho_sq_inv;
-      auto rho_12_inv = rho_6_inv*rho_6_inv;
+        auto r_c_sq_inv = 1/(cutoff*cutoff); // XXX revise this after cutoff_list_activated addition
+        auto rho_c_sq_inv = sigma_ij*sigma_ij*r_c_sq_inv;
+        auto rho_c_6_inv = rho_c_sq_inv*rho_c_sq_inv*rho_c_sq_inv;
+        auto rho_c_12_inv = rho_c_6_inv*rho_c_6_inv;
+        auto dr_sq_inv = 1/dr_sq;
+        auto rho_sq_inv = sigma_ij*sigma_ij*dr_sq_inv;
+        auto rho_6_inv = rho_sq_inv*rho_sq_inv*rho_sq_inv;
+        auto rho_12_inv = rho_6_inv*rho_6_inv;
 
-      auto force = 4*eps_ij*(-12*rho_12_inv*dr_sq_inv + 6*rho_6_inv*dr_sq_inv + 
-                             +12*rho_c_12_inv*r_c_sq_inv - 6*rho_c_6_inv*r_c_sq_inv   ) * dr;
+        auto force = 4*eps_ij*(-12*rho_12_inv*dr_sq_inv + 6*rho_6_inv*dr_sq_inv + 
+                              +12*rho_c_12_inv*r_c_sq_inv - 6*rho_c_6_inv*r_c_sq_inv   ) * dr;
 
-      atom_data -> owned.acceleration [i] += force * mass_inv_i;
-      if (!is_ghost) 
-        atom_data -> owned.acceleration [j] -= force * mass_inv_j;   
+        atom_data -> owned.acceleration [i] += force * mass_inv_i;
+        if (!is_ghost) 
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp critical
+#endif
+          atom_data -> owned.acceleration [j] -= force * mass_inv_j;   
 
-    }       
+      }       
     }
   }
 

@@ -115,14 +115,19 @@ void Fene_bond::calculate_acceleration () {
         const auto dr_vec = dr / dr_norm;
         auto cutoff_sq = repulsive_cutoff * repulsive_cutoff;
         auto c = cutoff_sq;
-	double res;
-	if (dr_sq <= c) res=1.0;
-	if (dr_sq > c) res=0.0;
-	const auto repulsive_term = 24*(epsilon_coef[btype]/dr_norm)*(2*pow(sigma_coef[btype]/dr_norm,12)-pow(sigma_coef[btype]/dr_norm,6))*dr_vec;
+        double res;
+        if (dr_sq <= c) res=1.0;
+        if (dr_sq > c) res=0.0;
+        const auto repulsive_term = 24*(epsilon_coef[btype]/dr_norm)*(2*pow(sigma_coef[btype]/dr_norm,12)-pow(sigma_coef[btype]/dr_norm,6))*dr_vec;
         const auto force = -elastic_coef[btype]*(dr_norm/(1-(dr_norm/R[btype])*(dr_norm/R[btype])))*dr_vec + repulsive_term*res - (dissip_coef[btype] * dv);
 //std::cout << force << std::endl;
-        atom_data -> owned.acceleration [k1] -= force * mass_inv[type[k1]];
-        atom_data -> owned.acceleration [k2] += force * mass_inv[type[k2]];        
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp critical
+#endif
+        {
+          atom_data -> owned.acceleration [k1] -= force * mass_inv[type[k1]];
+          atom_data -> owned.acceleration [k2] += force * mass_inv[type[k2]];        
+        }
     }
 
   }

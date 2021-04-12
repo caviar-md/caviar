@@ -169,6 +169,9 @@ void Granular::calculate_acceleration () {
 
         if (!is_ghost)
           if (mass_inv_j > 0)
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp critical
+#endif            
             atom_data -> owned.acceleration [j] -= force * mass_inv_j;
 
 

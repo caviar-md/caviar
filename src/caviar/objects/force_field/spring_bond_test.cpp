@@ -102,8 +102,13 @@ void Spring_bond_test::calculate_acceleration () {
         const auto dr_vec = dr / dr_norm;
         const auto force = -elastic_coef[btype]*(dr_norm - d)*dr_vec -(dissip_coef[btype] * dv);
 //std::cout << force << std::endl;
-        atom_data -> owned.acceleration [k1] -= force * mass_inv[type[k1]];
-        atom_data -> owned.acceleration [k2] += force * mass_inv[type[k2]];        
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp critical
+#endif   
+        {
+          atom_data -> owned.acceleration [k1] -= force * mass_inv[type[k1]];
+          atom_data -> owned.acceleration [k2] += force * mass_inv[type[k2]];        
+        }
     }
 
   }

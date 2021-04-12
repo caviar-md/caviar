@@ -118,6 +118,9 @@ void Electrostatic_ewald_r::calculate_acceleration () {
 
       atom_data -> owned.acceleration[i] += force * mass_inv_i;
       if (!is_ghost)
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp critical
+#endif          
         atom_data -> owned.acceleration[j] -= force * mass_inv_j;        
     
     }

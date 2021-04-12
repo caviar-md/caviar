@@ -84,7 +84,11 @@ void Gravity::calculate_acceleration () {
         const auto dr_sq = dr*dr;
         const auto dr_norm = std::sqrt(dr_sq);      
         const auto force = k_gravity * mass_inv_i * mass_inv_j * dr / (dr_sq*dr_norm);
+        
         atom_data -> owned.acceleration [i] += force * mass_inv_i;
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp critical
+#endif        
         atom_data -> owned.acceleration [j] -= force * mass_inv_j;
 
       }

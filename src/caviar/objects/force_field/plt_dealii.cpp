@@ -858,6 +858,9 @@ double Plt_dealii::calculate_induced_charge (int t, const int requested_id) {
 
 
   // Not sure if this loop can or should be parallelized with openmp
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp parallel for
+#endif   
   for (unsigned int f = 0; f < face_id.size(); ++f) {
 
     if (face_id[f]==0) continue;
@@ -904,11 +907,14 @@ double Plt_dealii::calculate_induced_charge (int t, const int requested_id) {
 
     auto local_q = field_normal * face_area[f]; // this is the charge value times 4*PI*K_el
     
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp atomic
+#endif       
     induced_charge[face_id[f]] += local_q;
     //std::cout << face_normal[f]<< " " << local_q << " " << face_area[f] << "\n";
   }
 
-  auto four_pi_k_electrostatic_inv = 1.0/(4.0*3.14159265*k_electrostatic);
+  static auto four_pi_k_electrostatic_inv = 1.0/(4.0*3.14159265*k_electrostatic);
 
   for (auto&& i : induced_charge) {
     i *= four_pi_k_electrostatic_inv; // correcting to the absolute charge value

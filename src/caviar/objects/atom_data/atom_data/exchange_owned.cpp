@@ -305,8 +305,12 @@ bool Atom_data::exchange_owned () {
 
 
 #else
+
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for
+#endif   
   for (unsigned int i = 0 ; i < num_local_atoms; ++i) {
-    if (bc.x == 1) { //TODO While should be changed to if in the future
+    if (bc.x == 1) { 
       while (pos[i].x < x_llow) {pos[i].x += x_width; owned.msd_domain_cross[i].x -= 1 ;}
       while (pos[i].x > x_lupp) {pos[i].x -= x_width; owned.msd_domain_cross[i].x += 1 ;}
     }

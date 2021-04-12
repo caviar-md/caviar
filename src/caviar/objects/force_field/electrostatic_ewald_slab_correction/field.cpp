@@ -36,7 +36,10 @@ Vector<double> Electrostatic_ewald_slab_correction::field (const Vector<double> 
   int ip = 0;
   bool do_iy_loop_once = true;
 
-// XXX no OpenMP parallel yet (due to boolean flag)  
+// XXX no OpenMP parallel yet (due to boolean flag)
+#ifdef CAVIAR_WITH_OPENMP  
+  //#pragma omp parallel for reduction (+:f_local)
+#endif    
   for (auto ix = 0; ix <kx_max; ++ix) {
 
 

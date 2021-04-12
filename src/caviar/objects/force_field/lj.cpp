@@ -297,9 +297,29 @@ void Lj::calculate_acceleration () {
                              +12*rho_c_12_inv*r_c_sq_inv - 6*rho_c_6_inv*r_c_sq_inv   ) * dr;
 
       atom_data -> owned.acceleration [i] += force * mass_inv_i;
-      if (!is_ghost) 
-        atom_data -> owned.acceleration [j] -= force * mass_inv_j;   
-
+      if (!is_ghost) {
+        
+        /*
+#ifdef CAVIAR_WITH_OPENMP        
+        auto fm_val = force * mass_inv_j;   
+#pragma omp atomic 
+          atom_data -> owned.acceleration [j].x -= fm_val.x;
+#pragma omp atomic
+          atom_data -> owned.acceleration [j].y -= fm_val.y;
+#pragma omp atomic 
+          atom_data -> owned.acceleration [j].z -= fm_val.z;        
+#else
+          atom_data -> owned.acceleration [j] -= fm_val;
+#endif                        
+        */
+        
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp critical
+#endif   
+            atom_data -> owned.acceleration [j] -= force * mass_inv_j;
+          
+          
+      }
        
     }
   }

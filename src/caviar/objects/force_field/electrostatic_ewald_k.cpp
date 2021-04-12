@@ -140,13 +140,13 @@ void Electrostatic_ewald_k::calculate_acceleration () {
   const auto &pos = atom_data -> owned.position;    
   static std::complex<double> ii(0.0, 1.0);    
 
-#ifdef CAVIAR_WITH_OPENMP
-  #pragma omp parallel for
-#endif
+
   for (int k = 0; k<n_k_vectors; ++k) {
 
     const auto sum_j_c = std::conj(potential_k_coef_cmplx[k]);
-
+#ifdef CAVIAR_WITH_OPENMP
+  #pragma omp parallel for
+#endif
     for (unsigned int i=0;i<pos.size();++i) {
       const auto type_i = atom_data -> owned.type [i] ;
       const auto charge_i = atom_data -> owned.charge [ type_i ];    
