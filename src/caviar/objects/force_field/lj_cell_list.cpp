@@ -123,11 +123,18 @@ void Lj_cell_list::calculate_acceleration () {
                               +12*rho_c_12_inv*r_c_sq_inv - 6*rho_c_6_inv*r_c_sq_inv   ) * dr;
 
         atom_data -> owned.acceleration [i] += force * mass_inv_i;
-        if (!is_ghost) 
-#ifdef CAVIAR_WITH_OPENMP
-  #pragma omp critical
-#endif
+        if (!is_ghost) {
+#ifdef CAVIAR_WITH_OPENMP        
+#pragma omp atomic 
+          atom_data -> owned.acceleration [j].x -= force.x * mass_inv_j;   
+#pragma omp atomic
+          atom_data -> owned.acceleration [j].y -= force.y * mass_inv_j;   
+#pragma omp atomic 
+          atom_data -> owned.acceleration [j].z -= force.z * mass_inv_j;   
+#else
           atom_data -> owned.acceleration [j] -= force * mass_inv_j;   
+#endif     
+        }
 
       }       
     }

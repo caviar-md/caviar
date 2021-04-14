@@ -120,14 +120,29 @@ void Fene_bond::calculate_acceleration () {
         if (dr_sq > c) res=0.0;
         const auto repulsive_term = 24*(epsilon_coef[btype]/dr_norm)*(2*pow(sigma_coef[btype]/dr_norm,12)-pow(sigma_coef[btype]/dr_norm,6))*dr_vec;
         const auto force = -elastic_coef[btype]*(dr_norm/(1-(dr_norm/R[btype])*(dr_norm/R[btype])))*dr_vec + repulsive_term*res - (dissip_coef[btype] * dv);
-//std::cout << force << std::endl;
-#ifdef CAVIAR_WITH_OPENMP
-  #pragma omp critical
-#endif
-        {
-          atom_data -> owned.acceleration [k1] -= force * mass_inv[type[k1]];
-          atom_data -> owned.acceleration [k2] += force * mass_inv[type[k2]];        
-        }
+
+
+#ifdef CAVIAR_WITH_OPENMP        
+#pragma omp atomic           
+        atom_data -> owned.acceleration [k1].x -= force.z * mass_inv[type[k1]];
+#pragma omp atomic           
+        atom_data -> owned.acceleration [k1].y -= force.y * mass_inv[type[k1]];
+#pragma omp atomic           
+        atom_data -> owned.acceleration [k1].z -= force.z * mass_inv[type[k1]];
+#pragma omp atomic           
+        atom_data -> owned.acceleration [k2].x += force.x * mass_inv[type[k2]];
+#pragma omp atomic           
+        atom_data -> owned.acceleration [k2].y += force.y * mass_inv[type[k2]];
+#pragma omp atomic           
+        atom_data -> owned.acceleration [k2].z += force.z * mass_inv[type[k2]];
+#else                          
+        atom_data -> owned.acceleration [k1] -= force * mass_inv[type[k1]];
+        atom_data -> owned.acceleration [k2] += force * mass_inv[type[k2]];                        
+#endif                        
+        
+
+        
+        
     }
 
   }

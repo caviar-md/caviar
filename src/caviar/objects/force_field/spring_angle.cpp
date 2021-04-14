@@ -145,14 +145,32 @@ void Spring_angle::calculate_acceleration () {
         auto force_12 = torque*f12* p21_size_inv;
         auto force_32 = torque*f32* p23_size_inv;
 
-#ifdef CAVIAR_WITH_OPENMP
-  #pragma omp critical
-#endif   
-        {
-          atom_data -> owned.acceleration [k1] += force_12 * mass_inv[type[k1]];
-          atom_data -> owned.acceleration [k3] += force_32 * mass_inv[type[k3]];        
-          atom_data -> owned.acceleration [k2] -= (force_12 + force_32)* mass_inv[type[k2]];        
-        }
+#ifdef CAVIAR_WITH_OPENMP        
+#pragma omp atomic           
+        atom_data -> owned.acceleration [k1].x += force_12.x * mass_inv[type[k1]];
+#pragma omp atomic           
+        atom_data -> owned.acceleration [k1].y += force_12.y * mass_inv[type[k1]];
+#pragma omp atomic           
+        atom_data -> owned.acceleration [k1].z += force_12.z * mass_inv[type[k1]];
+#pragma omp atomic           
+        atom_data -> owned.acceleration [k3].x += force_32.x * mass_inv[type[k3]];        
+#pragma omp atomic           
+        atom_data -> owned.acceleration [k3].y += force_32.y * mass_inv[type[k3]];        
+#pragma omp atomic           
+        atom_data -> owned.acceleration [k3].z += force_32.z * mass_inv[type[k3]];        
+#pragma omp atomic           
+        atom_data -> owned.acceleration [k2].x -= (force_12.x + force_32.x)* mass_inv[type[k2]];        
+#pragma omp atomic           
+        atom_data -> owned.acceleration [k2].y -= (force_12.y + force_32.y)* mass_inv[type[k2]];        
+#pragma omp atomic           
+        atom_data -> owned.acceleration [k2].z -= (force_12.z + force_32.z)* mass_inv[type[k2]];                
+#else                          
+        atom_data -> owned.acceleration [k1] += force_12 * mass_inv[type[k1]];
+        atom_data -> owned.acceleration [k3] += force_32 * mass_inv[type[k3]];        
+        atom_data -> owned.acceleration [k2] -= (force_12 + force_32)* mass_inv[type[k2]];        
+#endif                     
+        
+
     }
 
   }

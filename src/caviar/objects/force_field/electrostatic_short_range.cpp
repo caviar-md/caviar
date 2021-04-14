@@ -125,11 +125,20 @@ void Electrostatic_short_range::calculate_acceleration () {
       const auto force_shifted = force * (1.0 - std::pow(dr_norm/cutoff, beta+1));
       atom_data -> owned.acceleration [i] -= force_shifted * mass_inv_i;
 
-      if (!is_ghost)
-#ifdef CAVIAR_WITH_OPENMP
-  #pragma omp critical
-#endif        
-        atom_data -> owned.acceleration [j] += force_shifted * mass_inv_j;
+      if (!is_ghost) {
+#ifdef CAVIAR_WITH_OPENMP        
+#pragma omp atomic 
+          atom_data -> owned.acceleration [j].x -= force_shifted.x * mass_inv_j;   
+#pragma omp atomic
+          atom_data -> owned.acceleration [j].y -= force_shifted.y * mass_inv_j;   
+#pragma omp atomic 
+          atom_data -> owned.acceleration [j].z -= force_shifted.z * mass_inv_j;   
+#else
+        atom_data -> owned.acceleration [j] -= force_shifted * mass_inv_j;   
+#endif                        
+        
+
+        }
 
       }
     

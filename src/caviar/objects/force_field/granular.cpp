@@ -167,14 +167,22 @@ void Granular::calculate_acceleration () {
         if (mass_inv_i > 0)
           atom_data -> owned.acceleration [i] += force * mass_inv_i;
 
-        if (!is_ghost)
-          if (mass_inv_j > 0)
-#ifdef CAVIAR_WITH_OPENMP
-  #pragma omp critical
-#endif            
-            atom_data -> owned.acceleration [j] -= force * mass_inv_j;
-
-
+        if (!is_ghost) {
+          if (mass_inv_j > 0) {
+#ifdef CAVIAR_WITH_OPENMP        
+#pragma omp atomic 
+          atom_data -> owned.acceleration [j].x -= force.x * mass_inv_j;   
+#pragma omp atomic
+          atom_data -> owned.acceleration [j].y -= force.y * mass_inv_j;   
+#pragma omp atomic 
+          atom_data -> owned.acceleration [j].z -= force.z * mass_inv_j;  
+#else
+          atom_data -> owned.acceleration [j] -= force * mass_inv_j;
+#endif    
+            
+           // atom_data -> owned.acceleration [j] -= force * mass_inv_j;
+          }
+        }
 
       }       
 

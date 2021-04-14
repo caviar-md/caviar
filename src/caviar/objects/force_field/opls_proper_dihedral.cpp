@@ -149,14 +149,39 @@ void Opls_proper_dihedral::calculate_acceleration () {
 
         auto force_3 = (o3_size_inv)*(o3_size_inv)*cross_product(tc , o3);
 
-#ifdef CAVIAR_WITH_OPENMP
-  #pragma omp critical
-#endif
         {
+#ifdef CAVIAR_WITH_OPENMP        
+#pragma omp atomic 
+          atom_data -> owned.acceleration [k1].x += force_1.x * mass_inv[type[k1]];
+#pragma omp atomic 
+          atom_data -> owned.acceleration [k1].y += force_1.y * mass_inv[type[k1]];
+#pragma omp atomic 
+          atom_data -> owned.acceleration [k1].z += force_1.z * mass_inv[type[k1]];
+#pragma omp atomic 
+          atom_data -> owned.acceleration [k4].x += force_4.x * mass_inv[type[k4]];    
+#pragma omp atomic 
+          atom_data -> owned.acceleration [k4].y += force_4.y * mass_inv[type[k4]];    
+#pragma omp atomic 
+          atom_data -> owned.acceleration [k4].z += force_4.z * mass_inv[type[k4]];    
+#pragma omp atomic 
+          atom_data -> owned.acceleration [k3].x += force_3.x * mass_inv[type[k3]];    
+#pragma omp atomic 
+          atom_data -> owned.acceleration [k3].y += force_3.y * mass_inv[type[k3]];    
+#pragma omp atomic 
+          atom_data -> owned.acceleration [k3].z += force_3.z * mass_inv[type[k3]];    
+#pragma omp atomic 
+          atom_data -> owned.acceleration [k2].x -= (force_1.x + force_3.x + force_4.x)* mass_inv[type[k2]];        
+#pragma omp atomic 
+          atom_data -> owned.acceleration [k2].y -= (force_1.y + force_3.y + force_4.y)* mass_inv[type[k2]];        
+#pragma omp atomic           
+          atom_data -> owned.acceleration [k2].z -= (force_1.z + force_3.z + force_4.z)* mass_inv[type[k2]];        
+#else
           atom_data -> owned.acceleration [k1] += force_1 * mass_inv[type[k1]];
           atom_data -> owned.acceleration [k4] += force_4 * mass_inv[type[k4]];    
           atom_data -> owned.acceleration [k3] += force_3 * mass_inv[type[k3]];    
           atom_data -> owned.acceleration [k2] -= (force_1 + force_3 + force_4)* mass_inv[type[k2]];        
+#endif               
+          
         }
     }
 
