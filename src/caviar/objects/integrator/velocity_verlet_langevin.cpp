@@ -127,26 +127,28 @@ void Velocity_verlet_langevin::step_part_I () {
   auto &vel = atom_data -> owned.velocity;
   auto &acc = atom_data -> owned.acceleration;
 
+
   const auto psize = vel.size();
   
   eta_x.resize(psize);
   eta_y.resize(psize);
   eta_z.resize(psize);
 
+  for (unsigned int i=0; i<psize; i++) { 
+    eta_x[i] = rnd_ndist_x (rnd_generator_x);      
+    eta_y[i] = rnd_ndist_y (rnd_generator_y); 
+    eta_z[i] = rnd_ndist_z (rnd_generator_z);    
+  }
+  
 #ifdef CAVIAR_WITH_OPENMP
   #pragma omp parallel for
 #endif
-  for (unsigned int i=0; i<psize; i++) { 
-
-
-    eta_x[i] = rnd_ndist_x (rnd_generator_x);      
-    eta_y[i] = rnd_ndist_y (rnd_generator_y); 
-    eta_z[i] = rnd_ndist_z (rnd_generator_z);
+  for (unsigned int i=0; i<psize; i++) {
     
     const auto eta = Vector<double>{eta_x[i], eta_y[i], eta_z[i]};
 
     vel [i] += 0.5 * acc [i] * dt + b * eta;
-
+    //std::cout << "acc " << acc[i] << ",vel " << vel[i] << "\n";
 
   }
 }
@@ -160,7 +162,9 @@ void Velocity_verlet_langevin::step_part_II () {
   #pragma omp parallel for
 #endif
   for (unsigned int i=0; i<psize; i++) { 
+    //std::cout << "b " << pos[i] ;
     pos [i] += vel [i] * c;
+    //std::cout << "a " << pos[i] << "\n";
   }
 }
 
@@ -175,6 +179,7 @@ void Velocity_verlet_langevin::step_part_III () {
   for (unsigned int i=0; i<vel.size(); i++) {
     const auto eta = Vector<double>{eta_x[i], eta_y[i], eta_z[i]};
     vel [i] = a * vel [i] + b * eta + 0.5 * acc [i] * dt;
+    //std::cout << "2 acc " << acc[i] << ",vel " << vel[i] << "\n";
 
   }
 }

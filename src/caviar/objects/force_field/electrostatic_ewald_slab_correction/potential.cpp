@@ -40,7 +40,7 @@ double Electrostatic_ewald_slab_correction::potential (const Vector<double> &r) 
 
   // XXX no OpenMP parallel yet (due to boolean flag)
 #ifdef CAVIAR_WITH_OPENMP  
-  //#pragma omp parallel for reduction (+:sum_p)
+  #pragma omp parallel for reduction (+:sum_p)
 #endif   
   for (unsigned int j = 0; j < pos_size; ++j) {
 

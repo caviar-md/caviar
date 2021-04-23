@@ -165,6 +165,8 @@ void Electrostatic_ewald1d::calculate_acceleration () {
 
 ///*
     // long range part
+
+
     Vector<double> field {0,0,0};  
     for (unsigned int j=0;j<pos.size();++j) {
       const auto type_j = atom_data -> owned.type [j] ;
@@ -178,12 +180,13 @@ void Electrostatic_ewald1d::calculate_acceleration () {
         const auto d2 = 1.0/std::sqrt(dr_sq+sigma_sq);
         sum += dr*(d2*d2*d2);
       }
-
       field += charge_j  * sum;
     }
 
     auto force =  k_electrostatic * charge_i * field;
+
     atom_data -> owned.acceleration[i] += force * mass_inv_i;
+    
 //*/
   }
 

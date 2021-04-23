@@ -301,9 +301,9 @@ void Geometry_lj::calculate_acceleration () {
                    * 4*eps_ij*(-12*rho_12_inv*dr_sq_inv + 6*rho_6_inv*dr_sq_inv + 
                    +12*rho_c_12_inv*r_c_sq_inv - 6*rho_c_6_inv*r_c_sq_inv   ) * dr;
         //std::cout << "f : " << force << "\n";
-        acc[i] += force * mass_inv_i;
+        
 
-       
+        acc[i] += force * mass_inv_i;
 
       }
     }

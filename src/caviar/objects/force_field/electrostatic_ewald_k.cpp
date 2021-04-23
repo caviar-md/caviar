@@ -160,8 +160,8 @@ void Electrostatic_ewald_k::calculate_acceleration () {
       if (dipole) {
         force += charge_i * dipole_field_vector;
       }
-      
-      atom_data -> owned.acceleration[i] += force * mass_inv_i;
+
+      atom_data -> owned.acceleration[i] += force * mass_inv_i;     
 
     }
   }

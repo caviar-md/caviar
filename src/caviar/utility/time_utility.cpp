@@ -106,7 +106,7 @@ void example_for_openmp (){
 
       //  Perform some computation.
       double sum = 0;
-  #pragma omp parallel for reduction(+ : sum)
+    //#pragma omp parallel for reduction(+ : sum)
       for (long long i = 1; i < 100000; i++){
           sum += log((double)i);
       }

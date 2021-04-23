@@ -310,19 +310,6 @@ void Lj::calculate_acceleration () {
 #else
           atom_data -> owned.acceleration [j] -= force * mass_inv_j;   
 #endif                        
-
-
-/*    // Wrong answer sometimes
-#ifdef CAVIAR_WITH_OPENMP
-  #pragma omp critical
-  {
-        atom_data -> owned.acceleration [j] -= force * mass_inv_j;
-  }
-#else
-        atom_data -> owned.acceleration [j] -= force * mass_inv_j;
-#endif   
-//*/
-
           
       }
        

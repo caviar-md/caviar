@@ -30,7 +30,7 @@ double Electrostatic_short_range::energy () {
   const auto &pos = atom_data -> owned.position;    
   double energy_r = 0 ;
 #ifdef CAVIAR_WITH_OPENMP  
-  #pragma omp parallel for reduction (+:energy_r)
+ #pragma omp parallel for reduction (+:energy_r)
 #endif       
   for (unsigned int j=0;j<pos.size();++j) {
     const auto type_j = atom_data -> owned.type [j] ;  

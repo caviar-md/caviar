@@ -104,7 +104,7 @@ void Spring_bond_test::calculate_acceleration () {
 
 #ifdef CAVIAR_WITH_OPENMP        
 #pragma omp atomic           
-        atom_data -> owned.acceleration [k1].x -= force.z * mass_inv[type[k1]];
+        atom_data -> owned.acceleration [k1].x -= force.x * mass_inv[type[k1]];
 #pragma omp atomic           
         atom_data -> owned.acceleration [k1].y -= force.y * mass_inv[type[k1]];
 #pragma omp atomic           

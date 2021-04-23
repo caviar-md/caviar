@@ -858,9 +858,11 @@ double Plt_dealii::calculate_induced_charge (int t, const int requested_id) {
 
 
   // Not sure if this loop can or should be parallelized with openmp
-#ifdef CAVIAR_WITH_OPENMP
-  #pragma omp parallel for
-#endif   
+  // Since there's field() calculation inside, it already has an intrinsic opm
+  // parallelized loop inside
+//#ifdef CAVIAR_WITH_OPENMP
+  //#pragma omp parallel for
+//#endif   
   for (unsigned int f = 0; f < face_id.size(); ++f) {
 
     if (face_id[f]==0) continue;
@@ -885,7 +887,7 @@ double Plt_dealii::calculate_induced_charge (int t, const int requested_id) {
 
     caviar::Vector<double> f_si {0.0, 0.0, 0.0};
     for (auto &&f_custom : force_field_custom)
-      f_si += f_custom -> field(pos_j);
+      f_si += f_custom -> field(pos_j); // OPEN MP IS INSIDE 
 
 
 
@@ -907,9 +909,9 @@ double Plt_dealii::calculate_induced_charge (int t, const int requested_id) {
 
     auto local_q = field_normal * face_area[f]; // this is the charge value times 4*PI*K_el
     
-#ifdef CAVIAR_WITH_OPENMP
-  #pragma omp atomic
-#endif       
+//#ifdef CAVIAR_WITH_OPENMP
+  //#pragma omp atomic
+//#endif       
     induced_charge[face_id[f]] += local_q;
     //std::cout << face_normal[f]<< " " << local_q << " " << face_area[f] << "\n";
   }
@@ -1370,6 +1372,7 @@ void Plt_dealii::calculate_all_particles_mesh_force_acc() {
     }
     auto frc = field * charge_i;
     auto force = caviar::Vector<double> {frc[0], frc[1], frc[2]};
+
     atom_data -> owned.acceleration [i] += force * mass_inv_i;    
   }
 }
