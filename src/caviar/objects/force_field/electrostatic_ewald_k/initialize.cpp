@@ -80,7 +80,7 @@ void Electrostatic_ewald_k::calculate_dipole_sum() {
     const auto &pos = atom_data -> owned.position;
     dipole_sum = Vector<double> {0, 0, 0};
 #ifdef CAVIAR_WITH_OPENMP  
-  #pragma omp parallel for reduction (+:dipole_sum) //weird error in gavazang compiler but no error in my laptop
+  //#pragma omp parallel for reduction (+:dipole_sum) //weird error in gavazang compiler but no error in my laptop
     //  error: ‘caviar::objects::force_field::Electrostatic_ewald_k::dipole_sum’ is not a variable in clause ‘reduction’
 #endif    
     for (unsigned int j=0;j<pos.size();++j) {
