@@ -137,7 +137,9 @@ endif (CAVIAR_WITH_DEALII)
 #TARGET_LINK_LIBRARIES(caviarmd CAVIAR_lib ${Bpython}) #boostpython
 
 #TARGET_LINK_LIBRARIES(caviarmd CAVIAR_lib boost_python36) #boostpython
-TARGET_LINK_LIBRARIES(caviarmd ${Boost_LIBRARIES} ${PYTHON_LIBRARIES})
+
+TARGET_LINK_LIBRARIES(caviarmd ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} )
+
 set_target_properties(caviarmd PROPERTIES PREFIX "") #boostpython # WHAT is this line?
 
 

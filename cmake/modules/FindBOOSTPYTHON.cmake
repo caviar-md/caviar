@@ -27,42 +27,37 @@ LIST(REMOVE_ITEM CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
 # ======= find boost python =======
 # =========================================
 
-find_package( Boost COMPONENTS python3 REQUIRED )
-
-if( Boost_FOUND )
-        MESSAGE("********************************FOUND BOOST***********************")
-endif( Boost_FOUND )           
-
-
-# NOT TESTED
 set (Boost_VERBOSE ON)
 
-FIND_PACKAGE(boost_python REQUIRED
-  HINTS ${BOOST_PYTHON_DIR} $ENV{BOOST_PYTHON_DIR}
+find_package( Boost COMPONENTS python3 REQUIRED 
+  #HINTS ${BOOST_PYTHON_DIR} $ENV{BOOST_PYTHON_DIR}
 )
 
-IF(NOT ${boost_python_FOUND})
-  MESSAGE(FATAL_ERROR "\n"
+if( Boost_FOUND )
+  MESSAGE(STATUS "FOUND BOOST")
+else()
+MESSAGE(FATAL_ERROR "\n"
     "Could not locate a (sufficiently recent) version of boost python\n\n"
     "You may want to either pass a flag -DBOOST_PYTHON_DIR=/path/to/boost_python to cmake\n"
     "or set an environment variable \"BOOST_PYTHON_DIR\" that contains this path."
     )    
-endif()
+endif( Boost_FOUND )           
 
-message(STATUS "Boost_LIBRARY_DIRS :${Boost_LIBRARY_DIRS}")
-message(STATUS "Boost_INCLUDE_DIRS : ${Boost_INCLUDE_DIRS}")
 
-message(STATUS "BOOST_LIBRARIES : ${BOOST_LIBRARIES}")
-message(STATUS "boost_python_DIR: ${boost_python_DIR}")
+# NOT TESTED
 
-message(STATUS "boost_python: ${boost_python}")
 
-message(STATUS boost_python_FOUND : ${boost_python_FOUND})
-message(STATUS boost_python_INCLUDE_DIRS : ${boost_python_INCLUDE_DIRS})
-message(STATUS boost_python_INCLUDES : ${boost_python_INCLUDES})
-message(STATUS boost_python_LIBRARIES : ${boost_python_LIBRARIES})
-message(STATUS boost_python_LIBS : ${boost_python_LIBS})
-message(STATUS boost_python_DEFINITIONS : ${boost_python_DEFINITIONS})
+#FIND_PACKAGE(boost_python REQUIRED
+#  HINTS ${BOOST_PYTHON_DIR} $ENV{BOOST_PYTHON_DIR}
+#)
+
+#IF(NOT ${boost_python_FOUND})
+#  MESSAGE(FATAL_ERROR "\n"
+#    "Could not locate a (sufficiently recent) version of boost python\n\n"
+#    "You may want to either pass a flag -DBOOST_PYTHON_DIR=/path/to/boost_python to cmake\n"
+#    "or set an environment variable \"BOOST_PYTHON_DIR\" that contains this path."
+#    )    
+#endif()
 
 #find_library(Bpython libboost_python36.so PATH /usr/local/lib) #boostpython
 
