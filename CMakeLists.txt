@@ -128,21 +128,23 @@ endif()
 # ===========================================
 
 
-ADD_LIBRARY(caviarmd SHARED src/caviar/CAVIAR.cpp) #boostpython
+set(CMAKE_SHARED_MODULE_PREFIX "")
+
+ADD_LIBRARY(caviarmd MODULE src/caviar/CAVIAR.cpp) #boostpython
 
 if (CAVIAR_WITH_DEALII)
   DEAL_II_SETUP_TARGET(caviarmd)  
 endif (CAVIAR_WITH_DEALII)
 
-#TARGET_LINK_LIBRARIES(caviarmd CAVIAR_lib ${Bpython}) #boostpython
 
-#TARGET_LINK_LIBRARIES(caviarmd CAVIAR_lib boost_python36) #boostpython
-
-TARGET_LINK_LIBRARIES(caviarmd ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} )
-
+TARGET_LINK_LIBRARIES(caviarmd CAVIAR_lib ${Boost_LIBRARIES} ${PYTHON_LIBRARIES} )
+         
 set_target_properties(caviarmd PROPERTIES PREFIX "") #boostpython # WHAT is this line?
 
 
+
+
+  
 # ========================================
 # ========================================
 # ========================================
