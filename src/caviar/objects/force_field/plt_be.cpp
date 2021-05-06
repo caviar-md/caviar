@@ -20,10 +20,12 @@
 #include "caviar/objects/atom_data.h"
 #include "caviar/objects/neighborlist.h"
 #include "caviar/utility/macro_constants.h"
+#include "caviar/objects/domain.h"
 
 #if defined(CAVIAR_WITH_EIGEN)
- #include <Eigen/Dense>
- #include <Eigen/Cholesky>
+// #include <Eigen/Dense>
+//#include "Eigen/Dense"
+#include <Eigen/Cholesky>
 #endif
 
 #include "caviar/objects/shape/polyhedron.h"
@@ -75,7 +77,8 @@ Plt_be::Plt_be(CAVIAR * fptr) :
 */
 { 
   FC_OBJECT_INITIALIZE_INFO
-initialized = false;
+  initialized = false;
+  num_of_replicas = Vector<int> {0, 0, 0};
 /*
   ignore_point_out_of_mesh = false;
   time_profile = false;
@@ -107,6 +110,18 @@ Plt_be::~Plt_be() {}
 //==================================================
 //==================================================
 //==================================================
+
+void Plt_be::calculate_box_center() {
+  box_length = domain->upper_global - domain->lower_global;
+
+  box_center.clear();
+  
+  for (int i = -num_of_replicas.x; i <= num_of_replicas.x ; ++i) {
+  for (int j = -num_of_replicas.y; j <= num_of_replicas.y ; ++j) {
+  for (int k = -num_of_replicas.z; k <= num_of_replicas.z ; ++k) {
+    box_center.push_back(Vector<double> {i*box_length.x, i*box_length.y, i*box_length.z});
+  }}}
+}
 
 void Plt_be::jacobian_calculation() {
 
@@ -262,7 +277,7 @@ void Plt_be::make_inverse_matrix() {
 
     for (unsigned int i = 0; i < face_size; ++i) {
       for (unsigned int j = 0; j < face_size; ++j) {
-            a(i,j) = -D1[i][j]; // XXX It may needs a transpose (converted from Fortran).
+        a(i,j) = -D1[i][j]; // XXX It may needs a transpose (converted from Fortran).
       }
     }
 /*
@@ -277,11 +292,10 @@ void Plt_be::make_inverse_matrix() {
     b[m] = sum ;
   }
 */
-  Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic>a_inverse;
+  //Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic>a_inverse;
   a_inverse.resize(face_size,face_size);
- // vec_zz.clear();
- // vec_zz.resize(face_size, 0);
   a_inverse = a.llt().solve(Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic>::Identity(face_size,face_size));
+  
 /*
     auto a_inv = a.inverse(); // XXX FIX: does a.inverse() makes 'a' inverse or makes a copy and gives a pointer?
 
@@ -371,7 +385,7 @@ void Plt_be::make_vec_zz() {
     b[m] = sum ;
   }
 
-  vec_zz.clear();
+  //vec_zz.clear();
   vec_zz.resize(face_size);
 
  /* // We implement ' vec_zz = a.inverse() * b ' as follows.
@@ -396,24 +410,27 @@ double Plt_be::potential_value(const Vector<double> v) {
   std::vector <double> D_2 (face_size,0);
 
 
+  
+
   for (unsigned int i = 0; i < face_size; ++i)   {
 
     D_1[i]=0.0;
     D_2[i]=0.0;
+    for (auto && b_vec : box_center) {
 
-    for(int g=0; g < 16; g++) {
-      double ut = tg[g]*(1-vg[g]);
+      for(int g=0; g < 16; g++) {
+        double ut = tg[g]*(1-vg[g]);
 
-      Vector<double> vk = pc1[i]*ut + pc2[i]*vg[g] + pc3[i];
+        Vector<double> vk = pc1[i]*ut + pc2[i]*vg[g] + pc3[i] + b_vec; // b_vec is for periodic boundary condition
 
-      double fs3d  = -0.25 / (FC_PI*std::sqrt((vk-v)*(vk-v)));
+        double fs3d  = -0.25 / (FC_PI*std::sqrt((vk-v)*(vk-v)));
 
-      double dfs3d = 0.25 * ((vk-v)*normal[i]) / (FC_PI*std::pow((vk-v)*(vk-v), 1.5));
+        double dfs3d = 0.25 * ((vk-v)*normal[i]) / (FC_PI*std::pow((vk-v)*(vk-v), 1.5));
 
-      D_1[i] += fs3d * (1.0-vg[g]);
-      D_2[i] += dfs3d * (1.0-vg[g]);
+        D_1[i] += fs3d * (1.0-vg[g]);
+        D_2[i] += dfs3d * (1.0-vg[g]);
+      }
     }
-
     D_1[i] *= (jac[i])/16.0;
     D_2[i] *= (jac[i])/16.0;
   }
@@ -468,9 +485,9 @@ void Plt_be::start_spherical_test(){
 
 void Plt_be::write_spherical_test(){
 ///*
+  calculate_box_center(); // used for periodic boundary condition
   set_potential_on_boundary();
   make_vec_zz(); 
-  //make_inverse_matrix();
 
   double c = 0.0;  //calculate_induced_charge (0, 1);
 
@@ -480,10 +497,15 @@ void Plt_be::write_spherical_test(){
 
   const double delta = 1e-6; //XXX
 
-  const Vector<double> r   {pos[0].x, pos[0].y, pos[0].z};
-  const Vector<double> rx  {pos[0].x+delta, pos[0].y, pos[0].z};
-  const Vector<double> ry  {pos[0].x, pos[0].y+delta, pos[0].z};
-  const Vector<double> rz  {pos[0].x, pos[0].y, pos[0].z+delta};
+  //const 
+  Vector<double> r   {pos[0].x, pos[0].y, pos[0].z};
+  //const 
+  Vector<double> rx  {pos[0].x+delta, pos[0].y, pos[0].z};
+  //const 
+  Vector<double> ry  {pos[0].x, pos[0].y+delta, pos[0].z};
+  //const 
+  Vector<double> rz  {pos[0].x, pos[0].y, pos[0].z+delta};
+  //double boxlength = box_length;
 
   double p_sm = 0.0;
   Vector<double> f_sm_d {0,0,0};
@@ -494,6 +516,10 @@ void Plt_be::write_spherical_test(){
 
   try {
 
+    rx.x+=box_length.x;ry.x+=box_length.x;rz.x+=box_length.x;r.x+=box_length.x;
+    rx.y+=box_length.y;ry.y+=box_length.y;rz.y+=box_length.y;r.y+=box_length.y;
+    rx.z+=box_length.z;ry.z+=box_length.z;rz.z+=box_length.z;r.z+=box_length.z; 
+    
     p_sm_x = potential_value (rx);
     p_sm_y = potential_value (ry);
     p_sm_z = potential_value (rz);
@@ -539,9 +565,10 @@ void Plt_be::write_spherical_test(){
                              << p_err      << " "
                              << f_err      << "\n";
 
+ 
   }
 //*/
-}*/
+}//*/
 
 //==================================================
 //==================================================
@@ -597,7 +624,10 @@ bool Plt_be::read (caviar::interpreter::Parser *parser) {
         error->all (FC_FILE_LINE_FUNC_PARSE, "#boundary_id=0 is reserved for free boundary");
       }
 
-    } /* else if (string_cmp(t,"make_grid")) {
+    } else if (string_cmp(t,"num_of_replicas") ) {
+      GET_OR_CHOOSE_A_INT_3D_VECTOR(num_of_replicas,"","")
+    }
+    /* else if (string_cmp(t,"make_grid")) {
       //make_grid();
         error->all (FC_FILE_LINE_FUNC_PARSE, "not implemented");
     } else if (string_cmp(t,"num_quadrature_points")) {    

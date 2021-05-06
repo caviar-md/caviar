@@ -22,7 +22,7 @@
 if (CAVIAR_WITH_EIGEN)
   set (CAVIAR_WITH_EIGEN ON)
 
-  find_package(EIGEN)
+  find_package(Eigen3)
 
   add_definitions (-DCAVIAR_WITH_EIGEN)
 

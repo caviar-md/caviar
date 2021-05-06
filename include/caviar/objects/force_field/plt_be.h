@@ -19,6 +19,9 @@
 
 #include "caviar/objects/force_field.h"
 
+#if defined(CAVIAR_WITH_EIGEN)
+  #include <Eigen/Cholesky>
+#endif
 
 namespace caviar {
 namespace objects {
@@ -63,7 +66,9 @@ public:
 
   void jacobian_calculation();
   void make_inverse_matrix(); //  makes 'm_inverse' of 'D1'. Once per geometry.
-
+#if defined(CAVIAR_WITH_EIGEN)
+  Eigen::Matrix<double,Eigen::Dynamic,Eigen::Dynamic>a_inverse;
+#endif
   void set_potential_on_boundary();
   void make_vec_zz(); // makes 'vec_zz' from 'D2', 'm_inverse', and 'phi_boundary'.
 
@@ -89,6 +94,10 @@ public:
   std::vector<std::vector<double>> m_inverse;
   bool initialized;
 
+  Vector<double> box_length; //
+  std::vector <Vector<double>> box_center; // used for periodic boundary condition. The center of simulation box replicas.
+  void calculate_box_center();
+  Vector<int> num_of_replicas;
 /*
 
   void run ();
