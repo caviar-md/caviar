@@ -40,7 +40,7 @@ a_O position 0 .5794 0
 
 unique atom a_Na
 a_Na type 2
-a_Na position 0 0 1
+a_Na position 0 0 0
 
 unique atom a_Cl
 a_Cl type 3
@@ -80,10 +80,8 @@ unique molecule_group mg_nacl
 
 domain box dom
 dom xmin -20 xmax 20
-#dom ymin -9.72 ymax 9.72
-#dom zmin -9.72 zmax 9.72
-dom ymin -12 ymax 12
-dom zmin -12 zmax 12
+dom ymin -9.72 ymax 9.72
+dom zmin -9.72 zmax 9.72
 dom boundary_condition 1 1 1
  
 dom generate
@@ -214,16 +212,16 @@ adata add_type_mass   3 35.453     # Cl
 adata add_type_charge 3 -1        # Cl
 adata add_type_radius 3 1.81      #Cl
 
-#adata add_molecule_group mg
+adata add_molecule_group mg
 adata add_molecule_group mg_nacl
 adata add_random_velocity
 
 #===== Neighborlist
 
-#neighborlist verlet_list neigh_cell 
-#neigh_cell set_atom_data adata
-#neigh_cell cutoff 9.5
-#neigh_cell dt global_dt
+#neighborlist verlet_list neigh_verlet 
+#neigh_verlet set_atom_data adata
+#neigh_verlet cutoff 9.5
+#neigh_verlet dt global_dt
 
 
 #===== Neighborlist
@@ -301,66 +299,49 @@ f_plt set_atom_data adata
 f_plt add_force_field f_ewr
 f_plt add_force_field f_ewk
 
-f_plt add_unv_mesh "Mesh_1.unv"
+f_plt add_unv_mesh "Box.unv"
 f_plt read_unv_mesh 
 
 f_plt boundary_id_value 1 0 
-f_plt boundary_id_value 2 100 
+f_plt boundary_id_value 2 5000 
 
 f_plt output_induced_charge 500
 
 f_plt set_solve_type faster_adaptive
 
-f_plt refine_global 2
+f_plt refine_global 1
 
 #===== force_field
 
-force_field geometry_slab f_geslab_xp 
-f_geslab_xp asymmetric
-f_geslab_xp slab_direction +1
-f_geslab_xp slab_position -9.72
-f_geslab_xp young_modulus 500000
-f_geslab_xp dissip_coef 100
-f_geslab_xp set_atom_data adata
-f_geslab_xp radius 0 3.166
-f_geslab_xp radius 1 1.0
-f_geslab_xp radius 2 2.35
-f_geslab_xp radius 3 4.40
+force_field geometry_slab f_geslab_x1
+
+f_geslab_x1 symmetric
+f_geslab_x1 slab_direction 1
+f_geslab_x1 slab_position -9.72
+f_geslab_x1 young_modulus 500000
+f_geslab_x1 dissip_coef 100
+f_geslab_x1 set_atom_data adata
+f_geslab_x1 radius 0 3.166
+f_geslab_x1 radius 1 1.0
+f_geslab_x1 radius 2 2.35
+f_geslab_x1 radius 3 4.40
+
 
 #===== force_field
 
-force_field geometry_slab f_geslab_xm 
-f_geslab_xm asymmetric
-f_geslab_xm slab_direction -1
-f_geslab_xm slab_position 9.72
-f_geslab_xm young_modulus 500000
-f_geslab_xm dissip_coef 100
-f_geslab_xm set_atom_data adata
-f_geslab_xm radius 0 3.166
-f_geslab_xm radius 1 1.0
-f_geslab_xm radius 2 2.35
-f_geslab_xm radius 3 4.40
+force_field geometry_slab f_geslab_x2
 
-#===== force_field
+f_geslab_x2 symmetric
+f_geslab_x2 slab_direction 1
+f_geslab_x2 slab_position 9.72
+f_geslab_x2 young_modulus 500000
+f_geslab_x2 dissip_coef 100
+f_geslab_x2 set_atom_data adata
+f_geslab_x2 radius 0 3.166
+f_geslab_x2 radius 1 1.0
+f_geslab_x2 radius 2 2.35
+f_geslab_x2 radius 3 4.40
 
-force_field geometry_slab f_geslab_x0
-
-f_geslab_x0 symmetric
-f_geslab_x0 slab_direction 1
-f_geslab_x0 slab_position 0
-f_geslab_x0 young_modulus 500000
-f_geslab_x0 dissip_coef 100
-f_geslab_x0 set_atom_data adata
-f_geslab_x0 radius 0 3.166
-f_geslab_x0 radius 1 1.0
-f_geslab_x0 radius 2 2.35
-f_geslab_x0 radius 3 4.40
-
-#===== force_field
-force_field gravity_external f_gr
-f_gr amplitude 1.0
-f_gr direction 1 0 0 
-f_gr set_atom_data adata
 
 
 #==== Constraint
@@ -385,11 +366,12 @@ c_nve kbt 2.494387628 # 300K / 120.27
 c_nve set_atom_data adata
 
 
+
 #====== writer 
 writer atom_data w1
 w1 set_atom_data adata
 w1 set_domain dom
-w1 xyz_step 100
+w1 xyz_step 10000
 w1 energy_step 500
 w1 msd_step 500
 w1 output_velocity
@@ -404,14 +386,11 @@ sim integrator_type leap_frog
 sim set_atom_data adata
 
 sim add_force_field f_lj
-#sim add_force_field f_ewr 
-#sim add_force_field f_ewk
-#sim add_force_field f_plt
-#sim add_force_field f_gelj
-sim add_force_field f_geslab_xm
-sim add_force_field f_geslab_xp
-sim add_force_field f_geslab_x0
-sim add_force_field f_gr
+sim add_force_field f_ewr 
+sim add_force_field f_ewk
+sim add_force_field f_plt
+sim add_force_field f_geslab_x1
+sim add_force_field f_geslab_x2
 
 sim add_neighborlist neigh_cell
 
@@ -423,7 +402,7 @@ sim add_constraint c_nve
 
 
 sim initial_step 0
-sim final_step 100000000
+sim final_step 5
 sim dt global_dt
 sim run
 

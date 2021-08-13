@@ -299,7 +299,7 @@ f_plt set_atom_data adata
 f_plt add_force_field f_ewr
 f_plt add_force_field f_ewk
 
-f_plt add_unv_mesh "Mesh_1.unv"
+f_plt add_unv_mesh "Box.unv"
 f_plt read_unv_mesh 
 
 f_plt boundary_id_value 1 0 
