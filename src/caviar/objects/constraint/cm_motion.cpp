@@ -27,6 +27,7 @@ Cm_motion::Cm_motion (CAVIAR *fptr) : Constraint{fptr} {
   FC_OBJECT_INITIALIZE_INFO
   velocity_steps = -1;
   angular_momentum_steps = -1;
+  constraint_type = Constraint_t::Cm_motion;
 }
 
 Cm_motion::~Cm_motion () {}
@@ -54,7 +55,7 @@ bool Cm_motion::read (caviar::interpreter::Parser *parser) {
 }
 
 
-void Cm_motion::step_part_I (int steps) {
+void Cm_motion::apply_on_velocity (int64_t steps) { // step I
   // XXX there may be two cases. 1: all of particles, 2: a particle of a type
 
   FC_NULLPTR_CHECK(atom_data)
@@ -64,13 +65,6 @@ void Cm_motion::step_part_I (int steps) {
 
 }
 
-void Cm_motion::step_part_II (int) {
-
-}
-
-void Cm_motion::step_part_III (int) {
-
-}
 
 void Cm_motion::fix_velocity () {
   auto v_cm = atom_data->owned_velocity_cm();

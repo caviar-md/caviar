@@ -33,6 +33,7 @@ Rattle::Rattle (CAVIAR *fptr) : Constraint{fptr},
     initialized{false}
  {
   FC_OBJECT_INITIALIZE_INFO
+  constraint_type = Constraint_t::Rattle;
 }
 
 Rattle::~Rattle () {}
@@ -72,26 +73,12 @@ void Rattle::verify_settings () {
 }
 
 
-void Rattle::step_part_I (int) {
-
-}
-
-void Rattle::step_part_II (int) {
-
-}
-
-void Rattle::step_part_III (int) {
+void Rattle::apply_on_position (int64_t) {
   FC_OBJECT_VERIFY_SETTINGS
 
-  bond_fix(); // XXX P.I
 
-}
-
-
-void Rattle::bond_fix() {
-
-	auto &vel = atom_data -> owned.velocity;
-	auto &pos = atom_data -> owned.position;
+  auto &vel = atom_data -> owned.velocity;
+  auto &pos = atom_data -> owned.position;
   auto &pos_old = atom_data -> owned.position_old;
 
   auto &atomic_bond_index_vector = atom_data -> owned.atomic_bond_index_vector;
@@ -103,11 +90,11 @@ void Rattle::bond_fix() {
     if (Nc==0) continue;
     std::vector<double> C(Nc,0);
 
-		double sum_err = 1.0;
+    double sum_err = 1.0;
 
-		while(sum_err>error_tolerance) {
-	
-			
+    while(sum_err>error_tolerance) {
+
+          
       for (unsigned int j=0; j<atomic_bond_vector[i].size(); j++) { 
 
         auto k1 = atomic_bond_vector[i][j].index_1, k2 = atomic_bond_vector[i][j].index_2;
@@ -119,35 +106,35 @@ void Rattle::bond_fix() {
 
 
         auto dr = domain -> fix_distance (pos[k1] - pos[k2]);
-				
+                
         auto dr_old = domain -> fix_distance (pos_old[k1] - pos_old[k2]);
-				
+                
         auto lambda = (dr*dr - (d*d)) /  (2.0*(mass_inv_k1 + mass_inv_k2)*(dr * dr_old));
 
 
 
-				
+                
         pos[k1] -= mass_inv_k1 *  lambda * dr_old;
 
         dr_old = domain -> fix_distance (pos_old[k2] - pos_old[k1]); // Note (k2 - k1)
 
         pos[k2] -= mass_inv_k2 *  lambda * dr_old;
-				
+                
         dr = domain -> fix_distance (pos[k1] - pos[k2]);
-		
+
 
 
         auto dv = vel[k1] - vel[k2];
-			
-				auto etha =  (dr * dv) / ((mass_inv_k1+mass_inv_k2)*d*d);
-			
 
-		
-				vel[k1] -= mass_inv_k1 * etha * dr;
+        auto etha =  (dr * dv) / ((mass_inv_k1+mass_inv_k2)*d*d);
 
-				vel[k2] += mass_inv_k2 * etha * dr; // Note the Plus sign
-			
-			}
+
+
+        vel[k1] -= mass_inv_k1 * etha * dr;
+
+        vel[k2] += mass_inv_k2 * etha * dr; // Note the Plus sign
+
+        }
 
 
       sum_err = 0.0;
@@ -160,14 +147,14 @@ void Rattle::bond_fix() {
 
         auto r2 = dr * dr;
 
-				C[j] = (r2 - d*d)/(2*d*d);
+        C[j] = (r2 - d*d)/(2*d*d);
 
-				sum_err += C[j];
-			}
+        sum_err += C[j];
+      }
       sum_err = abs( sum_err );	
 
-		}
-	}
+      }
+    }
 }
 
 

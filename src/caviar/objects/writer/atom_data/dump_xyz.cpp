@@ -32,7 +32,7 @@ namespace writer {
 
 
 
-void Atom_data::dump_xyz (int i) {
+void Atom_data::dump_xyz (int64_t i) {
 
 //#if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
 

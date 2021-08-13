@@ -31,6 +31,7 @@ Nose_hoover::Nose_hoover (CAVIAR *fptr) : Constraint{fptr} {
   mass = -1.0;
   tau = -1.0;
   type = 1;
+  constraint_type = Constraint_t::Nose_hoover;
 }
 
 Nose_hoover::~Nose_hoover () {}
@@ -84,9 +85,8 @@ void Nose_hoover::verify_settings () {
   settings_verified = true;
 }
 
-// We can put both of these function (step_I and step_II) into one if the Euler
-// integration is used.
-void Nose_hoover::step_part_I (int) {
+
+void Nose_hoover::apply_on_acceleration (int64_t) { // step I
   if (!settings_verified) verify_settings();
 
   auto n_df = atom_data -> degree_of_freedoms();
@@ -117,19 +117,21 @@ void Nose_hoover::step_part_I (int) {
 
   // a simple euler integration.
   zeta += dt * zeta_dot;  
-}
-
-void Nose_hoover::step_part_II (int) {
-
+  
+  
+  
+  // ------------------------------- // step II
+  // We can put both of these function (step_I and step_II) into one if the Euler
+  // integration is used.
+  
   auto &vel = atom_data -> owned.velocity;
   auto &acc = atom_data -> owned.acceleration;
   auto psize = acc.size();
-
   for (unsigned int i = 0; i < psize; ++i) {
     acc[i] += - zeta * vel[i];
   }
-
 }
+
 
 
 } //constraint

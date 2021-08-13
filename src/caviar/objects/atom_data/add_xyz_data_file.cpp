@@ -14,7 +14,7 @@
 //
 //========================================================================
 
-#include "caviar/objects/atom_data/basic.h"
+#include "caviar/objects/atom_data.h"
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/interpreter/object_handler/preprocessors_new.h"
 
@@ -22,9 +22,8 @@
 
 namespace caviar {
 namespace objects {
-namespace atom_data {
 
-bool Basic::add_xyz_data_file (caviar::interpreter::Parser *parser) {
+bool Atom_data::add_xyz_data_file (caviar::interpreter::Parser *parser) {
   output->info("Basic::add_xyz_data_file ");
 
   std::string xyz_file_name = "";
@@ -128,8 +127,6 @@ bool Basic::add_xyz_data_file (caviar::interpreter::Parser *parser) {
 }
 
 
-
-} //atom_data
 } //objects
 } // namespace caviar
 

@@ -26,11 +26,11 @@ namespace objects {
 namespace writer {
 
 
-void Atom_data::dump_energy (int i) {
+void Atom_data::dump_energy (int64_t i) {
   dump_energy(i,0.0);
 }
 
-void Atom_data::dump_energy (int i, double t) {
+void Atom_data::dump_energy (int64_t i, double t) {
 
 
   double k_e = atom_data -> kinetic_energy();

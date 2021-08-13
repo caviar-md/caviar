@@ -38,9 +38,7 @@ class Atoms_molarity : public Constraint {
    ~Atoms_molarity ( );
   bool read (class caviar::interpreter::Parser *);
 
-  void step_part_I (int);
-  void step_part_II (int);
-  void step_part_III (int);
+  void apply (int64_t);
 
   void verify_settings();
 

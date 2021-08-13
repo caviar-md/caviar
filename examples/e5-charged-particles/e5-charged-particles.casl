@@ -233,15 +233,6 @@ f_gelj sigma_wall   0 0.674  # carbon sigma = 3.37 A
 f_gelj wca
 f_gelj set_atom_data adata
 
-#==== Integration =====
-
-integrator velocity_verlet_langevin integ_langevin 
-integ_langevin set_atom_data adata
-integ_langevin dt timestep_all
-integ_langevin temperature 3.325933132 # = 400.0 / 120.267
-
-integ_langevin friction 60.0
-integ_langevin kb 1.0
 
 #====== writer 
 
@@ -258,7 +249,11 @@ w1 xyz_step 1000
 
 md_simulator basic sim 
 
-sim set_integrator integ_langevin 
+#sim integrator_type velocity_verlet
+sim integrator_type velocity_verlet_langevin
+sim temperature 3.325933132 # = 400.0 / 120.267
+sim kb 60.0
+sim friction 1.0
 
 sim set_atom_data adata
 

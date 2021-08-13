@@ -26,7 +26,7 @@ namespace caviar {
 namespace objects {
 namespace writer {
 
-void Atom_data::dump_povray (int ) {
+void Atom_data::dump_povray (int64_t ) {
 /*
 #ifdef CAVIAR_WITH_MPI
   MPI_Barrier (mpi_comm);  

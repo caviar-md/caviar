@@ -34,6 +34,7 @@ Shake::Shake (CAVIAR *fptr) : Constraint{fptr},
  {
   FC_OBJECT_INITIALIZE_INFO
   shake_type = 0;
+  constraint_type = Constraint_t::Shake;
 }
 
 Shake::~Shake () {}
@@ -73,46 +74,11 @@ void Shake::verify_settings () {
 
 }
 
-void Shake::step_part_I (int) {
 
-  
-
-}
-
-void Shake::step_part_II (int) {
-
-}
-
-void Shake::step_part_III (int) {
+void Shake::apply_on_position (int64_t) {
 
   FC_OBJECT_VERIFY_SETTINGS
 
-
-  bond_fix(); // XXX
-
-
-  // velocity_fix part
-  // this fix has to be done only on the M-Shake molecules. If not, the normal
-  // leap-frog step has to be enough.
-  auto &vel = atom_data -> owned.velocity;
-  auto &pos = atom_data -> owned.position;
-  auto &pos_old = atom_data -> owned.position_old;
-  auto &atomic_bond_index_vector = atom_data -> owned.atomic_bond_index_vector;
-  for (unsigned int i=0; i<atomic_bond_index_vector.size(); i++) { 
-    for (unsigned int j=0; j<atomic_bond_index_vector[i].size(); j++) { // XXX P.II
-      const auto k = atomic_bond_index_vector[i][j];
-      vel[k] = domain -> fix_distance(pos[k] - pos_old[k]) / dt ;			
-    }
-  }
-
-
-
-}
-
-
-
-
-void Shake::bond_fix () {
 
   auto &pos = atom_data -> owned.position;
   auto &pos_old = atom_data -> owned.position_old;
@@ -182,6 +148,26 @@ void Shake::bond_fix () {
     }
               
   }
+  
+}
+
+void Shake::apply_on_velocity (int64_t) {
+  // velocity_fix part
+  // this fix has to be done only on the M-Shake molecules. If not, the normal
+  // leap-frog step has to be enough.
+  auto &vel = atom_data -> owned.velocity;
+  auto &pos = atom_data -> owned.position;
+  auto &pos_old = atom_data -> owned.position_old;
+  auto &atomic_bond_index_vector = atom_data -> owned.atomic_bond_index_vector;
+  for (unsigned int i=0; i<atomic_bond_index_vector.size(); i++) { 
+    for (unsigned int j=0; j<atomic_bond_index_vector[i].size(); j++) { // XXX P.II
+      const auto k = atomic_bond_index_vector[i][j];
+      vel[k] = domain -> fix_distance(pos[k] - pos_old[k]) / dt ;			
+    }
+  }
+
+
+
 }
 
 

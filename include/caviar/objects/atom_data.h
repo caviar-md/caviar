@@ -45,7 +45,7 @@ class Atom_data : public Pointers {
 public:
   Atom_data (class CAVIAR *);
   virtual ~Atom_data ();
-  virtual bool read (class caviar::interpreter::Parser *) = 0;
+  virtual bool read (class caviar::interpreter::Parser *);
 
   /**   
    * check if a position is empty of any atom. Usage in fixing number of atoms
@@ -53,6 +53,13 @@ public:
    */
   virtual bool empty_of_atoms(const Vector<Real_t>, double radius);
 
+  
+  /**
+   * Import an xyz file contaning atoms positions and maybe velocities
+   */
+  bool add_xyz_data_file (caviar::interpreter::Parser *parser);
+  
+  
   /**
    * checks by atom_type
    */

@@ -117,12 +117,6 @@ f_lj set_atom_data adata
 f_lj set_domain dom
 
 
-#==== Integrator =====
-
-integrator  velocity_verlet  integ2
-integ2 set_atom_data adata
-integ2 dt 0.001
-
 #====== writer 
 writer atom_data w1
 w1 set_atom_data adata
@@ -131,7 +125,7 @@ w1 xyz_step 200
 #=====  simulator
 
 md_simulator basic sim
-sim set_integrator integ2
+sim integrator_type velocity_verlet
 sim set_atom_data adata
 sim add_force_field f_lj
 #sim add_neighborlist neigh_verlet

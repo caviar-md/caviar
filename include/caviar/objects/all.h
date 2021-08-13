@@ -17,7 +17,6 @@
 #include "caviar/objects/atom_data.h"
 #include "caviar/objects/domain.h"
 #include "caviar/objects/force_field.h"
-#include "caviar/objects/integrator.h"
 #include "caviar/objects/neighborlist.h"
 #include "caviar/objects/shape.h"
 #include "caviar/objects/md_simulator.h"

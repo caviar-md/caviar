@@ -34,6 +34,7 @@ M_shake::M_shake (CAVIAR *fptr) : Constraint{fptr},
     initialized{false}
 {
   FC_OBJECT_INITIALIZE_INFO
+  constraint_type = Constraint_t::M_shake;
 }
 
 M_shake::~M_shake () {}
@@ -70,41 +71,11 @@ void M_shake::verify_settings () {
 
 }
 
-void M_shake::step_part_I (int) {
-
-}
-
-void M_shake::step_part_II (int) {
-
-}
-
-void M_shake::step_part_III (int) {
+void M_shake::apply_on_position (int64_t) { // step III
 
   FC_OBJECT_VERIFY_SETTINGS
 
-  bond_fix(); 
-
-
-  // velocity_fix part
-  // this fix has to be done only on the M-Shake molecules. If not, the normal
-  // leap-frog step has to be enough.
-  auto &vel = atom_data -> owned.velocity;
-  auto &pos = atom_data -> owned.position;
-  auto &pos_old = atom_data -> owned.position_old;
-  auto &atomic_bond_index_vector = atom_data -> owned.atomic_bond_index_vector;
-  for (unsigned int i=0; i<atomic_bond_index_vector.size(); i++) { 
-    for (unsigned int j=0; j<atomic_bond_index_vector[i].size(); j++) { // XXX P.II
-      const auto k = atomic_bond_index_vector[i][j];
-      vel[k] = domain -> fix_distance(pos[k] - pos_old[k]) / dt ;			
-    }
-  }
-
-}
-
-
-void M_shake::bond_fix () {
-
-
+  
   auto &pos = atom_data -> owned.position;
   auto &pos_old = atom_data -> owned.position_old;
   auto &atomic_bond_index_vector = atom_data -> owned.atomic_bond_index_vector;
@@ -210,11 +181,25 @@ void M_shake::bond_fix () {
 
     }
   }
+
 }
 
+void M_shake::apply_on_velocity (int64_t) { // step III
+  // velocity_fix part
+  // this fix has to be done only on the M-Shake molecules. If not, the normal
+  // leap-frog step has to be enough.
+  auto &vel = atom_data -> owned.velocity;
+  auto &pos = atom_data -> owned.position;
+  auto &pos_old = atom_data -> owned.position_old;
+  auto &atomic_bond_index_vector = atom_data -> owned.atomic_bond_index_vector;
+  for (unsigned int i=0; i<atomic_bond_index_vector.size(); i++) { 
+    for (unsigned int j=0; j<atomic_bond_index_vector[i].size(); j++) { // XXX P.II
+      const auto k = atomic_bond_index_vector[i][j];
+      vel[k] = domain -> fix_distance(pos[k] - pos_old[k]) / dt ;			
+    }
+  }
 
-
-
+}
 
 
 

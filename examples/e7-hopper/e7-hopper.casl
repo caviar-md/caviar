@@ -223,12 +223,6 @@ f_ge young_modulus 10000
 f_ge set_atom_data adata
 f_ge set_neighborlist neigh_verlet
 
-#==== Integration =====
-
-integrator leap_frog integ_leapfrog 
-integ_leapfrog set_atom_data adata
-integ_leapfrog dt global_dt
-
 
 
 #====== writer 
@@ -245,7 +239,7 @@ w1 output_velocity
 
 md_simulator basic sim 
 
-sim set_integrator integ_leapfrog
+sim integrator_type leap_frog
 
 sim set_atom_data adata
 

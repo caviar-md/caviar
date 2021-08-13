@@ -233,19 +233,6 @@ f_grn elastic_coef 2 100.0
 f_grn dissip_coef  2 1.0
 
 
-#==== Integration =====
-
-integrator leap_frog integ3 
-integ3 set_atom_data adata
-integ3 dt 0.001 
-
-#==== Integration =====
-integrator velocity_verlet_langevin integ4 
-integ4 set_atom_data adata
-integ4 dt 0.001 
-integ4 temperature 1.0
-integ4 kb 1.0
-integ4 friction 1.0
 
 
 #====== writer 
@@ -259,7 +246,13 @@ w1 energy_step 200
 #=====  simulator
 
 md_simulator basic sim 
-sim set_integrator integ4
+
+#sim integrator_type velocity_verlet
+sim integrator_type velocity_verlet_langevin
+sim temperature 1.0
+sim kb 1.0
+sim friction 1.0
+
 sim set_atom_data adata
 
 #sim add_force_field f_lj

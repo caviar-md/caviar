@@ -46,7 +46,7 @@ class Nve : public Constraint {
    ~Nve ( );
   bool read (class caviar::interpreter::Parser *);
 
-  void step_part_I (int);
+  void apply_on_velocity (int64_t);
 
   void verify_settings();
 

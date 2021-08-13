@@ -33,6 +33,7 @@ Nve::Nve (CAVIAR *fptr) : Constraint{fptr} {
   kb = -1.0;
 
   kbt = -1.0;
+  constraint_type = Constraint_t::Nve;
 }
 
 Nve::~Nve () {}
@@ -102,7 +103,7 @@ void Nve::verify_settings () {
 
 }
 
-void Nve::step_part_I (int) {
+void Nve::apply_on_velocity (int64_t) {
 
 
   FC_OBJECT_VERIFY_SETTINGS

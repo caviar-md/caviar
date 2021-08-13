@@ -196,17 +196,6 @@ c_nve kbt 2.477758377 # 298K / 120.27
 c_nve set_atom_data adata
 
 
-#==== Integration =====
-
-integrator leap_frog integ_leapfrog 
-integ_leapfrog set_atom_data adata
-integ_leapfrog dt global_dt
-
-#==== Integration =====
-
-integrator leap_frog2 integ_leapfrog2 
-integ_leapfrog2 set_atom_data adata
-integ_leapfrog2 dt global_dt
 
 #====== writer 
 writer atom_data w1
@@ -222,8 +211,8 @@ w1 output_velocity
 
 md_simulator basic sim 
 
-sim set_integrator integ_leapfrog2  
-#sim set_integrator integ_leapfrog  
+#sim integrator_type velocity_verlet
+sim integrator_type leap_frog
 
 sim set_atom_data adata
 
@@ -231,7 +220,6 @@ sim add_force_field f_lj
 sim add_force_field f_elsh 
 
 sim add_neighborlist neigh_verlet
-#integ2 add_neighborlist neigh_cell
 
 sim add_writer w1
 

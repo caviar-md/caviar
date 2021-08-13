@@ -35,9 +35,7 @@ class Nose_hoover : public Constraint {
   ~Nose_hoover ( );
   bool read (class caviar::interpreter::Parser *);
 
-  void step_part_I (int);
-  void step_part_II (int);
-  //void step_part_III (int);
+  void apply_on_acceleration (int64_t);
 
   void verify_settings();
 

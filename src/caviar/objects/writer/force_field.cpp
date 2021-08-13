@@ -55,9 +55,9 @@ void Force_field::write(){
     ofs << i << " " << acc[i].x << "\t" << acc[i].y << "\t" << acc[i].z << "\n" ;
   }*/
 }
-void Force_field::write(int){} // current time_step
+void Force_field::write(int64_t){} // current time_step
 void Force_field::write(double){} // current time
-void Force_field::write(int, double){} //time_step and time
+void Force_field::write(int64_t, double){} //time_step and time
 void Force_field::start_new_files(){} //add_time_to_previous
 void Force_field::start_new_files(std::string &){} //add_time_to_previous
 

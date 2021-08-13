@@ -27,11 +27,11 @@ namespace objects {
 namespace writer {
 
 
-void Atom_data::dump_msd (int i) {
+void Atom_data::dump_msd (int64_t i) {
   dump_msd(i, 0.0);
 }
 
-void Atom_data::dump_msd (int i, double t) {
+void Atom_data::dump_msd (int64_t i, double t) {
 
   const auto &pos = atom_data -> owned.position;
   const auto &type = atom_data -> owned.type;

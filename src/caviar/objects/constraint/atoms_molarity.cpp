@@ -46,6 +46,7 @@ Atoms_molarity::Atoms_molarity (CAVIAR *fptr) : Constraint{fptr} {
   steps = 0; check_steps=1;
   minimum_set = false;
   maximum_set = false;
+  constraint_type = Constraint_t::Atoms_molarity;
 }
 
 Atoms_molarity::~Atoms_molarity () {}
@@ -139,17 +140,10 @@ void Atoms_molarity::verify_settings () {
 }
 
 
-void Atoms_molarity::step_part_I (int) {
-
-}
-
-void Atoms_molarity::step_part_II (int) {
-
-}
 
 // XXX not sure if this is the best place to implement the function
 
-void Atoms_molarity::step_part_III (int steps) {
+void Atoms_molarity::apply (int64_t steps) { // III
 
   if ((steps%check_steps)!=0) { return;}
 

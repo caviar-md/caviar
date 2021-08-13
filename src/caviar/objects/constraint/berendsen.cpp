@@ -28,6 +28,7 @@ Berendsen::Berendsen (CAVIAR *fptr) : Constraint{fptr}
   FC_OBJECT_INITIALIZE_INFO
   coupling = -1.0;
   dt = -1.0;
+  constraint_type = Constraint_t::Berendsen;  
 }
 
 Berendsen::~Berendsen () {}
@@ -66,7 +67,7 @@ void Berendsen::verify_settings () {
 }
 
 
-void Berendsen::step_part_I (int) {
+void Berendsen::apply_on_velocity (int64_t) { // step I
 
   FC_OBJECT_VERIFY_SETTINGS
 

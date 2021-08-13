@@ -179,10 +179,10 @@ void Atom_data::open_files(){}
 void Atom_data::close_files(){}
 void Atom_data::generate(){}
 void Atom_data::write(){}
-void Atom_data::write(int){} // current time_step
+void Atom_data::write(int64_t){} // current time_step
 void Atom_data::write(double){} // current time
 
-void Atom_data::write(int i, double t){
+void Atom_data::write(int64_t i, double t){
 
   if (!initialized) 
     initialize();

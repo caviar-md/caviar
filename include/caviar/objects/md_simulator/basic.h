@@ -32,20 +32,6 @@ class Basic : public Md_simulator {
  public:
   Basic (class CAVIAR *);
    ~Basic ( );
-  bool read (class caviar::interpreter::Parser *);
-  bool run ();
-  void verify_settings ();
-
-/*
-
-  void setup ();
-  void cleanup ();
-
-  void setup_custom (); // called after the default 'setup()'
-  void cleanup_custom (); // called after the default 'cleanup()'
-  bool boundary_condition ();
-*/
-
 
 };
 

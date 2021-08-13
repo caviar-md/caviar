@@ -35,16 +35,16 @@ class Writer : public Pointers {
   virtual bool read (class caviar::interpreter::Parser *) = 0;
   virtual void initialize();
   virtual void write();
-  virtual void write(int); // current time_step
+  virtual void write(int64_t); // current time_step
   virtual void write(double); // current time
-  virtual void write(int, double); //time_step and time
+  virtual void write(int64_t, double); //time_step and time
   virtual void start_new_files(); //add_time_to_previous
   virtual void start_new_files(std::string &); //add_time_to_previous
   virtual void open_files();
   virtual void close_files();
   virtual void generate();
   bool initialized;
-  int last_timestep;
+  int64_t last_timestep;
   double last_time;
   double dt;
   int my_mpi_rank, mpi_world_size;

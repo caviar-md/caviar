@@ -31,12 +31,9 @@ namespace atom_data {
 class Basic : public Atom_data {
 public:
   Basic (class CAVIAR *);
-  bool read (class caviar::interpreter::Parser *);
-  bool add_xyz_data_file(class caviar::interpreter::Parser *);
-  void output_data(const int);
-  void report();
 
-  void allocate ();
+  ~Basic ( );
+  
 };
 
 } //atom_data

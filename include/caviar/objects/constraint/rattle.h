@@ -37,9 +37,8 @@ class Rattle : public Constraint {
    ~Rattle ( );
   bool read (class caviar::interpreter::Parser *);
 
-  void step_part_I (int);
-  void step_part_II (int);
-  void step_part_III (int);
+  void apply_on_position (int64_t);
+  
 
   void bond_fix ();
 

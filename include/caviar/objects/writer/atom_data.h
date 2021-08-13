@@ -37,9 +37,9 @@ class Atom_data : public Writer {
   bool read (class caviar::interpreter::Parser *);
   void initialize();
   void write();
-  void write(int); // current time_step
+  void write(int64_t); // current time_step
   void write(double); // current time
-  void write(int, double); //time_step and time
+  void write(int64_t, double); //time_step and time
   void start_new_files(); //add_time_to_previous
   void start_new_files(std::string &); //add_time_to_previous
   void open_files();
@@ -57,19 +57,19 @@ class Atom_data : public Writer {
   // used in msd calculations
   objects::Domain *domain;
 
-  void dump_energy (int); // dump energy to file 
-  void dump_energy (int, double); // dump energy to file
+  void dump_energy (int64_t); // dump energy to file 
+  void dump_energy (int64_t, double); // dump energy to file
 
-  void dump_xyz (int); // dump positions to file in xyz format
-  void dump_xyz (int, double); // dump positions to file in xyz format
+  void dump_xyz (int64_t); // dump positions to file in xyz format
+  void dump_xyz (int64_t, double); // dump positions to file in xyz format
 
-  void dump_povray (int); // dump positions to snapshot files in povray format
-  void dump_povray (int, double); // dump positions to snapshot files in povray format
+  void dump_povray (int64_t); // dump positions to snapshot files in povray format
+  void dump_povray (int64_t, double); // dump positions to snapshot files in povray format
 
-  void dump_msd (int); //
-  void dump_msd (int, double); //
+  void dump_msd (int64_t); //
+  void dump_msd (int64_t, double); //
 
-  int energy_step, xyz_step, povray_step, msd_step; // number of steps to output data
+  int64_t energy_step, xyz_step, povray_step, msd_step; // number of steps to output data
 
   int msd_type; // type of atom that should be used in msd calculations.
   int msd_initial_step;

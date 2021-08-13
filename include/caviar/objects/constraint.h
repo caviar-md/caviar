@@ -24,6 +24,19 @@ namespace objects {
 class Integrator;
 class Atom_data;
 
+enum class Constraint_t {
+  Atom_molarity,
+  Atoms_molarity,
+  Berendsen,
+  Cm_motion,
+  M_shake,
+  Nose_hoover,
+  Nve,
+  Rattle,
+  Shake,
+  Unknown
+};
+
 /**
  * This class is the base class for all the constraints.
  * A constraint is called during a simulations. It can be implemented in
@@ -36,18 +49,23 @@ class Constraint : public Pointers {
   virtual ~Constraint ( );
   virtual bool read (class caviar::interpreter::Parser *) = 0;
 
-  virtual void step_part_I (int);
-  virtual void step_part_II (int);
-  virtual void step_part_III (int);
-
-  /**
-   *  Each integrator has a integer type. This is provided in cases the type
-   *  matters for the constraint integration.
-   */
-  int integrator_type;
-  class Integrator *integrator;
-
+  // it will be applied at the start of each time step
+  virtual void apply (int64_t); 
+  
+  // it should be used after calculating new position to fix it before using it for acceleration calculation
+  virtual void apply_on_position (int64_t); // shake, m-shake, rattle
+  
+  // it should be used after calculating velocity to fix it
+  virtual void apply_on_velocity (int64_t); // shake, m-shake, rattle, nve,
+  
+  // it should be used after calculating acceleration to fix it
+  virtual void apply_on_acceleration (int64_t); //Nose_hoover
+  
+  
   class objects::Atom_data *atom_data;
+  
+  Constraint_t constraint_type;
+  
  public:
 
   FC_BASE_OBJECT_COMMON_TOOLS

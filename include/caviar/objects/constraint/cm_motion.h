@@ -38,9 +38,8 @@ class Cm_motion : public Constraint {
    ~Cm_motion ( );
   bool read (class caviar::interpreter::Parser *);
 
-  void step_part_I (int);
-  void step_part_II (int);
-  void step_part_III (int);
+  void apply_on_velocity (int64_t);
+
 
   void fix_velocity();
   void fix_angular_momentum();

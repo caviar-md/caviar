@@ -245,7 +245,12 @@ w1 xyz_step 10000
 
 md_simulator basic sim 
 
-sim set_integrator integ_langevin 
+sim integrator_type velocity_verlet_langevin
+sim temperature 3.325933132 # = 400.0 / 120.267
+#sim temperature 2.479067408 # = 298.15 / 120.267
+sim kb 60.0
+sim friction 1.0
+
 
 sim set_atom_data adata
 

@@ -17,7 +17,6 @@
 #include "caviar/objects/macro/declaration/atom_data.h"
 #include "caviar/objects/macro/declaration/domain.h"
 #include "caviar/objects/macro/declaration/force_field.h"
-#include "caviar/objects/macro/declaration/integrator.h"
 #include "caviar/objects/macro/declaration/neighborlist.h"
 #include "caviar/objects/macro/declaration/shape.h"
 #include "caviar/objects/macro/declaration/md_simulator.h"
