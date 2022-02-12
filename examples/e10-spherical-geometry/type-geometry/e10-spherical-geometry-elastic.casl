@@ -1,0 +1,165 @@
+
+#=======================================================================
+# 
+# Copyright (C) 2019 by Morad Biagooi and Ehsan Nedaaee Oskoee.
+# 
+# This file is part of the CAVIAR package.
+# 
+# The CAVIAR package is free software; you can use it, redistribute
+# it, and/or modify it under the terms of the GNU Lesser General
+# Public License as published by the Free Software Foundation; either
+# version 3.0 of the License, or (at your option) any later version.
+# The full text of the license can be found in the file LICENSE at
+# the top level of the CAVIAR distribution.
+# 
+#=======================================================================
+# 
+# This script script is made with the contributions of Mr Amin Karim Abadi
+# 
+
+#===== global variables
+
+real global_dt 0.001
+
+
+#===== Atom definition =====
+
+unique atom a_Grain0
+a_Grain0 type 0
+a_Grain0 position 0 0 0
+
+
+unique atom_group ag
+
+#===== Domain
+
+domain box dom
+dom xmin -100 xmax 100
+dom ymin -100 ymax 100
+dom zmin -100 zmax 100
+dom boundary_condition 0 0 0
+ 
+dom generate
+
+#===== Grid definition =====
+
+unique grid_1d gx0
+unique grid_1d gy0
+unique grid_1d gz0
+
+
+# A few number of molecules
+gx0 min -3 max 3 segment 3
+gy0 min -3 max 3 segment 3
+gz0 min -3 max 3 segment 3
+#gz min -450 max -400 segment 5
+
+gx0 generate
+gy0 generate
+gz0 generate
+
+
+#==== Distribution =====
+
+unique distribution d
+d atom_group ag
+
+d atom a_Grain0
+d grid_1d_x gx0 
+d grid_1d_y gy0 
+d grid_1d_z gz0
+d distribute_grid_3d
+
+
+#========== Atom_data
+
+atom_data basic adata
+adata ghost_cutoff 10
+adata cutoff_extra 0.01
+adata k_b 1.0
+adata set_domain dom
+adata add_type_mass   0 1.0
+adata add_type_charge 0 0.0  # oxygen
+adata add_type_radius 0 0.5  # oxygen 
+
+adata add_atom_group ag
+adata add_random_velocity
+
+
+
+
+#===== Neighborlist
+
+neighborlist verlet_list neigh_verlet 
+neigh_verlet set_atom_data adata
+neigh_verlet cutoff 5
+neigh_verlet dt global_dt
+
+
+#===== force_field
+
+force_field granular f_gr
+
+f_gr cutoff 20 # //it should be twice the maximum radius
+
+
+f_gr elastic_coef 0 1000
+f_gr dissip_coef 0 1
+
+f_gr gravity 0 0 -10.0
+
+f_gr set_neighborlist neigh_verlet
+
+f_gr set_atom_data adata
+f_gr set_domain dom
+
+#===== force_field
+
+force_field geometry_sphere f_ge
+
+
+f_ge dissip_coef 0.5
+f_ge young_modulus 300
+f_ge radius 10
+
+
+f_ge set_atom_data adata
+f_ge set_neighborlist neigh_verlet
+
+
+
+#====== writer 
+writer atom_data w1
+w1 set_atom_data adata
+w1 set_domain dom
+w1 xyz_step 50
+#w1 energy_step 100
+w1 output_velocity
+
+#=====  simulator
+
+
+md_simulator basic sim 
+
+sim integrator_type leap_frog
+
+sim set_atom_data adata
+
+sim add_force_field f_ge
+sim add_force_field f_gr
+
+sim add_neighborlist neigh_verlet
+
+
+sim add_writer w1
+
+
+
+sim initial_step 0
+sim final_step 10000
+sim dt global_dt
+sim run
+
+#exit
+
+

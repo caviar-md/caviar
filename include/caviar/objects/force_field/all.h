@@ -23,6 +23,8 @@
 #include "caviar/objects/force_field/geometry.h"
 #include "caviar/objects/force_field/geometry_slab.h"
 #include "caviar/objects/force_field/geometry_lj.h"
+#include "caviar/objects/force_field/geometry_sphere_lj.h"
+#include "caviar/objects/force_field/geometry_sphere.h"
 #include "caviar/objects/force_field/gravity.h"
 #include "caviar/objects/force_field/gravity_external.h"
 #include "caviar/objects/force_field/magnetic.h"
