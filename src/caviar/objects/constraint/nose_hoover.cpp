@@ -48,6 +48,9 @@ bool Nose_hoover::read (caviar::interpreter::Parser *parser) {
     } else if (string_cmp(t,"dt")) {
       GET_OR_CHOOSE_A_REAL(dt,"","")
       if (dt <= 0.0) error->all (FC_FILE_LINE_FUNC_PARSE, "dt have to non-negative."); 
+    } else if (string_cmp(t,"tau")) {
+      GET_OR_CHOOSE_A_REAL(tau,"","")
+      if (tau <= 0.0) error->all (FC_FILE_LINE_FUNC_PARSE, "dt have to non-negative."); 
     } else if (string_cmp(t,"type")) {
       GET_OR_CHOOSE_A_INT(type,"","")
       if (type <= 0.0) error->all (FC_FILE_LINE_FUNC_PARSE, "type have to non-negative."); 
@@ -57,6 +60,9 @@ bool Nose_hoover::read (caviar::interpreter::Parser *parser) {
     } else if (string_cmp(t,"temperature")) {
       GET_OR_CHOOSE_A_REAL(temperature,"","")
       if (temperature <= 0.0) error->all (FC_FILE_LINE_FUNC_PARSE, "Temperature have to non-negative."); 
+    } else if (string_cmp(t,"set_atom_data") || string_cmp(t,"atom_data")) {
+      FIND_OBJECT_BY_NAME(atom_data,it)
+      atom_data = object_container->atom_data[it->second.index];
     } else {
       error->all (FC_FILE_LINE_FUNC_PARSE, "Unknown variable or command");
     }
@@ -80,7 +86,7 @@ void Nose_hoover::verify_settings () {
   } break;
 
   default:
-     error->all(FC_FILE_LINE_FUNC,"this Nose-Hoover type is not implemented");
+     error->all(FC_FILE_LINE_FUNC,"this Nose-Hoover type is not implemented.  Expected type 1 or 2");
   }
   settings_verified = true;
 }
@@ -112,7 +118,7 @@ void Nose_hoover::apply_on_acceleration (int64_t) { // step I
   } break;
 
   default:
-     error->all(FC_FILE_LINE_FUNC,"this Nose-Hoover type is not implemented");
+     error->all(FC_FILE_LINE_FUNC,"this Nose-Hoover type is not implemented. Expected type 1 or 2");
   }
 
   // a simple euler integration.

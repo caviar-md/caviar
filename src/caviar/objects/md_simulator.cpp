@@ -75,6 +75,21 @@ bool Md_simulator::read (caviar::interpreter::Parser *parser) {
     } else if (string_cmp(t,"add_constraint") || string_cmp(t,"constraint")) {
       FIND_OBJECT_BY_NAME(constraint,it)
       constraint.push_back(object_container->constraint[it->second.index]);
+    } else if (string_cmp(t,"remove_constraint")) {
+#define FC_REMOVE_OBJECT(name) \
+      FIND_OBJECT_BY_NAME(name,it) \
+      bool found = false; \
+      for (unsigned int i = 0 ; i < name .size(); ++i ) \
+      { \
+          if (name [i] == object_container-> name [it->second.index]) \
+          { \
+              name .erase(name .begin()+i); \
+              found = true; \
+              break; \
+          } \
+      } \
+      if (!found) error->all (FC_FILE_LINE_FUNC_PARSE, "Unknown " #name " to remove.");
+      FC_REMOVE_OBJECT(constraint) 
     } else if (string_cmp(t,"add_writer") || string_cmp(t,"writer")) {
       FIND_OBJECT_BY_NAME(writer,it)
       writer.push_back(object_container->writer[it->second.index]);
@@ -84,6 +99,12 @@ bool Md_simulator::read (caviar::interpreter::Parser *parser) {
     } else if (string_cmp(t,"add_force_field") || string_cmp(t,"force_field")) {
       FIND_OBJECT_BY_NAME(force_field,it)
       force_field.push_back(object_container->force_field[it->second.index]);
+    } else if (string_cmp(t,"remove_writer")) {
+      FC_REMOVE_OBJECT(writer) 
+    } else if (string_cmp(t,"remove_neighborlist")) {
+      FC_REMOVE_OBJECT(neighborlist)       
+    } else if (string_cmp(t,"remove_force_field")) {
+      FC_REMOVE_OBJECT(force_field) 
     } else  if (string_cmp(t,"set_atom_data") || string_cmp(t,"atom_data")) {
       FIND_OBJECT_BY_NAME(atom_data,it)
       atom_data = object_container->atom_data[it->second.index];

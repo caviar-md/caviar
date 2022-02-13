@@ -60,6 +60,9 @@ class Atom_data : public Writer {
   void dump_energy (int64_t); // dump energy to file 
   void dump_energy (int64_t, double); // dump energy to file
 
+  void dump_temperature (int64_t); // dump temperature to file 
+  void dump_temperature (int64_t, double); // dump temperature to file
+  
   void dump_xyz (int64_t); // dump positions to file in xyz format
   void dump_xyz (int64_t, double); // dump positions to file in xyz format
 
@@ -69,16 +72,16 @@ class Atom_data : public Writer {
   void dump_msd (int64_t); //
   void dump_msd (int64_t, double); //
 
-  int64_t energy_step, xyz_step, povray_step, msd_step; // number of steps to output data
+  int64_t energy_step, temperature_step, xyz_step, povray_step, msd_step; // number of steps to output data
 
   int msd_type; // type of atom that should be used in msd calculations.
   int msd_initial_step;
 
-  std::ofstream ofs_energy,  ofs_xyz, ofs_velocities, ofs_povray; // output files
+  std::ofstream ofs_energy, ofs_temperature, ofs_xyz, ofs_velocities, ofs_povray; // output files
   std::ofstream ofs_msd; // mean square distance
 
   // if true, outputs would be created  
-  bool output_energy, output_xyz, output_povray, output_msd;
+  bool output_energy, output_temperature, output_xyz, output_povray, output_msd;
 
   // dump velocity and acceleration alongside position
   bool output_velocity, output_acceleration;

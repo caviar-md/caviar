@@ -27,8 +27,8 @@ namespace writer {
 
 Atom_data::Atom_data (CAVIAR *fptr) : Writer{fptr},
     atom_data{nullptr}, domain{nullptr},
-    energy_step{100}, xyz_step{1000}, povray_step{10000}, msd_step{1000},
-    output_energy{false}, output_xyz{false}, output_povray{false},
+    energy_step{100}, temperature_step{100}, xyz_step{1000}, povray_step{10000}, msd_step{1000},
+    output_energy{false}, output_temperature{false}, output_xyz{false}, output_povray{false},
     output_msd{false},
     output_velocity{false},  output_acceleration{false}
 {
@@ -40,6 +40,7 @@ Atom_data::Atom_data (CAVIAR *fptr) : Writer{fptr},
 Atom_data::~Atom_data () {
   if (ofs_xyz.is_open())    ofs_xyz.close();
   if (ofs_energy.is_open()) ofs_energy.close();
+  if (ofs_temperature.is_open()) ofs_temperature.close();
   if (ofs_povray.is_open()) ofs_povray.close();
   if (ofs_msd.is_open())    ofs_msd.close();
 }
@@ -65,6 +66,9 @@ bool Atom_data::read (caviar::interpreter::Parser *parser) {
     } else  if (string_cmp(t,"energy_step")) {
       GET_OR_CHOOSE_A_INT(energy_step,"","")
       output_energy = true;
+    } else  if (string_cmp(t,"temperature_step")) {
+      GET_OR_CHOOSE_A_INT(temperature_step,"","")
+      output_temperature = true;
     } else  if (string_cmp(t,"msd_step")) {
       GET_OR_CHOOSE_A_INT(msd_step,"","")
       output_msd = true;
@@ -130,6 +134,10 @@ if (my_mpi_rank==0) {
     if (!ofs_energy.is_open()) 
       ofs_energy.open("o_energy.txt");
 
+  if (output_temperature)     
+    if (!ofs_temperature.is_open()) 
+      ofs_temperature.open("o_temperature.txt");
+    
   if (output_msd)     
     if (!ofs_msd.is_open()) 
       ofs_msd.open("o_msd.txt");
@@ -148,6 +156,10 @@ if (my_mpi_rank==0) {
     if (!ofs_energy.is_open()) 
       ofs_energy.open("o_energy.txt");
 
+  if (output_temperature)     
+    if (!ofs_temperature.is_open()) 
+      ofs_temperature.open("o_temperature.txt");
+    
   if (output_msd)     
     if (!ofs_msd.is_open()) 
       ofs_msd.open("o_msd.txt");
@@ -168,6 +180,10 @@ if (my_mpi_rank==0) {
     if (!ofs_energy.is_open()) 
       ofs_energy.open("o_energy.txt");
 
+if (output_temperature)     
+    if (!ofs_temperature.is_open()) 
+      ofs_temperature.open("o_temperature.txt");
+    
   if (output_msd)     
     if (!ofs_msd.is_open()) 
       ofs_msd.open("o_msd.txt");
@@ -195,6 +211,10 @@ void Atom_data::write(int64_t i, double t){
     if (i%energy_step==0)
       dump_energy(i);
 
+  if (output_temperature) 
+    if (i%temperature_step==0)
+      dump_temperature(i);
+    
   if (output_povray) 
     if (i%povray_step==0)
       dump_povray(i);
