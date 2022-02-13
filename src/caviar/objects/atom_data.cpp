@@ -265,7 +265,7 @@ int Atom_data::degree_of_freedoms () {
 Vector<Real_t> Atom_data::owned_position_cm () {
   Vector<Real_t> p_cm {0.0,0.0,0.0};
   double mass_sum = 0.0;
-  auto p_size = owned.position.size();
+  auto p_size = owned.position.size(); // MPI check
 #ifdef CAVIAR_WITH_OPENMP  
   #pragma omp parallel for reduction (+:p_cm,mass_sum)
 #endif     
@@ -282,7 +282,7 @@ Vector<Real_t> Atom_data::owned_position_cm () {
 Vector<Real_t> Atom_data::owned_velocity_cm () {
   Vector<Real_t> v_cm {0.0,0.0,0.0};
   double mass_sum = 0.0;
-  auto p_size = owned.velocity.size();
+  auto p_size = owned.velocity.size();// MPI check
 #ifdef CAVIAR_WITH_OPENMP  
   #pragma omp parallel for reduction (+:v_cm,mass_sum)
 #endif     
@@ -296,17 +296,50 @@ Vector<Real_t> Atom_data::owned_velocity_cm () {
   return v_cm;
 }
 
-Vector<Real_t> Atom_data::owned_angular_momentum_cm () {
-  Vector<Real_t> am_cm {0.0,0.0,0.0};
-  error->all(FC_FILE_LINE_FUNC,"not implemented.");
-  return am_cm;
+Vector<double> Atom_data::owned_angular_momentum_cm (const Vector<double> &p_cm) {
+  
+  Vector<double> L_cm {0.0, 0.0,0.0};
+  
+  auto p_size = owned.position.size();// MPI check
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:L_cm)
+#endif     
+  for (unsigned int i = 0; i < p_size; ++i) {
+    auto type_i = owned.type[i];
+    auto mass_i = owned.mass[type_i];
+    
+    L_cm += mass_i*cross_product(owned.position[i] - p_cm, owned.velocity[i]);    
+  }  
+  
+  return L_cm;
 }
 
-std::vector<std::vector<Real_t> > Atom_data::owned_inertia_tensor_cm () {
-  std::vector<std::vector<Real_t> > it_cm (3, std::vector<Real_t> (3, 0.0));
-  owned_position_cm();
-  error->all(FC_FILE_LINE_FUNC,"not implemented.");
-  return it_cm;
+std::vector<std::vector<double> > Atom_data::owned_inertia_tensor_cm (const Vector<double> &p_cm) {
+  
+  std::vector<std::vector<double> > I_cm (3, std::vector<double> (3, 0.0));
+  
+  auto p_size = owned.position.size(); // MPI check
+#ifdef CAVIAR_WITH_OPENMP  
+  #pragma omp parallel for reduction (+:it_cm)
+#endif     
+  for (unsigned int i = 0; i < p_size; ++i) {
+    auto type_i = owned.type[i];
+    auto mass_i = owned.mass[type_i];
+    auto p = owned.position[i] - p_cm; //relative position
+    I_cm[0][0] += mass_i*(p.y*p.y + p.z*p.z);
+    I_cm[1][1] += mass_i*(p.x*p.x + p.z*p.z);    
+    I_cm[2][2] += mass_i*(p.x*p.x + p.y*p.y);
+    
+    I_cm[0][1] -= mass_i*(p.x*p.y);
+    I_cm[1][2] -= mass_i*(p.y*p.z);    
+    I_cm[2][0] -= mass_i*(p.z*p.x);
+    
+    I_cm[1][0] = I_cm[0][1];
+    I_cm[2][1] = I_cm[1][2];
+    I_cm[0][2] = I_cm[2][0];
+  }      
+  
+  return I_cm;
 }
   
 

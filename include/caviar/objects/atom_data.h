@@ -80,14 +80,31 @@ public:
   /**
    *  angular momentum of the center of mass
    */
-  virtual Vector<Real_t> owned_angular_momentum_cm ();
+  virtual Vector<double> owned_angular_momentum_cm ()
+  {
+      return owned_angular_momentum_cm (owned_position_cm ());
+  }
 
+  /**
+   *  angular momentum of the center of mass
+   */
+  virtual Vector<double> owned_angular_momentum_cm (const Vector<double> &p_cm);
+    
+  
   /**
    *  inertia_tensor of the center of mass. The tensor type may be modified
    *  in the future.
    */
-  virtual std::vector<std::vector<Real_t> > owned_inertia_tensor_cm ();
+  virtual std::vector<std::vector<double> > owned_inertia_tensor_cm ()
+  {
+      return owned_inertia_tensor_cm (owned_position_cm ());
+  }
   
+  /**
+   *  inertia_tensor of the center of mass. The tensor type may be modified
+   *  in the future.
+   */
+  virtual std::vector<std::vector<double> > owned_inertia_tensor_cm (const Vector<double> &p_cm);
 
   /**
    * Initial setting of number of atoms.

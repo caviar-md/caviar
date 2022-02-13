@@ -18,6 +18,7 @@
 #define CAVIAR_UTILITY_H
 
 #include "caviar_config.h"
+#include "caviar/utility/vector.h"
 #include <algorithm>
 #include <vector>
 
@@ -143,6 +144,28 @@ int matrix_inverse(std::vector<std::vector<T>>&A, std::vector<std::vector<T>>&A_
   }
 
   }
+}
+
+
+/**
+ *  Product of Matrix on a Vector which results in a vector
+ *  type 'std::vector < std::vector < typename > >' . It
+ */
+template <typename T>
+int matrix_Vector_product (const std::vector<std::vector<T>>&A, const Vector<T>&V, Vector<T>&R ) {
+
+  const auto A_size = A.size();
+  if (A_size != 3) return 3;
+  for (auto &&i : A) {
+    if (i.size() != A_size)
+      return 3;
+  }
+  
+  R.x = A[0][0] * V.x + A[0][1] * V.y + A[0][2] * V.z;
+  R.y = A[1][0] * V.x + A[1][1] * V.y + A[1][2] * V.z;
+  R.z = A[2][0] * V.x + A[2][1] * V.y + A[2][2] * V.z;
+  
+  return 0;
 }
 
 

@@ -18,6 +18,7 @@
 #include "caviar/interpreter/communicator.h"
 #include "caviar/interpreter/error.h"
 #include "caviar/objects/domain.h"
+#include "caviar/utility/common_template_functions.h"
 
 #include <algorithm>
 
@@ -49,7 +50,36 @@ double Atom_data::kinetic_energy () {
   } break;
 
   case (4): case (5): case (6): {
-    error->all(FC_FILE_LINE_FUNC,"not implemented.");    
+    
+    auto v_cm = owned_velocity_cm();
+    auto p_cm = owned_position_cm();          
+    auto L_cm = owned_angular_momentum_cm();
+    auto I_cm = owned_inertia_tensor_cm();
+    
+    std::vector<std::vector<Real_t> > I_cm_inverse (3, std::vector<Real_t> (3, 0.0)); 
+    Vector<Real_t> I_i_L (0,0,0);
+    bool correct_result = false;
+    if (matrix_inverse(I_cm, I_cm_inverse)!= 0) 
+    {
+        if (matrix_Vector_product(I_cm_inverse, L_cm, I_i_L) != 0)        {
+            
+            correct_result = true;
+        }
+    }
+    
+    if (correct_result)
+    {
+        for (unsigned int i = 0; i < owned.position.size(); ++i) {
+        
+        auto v_i = owned.velocity[i] - v_cm - (cross_product(I_i_L, owned.position[i] - p_cm));
+        e_owned += owned.mass[owned.type[i]] * (v_i * v_i);
+        }
+    }
+    else
+    {
+        error->all(FC_FILE_LINE_FUNC,"Error in Inertia Tensor Inverse Calculations for Kinetic Energy...");    
+    }
+    
   } break;
 
 
@@ -66,38 +96,72 @@ double Atom_data::kinetic_energy () {
 }
 
 
-
+// KINETIC ENERGY OF A TYPE
 double Atom_data::kinetic_energy (const int t) {
+  
+      
+      
   double e_total = 0.0;
 
   double e_owned = 0.0;
 
+
   switch (get_n_r_df()) {
   case 0 : {
     for (unsigned int i = 0; i < owned.position.size(); ++i) {
-      if (t==static_cast<int>(owned.type[i])) {
+        if (t!=static_cast<int>(owned.type[i]))   continue; // KINETIC ENERGY OF A TYPE
         e_owned += owned.mass[owned.type[i]] * (owned.velocity[i] * owned.velocity[i]);
-      }
     }
-    e_owned *= 0.5;
+
   } break;
 
   case (1) : case (2): case (3): {
-    error->all(FC_FILE_LINE_FUNC,"not implemented.");
+    auto v_cm = owned_velocity_cm();
+    for (unsigned int i = 0; i < owned.position.size(); ++i) {
+      if (t!=static_cast<int>(owned.type[i]))   continue; // KINETIC ENERGY OF A TYPE
+      auto v_i = owned.velocity[i] - v_cm;
+      e_owned += owned.mass[owned.type[i]] * (v_i * v_i);
+    }
   } break;
 
   case (4): case (5): case (6): {
-    error->all(FC_FILE_LINE_FUNC,"not implemented.");   
+    
+    auto v_cm = owned_velocity_cm();
+    auto p_cm = owned_position_cm();    
+    
+    auto L_cm = owned_angular_momentum_cm();
+    auto I_cm = owned_inertia_tensor_cm();
+    
+    std::vector<std::vector<Real_t> > I_cm_inverse (3, std::vector<Real_t> (3, 0.0)); 
+    Vector<Real_t> I_i_L (0,0,0);
+    bool correct_result = false;
+    if (matrix_inverse(I_cm, I_cm_inverse)!= 0) 
+    {
+        if (matrix_Vector_product(I_cm_inverse, L_cm, I_i_L) != 0)
+        {
+            correct_result = true;
+        }
+    }
+    
+    if (correct_result)
+    {
+        for (unsigned int i = 0; i < owned.position.size(); ++i) {
+            if (t!=static_cast<int>(owned.type[i]))   continue; // KINETIC ENERGY OF A TYPE
+        
+            auto v_i = owned.velocity[i] - v_cm - (cross_product(I_i_L, owned.position[i] - p_cm));
+            e_owned += owned.mass[owned.type[i]] * (v_i * v_i);
+        }
+    }
+    else
+    {
+        error->all(FC_FILE_LINE_FUNC,"Error in Inertia Tensor Inverse Calculations for Kinetic Energy...");    
+    }
+    
   } break;
 
 
   }
-
-//--------------
-
-
-
-
+  e_owned *= 0.5;
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
   e_total = e_owned;
 #elif defined(CAVIAR_WITH_MPI)
