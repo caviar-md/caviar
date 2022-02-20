@@ -1,0 +1,235 @@
+
+#=======================================================================
+# 
+# Copyright (C) 2019 by Morad Biagooi and Ehsan Nedaaee Oskoee.
+# 
+# This file is part of the CAVIAR package.
+# 
+# The CAVIAR package is free software; you can use it, redistribute
+# it, and/or modify it under the terms of the GNU Lesser General
+# Public License as published by the Free Software Foundation; either
+# version 3.0 of the License, or (at your option) any later version.
+# The full text of the license can be found in the file LICENSE at
+# the top level of the CAVIAR distribution.
+# 
+#=======================================================================
+# 
+# This script script is made with the contributions of Mr Amin Karim Abadi
+# 
+
+#===== global variables
+
+real global_dt 0.001
+
+
+#===== Atom definition =====
+
+unique atom a_Grain0
+a_Grain0 type 0
+a_Grain0 position 0 0 0
+
+
+unique atom_group ag0
+
+
+#===== Atom definition =====
+
+unique atom a_Grain1
+a_Grain1 type 1
+a_Grain1 position 1 1 1
+
+
+unique atom_group ag1
+
+
+#===== Domain
+
+domain box dom
+dom xmin -11 xmax 11
+dom ymin -11 ymax 11
+dom zmin -11 zmax 11
+dom boundary_condition 1 1 1
+ 
+dom generate
+
+#===== Grid definition =====
+
+unique grid_1d gx0
+unique grid_1d gy0
+unique grid_1d gz0
+
+
+# A few number of molecules
+gx0 min -10 max 10 segment 5
+gy0 min -10 max 10 segment 5
+gz0 min -10 max 10 segment 5
+#gz min -450 max -400 segment 5
+
+gx0 generate
+gy0 generate
+gz0 generate
+
+
+#==== Distribution =====
+
+unique distribution d
+d atom_group ag0
+
+d atom a_Grain0
+d grid_1d_x gx0 
+d grid_1d_y gy0 
+d grid_1d_z gz0
+d distribute_grid_3d
+
+#==== Distribution =====
+
+
+d atom_group ag1
+d atom a_Grain1
+d grid_1d_x gx0
+d grid_1d_y gy0 
+d grid_1d_z gz0
+d distribute_grid_3d
+
+
+#========== Atom_data
+
+atom_data basic adata
+adata ghost_cutoff 10
+adata cutoff_extra 0.01
+adata k_b 1.0
+adata set_domain dom
+adata add_type_mass   0 1.0
+adata add_type_charge 0 0.0 
+adata add_type_radius 0 0.5 
+
+adata add_atom_group ag0
+adata add_atom_group ag1
+adata add_random_velocity
+
+
+
+
+#===== Neighborlist
+
+neighborlist verlet_list neigh_verlet 
+neigh_verlet set_atom_data adata
+neigh_verlet cutoff 5
+neigh_verlet dt global_dt
+
+
+
+#===== force_field
+
+force_field  lj f_lj
+
+f_lj cutoff 10.0
+f_lj epsilon 0 0 1.0
+f_lj sigma 0 0 0.5
+f_lj set_neighborlist neigh_verlet
+#f_lj set_neighborlist neigh_cell
+f_lj set_atom_data adata
+
+#===== force_field
+
+force_field  fix_bond f_fb
+
+f_fb type_i 0
+f_fb type_j 1
+f_fb Rmin 1.0
+f_fb blength 1.0
+f_fb btype 1
+f_fb set_neighborlist neigh_verlet
+f_fb set_atom_data adata
+
+#===== force_field
+
+force_field spring_bond f_sb
+f_sb set_atom_data adata
+f_sb set_domain dom
+f_sb elastic_coef 0 100.0
+f_sb dissip_coef 0 1.0
+
+
+#==== Constraint
+
+constraint  nve c_nve
+c_nve kb 1.0
+c_nve temperature 5.0
+c_nve set_atom_data adata
+
+
+#==== Constraint
+
+constraint  Nose_hoover c_nh
+c_nh kb 1.0
+c_nh type 2
+c_nh tau 0.0001 # used in type 2 Nose_hoover
+# c_nh mass 1.0 # used in type 1 Nose_hoover
+c_nh temperature 5.0
+
+c_nh dt global_dt
+c_nh set_atom_data adata
+
+#==== Constraint
+
+constraint  Berendsen c_ber
+c_ber coupling 0.01 
+c_ber temperature 5.0
+c_ber dt global_dt
+c_ber set_atom_data adata
+
+
+#====== writer 
+writer atom_data w1
+w1 set_atom_data adata
+w1 set_domain dom
+w1 xyz_step 50
+w1 temperature_step 500
+w1 energy_step 50
+w1 output_velocity
+
+#=====  simulator
+
+
+md_simulator basic sim 
+
+sim integrator_type leap_frog
+
+sim set_atom_data adata
+
+sim add_force_field f_lj
+sim add_force_field f_fb
+#sim add_force_field f_sb
+
+sim add_neighborlist neigh_verlet
+
+
+sim add_writer w1
+
+sim dt global_dt
+
+sim add_constraint c_nve
+
+sim initial_step 0
+sim final_step 10000
+sim run
+
+sim remove_constraint c_nve
+sim add_constraint c_ber
+
+sim initial_step 10001
+sim final_step 20000
+sim run
+
+sim remove_constraint c_ber
+sim add_constraint c_nh
+
+sim initial_step 20001
+sim final_step 70000
+sim run
+
+
+#exit
+
+

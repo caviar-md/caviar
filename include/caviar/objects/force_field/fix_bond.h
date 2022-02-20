@@ -14,8 +14,8 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_FORCEFIELD_SPRINGBONDTEST_H
-#define CAVIAR_OBJECTS_FORCEFIELD_SPRINGBONDTEST_H
+#ifndef CAVIAR_OBJECTS_FORCEFIELD_FIXBOND_H
+#define CAVIAR_OBJECTS_FORCEFIELD_FIXBOND_H
 
 #include "caviar/objects/force_field.h"
 
@@ -24,22 +24,26 @@ namespace objects {
 namespace force_field {
 
 /**
- * This class does a spring force-field on the molecular bonds
- *  
+ * This class adds a atomic bond between atoms/molecules
+ * if the given conditions are satisfied.
  */
-class Spring_bond_test : public Force_field {
+class Fix_bond : public Force_field {
 public:
-  Spring_bond_test (class CAVIAR *);
-  ~Spring_bond_test () {};
+  Fix_bond (class CAVIAR *);
+  ~Fix_bond () {};
 
-  //double energy();
 
   bool read (class caviar::interpreter::Parser *);
   void verify_settings ();
   void calculate_acceleration ();
+  void create_atomic_bond ();
 public:
 
-  std::vector<Real_t> elastic_coef, dissip_coef;
+  int type_i;
+  int type_j;
+  int btype;
+  double Rmin;
+  double blength;
  
 };
 

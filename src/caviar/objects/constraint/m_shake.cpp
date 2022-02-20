@@ -78,12 +78,12 @@ void M_shake::apply_on_position (int64_t) { // step III
   
   auto &pos = atom_data -> owned.position;
   auto &pos_old = atom_data -> owned.position_old;
-  auto &atomic_bond_index_vector = atom_data -> owned.atomic_bond_index_vector;
+  
   auto &atomic_bond_vector = atom_data -> owned.atomic_bond_vector;
 
-  for (unsigned int i=0; i<atomic_bond_index_vector.size(); i++) { 
+  for (unsigned int i=0; i<atomic_bond_vector.size(); i++) { 
 
-    auto Nc = atomic_bond_index_vector[i].size();
+    auto Nc = atomic_bond_vector[i].size();
     if (Nc==0) continue;
 	  std::vector<std::vector<double>> A (Nc, std::vector<double> (Nc,0));
     std::vector<std::vector<double>> M (Nc, std::vector<double> (Nc,0));  //inverse of matrix A
@@ -191,11 +191,13 @@ void M_shake::apply_on_velocity (int64_t) { // step III
   auto &vel = atom_data -> owned.velocity;
   auto &pos = atom_data -> owned.position;
   auto &pos_old = atom_data -> owned.position_old;
-  auto &atomic_bond_index_vector = atom_data -> owned.atomic_bond_index_vector;
-  for (unsigned int i=0; i<atomic_bond_index_vector.size(); i++) { 
-    for (unsigned int j=0; j<atomic_bond_index_vector[i].size(); j++) { // XXX P.II
-      const auto k = atomic_bond_index_vector[i][j];
-      vel[k] = domain -> fix_distance(pos[k] - pos_old[k]) / dt ;			
+  auto &atomic_bond_vector = atom_data -> owned.atomic_bond_vector;
+  for (unsigned int i=0; i<atomic_bond_vector.size(); i++) { 
+    for (unsigned int j=0; j<atomic_bond_vector[i].size(); j++) { // XXX P.II
+      auto k1 = atomic_bond_vector[i][j].index_1;
+      auto k2 = atomic_bond_vector[i][j].index_2;
+      vel[k1] = domain -> fix_distance(pos[k1] - pos_old[k1]) / dt ;
+      vel[k2] = domain -> fix_distance(pos[k2] - pos_old[k2]) / dt ;
     }
   }
 

@@ -73,17 +73,13 @@ void Spring_bond::calculate_acceleration () {
   auto &vel = atom_data -> owned.velocity;
   auto &type = atom_data -> owned.type;
   auto &mass_inv = atom_data -> owned.mass_inv;
-
-  auto &atomic_bond_index_vector = atom_data -> owned.atomic_bond_index_vector;
   auto &atomic_bond_vector = atom_data -> owned.atomic_bond_vector;
 
 #ifdef CAVIAR_WITH_OPENMP
   #pragma omp parallel for
 #endif
-  for (unsigned int i=0; i<atomic_bond_index_vector.size(); i++) { 
-
-    auto Nc = atomic_bond_index_vector[i].size();
-    if (Nc==0) continue;
+  for (unsigned int i=0; i<atomic_bond_vector.size(); i++) { 
+    
     for (unsigned int j=0; j<atomic_bond_vector[i].size(); j++) { 
         int k1 = atomic_bond_vector[i][j].index_1, k2 = atomic_bond_vector[i][j].index_2;
         int btype = atomic_bond_vector[i][j].type;

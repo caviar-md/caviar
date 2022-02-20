@@ -3,6 +3,8 @@
 //
 // Copyright (C) 2019 by Morad Biagooi and Ehsan Nedaaee Oskoee.
 //
+// Implementation of Opls_proper_dihedral is done by Nasrin Eyvazi
+//
 // This file is part of the CAVIAR package.
 //
 // The CAVIAR package is free software; you can use it, redistribute
@@ -85,16 +87,13 @@ void Opls_proper_dihedral::calculate_acceleration () {
   auto &type = atom_data -> owned.type;
   auto &mass_inv = atom_data -> owned.mass_inv;
 
-  auto &atomic_properdihedral_index_vector = atom_data -> owned.atomic_properdihedral_index_vector;
   auto &atomic_properdihedral_vector = atom_data -> owned.atomic_properdihedral_vector;
 
 #ifdef CAVIAR_WITH_OPENMP
   #pragma omp parallel for
 #endif
-  for (unsigned int i=0; i<atomic_properdihedral_index_vector.size(); i++) { 
-
-    auto Nc = atomic_properdihedral_index_vector[i].size();
-    if (Nc==0) continue;
+  for (unsigned int i=0; i<atomic_properdihedral_vector.size(); i++) { 
+      
     for (unsigned int j=0; j<atomic_properdihedral_vector[i].size(); j++) { 
         int k1 = atomic_properdihedral_vector[i][j].index_1;
         int k2 = atomic_properdihedral_vector[i][j].index_2;

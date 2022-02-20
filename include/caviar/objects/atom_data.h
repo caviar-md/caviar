@@ -135,9 +135,7 @@ public:
   virtual bool add_atom (GlobalID_t, 
                          AtomType_t,
                          const Vector<Real_t> &,
-                         const Vector<Real_t> &vel = Vector<Real_t>{0.0,0.0,0.0},
-                         const std::vector<Real_t> &other_real = std::vector<Real_t>{},
-                         const std::vector<int> &other_int = std::vector<int>{});
+                         const Vector<Real_t> &vel = Vector<Real_t>{0.0,0.0,0.0});
 
   /**
    * add unique::Atom to the owned data
@@ -153,6 +151,56 @@ public:
   virtual bool add_molecule(caviar::objects::unique::Molecule_group &m);
   virtual bool add_molecule(caviar::objects::unique::Molecule_list &m);
 
+  /**
+   * merging two molecules by their molecule index
+   */
+  void merge_molecules(int molecule_index_1, int molecule_index_2);
+  
+  /**
+   * adds a new bond between existing atoms in the  atom_data and merge molecules if possible
+   */
+  void add_atomic_bond(const objects::atom_data::Bond& bond); 
+  
+  /**
+   * adds a new bond between existing atoms in the  atom_data and merge molecules if possible
+   */
+  void add_atomic_angle(const objects::atom_data::Angle& angle);
+  
+  /**
+   * adds a new bond between existing atoms in the  atom_data and merge molecules if possible
+   */
+  void add_atomic_properdihedral(const objects::atom_data::Proper_dihedral& proper_dihedral);
+
+  /**
+   * remove atomic bond if it exist. Also remove atomic angles and proper dihedrals if the bond is used in them.
+   */
+  void remove_atomic_bond(const objects::atom_data::Bond& bond); 
+  
+  /**
+   * remove atomic angle if it exist
+   */
+  void remove_atomic_angle(const objects::atom_data::Angle& angle);
+  
+  /**
+   * remove atomic angle if it exist
+   */
+  void remove_atomic_properdihedral(const objects::atom_data::Proper_dihedral& proper_dihedral);
+
+    /**
+   * remove atomic bond if it exist. Also remove atomic angles and proper dihedrals if the bond is used in them.
+   */
+  bool check_atomic_bond_exist(const objects::atom_data::Bond& bond); 
+  
+  /**
+   * remove atomic angle if it exist
+   */
+  bool check_atomic_angle_exist(const objects::atom_data::Angle& angle);
+  
+  /**
+   * remove atomic angle if it exist
+   */
+  bool check_atomic_properdihedral_exist(const objects::atom_data::Proper_dihedral& proper_dihedral);
+  
   /**
    * sets the mass of an atom type
    */
@@ -340,24 +388,22 @@ public:
     std::vector<Vector<int>> msd_domain_cross;
 
 
-    /**    
-     * this part matters when molecules are in the play. The first index, meaning
-     * the first std::vector, is the molecule index. the inner data contain bonds.
-     */
-    std::vector <std::vector<objects::atom_data::Bond>> atomic_bond_vector; 
-
-    /**
-     * and a list of atoms which are in the molecule
-     * note that this is different from Molecule->atomic_bond_index_list
-     */
-    std::vector <std::vector<int>> atomic_bond_index_vector; 
-
     /**
      * this vector contain a molecule index for all the atoms. if it's '-1' the
      * atom is not of any molecule. This matters in the MPI process. All of the
      * atoms of a molecule should be existed in one process.
      */
     std::vector <int> molecule_index; //
+    
+    /**    
+     * number of total molecules.
+     */
+    int num_molecules;
+    
+    /**    
+     * The first std::vector, is the molecule index. the inner data contain bonds.
+     */
+    std::vector <std::vector<objects::atom_data::Bond>> atomic_bond_vector;  
 
     /**
      * The first index, meaning
@@ -365,13 +411,9 @@ public:
      */
     std::vector <std::vector<objects::atom_data::Angle>> atomic_angle_vector; 
 
-    /**
-     * and a list of atoms which are in the molecule
-     */
-    std::vector <std::vector<int>> atomic_angle_index_vector;  
 
     std::vector <std::vector<objects::atom_data::Proper_dihedral>> atomic_properdihedral_vector;
-    std::vector <std::vector<int>> atomic_properdihedral_index_vector; 
+    
  
   }  
   /**

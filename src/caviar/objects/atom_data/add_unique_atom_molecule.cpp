@@ -38,7 +38,9 @@ bool Atom_data::add_atom(caviar::objects::unique::Atom &a) {
   const auto t = a.type;
   const auto pos = a.pos_tot ();
   const auto vel = a.vel_tot ();
-  return add_atom (id, t, pos, vel);    
+  if (position_inside_local_domain(pos))
+    return add_atom (id, t, pos, vel);
+  return false;
 }
 
 bool Atom_data::add_atom(caviar::objects::unique::Atom_group &ag) {
@@ -47,6 +49,7 @@ bool Atom_data::add_atom(caviar::objects::unique::Atom_group &ag) {
   return true; 
 }
 
+
 bool Atom_data::add_atom(caviar::objects::unique::Atom_list &al) {
   for (auto&& a : al.atoms)
     add_atom(*a);
@@ -54,88 +57,483 @@ bool Atom_data::add_atom(caviar::objects::unique::Atom_list &al) {
 }
 
 
+inline bool FC_COMPARE_PAIRS(int a1,int a2,int b1, int b2) {
+    if ((a1 == b1 && a2 == b2) || (a1 == b2 && a2 == b1)) return true;
+    return false;
+}
+
+void Atom_data::remove_atomic_bond(const objects::atom_data::Bond& bond) 
+{
+    
+    int mi_1 = owned.molecule_index[bond.index_1];
+    int mi_2 = owned.molecule_index[bond.index_2];
+    if (mi_1 == -1 || mi_2 == -1) return;
+    
+    if (mi_1 == mi_2)
+    {        
+         bool bond_found = false;
+         for (unsigned int j = 0; j < owned.atomic_bond_vector[mi_1].size(); ++j)
+         {
+             auto b = owned.atomic_bond_vector[mi_1][j];             
+            
+             if (FC_COMPARE_PAIRS (b.index_1, b.index_2, bond.index_1, bond.index_2))
+             {
+                 owned.atomic_bond_vector[mi_1].erase(owned.atomic_bond_vector[mi_1].begin() + j);
+                 bond_found = true;
+                 break;
+             }
+         }
+         if (!bond_found)
+         {
+             error->all (FC_FILE_LINE_FUNC, "Can't remove bond. It does not exist"); 
+             return;
+         }
+         
+
+         
+         for (unsigned int j = 0; j < owned.atomic_angle_vector[mi_1].size(); ++j)
+         {
+             auto a = owned.atomic_angle_vector[mi_1][j];
+             if (FC_COMPARE_PAIRS(bond.index_1, bond.index_2, a.index_1, a.index_2) || 
+                 FC_COMPARE_PAIRS(bond.index_1, bond.index_2, a.index_2, a.index_3))
+             {
+                 owned.atomic_angle_vector[mi_1].erase(owned.atomic_angle_vector[mi_1].begin() + j);
+                 //break; no break! It can be shared between two angles
+             }
+         }
+         
+         for (unsigned int j = 0; j < owned.atomic_properdihedral_vector[mi_1].size(); ++j)
+         {
+             auto p = owned.atomic_properdihedral_vector[mi_1][j];
+             if (FC_COMPARE_PAIRS(bond.index_1, bond.index_2, p.index_1, p.index_2) || 
+                 FC_COMPARE_PAIRS(bond.index_1, bond.index_2, p.index_2, p.index_3) || 
+                 FC_COMPARE_PAIRS(bond.index_1, bond.index_2, p.index_3, p.index_4))
+             {
+                 owned.atomic_properdihedral_vector[mi_1].erase(owned.atomic_properdihedral_vector[mi_1].begin() + j);
+                 //break; no break! It can be shared between three proper dihedrals
+             }
+         }
+
+        //------------------------------------------
+        // remove mono-atomic  molecules  //
+        //------------------------------------------
+         if (owned.atomic_bond_vector[mi_1].size()==0)
+         {
+            owned.num_molecules--;
+            owned.atomic_bond_vector.erase(owned.atomic_bond_vector.begin() + mi_1);
+            owned.atomic_angle_vector.erase(owned.atomic_angle_vector.begin() + mi_1);
+            owned.atomic_properdihedral_vector.erase(owned.atomic_properdihedral_vector.begin() + mi_1);
+         }
+         
+    }    
+    else
+    {
+        error->all (FC_FILE_LINE_FUNC, "Can't remove atomic bond because the described atoms are of different molecules."); 
+    }
+}
+
+void Atom_data::remove_atomic_angle(const objects::atom_data::Angle& angle) 
+{
+    
+    int mi_1 = owned.molecule_index[angle.index_1];
+    int mi_2 = owned.molecule_index[angle.index_2];
+    int mi_3 = owned.molecule_index[angle.index_3];
+    
+
+    if ((mi_1==mi_2) && (mi_2==mi_3))
+    {
+         for (unsigned int j = 0; j < owned.atomic_angle_vector[mi_1].size(); ++j)
+         {
+             auto a = owned.atomic_angle_vector[mi_1][j];
+             if (
+                 ( FC_COMPARE_PAIRS(angle.index_1, angle.index_2, a.index_1, a.index_2) &&
+                   FC_COMPARE_PAIRS(angle.index_2, angle.index_3, a.index_2, a.index_3 ) ) 
+                 || 
+                 ( FC_COMPARE_PAIRS(angle.index_1, angle.index_2, a.index_2, a.index_3) &&
+                   FC_COMPARE_PAIRS(angle.index_2, angle.index_3, a.index_1, a.index_2 ) )   
+                )
+             {
+                 owned.atomic_angle_vector[mi_1].erase(owned.atomic_angle_vector[mi_1].begin() + j);
+                 break;
+             }
+         }
+    }
+    else
+    {
+        error->all (FC_FILE_LINE_FUNC, "Can't remove atomic angle because the described atoms are of different molecules."); 
+    }
+}
+
+
+
+void Atom_data::remove_atomic_properdihedral(const objects::atom_data::Proper_dihedral& pd) 
+{
+    
+    int mi_1 = owned.molecule_index[pd.index_1];
+    int mi_2 = owned.molecule_index[pd.index_2];
+    int mi_3 = owned.molecule_index[pd.index_3];
+    int mi_4 = owned.molecule_index[pd.index_4];
+    
+
+    if ((mi_1==mi_2) && (mi_2==mi_3) && (mi_3 == mi_4))
+    {
+        for (unsigned int j = 0; j < owned.atomic_properdihedral_vector[mi_1].size(); ++j)
+        {
+            auto p = owned.atomic_properdihedral_vector[mi_1][j];
+            if (
+                 ( FC_COMPARE_PAIRS(pd.index_1, pd.index_2, p.index_1, p.index_2) &&
+                   FC_COMPARE_PAIRS(pd.index_3, pd.index_4, p.index_3, p.index_4 ) ) 
+                 || 
+                 ( FC_COMPARE_PAIRS(pd.index_1, pd.index_2, p.index_3, p.index_4) &&
+                   FC_COMPARE_PAIRS(pd.index_3, pd.index_4, p.index_1, p.index_2 ) )   
+                )
+             {
+                 owned.atomic_properdihedral_vector[mi_1].erase(owned.atomic_properdihedral_vector[mi_1].begin() + j);
+                 break;
+             }
+        }
+    }
+    else
+    {
+        error->all (FC_FILE_LINE_FUNC, "Can't remove atomic proper dihedral because the described atoms are of different molecules."); 
+    }
+    
+}
+
+
+void Atom_data::add_atomic_bond(const objects::atom_data::Bond& bond) {
+
+    int molecule_index_1 = owned.molecule_index[bond.index_1];
+    int molecule_index_2 = owned.molecule_index[bond.index_2];
+    
+    
+    //---------------------------------------------------------
+    // deducing whether a new molecule must be created or
+    // choosing the molecule with the lower index to be the one
+    // that the other atoms/molecule are merged into.
+    //---------------------------------------------------------
+    
+    
+    
+    if (molecule_index_1 == -1 && molecule_index_2 == -1)
+    {        
+        
+        //------------------------------------------
+        // increasing Molecules' containers size  //
+        //------------------------------------------
+        owned.num_molecules++;
+        owned.atomic_bond_vector.resize(owned.num_molecules);
+        owned.atomic_angle_vector.resize(owned.num_molecules);
+        owned.atomic_properdihedral_vector.resize(owned.num_molecules);
+        int new_molecule_index  = owned.num_molecules - 1; 
+        
+        //------------------------------------------
+        // add the bond
+        //------------------------------------------
+        owned.atomic_bond_vector[new_molecule_index].emplace_back (bond); 
+        owned.molecule_index[bond.index_1] = new_molecule_index;
+        owned.molecule_index[bond.index_2] = new_molecule_index;
+                
+    }
+    else if (molecule_index_1 == -1)
+    {
+        owned.atomic_bond_vector[molecule_index_2].push_back(bond);
+        owned.molecule_index[bond.index_1] = molecule_index_1;
+    }
+    else if (molecule_index_2 == -1)
+    {
+        owned.atomic_bond_vector[molecule_index_1].push_back(bond);
+        owned.molecule_index[bond.index_2] = molecule_index_1;
+    }
+    else if (molecule_index_1 != molecule_index_2)
+    {
+        int molecule_index_lower, molecule_index_higher;
+        if (molecule_index_1 < molecule_index_2)
+        {
+            molecule_index_lower = molecule_index_1;
+            molecule_index_higher = molecule_index_2;
+        }
+        else
+        {
+            molecule_index_lower = molecule_index_2;
+            molecule_index_higher = molecule_index_1;
+        }
+    
+        auto vs = owned.atomic_bond_vector[molecule_index_higher].size();
+        
+        if (vs > 0)
+        {
+            owned.atomic_bond_vector[molecule_index_lower].reserve(vs);
+            
+            for (const auto & i: owned.atomic_bond_vector[molecule_index_higher])
+            {
+                owned.atomic_bond_vector[molecule_index_lower].emplace_back(i);
+                owned.molecule_index[i.index_1] = molecule_index_lower;
+                owned.molecule_index[i.index_2] = molecule_index_lower;
+            }
+            owned.atomic_bond_vector[molecule_index_higher].clear();
+        }        
+        
+        owned.atomic_bond_vector[molecule_index_lower].push_back(bond);
+        
+        //---------------------------------------------------------
+        // After two molecules are merged by a new bond, existing
+        // angles and properdihedrals have to be merged too.
+        //--------------------------------------------------------
+        vs = owned.atomic_angle_vector[molecule_index_higher].size();
+        if (vs > 0)
+        {
+            owned.atomic_angle_vector[molecule_index_lower].reserve(vs);
+            
+            for (const auto & i: owned.atomic_angle_vector[molecule_index_higher])
+            {
+                owned.atomic_angle_vector[molecule_index_lower].emplace_back(i);
+                owned.molecule_index[i.index_1] = molecule_index_lower;
+                owned.molecule_index[i.index_2] = molecule_index_lower;
+                owned.molecule_index[i.index_3] = molecule_index_lower;
+            }
+            owned.atomic_angle_vector[molecule_index_higher].clear();
+        }
+        
+        vs = owned.atomic_properdihedral_vector[molecule_index_higher].size();
+        if (vs >0)
+        {
+            owned.atomic_properdihedral_vector[molecule_index_lower].reserve(vs);
+            
+            for (const auto & i: owned.atomic_properdihedral_vector[molecule_index_higher])
+            {
+                owned.atomic_properdihedral_vector[molecule_index_lower].emplace_back(i);
+                owned.molecule_index[i.index_1] = molecule_index_lower;
+                owned.molecule_index[i.index_2] = molecule_index_lower;
+                owned.molecule_index[i.index_3] = molecule_index_lower;                
+                owned.molecule_index[i.index_4] = molecule_index_lower;                
+            }
+            
+            owned.atomic_properdihedral_vector[molecule_index_higher].clear();
+        }
+        
+    }
+    else if ( (molecule_index_1 == molecule_index_2) && (molecule_index_1 != -1))
+    {
+        owned.atomic_bond_vector[molecule_index_1].push_back(bond);
+    }                        
+        
+}
+
+
+void Atom_data::add_atomic_angle(const objects::atom_data::Angle& angle) 
+{
+    
+    int mi_1 = owned.molecule_index[angle.index_1];
+    int mi_2 = owned.molecule_index[angle.index_2];
+    int mi_3 = owned.molecule_index[angle.index_3];
+    
+
+    if ((mi_1==mi_2) && (mi_2==mi_3))
+    {
+        owned.atomic_angle_vector[mi_1].emplace_back(angle);
+    }
+    else
+    {
+        error->all (FC_FILE_LINE_FUNC, "New atomic angles must be in the same molecule"); 
+    }
+    
+}
+
+void Atom_data::add_atomic_properdihedral(const objects::atom_data::Proper_dihedral& proper_dihedral) 
+{
+    
+    int mi_1 = owned.molecule_index[proper_dihedral.index_1];
+    int mi_2 = owned.molecule_index[proper_dihedral.index_2];
+    int mi_3 = owned.molecule_index[proper_dihedral.index_3];
+    int mi_4 = owned.molecule_index[proper_dihedral.index_4];
+    
+
+    if ((mi_1==mi_2) && (mi_2==mi_3) && (mi_3 == mi_4))
+    {
+        owned.atomic_properdihedral_vector[mi_1].emplace_back(proper_dihedral);
+    }
+    else
+    {
+        error->all (FC_FILE_LINE_FUNC, "New atomic proper dihedrals must be in the same molecule"); 
+    }
+    
+    
+}
+
+
+
+bool Atom_data::check_atomic_bond_exist(const objects::atom_data::Bond& bond) 
+{
+    int mi_1 = owned.molecule_index[bond.index_1];
+    int mi_2 = owned.molecule_index[bond.index_2];
+    if (mi_1 == -1 || mi_2 == -1) return false;
+    if (mi_1 == mi_2)
+    {        
+         for (unsigned int j = 0; j < owned.atomic_bond_vector[mi_1].size(); ++j)
+         {
+             auto b = owned.atomic_bond_vector[mi_1][j];
+             if (FC_COMPARE_PAIRS (b.index_1, b.index_2, bond.index_1, bond.index_2))
+             {                
+                 return true;
+             }
+         }
+         
+    }
+    return false;
+
+}
+
+bool Atom_data::check_atomic_angle_exist(const objects::atom_data::Angle& angle) 
+{
+    
+    int mi_1 = owned.molecule_index[angle.index_1];
+    int mi_2 = owned.molecule_index[angle.index_2];
+    int mi_3 = owned.molecule_index[angle.index_3];
+    
+
+    if ((mi_1==mi_2) && (mi_2==mi_3))
+    {
+         for (unsigned int j = 0; j < owned.atomic_angle_vector[mi_1].size(); ++j)
+         {
+             auto a = owned.atomic_angle_vector[mi_1][j];
+             if (
+                 ( FC_COMPARE_PAIRS(angle.index_1, angle.index_2, a.index_1, a.index_2) &&
+                   FC_COMPARE_PAIRS(angle.index_2, angle.index_3, a.index_2, a.index_3 ) ) 
+                 || 
+                 ( FC_COMPARE_PAIRS(angle.index_1, angle.index_2, a.index_2, a.index_3) &&
+                   FC_COMPARE_PAIRS(angle.index_2, angle.index_3, a.index_1, a.index_2 ) )   
+                )
+             {
+                 return true;
+             }
+         }
+    }
+    return false;
+}
+
+
+
+bool Atom_data::check_atomic_properdihedral_exist(const objects::atom_data::Proper_dihedral& pd) 
+{
+    
+    int mi_1 = owned.molecule_index[pd.index_1];
+    int mi_2 = owned.molecule_index[pd.index_2];
+    int mi_3 = owned.molecule_index[pd.index_3];
+    int mi_4 = owned.molecule_index[pd.index_4];
+    
+
+    if ((mi_1==mi_2) && (mi_2==mi_3) && (mi_3 == mi_4))
+    {
+        for (unsigned int j = 0; j < owned.atomic_properdihedral_vector[mi_1].size(); ++j)
+        {
+            auto p = owned.atomic_properdihedral_vector[mi_1][j];
+             if (
+                 ( FC_COMPARE_PAIRS(pd.index_1, pd.index_2, p.index_1, p.index_2) &&
+                   FC_COMPARE_PAIRS(pd.index_3, pd.index_4, p.index_3, p.index_4 ) ) 
+                 || 
+                 ( FC_COMPARE_PAIRS(pd.index_1, pd.index_2, p.index_3, p.index_4) &&
+                   FC_COMPARE_PAIRS(pd.index_3, pd.index_4, p.index_1, p.index_2 ) )   
+                )
+             {
+                 return true;
+             }
+        }
+    }
+    return false;
+    
+}
+
 
 
 bool Atom_data::add_molecule(caviar::objects::unique::Molecule &m) {
-
+  
+  //------------------------------------------
+  // increasing Molecules' containers size  //
+  //------------------------------------------
+  owned.num_molecules++;
+  owned.atomic_bond_vector.resize(owned.num_molecules);
+  owned.atomic_angle_vector.resize(owned.num_molecules);
+  owned.atomic_properdihedral_vector.resize(owned.num_molecules);
+  int new_molecule_index  = owned.num_molecules - 1; 
+  
+  //-------------------------------------
+  // extract the atoms of the Molecule //
+  //-------------------------------------
   std::vector<int> types;
   std::vector<Vector<double>> pos, vel;
 
 
   m.extract_all_e_pos_vel (types, pos, vel);
 
-  // check all of atoms position validity...
+  //--------------------------------------------------------------
+  // check whether the center of mass of atoms of the molecule
+  // is inside the MPI domain or not. If not, ignore the molecule
+  //--------------------------------------------------------------
+  Vector<double> pos_cm(0,0,0);
   for (unsigned int i = 0; i < pos.size(); ++i) {
-    if (!position_inside_local_domain(pos[i])) {
-      return false;
-    }
+      pos_cm += pos[i];
   }
+  pos_cm *= 1.0 / pos.size();
+  
+  if (!position_inside_local_domain(pos_cm))
+      return false;      
 
-  // adding the atoms while recording the map of molecule's atom index to atom_data index
+  //----------------------------------------------------------
+  // add a copy of molecule's atom into Atom data as new atoms
+  // making a map of the local indices to global
+  //----------------------------------------------------------    
+  
   std::vector <int> indices (pos.size(), -1);
+  
   for (unsigned int i = 0; i < pos.size(); ++i) {
     const auto id = get_global_id();
     const auto index = owned.position.size();    
     add_atom (id, types[i], pos[i], vel[i]);
     indices[i] = index;
+    owned.molecule_index[index] = new_molecule_index;
   }
 
-
-  // add the bonds if there are some. Changes the local indices to global ones
-  // before addition.
-  // not sure about this part to the end. But if it works, let it be!
-  auto dummy_atomic_bond = m.atomic_bond;
-  for (unsigned int j = 0;j<dummy_atomic_bond.size(); ++j) {
-    dummy_atomic_bond[j].index_1 = indices[dummy_atomic_bond[j].index_1];
-    dummy_atomic_bond[j].index_2 = indices[dummy_atomic_bond[j].index_2];
+  //---------------------------
+  // Adding the atomic bonds //
+  //---------------------------
+  for (unsigned int j = 0;j<m.atomic_bond.size(); ++j) {
+    auto dummy_atomic_bond = m.atomic_bond[j];
+    // Changes the local indices to global ones
+    dummy_atomic_bond.index_1 = indices[dummy_atomic_bond.index_1];
+    dummy_atomic_bond.index_2 = indices[dummy_atomic_bond.index_2];
+    
+    owned.atomic_bond_vector[new_molecule_index].emplace_back ( dummy_atomic_bond); 
+  }
+  
+ 
+  //----------------------------
+  // Adding the atomic angles //
+  //----------------------------
+  for (unsigned int j = 0; j<m.atomic_angle.size(); ++j) {
+    auto dummy_atomic_angle = m.atomic_angle[j];
+    // Changes the local indices to global ones
+    dummy_atomic_angle.index_1 = indices[dummy_atomic_angle.index_1];
+    dummy_atomic_angle.index_2 = indices[dummy_atomic_angle.index_2];
+    dummy_atomic_angle.index_3 = indices[dummy_atomic_angle.index_3];
+    
+    owned.atomic_angle_vector[new_molecule_index].emplace_back ( dummy_atomic_angle);
   }
 
-  auto dummy_atomic_bond_index = m.atomic_bond_index;    
-
-  for (unsigned int j = 0;j<dummy_atomic_bond_index.size(); ++j) {
-    dummy_atomic_bond_index[j] = indices[dummy_atomic_bond_index[j]];
+  //--------------------------------------
+  // Adding the atomic proper dihedrals //
+  //--------------------------------------
+  for (unsigned int j = 0;j<m.atomic_properdihedral.size(); ++j) {
+    auto dummy_atomic_properdihedral = m.atomic_properdihedral[j];
+    // Changes the local indices to global ones
+    dummy_atomic_properdihedral.index_1 = indices[dummy_atomic_properdihedral.index_1];
+    dummy_atomic_properdihedral.index_2 = indices[dummy_atomic_properdihedral.index_2];
+    dummy_atomic_properdihedral.index_3 = indices[dummy_atomic_properdihedral.index_3];
+    dummy_atomic_properdihedral.index_4 = indices[dummy_atomic_properdihedral.index_4];
+    
+    owned.atomic_properdihedral_vector[new_molecule_index].emplace_back ( dummy_atomic_properdihedral);
   }
 
-  owned.atomic_bond_vector.push_back(dummy_atomic_bond); // XXX add condition of no zero sized push_back
-  owned.atomic_bond_index_vector.push_back(dummy_atomic_bond_index);
-
-
-  // add the angles if there are some. Changes the local indices to global ones
-  // before addition.
-  // not sure about this part to the end. But if it works, let it be!
-  auto dummy_atomic_angle = m.atomic_angle;
-  for (unsigned int j = 0;j<dummy_atomic_angle.size(); ++j) {
-    dummy_atomic_angle[j].index_1 = indices[dummy_atomic_angle[j].index_1];
-    dummy_atomic_angle[j].index_2 = indices[dummy_atomic_angle[j].index_2];
-    dummy_atomic_angle[j].index_3 = indices[dummy_atomic_angle[j].index_3];
-  }
-
-  auto dummy_atomic_angle_index = m.atomic_angle_index;    
-
-  for (unsigned int j = 0;j<dummy_atomic_angle_index.size(); ++j) {
-    dummy_atomic_angle_index[j] = indices[dummy_atomic_angle_index[j]];
-  }
-
-  owned.atomic_angle_vector.push_back(dummy_atomic_angle);
-  owned.atomic_angle_index_vector.push_back(dummy_atomic_angle_index);
-
-
-  auto dummy_atomic_properdihedral = m.atomic_properdihedral;
-  for (unsigned int j = 0;j<dummy_atomic_properdihedral.size(); ++j) {
-    dummy_atomic_properdihedral[j].index_1 = indices[dummy_atomic_properdihedral[j].index_1];
-    dummy_atomic_properdihedral[j].index_2 = indices[dummy_atomic_properdihedral[j].index_2];
-    dummy_atomic_properdihedral[j].index_3 = indices[dummy_atomic_properdihedral[j].index_3];
-    dummy_atomic_properdihedral[j].index_4 = indices[dummy_atomic_properdihedral[j].index_4];
-  }
-
-  auto dummy_atomic_properdihedral_index = m.atomic_properdihedral_index;    
-
-  for (unsigned int j = 0;j<dummy_atomic_properdihedral_index.size(); ++j) {
-    dummy_atomic_properdihedral_index[j] = indices[dummy_atomic_properdihedral_index[j]];
-  }
-
-  owned.atomic_properdihedral_vector.push_back(dummy_atomic_properdihedral);
-  owned.atomic_properdihedral_index_vector.push_back(dummy_atomic_properdihedral_index);
 
 
   return true;

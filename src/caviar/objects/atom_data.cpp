@@ -53,19 +53,14 @@ Atom_data::Atom_data (CAVIAR *fptr) : Pointers{fptr},
   cutoff_extra = 0.0;
   k_b = -1.0;
   n_r_df = -1;
+  
+  owned.num_molecules = 0;
 }
 
 Atom_data::~Atom_data () {
   
 }
 
-//void Atom_data::allocate () {
-  
-//}
-
-//void Atom_data::output_data (int ) {
-  
-//}
 
 
 /*
@@ -81,6 +76,7 @@ Atom_data::~Atom_data () {
   std::map<std::string,caviar::interpreter::object_handler::Dictionary>::iterator ITERATOR_NAME;\
   FIND_UNIQUE_OBJECT_BY_NAME_NIC(OBJECT_TYPE,ITERATOR_NAME)
 */
+
 bool Atom_data::read (caviar::interpreter::Parser *parser) {
   FC_OBJECT_READ_INFO
   bool in_file = true;
@@ -375,6 +371,20 @@ void Atom_data::reserve_owned_vectors () {
 bool Atom_data::position_inside_local_domain(const Vector<double> &pos) {
   if (domain==nullptr) error->all(FC_FILE_LINE_FUNC,"domain = nullptr");
 
+  
+#if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
+  const auto me = domain->me;
+  if (me==0) 
+  {
+      if (pos.x >= domain->lower_local.x && pos.x < domain->upper_local.x &&
+      pos.y >= domain->lower_local.y && pos.y < domain->upper_local.y &&
+      pos.z >= domain->lower_local.z && pos.z < domain->upper_local.z) 
+        return true;
+  
+  }
+  return false;  
+#endif
+  
   if (pos.x >= domain->lower_local.x && pos.x < domain->upper_local.x &&
       pos.y >= domain->lower_local.y && pos.y < domain->upper_local.y &&
       pos.z >= domain->lower_local.z && pos.z < domain->upper_local.z) 
@@ -384,34 +394,22 @@ bool Atom_data::position_inside_local_domain(const Vector<double> &pos) {
 }
 
 
-// XXX note that any new vector addition to this function should be deleted in 
-// 'remove_atom()' functions.
+// TODO: note that any new vector addition to this function should be deleted in 'remove_atom()' functions.
 bool Atom_data::add_atom (GlobalID_t id,
                           AtomType_t type,
                           const Vector<Real_t> &pos,
-                          const Vector<Real_t> &vel,
-                          const std::vector<Real_t> &,
-                          const std::vector<int> &) {
+                          const Vector<Real_t> &vel)
+{
 
-#if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
-  const auto me = domain->me;
-  if (me==0) {
-#endif
-  if (position_inside_local_domain (pos)) {
     owned.type.emplace_back (type);
     owned.position.emplace_back (pos);
     owned.id.emplace_back ( id );
     owned.velocity.emplace_back (vel);
     owned.acceleration.emplace_back (0,0,0);
     owned.msd_domain_cross.emplace_back(0,0,0);
+    owned.molecule_index.emplace_back(-1);
     ++num_local_atoms;
     return true;
-  }
-  else return false;
-#if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
-  }
-#endif
-  return false;
 }
 
 bool Atom_data::add_masses (unsigned int type, Real_t m) {
@@ -439,6 +437,7 @@ void Atom_data::remove_atom(const int i) {
     owned.type.erase (owned.type.begin()+i);  
     owned.id.erase (owned.id.begin()+i);
     owned.msd_domain_cross.erase(owned.msd_domain_cross.begin()+i);
+    owned.molecule_index.erase(owned.molecule_index.begin()+i);
   --num_local_atoms;   
 }
 

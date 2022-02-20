@@ -44,6 +44,6 @@
 #include "caviar/objects/force_field/macro/plt_dealii_mpi.h"
 #include "caviar/objects/force_field/macro/spring_bond.h"
 #include "caviar/objects/force_field/macro/fene_bond.h"
-#include "caviar/objects/force_field/macro/spring_bond_test.h"
 #include "caviar/objects/force_field/macro/spring_angle.h"
 #include "caviar/objects/force_field/macro/opls_proper_dihedral.h"
+#include "caviar/objects/force_field/macro/fix_bond.h"

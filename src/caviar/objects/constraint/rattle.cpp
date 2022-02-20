@@ -80,13 +80,11 @@ void Rattle::apply_on_position (int64_t) {
   auto &vel = atom_data -> owned.velocity;
   auto &pos = atom_data -> owned.position;
   auto &pos_old = atom_data -> owned.position_old;
-
-  auto &atomic_bond_index_vector = atom_data -> owned.atomic_bond_index_vector;
   auto &atomic_bond_vector = atom_data -> owned.atomic_bond_vector;	
 
-  for (unsigned int i=0; i<atomic_bond_index_vector.size(); i++) { 
+  for (unsigned int i=0; i<atomic_bond_vector.size(); i++) { 
 
-    auto Nc = atomic_bond_index_vector[i].size();
+    auto Nc = atomic_bond_vector[i].size();
     if (Nc==0) continue;
     std::vector<double> C(Nc,0);
 
