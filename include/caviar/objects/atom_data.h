@@ -403,8 +403,14 @@ public:
     /**    
      * The first std::vector, is the molecule index. the inner data contain bonds.
      */
-    std::vector <std::vector<objects::atom_data::Bond>> atomic_bond_vector;  
+    std::vector <std::vector<objects::atom_data::Bond>> atomic_bond_vector;
 
+    /**    
+     * Number of atomic bonds each atom have. It is used to limit
+     * the bond creations.
+     */
+    std::vector <int> atomic_bond_count;
+    
     /**
      * The first index, meaning
      * the first std::vector, is the molecule index. the inner data contain angles.

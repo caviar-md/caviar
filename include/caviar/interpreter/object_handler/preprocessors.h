@@ -509,6 +509,15 @@ else {\
   if (vector_name.size() < i+1) vector_name.resize(i+1);\
   vector_name[i] = vector_value;
 
+  
+#define GET_A_STDVECTOR_INT_ELEMENT(vector_name)\
+  unsigned int i = 0;\
+  int vector_value = 0;\
+  GET_OR_CHOOSE_A_INT(i,"","")\
+  GET_OR_CHOOSE_A_INT(vector_value,"","")\
+  if (vector_name.size() < i+1) vector_name.resize(i+1);\
+  vector_name[i] = vector_value;
+
 //===========
 //=========== FIND OBJECT POINTER
 //===========

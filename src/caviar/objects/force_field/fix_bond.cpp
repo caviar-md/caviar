@@ -49,7 +49,7 @@ bool Fix_bond::read (caviar::interpreter::Parser *parser) {
     GET_A_TOKEN_FOR_CREATION
     auto t = token.string_value;
     if (string_cmp(t,"type_i")) {
-      GET_OR_CHOOSE_A_INT(type_i,"","")
+      GET_OR_CHOOSE_A_INT(type_i,"","")      
       if (type_i < 0) error->all (FC_FILE_LINE_FUNC_PARSE, "type_i have to be non-negative integer.");                 
     } else if (string_cmp(t,"type_j")) {
       GET_OR_CHOOSE_A_INT(type_j,"","")
@@ -63,6 +63,9 @@ bool Fix_bond::read (caviar::interpreter::Parser *parser) {
     } else if (string_cmp(t,"Rmin")) {
       GET_OR_CHOOSE_A_REAL(Rmin,"","")
       if (Rmin < 0.0) error->all (FC_FILE_LINE_FUNC_PARSE, "R min have to non-negative.");                 
+    } else if (string_cmp(t,"bond_limit")) {
+      GET_A_STDVECTOR_INT_ELEMENT(bond_limit)
+      if (vector_value < 0)  error->all (FC_FILE_LINE_FUNC_PARSE, "Bond limit have to be non-negative.");      
     } else if (string_cmp(t,"set_neighborlist") || string_cmp(t,"neighborlist")) {
       FIND_OBJECT_BY_NAME(neighborlist,it)
       neighborlist = object_container->neighborlist[it->second.index];
@@ -87,31 +90,38 @@ void Fix_bond::verify_settings() {
       error->all (FC_FILE_LINE_FUNC, "(blength < 0)");
   if (Rmin < 0)
       error->all (FC_FILE_LINE_FUNC, "(Rmin < 0)");
+  
+  auto type_max = type_i > type_j ? type_i : type_j;
+  if ((int) bond_limit.size()<type_max+1) bond_limit.resize(type_max+1, 0);  
 }
 
 void Fix_bond::create_atomic_bond () {
     
     auto &pos = atom_data -> owned.position;
-    
+    auto &bond_count = atom_data -> owned.atomic_bond_count;
     
     for (unsigned int i=0;i<pos.size();++i) {
         for (unsigned int j=i+1;j<pos.size();++j) {
+            
             if((int)atom_data -> owned.type[i]==type_i && (int)atom_data -> owned.type[j]==type_j) {
-
+;
                 const auto dr = pos[j] - pos[i];
                 const auto dr_sq = dr*dr;
+                
                 if (dr_sq < Rmin*Rmin){
+                    
                     objects::atom_data::Bond b;
                     b.type = btype;
                     b.length = blength;
                     b.index_1 = i;
                     b.index_2 = j;
                     
-                    
-                    if (!atom_data->check_atomic_bond_exist(b))
+                    if (bond_count[i]<bond_limit[type_i] && bond_count[j]<bond_limit[type_j])
                     {
-                        atom_data->add_atomic_bond(b);
-                        std::cout << "1xx\n";
+                        if (!atom_data->check_atomic_bond_exist(b))
+                        {
+                            atom_data->add_atomic_bond(b);
+                        }
                     }
                 }
             }

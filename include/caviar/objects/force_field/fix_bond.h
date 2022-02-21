@@ -44,6 +44,12 @@ public:
   int btype;
   double Rmin;
   double blength;
+  
+  /**
+   * Maximum number of bonds allowed for a atom type.
+   * This function uses 'Atom_data.owned.atomic_bond_count' vector.
+   */
+  std::vector<int> bond_limit;
  
 };
 

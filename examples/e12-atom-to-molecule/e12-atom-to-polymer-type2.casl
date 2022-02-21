@@ -45,9 +45,9 @@ unique atom_group ag1
 #===== Domain
 
 domain box dom
-dom xmin -11 xmax 11
-dom ymin -11 ymax 11
-dom zmin -11 zmax 11
+dom xmin -20 xmax 20
+dom ymin -20 ymax 20
+dom zmin -20 zmax 20
 dom boundary_condition 1 1 1
  
 dom generate
@@ -102,6 +102,9 @@ adata set_domain dom
 adata add_type_mass   0 1.0
 adata add_type_charge 0 0.0 
 adata add_type_radius 0 0.5 
+adata add_type_mass   1 1.0
+adata add_type_charge 1 0.0 
+adata add_type_radius 1 0.5 
 
 adata add_atom_group ag0
 adata add_atom_group ag1
@@ -136,9 +139,11 @@ force_field  fix_bond f_fb
 
 f_fb type_i 0
 f_fb type_j 1
-f_fb Rmin 1.0
-f_fb blength 1.0
+f_fb Rmin 2.0
+f_fb blength 2.0
 f_fb btype 1
+f_fb bond_limit 0 2
+f_fb bond_limit 1 2
 f_fb set_neighborlist neigh_verlet
 f_fb set_atom_data adata
 
@@ -149,7 +154,8 @@ f_sb set_atom_data adata
 f_sb set_domain dom
 f_sb elastic_coef 0 100.0
 f_sb dissip_coef 0 1.0
-
+f_sb elastic_coef 1 100.0
+f_sb dissip_coef 1 1.0
 
 #==== Constraint
 
@@ -186,7 +192,7 @@ w1 set_atom_data adata
 w1 set_domain dom
 w1 xyz_step 50
 w1 temperature_step 500
-w1 energy_step 50
+w1 energy_step 200
 w1 output_velocity
 
 #=====  simulator
@@ -200,7 +206,7 @@ sim set_atom_data adata
 
 sim add_force_field f_lj
 sim add_force_field f_fb
-#sim add_force_field f_sb
+sim add_force_field f_sb
 
 sim add_neighborlist neigh_verlet
 

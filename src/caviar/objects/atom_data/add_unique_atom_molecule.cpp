@@ -69,6 +69,8 @@ void Atom_data::remove_atomic_bond(const objects::atom_data::Bond& bond)
     int mi_2 = owned.molecule_index[bond.index_2];
     if (mi_1 == -1 || mi_2 == -1) return;
     
+    
+    
     if (mi_1 == mi_2)
     {        
          bool bond_found = false;
@@ -79,6 +81,7 @@ void Atom_data::remove_atomic_bond(const objects::atom_data::Bond& bond)
              if (FC_COMPARE_PAIRS (b.index_1, b.index_2, bond.index_1, bond.index_2))
              {
                  owned.atomic_bond_vector[mi_1].erase(owned.atomic_bond_vector[mi_1].begin() + j);
+                 
                  bond_found = true;
                  break;
              }
@@ -130,6 +133,9 @@ void Atom_data::remove_atomic_bond(const objects::atom_data::Bond& bond)
     {
         error->all (FC_FILE_LINE_FUNC, "Can't remove atomic bond because the described atoms are of different molecules."); 
     }
+    
+    owned.atomic_bond_count[bond.index_1]--;
+    owned.atomic_bond_count[bond.index_2]--;
 }
 
 void Atom_data::remove_atomic_angle(const objects::atom_data::Angle& angle) 
@@ -207,6 +213,9 @@ void Atom_data::add_atomic_bond(const objects::atom_data::Bond& bond) {
     int molecule_index_2 = owned.molecule_index[bond.index_2];
     
     
+    owned.atomic_bond_count[bond.index_1]++;
+    owned.atomic_bond_count[bond.index_2]++;
+    
     //---------------------------------------------------------
     // deducing whether a new molecule must be created or
     // choosing the molecule with the lower index to be the one
@@ -233,17 +242,22 @@ void Atom_data::add_atomic_bond(const objects::atom_data::Bond& bond) {
         owned.atomic_bond_vector[new_molecule_index].emplace_back (bond); 
         owned.molecule_index[bond.index_1] = new_molecule_index;
         owned.molecule_index[bond.index_2] = new_molecule_index;
+        
                 
     }
     else if (molecule_index_1 == -1)
     {
         owned.atomic_bond_vector[molecule_index_2].push_back(bond);
         owned.molecule_index[bond.index_1] = molecule_index_1;
+        
+
     }
     else if (molecule_index_2 == -1)
     {
         owned.atomic_bond_vector[molecule_index_1].push_back(bond);
         owned.molecule_index[bond.index_2] = molecule_index_1;
+        
+
     }
     else if (molecule_index_1 != molecule_index_2)
     {
@@ -274,8 +288,10 @@ void Atom_data::add_atomic_bond(const objects::atom_data::Bond& bond) {
             owned.atomic_bond_vector[molecule_index_higher].clear();
         }        
         
-        owned.atomic_bond_vector[molecule_index_lower].push_back(bond);
         
+        owned.atomic_bond_vector[molecule_index_lower].emplace_back(bond);
+        
+                
         //---------------------------------------------------------
         // After two molecules are merged by a new bond, existing
         // angles and properdihedrals have to be merged too.
@@ -504,6 +520,9 @@ bool Atom_data::add_molecule(caviar::objects::unique::Molecule &m) {
     dummy_atomic_bond.index_2 = indices[dummy_atomic_bond.index_2];
     
     owned.atomic_bond_vector[new_molecule_index].emplace_back ( dummy_atomic_bond); 
+    
+    owned.atomic_bond_count[dummy_atomic_bond.index_1]++;
+    owned.atomic_bond_count[dummy_atomic_bond.index_2]++;
   }
   
  

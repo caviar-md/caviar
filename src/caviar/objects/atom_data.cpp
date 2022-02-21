@@ -408,6 +408,7 @@ bool Atom_data::add_atom (GlobalID_t id,
     owned.acceleration.emplace_back (0,0,0);
     owned.msd_domain_cross.emplace_back(0,0,0);
     owned.molecule_index.emplace_back(-1);
+    owned.atomic_bond_count.emplace_back(0);
     ++num_local_atoms;
     return true;
 }
@@ -438,6 +439,7 @@ void Atom_data::remove_atom(const int i) {
     owned.id.erase (owned.id.begin()+i);
     owned.msd_domain_cross.erase(owned.msd_domain_cross.begin()+i);
     owned.molecule_index.erase(owned.molecule_index.begin()+i);
+    owned.atomic_bond_count.erase(owned.atomic_bond_count.begin()+i);
   --num_local_atoms;   
 }
 
