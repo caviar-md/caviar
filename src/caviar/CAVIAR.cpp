@@ -67,13 +67,16 @@ CAVIAR::~CAVIAR () {
 }
 
 void CAVIAR::execute () {
+  std::string greeting = "CAVIAR";
+
+  /*
   std::string greeting = "CAVIAR-";
   greeting += std::to_string (CAVIAR_MAJOR_VERSION);
   greeting += ".";
   greeting += std::to_string (CAVIAR_MINOR_VERSION);
   greeting += ".";
   greeting += std::to_string (CAVIAR_PATCH_VERSION);
-
+  */
   output->info(greeting);
   
 #ifdef CAVIAR_WITH_OPENMP

@@ -26,9 +26,9 @@ set (CMAKE_CXX_STANDARD 11)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
-set (CAVIAR_MAJOR_VERSION 1)
-set (CAVIAR_MINOR_VERSION 0)
-set (CAVIAR_PATCH_VERSION 1)
+#set (CAVIAR_MAJOR_VERSION 1)
+#set (CAVIAR_MINOR_VERSION 0)
+#set (CAVIAR_PATCH_VERSION 1)
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
@@ -80,10 +80,10 @@ include(cmake/print_final_message_before_build.cmake)
 # ======= configure cpp source file =======
 # =========================================
 
-configure_file (
-  "${CMAKE_SOURCE_DIR}/include/caviar/utility/caviar_config.h.in"
-  "${CMAKE_SOURCE_DIR}/include/caviar/utility/caviar_config.h"
-  )
+#configure_file (
+#  "${CMAKE_SOURCE_DIR}/include/caviar/utility/caviar_config.h.in"
+#  "${CMAKE_SOURCE_DIR}/include/caviar/utility/caviar_config.h"
+#  )
 
 # =================================
 # ======= Find Source files =======
