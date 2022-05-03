@@ -61,8 +61,8 @@ bool Atom_data::add_xyz_data_file (caviar::interpreter::Parser *parser) {
       if (t.kind == caviar::interpreter::Kind::identifier) {
         auto ts = t.string_value;
         if (   string_cmp(ts,"atom") || string_cmp(ts,"atoms")
-            || string_cmp(ts,"ATOM") || string_cmp(ts,"ATOMS") 
-        ) {
+            || string_cmp(ts,"ATOM") || string_cmp(ts,"ATOMS") )
+        {
           ++num_xyz_frames;
           if (i==1) error->all (FC_FILE_LINE_FUNC_PARSE, "Unknown xyz format");
           start_line = i-1;
