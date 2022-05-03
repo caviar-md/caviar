@@ -59,9 +59,9 @@ double Atom_data::kinetic_energy () {
     std::vector<std::vector<Real_t> > I_cm_inverse (3, std::vector<Real_t> (3, 0.0)); 
     Vector<Real_t> I_i_L (0,0,0);
     bool correct_result = false;
-    if (matrix_inverse(I_cm, I_cm_inverse)!= 0) 
+    if (matrix_inverse(I_cm, I_cm_inverse)== 0) 
     {
-        if (matrix_Vector_product(I_cm_inverse, L_cm, I_i_L) != 0)        {
+        if (matrix_Vector_product(I_cm_inverse, L_cm, I_i_L) == 0)        {
             
             correct_result = true;
         }
