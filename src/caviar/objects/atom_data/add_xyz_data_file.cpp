@@ -30,11 +30,14 @@ bool Atom_data::add_xyz_data_file (caviar::interpreter::Parser *parser) {
   bool last_frame = false;
   bool in_file = true;
   bool read_velocity = false;
+  bool replace_data = false; // used for resuming simulations when there's bonds and angles
   while(true) {
     GET_A_TOKEN_FOR_CREATION
     auto t = token.string_value;
     if (string_cmp(t,"last_frame")) {
       last_frame = true;
+    } else if (string_cmp(t,"replace_data")) {
+      replace_data = true;
     } else if (string_cmp(t,"file_name")) {
       const auto token = parser->get_val_token();
       const auto file_name = token.string_value;
@@ -57,7 +60,9 @@ bool Atom_data::add_xyz_data_file (caviar::interpreter::Parser *parser) {
     while (t.kind != caviar::interpreter::Kind::eof) {
       if (t.kind == caviar::interpreter::Kind::identifier) {
         auto ts = t.string_value;
-        if (string_cmp(ts,"atom") || string_cmp(ts,"atoms") ) {
+        if (   string_cmp(ts,"atom") || string_cmp(ts,"atoms")
+            || string_cmp(ts,"ATOM") || string_cmp(ts,"ATOMS") 
+        ) {
           ++num_xyz_frames;
           if (i==1) error->all (FC_FILE_LINE_FUNC_PARSE, "Unknown xyz format");
           start_line = i-1;
@@ -100,6 +105,10 @@ bool Atom_data::add_xyz_data_file (caviar::interpreter::Parser *parser) {
   pf.get_val_token();
   pf.end_of_line();
 
+  if (replace_data) {
+    if (num_atoms != (int) owned.position.size()) error->all (FC_FILE_LINE_FUNC, "XYZ file is not compatible: Different number of existing atoms in atomdata and xyz file atoms.");
+  }
+  
   for (int i = 0; i <num_atoms; ++i) {
     auto type = pf.get_literal_int();
 
@@ -117,9 +126,16 @@ bool Atom_data::add_xyz_data_file (caviar::interpreter::Parser *parser) {
 
     pf.end_of_line();
 
-    auto id = get_global_id();
-
-    add_atom (id, type, pos, vel);
+    
+    
+    if (replace_data) {
+        if (type != (int) owned.type[i]) error->all (FC_FILE_LINE_FUNC, "XYZ file is not compatible: Different atom type order exists.");
+        owned.position[i] = pos;
+        owned.velocity[i] = vel;
+    } else {
+        auto id = get_global_id();
+        add_atom (id, type, pos, vel);
+    }
 
   }
 
