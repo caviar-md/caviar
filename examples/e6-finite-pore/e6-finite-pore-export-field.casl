@@ -1,0 +1,65 @@
+
+#=======================================================================
+# 
+# Copyright (C) 2019 by Morad Biagooi and Ehsan Nedaaee Oskoee.
+# 
+# This file is part of the CAVIAR package.
+# 
+# The CAVIAR package is free software; you can use it, redistribute
+# it, and/or modify it under the terms of the GNU Lesser General
+# Public License as published by the Free Software Foundation; either
+# version 3.0 of the License, or (at your option) any later version.
+# The full text of the license can be found in the file LICENSE at
+# the top level of the CAVIAR distribution.
+# 
+#=======================================================================
+
+#----------------------------------------
+# Import the last frame of your simulation
+#----------------------------------------
+
+
+adata add_xyz_data_file file_name "o_last_frame_linear_empty.xyz"
+
+
+#----------------------------------------
+# run the simulation one timestep
+#----------------------------------------
+
+sim initial_step 0
+sim final_step 1 # for (dt=0.001) every 166666 step is near one nano-second
+sim dt timestep_all
+sim run
+
+#----------------------------------------
+# create a grid inside the mesh
+#----------------------------------------
+
+unique grid_1d gr1
+unique grid_1d gr2
+unique grid_1d gr3
+
+gr1 min -10.0 max 10 segment 160#7
+gr2 min -5 max 5 segment 80#7
+gr3 min 2.5 max 3.0 increment 1#7  
+
+gr1 generate
+gr2 generate
+gr3 generate
+
+#----------------------------------------
+# activate one of the following commands
+#----------------------------------------
+
+# f_plt output_field_vectors file_name "o_field_vectors_linear_filled" type smooth scale 0.005 grid_1d_x gx grid_1d_y gy grid_1d_z gz 
+
+# f_plt output_field_vectors file_name "o_field_vectors_linear_filled2" type smooth scale 0.001 grid_1d_x gx grid_1d_y gy grid_1d_z gz 
+
+# f_plt output_field_vectors file_name "o_field_vectors_linear_filled_si" type singular scale 0.001 grid_1d_x gx grid_1d_y gy grid_1d_z gz 
+
+# f_plt output_field_vectors file_name "o_field_vectors_linear_filled_to" type total scale 0.001 grid_1d_x gx grid_1d_y gy grid_1d_z gz 
+
+# f_plt output_potential_values file_name "o_potential_linear_empty_to" type total  grid_1d_x gx grid_1d_y gy grid_1d_z gz 
+
+
+
