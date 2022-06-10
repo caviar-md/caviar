@@ -40,6 +40,10 @@
 namespace caviar {
 namespace objects {
 class Atom_data;
+namespace unique
+{
+class Time_function;
+}
 namespace force_field {
 using namespace dealii;
 
@@ -156,7 +160,7 @@ public:
   bool initialized;
   
   std::vector<std::pair<int,double>> boundary_id_value;
-  std::vector<unsigned> boundary_id_list;
+  std::vector<std::pair<int,caviar::objects::unique::Time_function*>> boundary_id_time_function;
   std::vector<int> refine_sequence_type, refine_sequence_value;  
   double k_electrostatic;
   std::vector<std::string> unv_mesh_filename;  

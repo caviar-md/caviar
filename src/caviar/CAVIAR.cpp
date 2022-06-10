@@ -18,6 +18,7 @@
 
 #include <string>
 
+
 #ifdef CAVIAR_WITH_OPENMP
 #include <omp.h>
 #endif

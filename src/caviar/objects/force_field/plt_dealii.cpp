@@ -175,8 +175,15 @@ bool Plt_dealii::read (caviar::interpreter::Parser *parser) {
       double value = 0;
       GET_OR_CHOOSE_A_REAL(value,"","")
       boundary_id_value.push_back(std::make_pair(id, value));
-      boundary_id_list.push_back(id);
-    }  else if (string_cmp(t,"k_electrostatic")) {
+    } else if (string_cmp(t,"boundary_id_time_function")) {
+      int id = parser->get_literal_int();
+      if (id == 0) {
+        error->all (FC_FILE_LINE_FUNC_PARSE, "#boundary_id=0 is reserved for free boundary");
+      }
+      std::string function = 0;
+      GET_OR_CHOOSE_A_REAL(value,"","")
+      boundary_id_value.push_back(std::make_pair(id, value));
+    } else if (string_cmp(t,"k_electrostatic")) {
       GET_OR_CHOOSE_A_REAL(k_electrostatic,"","")    
       if (k_electrostatic < 0)  error->all (FC_FILE_LINE_FUNC_PARSE, "k_electrostatic has to be non-negative.");            
     } else if (string_cmp(t,"preconditioner_relaxation")) {
@@ -288,7 +295,7 @@ bool Plt_dealii::read (caviar::interpreter::Parser *parser) {
 void Plt_dealii::output_field_vectors(caviar::interpreter::Parser *parser) {
 
   std::string file_name = "o_field_vectors";
-  double scale = 1.0;
+\  double scale = 1.0;
   double limit = -1.0;
   char field_type = 't';
   bool in_file = true;

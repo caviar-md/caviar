@@ -70,6 +70,7 @@ include(cmake/configure/configure_mpi.cmake)
 include(cmake/configure/configure_dealii.cmake)
 include(cmake/configure/configure_eigen.cmake)
 include(cmake/configure/configure_openmp.cmake)
+include(cmake/configure/configure_muparser.cmake)
 
 print_stars()
 
@@ -116,9 +117,12 @@ endif (CAVIAR_WITH_DEALII)
 
 
 if (CAVIAR_WITH_OPENMP)
-target_link_libraries(CAVIAR OpenMP::OpenMP_CXX)
+  target_link_libraries(CAVIAR OpenMP::OpenMP_CXX)
 endif()
 
+if (CAVIAR_WITH_MUPARSER)
+  target_link_libraries(CAVIAR muparser)
+endif()
 
 # ========================================
 # ========================================

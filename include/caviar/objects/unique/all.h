@@ -23,3 +23,4 @@
 #include "caviar/objects/unique/grid_1d.h"
 #include "caviar/objects/unique/random_1d.h"
 #include "caviar/objects/unique/distribution.h"
+#include "caviar/objects/unique/time_function.h"

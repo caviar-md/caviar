@@ -35,6 +35,10 @@ print_flag_value(CAVIAR_WITH_DEALII)
 print_flag_value(CAVIAR_WITH_DEALII_MPI)
 message("")
 print_flag_value(CAVIAR_WITH_EIGEN)
+print_flag_value(EIGEN_DIR)
+message("")
+print_flag_value(CAVIAR_WITH_MUPARSER)
+print_flag_value(MUPARSER_DIR)
 message("")
 # ===============================
 # =======                 =======

@@ -27,7 +27,7 @@ IF( NOT EIGEN_DIR )
   Please point the environment variable EIGEN_DIR to the include directory of 
   your Eigen3 installation
 or
-  add the cmake definition with '-DEIGEN_DIR=THE_PATH/TO/EIGEN/LIBRARY' .
+  add the cmake definition with '-DEIGEN_DIR={/PATH/TO/EIGEN/LIBRARY}' .
  ")
 ENDIF()
 

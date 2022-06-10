@@ -15,22 +15,26 @@
 #=======================================================================
 
 
-# ===============================
-# =======  FINDING DEALII =======
-# ===============================
+# ==============================
+# =======  CONFIGURE MUPARSER =======
+# ==============================
 
-FIND_PACKAGE(deal.II 8.5.0 QUIET
-  HINTS ${deal.II_DIR} ${DEAL_II_DIR} ../ ../../ $ENV{DEAL_II_DIR}
-  )
-IF(NOT ${deal.II_FOUND})
-  MESSAGE(FATAL_ERROR "\n"
-    "*** Could not locate a (sufficiently recent) version of deal.II. ***\n\n"
-    "You may want to either pass a flag -DDEAL_II_DIR={/PATH/TO/deal.II} to cmake\n"
-    "or set an environment variable \"DEAL_II_DIR\" that contains this path."
-    )
-ENDIF()
- 
-DEAL_II_INITIALIZE_CACHED_VARIABLES()
+if (CAVIAR_WITH_MUPARSER)
+  set (CAVIAR_WITH_MUPARSER ON)
+
+  find_package(MUPARSER)
+
+  add_definitions (-DCAVIAR_WITH_MUPARSER)
+
+else ()
+  set (CAVIAR_WITH_MUPARSER OFF)
+endif ()
+
+print_flag_value(CAVIAR_WITH_MUPARSER)
+
+if (CAVIAR_WITH_MUPARSER)
+  print_flag_value(MUPARSER_DIR)
+endif ()
 
 # ===============================
 # =======                 =======
