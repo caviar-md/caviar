@@ -1,0 +1,66 @@
+
+#=======================================================================
+# 
+# Copyright (C) 2019 by Morad Biagooi and Ehsan Nedaaee Oskoee.
+# 
+# This file is part of the CAVIAR package.
+# 
+# The CAVIAR package is free software; you can use it, redistribute
+# it, and/or modify it under the terms of the GNU Lesser General
+# Public License as published by the Free Software Foundation; either
+# version 3.0 of the License, or (at your option) any later version.
+# The full text of the license can be found in the file LICENSE at
+# the top level of the CAVIAR distribution.
+# 
+#=======================================================================
+
+
+#===== Domain
+
+domain box dom 
+dom xmin -50 xmax 50
+dom ymin -50 ymax 50
+dom zmin -50 zmax 50
+dom boundary_condition 0 0 0
+dom generate
+
+#=====  time_function
+
+unique time_function tf_1
+tf_1 set_formula "t"
+tf_1 export_file_name "tf_1.txt"
+
+
+#=====  time_function
+
+unique time_function tf_2
+tf_2 set_formula "(t-5)*(t-5) + 1"
+tf_2 export_file_name "tf_2.txt"
+
+#=====  time_function
+
+unique time_function tf_3
+tf_3 set_formula "sin(t*10)"
+tf_3 export_file_name "tf_3.txt"
+
+
+#=====  atom_data
+
+atom_data basic adata
+adata set_domain dom
+
+#=====  simulator
+
+md_simulator basic sim
+
+sim set_atom_data adata
+sim add_time_function tf_1
+sim add_time_function tf_2
+sim add_time_function tf_3
+sim initial_step 0
+sim final_step 1000
+sim dt 0.01 
+sim run
+
+
+exit

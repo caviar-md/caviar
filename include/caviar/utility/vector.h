@@ -28,7 +28,6 @@ template <typename T>
 struct Vector {
   Vector() {x=0.0;y=0.0;z=0.0;}
   Vector(T x_, T y_, T z_) {x=x_;y=y_;z=z_;}
-  Vector(const Vector<T> &v) {x=v.x; y=v.y; z=v.z;}
   T x, y, z;
 };
 

@@ -24,6 +24,10 @@
 namespace caviar {
 
 namespace objects {
+namespace unique
+{
+class Time_function;
+}
 class Atom_data;
 class Integrator;
 class Neighborlist;
@@ -198,7 +202,8 @@ class Md_simulator : public Pointers {
   std::vector<objects::Force_field *> force_field; 
   std::vector<objects::Constraint *> constraint; 
   std::vector<objects::Writer *> writer; 
-
+  std::vector<objects::unique::Time_function *> time_function; 
+  
   double time, dt;
   clock_t t_start, t_end;
   double initial_time, final_time;

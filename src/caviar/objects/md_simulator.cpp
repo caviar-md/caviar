@@ -20,6 +20,7 @@
 #include "caviar/objects/force_field.h"
 #include "caviar/objects/constraint.h"
 #include "caviar/objects/writer.h"
+#include "caviar/objects/unique/time_function.h"
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/utility/time_utility.h"
 #include "caviar/interpreter/communicator.h"
@@ -108,6 +109,11 @@ bool Md_simulator::read (caviar::interpreter::Parser *parser) {
     } else  if (string_cmp(t,"set_atom_data") || string_cmp(t,"atom_data")) {
       FIND_OBJECT_BY_NAME(atom_data,it)
       atom_data = object_container->atom_data[it->second.index];
+    } else if (string_cmp(t,"add_time_function") || string_cmp(t,"time_function")) {
+      FIND_OBJECT_BY_NAME(unique,it)
+      FC_CHECK_OBJECT_CLASS_NAME(unique,it,time_function)
+      objects::unique::Time_function *a = dynamic_cast<objects::unique::Time_function *>(object_container->unique[it->second.index]);
+      time_function.push_back(a);            
     } else  if (string_cmp(t,"step")) {
       //int i=0;
       //GET_OR_CHOOSE_A_INT(i,"","")
@@ -308,6 +314,9 @@ void Md_simulator::step () {
       c -> verify_settings ();
 
     time = dt*initial_step;
+
+    for (auto&& tf: time_function) tf->update_time_variable (time);    
+    
     setup();
   }
 
@@ -391,7 +400,7 @@ void Md_simulator::step () {
 #endif
 
   time += dt;
-
+  for (auto&& tf: time_function) tf->update_time_variable (time);
 }
 
 
@@ -430,6 +439,8 @@ void Md_simulator::setup () {
 
 #endif 
 
+
+  
   for (auto&& n: neighborlist) n->init ();
 
   atom_data -> exchange_owned (); // isn't neccesary

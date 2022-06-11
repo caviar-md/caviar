@@ -38,20 +38,22 @@ class Time_function : public Unique {
  public:
   Time_function () ;
   Time_function (class CAVIAR *) ;    
-  Time_function (class CAVIAR *, std::string function_definition) ;
   ~Time_function () ;
   bool read (caviar::interpreter::Parser *);
-  void generate (); 
+  void generate_export_file (); 
+  void generate_formula (); 
   void verify_settings ();
   double value () {return current_value;};
-  void update_time_variable(double t){time_variable = t; calculate ();}
+  void update_time_variable(double t);
   void calculate ();
   
   std::string function_definition;
   double time_variable;
   double current_value;
   bool export_values_to_file;
+  bool export_file_append;
   std::string export_file_name;
+  std::ofstream ofs_time_value;
   
   mu::Parser* muParser;
     
