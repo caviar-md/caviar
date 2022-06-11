@@ -24,6 +24,7 @@
 #include "caviar/objects/neighborlist.h"
 #include "caviar/utility/macro_constants.h"
 #include "caviar/utility/time_utility.h"
+#include "caviar/objects/unique/time_function.h"
 #include "caviar/objects/unique/grid_1d.h"
 
 #ifdef CAVIAR_WITH_DEALII
@@ -180,9 +181,10 @@ bool Plt_dealii::read (caviar::interpreter::Parser *parser) {
       if (id == 0) {
         error->all (FC_FILE_LINE_FUNC_PARSE, "#boundary_id=0 is reserved for free boundary");
       }
-      std::string function = 0;
-      GET_OR_CHOOSE_A_REAL(value,"","")
-      boundary_id_value.push_back(std::make_pair(id, value));
+      FIND_OBJECT_BY_NAME(unique,it)
+      FC_CHECK_OBJECT_CLASS_NAME(unique,it,time_function)
+      objects::unique::Time_function *a = dynamic_cast<objects::unique::Time_function *>(object_container->unique[it->second.index]);           
+      boundary_id_time_function.push_back(std::make_pair(id, a));
     } else if (string_cmp(t,"k_electrostatic")) {
       GET_OR_CHOOSE_A_REAL(k_electrostatic,"","")    
       if (k_electrostatic < 0)  error->all (FC_FILE_LINE_FUNC_PARSE, "k_electrostatic has to be non-negative.");            

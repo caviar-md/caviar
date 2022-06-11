@@ -24,7 +24,7 @@
 #include "caviar/objects/force_field/plt_dealii.h"
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/utility/time_utility.h"
-
+#include "caviar/objects/unique/time_function.h"
 
 #include <deal.II/grid/tria.h>
 #include <deal.II/dofs/dof_handler.h>
@@ -186,8 +186,15 @@ void Plt_dealii::fa_solve () // XXX note of two of them
         i.first,
         plt_dealii::BoundaryValues(i.second, this),
         boundary_values); 
-  }                                            
-                                            
+  }               
+
+  for (auto&& i : boundary_id_time_function) {
+      auto fvalue = i.second->value();
+      VectorTools::interpolate_boundary_values (dof_handler,
+        i.first,
+        plt_dealii::BoundaryValues(fvalue , this),
+        boundary_values); 
+  }                                             
 
   // matrix and boundary value constraints
   FilteredMatrix<dealii::Vector<double> > filtered_A (system_matrix);

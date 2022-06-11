@@ -23,7 +23,7 @@
 
 #include "caviar/objects/force_field/plt_dealii.h"
 #include "caviar/utility/interpreter_io_headers.h"
-
+#include "caviar/objects/unique/time_function.h"
 
 #include <deal.II/grid/tria.h>
 #include <deal.II/dofs/dof_handler.h>
@@ -99,6 +99,13 @@ void Plt_dealii::sa_setup_system ()
         constraints); 
   }          
 
+  for (auto&& i : boundary_id_time_function) {
+      auto fvalue = i.second->value();
+      VectorTools::interpolate_boundary_values (dof_handler,
+        i.first,
+        plt_dealii::BoundaryValues(fvalue, this),
+        boundary_values); 
+  }                                   
 
   constraints.close ();
 
