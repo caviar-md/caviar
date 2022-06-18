@@ -297,7 +297,7 @@ bool Plt_dealii::read (caviar::interpreter::Parser *parser) {
 void Plt_dealii::output_field_vectors(caviar::interpreter::Parser *parser) {
 
   std::string file_name = "o_field_vectors";
-\  double scale = 1.0;
+  double scale = 1.0;
   double limit = -1.0;
   char field_type = 't';
   bool in_file = true;

@@ -104,7 +104,7 @@ void Plt_dealii::sa_setup_system ()
       VectorTools::interpolate_boundary_values (dof_handler,
         i.first,
         plt_dealii::BoundaryValues(fvalue, this),
-        boundary_values); 
+        constraints); 
   }                                   
 
   constraints.close ();

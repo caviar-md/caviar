@@ -36,10 +36,12 @@ endif()
 find_library( MUPARSER_LIBRARY
                NAMES muparser
                HINTS ${MUPARSER_DIR} $ENV{MUPARSER_DIR}               
-               PATH_SUFFIXES muparser ${MUPARSER_DIR} lib64 lib/cmake lib/cmake/muparser lib/pkgconfig
+               PATH_SUFFIXES muparser ${MUPARSER_DIR} lib lib64 lib/cmake lib/cmake/muparser lib/pkgconfig
               )
-
-IF(NOT ${MUPARSER_FOUND})
+#message("MUPARSER_FOUND: '" ${MUPARSER_FOUND} "'")  
+#message("MUPARSER_LIBRARY: '" ${MUPARSER_LIBRARY} "'")  
+#message("MUPARSER_LIBRARY_FOUND: '" ${MUPARSER_LIBRARY_FOUND})
+IF(NOT MUPARSER_LIBRARY)
   MESSAGE(FATAL_ERROR "\n"
     " Couldn't find MuParser library.
     #  Please point the environment variable MUPARSER_DIR to the include directory of 
