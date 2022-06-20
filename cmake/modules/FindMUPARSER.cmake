@@ -18,50 +18,64 @@
 # ==== FINDING MUPARSER ======
 # ============================
 
+if (CAVIAR_WITH_DEALII)
+  if (MUPARSER_INCLUDE_DIR)
+    INCLUDE_DIRECTORIES ( "${MUPARSER_INCLUDE_DIR}" )
+    if(EXISTS "${MUPARSER_INCLUDE_DIR}/muParser.h")
+      message("Found muparser header at ${MUPARSER_INCLUDE_DIR}/muParser.h" )
+    else()
+      message(FATAL_ERROR "Could not find 'muParser.h' header at ${MUPARSER_INCLUDE_DIR}/muParser.h" )
+    endif()
+  else()
+    message(FATAL_ERROR "Expected 'MUPARSER_INCLUDE_DIR' to be defined which has the exact version of muParser which Deal.II library is linked with. The directory must contain muParser headers. The default muparser library is in 'deal.ii-x.y.z/bundled/muparser_vX_Y_Z/include'")
+  endif()
+  set (MUPARSER_LIBRARY "Linked with bundled version of Deal.II library")
 
-find_path( MUPARSER_INCLUDE_DIR muParser.h
+else()
+
+  find_path( MUPARSER_INCLUDE_DIR muParser.h
           HINTS ${MUPARSER_DIR} $ENV{MUPARSER_DIR} 
           PATH_SUFFIXES muParser include)
 
-#if(EXISTS "${MUPARSER_INCLUDE_DIR}/muParser.h")  #both works
-if (MUPARSER_INCLUDE_DIR)     # both works
-  message("MUPARSER_INCLUDE_DIR " ${MUPARSER_INCLUDE_DIR})
-  INCLUDE_DIRECTORIES ( "${MUPARSER_INCLUDE_DIR}" )
-else()
-  MESSAGE( FATAL_ERROR " Couldn't find muParser.h header at: 
-   '${MUPARSER_DIR}/include' .")
-endif()
+  #if(EXISTS "${MUPARSER_INCLUDE_DIR}/muParser.h")  #both works
+  if (MUPARSER_INCLUDE_DIR)     # both works
+    message("MUPARSER_INCLUDE_DIR " ${MUPARSER_INCLUDE_DIR})
+    INCLUDE_DIRECTORIES ( "${MUPARSER_INCLUDE_DIR}" )
+  else()
+    MESSAGE( FATAL_ERROR " Couldn't find muParser.h header at: 
+     '${MUPARSER_DIR}/include' .")
+  endif()
 
 
-find_library( MUPARSER_LIBRARY
+  find_library( MUPARSER_LIBRARY
                NAMES muparser
                HINTS ${MUPARSER_DIR} $ENV{MUPARSER_DIR}               
                PATH_SUFFIXES muparser ${MUPARSER_DIR} lib lib64 lib/cmake lib/cmake/muparser lib/pkgconfig
               )
-#message("MUPARSER_FOUND: '" ${MUPARSER_FOUND} "'")  
-#message("MUPARSER_LIBRARY: '" ${MUPARSER_LIBRARY} "'")  
-#message("MUPARSER_LIBRARY_FOUND: '" ${MUPARSER_LIBRARY_FOUND})
-IF(NOT MUPARSER_LIBRARY)
-  MESSAGE(FATAL_ERROR "\n"
-    " Couldn't find MuParser library.
-    #  Please point the environment variable MUPARSER_DIR to the include directory of 
-    #  your MuParser installation
-    #or
-    #  add the cmake definition with '-DMUPARSER_DIR={/PATH/TO/MUPARSER}' ."
+  #message("MUPARSER_FOUND: '" ${MUPARSER_FOUND} "'")  
+  #message("MUPARSER_LIBRARY: '" ${MUPARSER_LIBRARY} "'")  
+  #message("MUPARSER_LIBRARY_FOUND: '" ${MUPARSER_LIBRARY_FOUND})
+  IF(NOT MUPARSER_LIBRARY)
+    MESSAGE(FATAL_ERROR "\n"
+      " Couldn't find MuParser library.
+      #  Please point the environment variable MUPARSER_DIR to the include directory of 
+      #  your MuParser installation
+      #or
+      #  add the cmake definition with '-DMUPARSER_DIR={/PATH/TO/MUPARSER}' ."
+      )
+  else()
+    message("MUPARSER library found")  
+    Message("MUPARSER_LIBRARY " ${MUPARSER_LIBRARY} )
+    add_library(muparser SHARED IMPORTED) # or STATIC instead of SHARED . used in target_link_libraries(CAVIAR muparser)
+    set_target_properties(muparser PROPERTIES
+      IMPORTED_LOCATION  ${MUPARSER_LIBRARY} # eg. "${CMAKE_SOURCE_DIR}/lib/libbar.so"
+      INTERFACE_INCLUDE_DIRECTORIES ${MUPARSER_INCLUDE_DIR} # eg. "${CMAKE_SOURCE_DIR}/include/libbar"
     )
-else()
-  message("MUPARSER library found")  
-  Message("MUPARSER_LIBRARY " ${MUPARSER_LIBRARY} )
-  add_library(muparser SHARED IMPORTED) # or STATIC instead of SHARED . used in target_link_libraries(CAVIAR muparser)
-  set_target_properties(muparser PROPERTIES
-    IMPORTED_LOCATION  ${MUPARSER_LIBRARY} # eg. "${CMAKE_SOURCE_DIR}/lib/libbar.so"
-    INTERFACE_INCLUDE_DIRECTORIES ${MUPARSER_INCLUDE_DIR} # eg. "${CMAKE_SOURCE_DIR}/include/libbar"
-  )
 
-ENDIF()
+  endif()
 
 
-
+endif()
 # find_path( MUPARSER_INCLUDE_DIR muParser.h
 #            PATH_SUFFIXES muParser )
 

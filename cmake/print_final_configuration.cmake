@@ -40,6 +40,7 @@ message("")
 print_flag_value(CAVIAR_WITH_MUPARSER)
 print_flag_value(MUPARSER_DIR)
 print_flag_value(MUPARSER_LIBRARY)
+print_flag_value(MUPARSER_INCLUDE_DIR)
 message("")
 # ===============================
 # =======                 =======

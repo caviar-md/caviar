@@ -96,7 +96,7 @@ ADD_SUBDIRECTORY(src)
 FILE(GLOB _ALL_FILES include)
 FOREACH(_FILE ${_ALL_FILES})
   IF(IS_DIRECTORY ${_FILE})
-    #MESSAGE( STATUS ${_FILE}  )  
+    #MESSAGE( STATUS ${_FILE}  )
     INCLUDE_DIRECTORIES(${_FILE})
   ENDIF()
 ENDFOREACH()
@@ -111,9 +111,12 @@ ADD_EXECUTABLE(CAVIAR src/main_CAVIAR.cpp)
 
 if (CAVIAR_WITH_DEALII)
   DEAL_II_SETUP_TARGET(CAVIAR)
-  TARGET_LINK_LIBRARIES(CAVIAR CAVIAR_lib)  
-else ()  
   TARGET_LINK_LIBRARIES(CAVIAR CAVIAR_lib)
+else ()
+  TARGET_LINK_LIBRARIES(CAVIAR CAVIAR_lib)
+  if (CAVIAR_WITH_MUPARSER)
+    target_link_libraries(CAVIAR muparser)
+  endif()
 endif (CAVIAR_WITH_DEALII)
 
 
@@ -121,9 +124,9 @@ if (CAVIAR_WITH_OPENMP)
   target_link_libraries(CAVIAR OpenMP::OpenMP_CXX)
 endif()
 
-if (CAVIAR_WITH_MUPARSER)
-  target_link_libraries(CAVIAR muparser)
-endif()
+#if (CAVIAR_WITH_MUPARSER)
+#  target_link_libraries(CAVIAR muparser)
+#endif()
 
 # ========================================
 # ========================================

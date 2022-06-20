@@ -42,6 +42,8 @@ endif()
 # ===================================================
 
 if (CAVIAR_WITH_DEALII)
+  set (CAVIAR_WITH_MUPARSER ON)
+
   set (CAVIAR_WITH_DEALII ON)
   find_package(DEALII)
   add_definitions (-DCAVIAR_WITH_DEALII)
