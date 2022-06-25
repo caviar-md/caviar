@@ -1,21 +1,12 @@
 
-## WHAT IS THIS?
+## HELP
+This code imports xyz files, then according to the given areas, calculates the location of given atom types in the given areas. It calculates the dynamics and also the total transitions of atom types.
 
-A post processing code for the output of 'plt_dealii' force_field.
+The code section that needs to be changed are:
+- Set parameters...
+- Set Areas...
 
-This is a simple code to help calculating mean of induced charges on each of 
-electrodes by id.
 
-The files starting with 'o_' are some example data, input and output.
 
-To compile,
 
- $ ./compile.sh
-
-Then run,
-
- $ ./mean_charges
-
-Follow the comments in the "main_mean_induced_charges.cpp" and you will know 
-what to do. If you have any questions, ask 'm.biagooi .at. gmail.com'
 
