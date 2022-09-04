@@ -61,5 +61,8 @@ gr3 generate
 
 # f_plt output_potential_values file_name "o_potential_linear_empty_to" type total  grid_1d_x gx grid_1d_y gy grid_1d_z gz 
 
+#----------------------------------------
+# Plot the results by using script examples such as plot_field_vectors.sh
+#----------------------------------------
 
 
