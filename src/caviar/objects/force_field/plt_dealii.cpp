@@ -85,7 +85,8 @@
 
 #include "caviar/objects/force_field/utility/plt_dealii_constants.h"
 #include "caviar/objects/force_field/utility/plt_dealii_functions.h"
-   
+#include "caviar/objects/neighborlist.h" // used for ml training
+
 namespace caviar {
 namespace objects {
 namespace force_field {
@@ -201,7 +202,7 @@ bool Plt_dealii::read (caviar::interpreter::Parser *parser) {
     } else if (string_cmp(t,"read_unv_mesh")) {
       dealii_functions::read_domain(triangulation, tria_reserve, unv_mesh_filename);
     } else if (string_cmp(t,"time_step_solve")) {
-      time_step_solve = parser->get_literal_int();    
+      time_step_solve = parser->get_literal_int();
     } else if (string_cmp(t,"output_vtk")) {
       output_vtk = true;
       time_step_output_vtk = parser->get_literal_int();
@@ -209,9 +210,9 @@ bool Plt_dealii::read (caviar::interpreter::Parser *parser) {
       output_induced_charge = true;
       time_step_induced_charge = parser->get_literal_int();
 #if defined(CAVIAR_WITH_MPI)
-      if (my_mpi_rank == 0)     
+      if (my_mpi_rank == 0)
         ofs_induced_charge.open ("o_induced_charge");
-#else 
+#else
       ofs_induced_charge.open ("o_induced_charge");
 #endif
     } else if (string_cmp(t,"output_induced_charge_name")) {
@@ -220,9 +221,9 @@ bool Plt_dealii::read (caviar::interpreter::Parser *parser) {
       auto token = parser->get_val_token();
       std::string fn = token.string_value;
 #if defined(CAVIAR_WITH_MPI)
-      if (my_mpi_rank == 0)     
+      if (my_mpi_rank == 0)
         ofs_induced_charge.open (fn.c_str());
-#else 
+#else
       ofs_induced_charge.open (fn.c_str());
 #endif
     } else if (string_cmp(t,"induced_charge_ignore_id")) {
@@ -282,12 +283,308 @@ bool Plt_dealii::read (caviar::interpreter::Parser *parser) {
     } else if (string_cmp(t,"output_potential_values")) {
       output_potential_values (parser);
       return in_file;
+    } else if (string_cmp(t,"generate_ml_training_data")) {
+      generate_ml_training_data(parser);
+      return in_file;
     }
-    
     else FC_ERR_UNDEFINED_VAR(t)
   }
   
   return in_file;
+}
+
+//==================================================
+//==================================================
+//==================================================
+
+void Plt_dealii::generate_ml_training_data(caviar::interpreter::Parser *parser) {
+
+      
+  unique::Grid_1D *grid_1d_x = nullptr, *grid_1d_y = nullptr, *grid_1d_z = nullptr;
+  objects::Neighborlist *neighborlist = nullptr;
+  bool in_file = true;
+  if (in_file==true) {
+    // removes a warning
+  }
+  while(true) {
+    GET_A_TOKEN_FOR_CREATION
+
+    auto t = token.string_value;
+
+    if (string_cmp(t,"neighborlist")) {
+      FIND_OBJECT_BY_NAME(neighborlist,it)
+      neighborlist = static_cast<objects::Neighborlist*> (object_container->neighborlist[it->second.index]);
+    } else if (string_cmp(t,"grid_1d_x")) {
+      FIND_OBJECT_BY_NAME(unique,it)
+      grid_1d_x = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+    } else if (string_cmp(t,"grid_1d_y")) {
+      FIND_OBJECT_BY_NAME(unique,it)
+      grid_1d_y = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+    } else  if (string_cmp(t,"grid_1d_z")) {
+      FIND_OBJECT_BY_NAME(unique,it)
+      grid_1d_z = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+    }
+
+    else FC_ERR_UNDEFINED_VAR(t)
+
+  }
+  FC_NULLPTR_CHECK(neighborlist)
+  FC_NULLPTR_CHECK(grid_1d_x)
+  FC_NULLPTR_CHECK(grid_1d_y)
+  FC_NULLPTR_CHECK(grid_1d_z)
+  FC_NULLPTR_CHECK(atom_data)
+
+  std::cout << "generate_ml_training_data: Check condition " << std::endl;
+  // check condition
+  auto &pos = atom_data -> owned.position;
+  if (pos.size()!=1)
+     error->all(FC_FILE_LINE_FUNC,"Expected only one atom in atomdata for ML training data.");
+
+  std::cout << "generate_ml_training_data: init FE calculation" << std::endl;
+  // init FE calculation
+  if (!initialized) {
+    initialized = true;
+
+    for (unsigned int i=0; i < refine_sequence_type.size(); ++i) {
+      if (refine_sequence_type[i]==0)
+        triangulation.refine_global (refine_sequence_value[i]);
+      if (refine_sequence_type[i]==1)
+        dealii_functions::refine_boundary (triangulation,refine_sequence_value[i]);
+    }
+    refine_sequence_type.clear();
+
+    make_boundary_face_normals ();
+    output_boundary_id_areas ();
+
+    // Solve forcefield once to get the point inside (not sure if necessary)
+    neighborlist -> init ();
+
+    atom_data -> exchange_owned ();
+
+    atom_data -> exchange_ghost ();
+
+    neighborlist ->build_neighlist ();
+
+    atom_data -> reset_owned_acceleration();
+    for (auto &&f_custom : force_field_custom)
+      f_custom -> calculate_acceleration ();
+
+    switch(solve_type) {
+    case 0 :
+      sg_setup_system ();
+      sg_assemble_system ();
+      sg_solve ();
+    break;
+
+    case 1 :
+      sa_setup_system ();
+      sa_assemble_system ();
+      sa_solve ();
+    break;
+
+    case 2 :
+      fg_setup_system ();
+      fg_assemble_system ();
+      fg_solve ();
+    break;
+
+    case 3 :
+      fa_setup_system ();
+      fa_assemble_system ();
+      fa_solve ();
+    break;
+
+    }
+  }
+
+  std::cout << "generate_ml_training_data: Export Boundary Position" << std::endl;
+  // Export Boundary Position
+  {
+    std::ofstream ofs_bound("o_ml_boundary_points");
+    //ofs_bound << "X_b"<<","<<"Y_b"<<","<<"Z_b" << "\n";
+    for (unsigned int f = 0; f < face_id.size(); ++f) { // Potential on the boundary
+
+      if (face_id[f]==0) continue;
+      if (std::count(face_id_ignore.begin(), face_id_ignore.end(), face_id[f]) > 0) continue;
+      ofs_bound << face_center[f][0] << " " << face_center[f][1] << " " << face_center[f][2] << "\n";
+    }
+  }
+
+  std::cout << "generate_ml_training_data: create grid vector" << std::endl;
+  // create all points of the grid vector
+  std::vector<Vector<double>> cpoints ;
+  std::vector<dealii::Point<3>> dpoints;
+  auto no_reserve = grid_1d_x->no_points() * grid_1d_y->no_points() * grid_1d_z->no_points();
+  cpoints.reserve(no_reserve);
+  dpoints.reserve(no_reserve);
+
+  for (unsigned int i = 0; i < grid_1d_x->no_points(); ++i) {
+  double x = grid_1d_x->give_point(i);
+  for (unsigned int j = 0; j < grid_1d_y->no_points(); ++j) {
+  double y = grid_1d_y->give_point(j);
+  for (unsigned int k = 0; k < grid_1d_z->no_points(); ++k) {
+    double z = grid_1d_z->give_point(k);
+    try {
+        VectorTools::point_value (dof_handler, solution, dealii::Point<3> {x,y,z});
+    } catch (...) {
+      // Point is outside of the mesh
+      continue;
+    }
+    cpoints.emplace_back( Vector<double>  {x,y,z});
+    dpoints.emplace_back( dealii::Point<3> {x,y,z});
+  }
+  }
+  }
+
+  std::cout << "generate_ml_training_data: export ml_inside_points" << std::endl;
+  {
+    std::ofstream ofs_pt ("o_ml_inside_points");
+    for (int i = 0; i <cpoints.size(); ++i)
+    {
+      ofs_pt << cpoints[i].x << " " << cpoints[i].y << " " << cpoints[i].z << "\n";
+    }
+  }
+
+  std::cout << "generate_ml_training_data: generate reference data" << std::endl;
+
+  // generate data
+  double small_number = 1e-9;
+  std::vector<double> boundary_potential_si ( face_id.size(), 0);
+  std::vector<double> boundary_potential_sm ( face_id.size(), 0);
+  std::vector<double> boundary_potential_to ( face_id.size(), 0);
+  auto no_points = cpoints.size();
+
+  std::ofstream ofs_ref_si ("o_ml_reference_data_si");
+  std::ofstream ofs_ref_sm ("o_ml_reference_data_sm");
+  std::ofstream ofs_ref_to ("o_ml_reference_data_to");
+
+  bool estimate_time = true;
+  double t1 = 0, t2 = 0;
+  for (unsigned int i = 0 ; i < no_points; ++i)
+  {
+    if (estimate_time)
+      t1 = get_wall_time();
+
+    // move the charged  particle position
+    pos[0] = cpoints[i];
+
+    // calculate force afte the move
+    //neighborlist -> init ();
+
+    atom_data -> exchange_owned ();
+
+    atom_data -> exchange_ghost ();
+
+    neighborlist -> build_neighlist ();
+
+    atom_data -> reset_owned_acceleration();
+    for (auto &&f_custom : force_field_custom)
+      f_custom -> calculate_acceleration ();
+
+    switch(solve_type) {
+    case 0 :
+      sg_setup_system ();
+      sg_assemble_system ();
+      sg_solve ();
+    break;
+
+    case 1 :
+      sa_setup_system ();
+      sa_assemble_system ();
+      sa_solve ();
+    break;
+
+    case 2 :
+      fg_setup_system ();
+      fg_assemble_system ();
+      fg_solve ();
+    break;
+
+    case 3 :
+      fa_setup_system ();
+      fa_assemble_system ();
+      fa_solve ();
+    break;
+    }
+
+    // Calculate the potential on the boundaries
+    for (unsigned int f = 0; f < face_id.size(); ++f) { // Potential on the boundary
+
+      if (face_id[f]==0) continue;
+      if (std::count(face_id_ignore.begin(), face_id_ignore.end(), face_id[f]) > 0) continue;
+      //auto p1 = face_center[f];
+      double p_sm = 0;
+      try
+      {
+        p_sm = VectorTools::point_value (dof_handler, solution, face_center[f]);
+      }
+      catch(...)
+      {
+        error->all(FC_FILE_LINE_FUNC,"face_center point is outside of the mesh.");
+        continue;
+      }
+      double p_si = 0;
+      for (auto &&f_custom : force_field_custom)
+        p_si += f_custom->potential(caviar::Vector<double> {face_center[f][0], face_center[f][1], face_center[f][2]});
+
+      //ofs_ref << p_si + p_sm << ",";
+      //boundary_potential[f] = p_si + p_sm;
+      double p_to = p_sm + p_si;
+      if (abs(p_sm) < small_number) p_sm = 0;
+      if (abs(p_si) < small_number) p_si = 0;
+      if (abs(p_to) < small_number) p_to = 0;
+      boundary_potential_sm[f] =  p_sm;
+      boundary_potential_si[f] =  p_si;
+      boundary_potential_to[f] =  p_to;
+
+    }
+
+    // potential at the  points inside
+    for (int j = 0; j < no_points; ++j)
+    {
+
+      ofs_ref_sm << cpoints[j].x << " " <<cpoints[j].y << " " << cpoints[j].z << " ";
+      ofs_ref_si << cpoints[j].x << " " <<cpoints[j].y << " " << cpoints[j].z << " ";
+      ofs_ref_to << cpoints[j].x << " " <<cpoints[j].y << " " << cpoints[j].z << " ";
+      // Calculate the potential on the boundaries
+      for (unsigned int f = 0; f < face_id.size(); ++f) { // Potential on the boundary
+        if (face_id[f]==0) continue;
+        if (std::count(face_id_ignore.begin(), face_id_ignore.end(), face_id[f]) > 0) continue;
+        ofs_ref_sm << boundary_potential_sm[f] << " ";
+        ofs_ref_si << boundary_potential_si[f] << " ";
+        ofs_ref_to << boundary_potential_to[f] << " ";
+      }
+
+      double p_sm = 0;
+      try
+      {
+        p_sm = VectorTools::point_value (dof_handler, solution, dpoints[j]);
+      }
+      catch(...)
+      {
+        error->all(FC_FILE_LINE_FUNC,"point is outside of the mesh.");
+        continue;
+      }
+      double p_si = 0;
+      for (auto &&f_custom : force_field_custom)
+        p_si += f_custom->potential(cpoints[j]);
+
+      ofs_ref_sm << p_sm << "\n";
+      ofs_ref_si << p_si << "\n";
+      ofs_ref_to << p_si + p_sm << "\n";
+    }
+
+    if (estimate_time)
+    {
+       t2 = get_wall_time();
+       std::cout << "No Points Inside: " << no_points << "\n";
+       std::cout << "No rows: " << no_points*no_points << "\n";
+       std::cout << "Estimated file size (MB): " << no_points*no_points * (no_points + face_id.size())*10 /(1024*1024) << "\n";
+       std::cout << "Estimate time  (min): " <<  ((t2 - t1)*no_points)/60.0  << std::endl;
+       estimate_time = false;
+    }
+  }
+
 }
 
 //==================================================
@@ -327,13 +624,13 @@ void Plt_dealii::output_field_vectors(caviar::interpreter::Parser *parser) {
       auto t2 = parser->get_val_token();
       limit  = t2.real_value;
     } else if (string_cmp(t,"grid_1d_x")) {
-      FIND_OBJECT_BY_NAME(unique,it)        
+      FIND_OBJECT_BY_NAME(unique,it)
       grid_1d_x = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
     } else if (string_cmp(t,"grid_1d_y")) {
-      FIND_OBJECT_BY_NAME(unique,it)        
+      FIND_OBJECT_BY_NAME(unique,it)
       grid_1d_y = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
     } else  if (string_cmp(t,"grid_1d_z")) {
-      FIND_OBJECT_BY_NAME(unique,it)        
+      FIND_OBJECT_BY_NAME(unique,it)
       grid_1d_z = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
     } 
 

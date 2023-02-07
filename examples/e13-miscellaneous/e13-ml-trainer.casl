@@ -1,0 +1,153 @@
+
+#=======================================================================
+# 
+# Copyright (C) 2019 by Morad Biagooi and Ehsan Nedaaee Oskoee.
+# 
+# This file is part of the CAVIAR package.
+# 
+# The CAVIAR package is free software; you can use it, redistribute
+# it, and/or modify it under the terms of the GNU Lesser General
+# Public License as published by the Free Software Foundation; either
+# version 3.0 of the License, or (at your option) any later version.
+# The full text of the license can be found in the file LICENSE at
+# the top level of the CAVIAR distribution.
+# 
+#=======================================================================
+# 
+# This script script is made with the contributions of Mr Amin Karim Abadi
+# 
+
+#===== global variables
+
+real global_dt 0.005
+
+#===== Atom definition =====
+unique atom a_base
+a_base type 0
+a_base position 0 0 0
+
+
+#===== Domain
+
+domain box dom
+dom xmin -55 xmax 27
+dom ymin -16 ymax 16
+dom zmin -10 zmax 10
+dom boundary_condition 0 0 1
+ 
+dom generate
+
+#===== Grid definition for water =====
+
+unique grid_1d gx
+unique grid_1d gy
+unique grid_1d gz
+
+
+gx min -54.5 max 28.4 segment 10
+gy min -15.5 max 17.6 segment 8
+gz min -9.5 max 11.7 segment 5
+
+
+gx generate
+gy generate
+gz generate
+
+
+#========== Atom_data
+
+atom_data basic adata
+adata ghost_cutoff 9.5
+adata cutoff_extra 0.0
+adata k_b 1.0
+adata set_domain dom
+
+adata add_type_mass   0 1     
+adata add_type_charge 0 -1        
+adata add_type_radius 0 1      
+
+adata add_atom a_base
+#===== Neighborlist
+
+#neighborlist verlet_list neigh_verlet 
+#neigh_verlet set_atom_data adata
+#neigh_verlet cutoff 9.5
+#neigh_verlet dt global_dt
+
+
+#===== Neighborlist
+
+neighborlist cell_list  neigh_cell
+neigh_cell set_atom_data adata
+neigh_cell cutoff 9.5
+neigh_cell set_domain dom
+neigh_cell make_neighlist
+neigh_cell cutoff_neighlist 9.5
+
+
+
+#===== Neighborlist
+
+#neighborlist cell_list neigh_cell 
+#neigh_cell set_atom_data adata
+#neigh_cell cutoff 12
+#neigh_cell set_domain dom
+#neigh_cell make_neighlist
+#neigh_cell cutoff_neighlist 10
+
+#===== force_field
+
+force_field  electrostatic_ewald1d f_ee
+f_ee set_neighborlist neigh_cell
+f_ee set_atom_data adata
+f_ee set_domain dom
+f_ee sigma 1.0
+f_ee num_mirrors 2
+f_ee k_electrostatic 1389.38550539
+#===============================
+
+force_field electrostatic_ewald_r f_ewr 
+f_ewr set_atom_data adata
+f_ewr k_electrostatic 1389.38550539
+f_ewr cutoff 9.72  
+f_ewr alpha 0.288065844  # 2.8/cutoff
+f_ewr set_neighborlist neigh_cell
+
+
+#===============================
+
+force_field electrostatic_ewald_k f_ewk
+f_ewk set_atom_data adata
+f_ewk set_domain dom
+f_ewk k_electrostatic 1389.38550539 
+f_ewk alpha 0.288065844  # 2.8/cutoff
+f_ewk k_max 5 # it has to be 5. THe value is deduced from the paper
+
+
+
+#===== finite element Mesh import
+
+force_field plt_dealii f_plt
+f_plt k_electrostatic 1389.38550539
+f_plt set_atom_data adata
+f_plt add_force_field f_ee
+#f_plt add_force_field f_ewr
+#f_plt add_force_field f_ewk
+
+f_plt add_unv_mesh "e13-ml-trainer-mesh.unv"
+f_plt read_unv_mesh 
+
+f_plt boundary_id_value 1 -110
+f_plt boundary_id_value 2 -110
+f_plt boundary_id_value 3 120
+f_plt boundary_id_value 4 120
+
+f_plt output_induced_charge 500
+
+f_plt set_solve_type faster_adaptive
+
+f_plt refine_global 1
+
+f_plt generate_ml_training_data grid_1d_x gx grid_1d_y gy grid_1d_z gz neighborlist neigh_cell
+
+

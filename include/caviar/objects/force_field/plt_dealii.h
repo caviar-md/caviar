@@ -126,6 +126,8 @@ public:
 
   void start_spherical_test();
   void write_spherical_test();
+
+  void generate_ml_training_data(caviar::interpreter::Parser *parser);
  
   Triangulation<3>   tria_reserve;  
 
