@@ -574,6 +574,31 @@ void Plt_dealii::generate_ml_training_data(caviar::interpreter::Parser *parser) 
       ofs_ref_to << p_si + p_sm << "\n";
     }
 
+
+    // potential at the  points  on the boundaries
+    for (int j = 0; j < face_id.size(); ++j)
+    {
+      if (face_id[j]==0) continue;
+      if (std::count(face_id_ignore.begin(), face_id_ignore.end(), face_id[j]) > 0) continue;
+
+      ofs_ref_sm <<  face_center[j][0] << " " << face_center[j][1] << " " << face_center[j][2] << " ";
+      ofs_ref_si <<  face_center[j][0] << " " << face_center[j][1] << " " << face_center[j][2] << " ";
+      ofs_ref_to <<  face_center[j][0] << " " << face_center[j][1] << " " << face_center[j][2] << " ";
+
+      // Calculate the potential on the boundaries
+      for (unsigned int f = 0; f < face_id.size(); ++f) { // Potential on the boundary
+        if (face_id[f]==0) continue;
+        if (std::count(face_id_ignore.begin(), face_id_ignore.end(), face_id[f]) > 0) continue;
+        ofs_ref_sm << boundary_potential_sm[f] << " ";
+        ofs_ref_si << boundary_potential_si[f] << " ";
+        ofs_ref_to << boundary_potential_to[f] << " ";
+      }
+
+      ofs_ref_sm << boundary_potential_sm[j] << "\n";
+      ofs_ref_si << boundary_potential_si[j] << "\n";
+      ofs_ref_to << boundary_potential_sm[j] + boundary_potential_si[j] << "\n";
+    }
+
     if (estimate_time)
     {
        t2 = get_wall_time();
