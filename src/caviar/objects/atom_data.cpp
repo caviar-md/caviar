@@ -28,6 +28,7 @@
 #include "caviar/objects/unique/molecule.h"
 #include "caviar/objects/unique/molecule_group.h"
 #include "caviar/objects/unique/molecule_list.h"
+#include "caviar/objects/unique/time_function_3d.h"
 
 #include "caviar/utility/interpreter_io_headers.h"
 #include <algorithm>
@@ -197,6 +198,12 @@ bool Atom_data::read (caviar::interpreter::Parser *parser) {
       return true;
     } else if (string_cmp(t,"n_r_df")) {
       GET_OR_CHOOSE_A_INT(n_r_df,"","")
+    } 
+    else if (string_cmp(t,"set_non_inertia_reference_frame_vel")) {
+      FIND_OBJECT_BY_NAME(unique,it)
+      FC_CHECK_OBJECT_CLASS_NAME(unique,it,time_function_3d)
+      objects::unique::Time_function_3d *a = dynamic_cast<objects::unique::Time_function_3d *>(object_container->unique[it->second.index]);
+      non_inertia_reference_frame_vel = a;
     } else FC_ERR_UNDEFINED_VAR(t)
 
   }

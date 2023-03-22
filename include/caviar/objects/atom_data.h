@@ -31,6 +31,7 @@ class Domain;
 namespace unique { 
 class Atom; class Atom_group; class Atom_list;
 class Molecule; class Molecule_group; class Molecule_list; 
+class Time_function_3d;
 }
 namespace neighborlist {
 class Cell_list;
@@ -46,6 +47,18 @@ public:
   Atom_data (class CAVIAR *);
   virtual ~Atom_data ();
   virtual bool read (class caviar::interpreter::Parser *);
+
+  /**
+   * It represents the position of the origin of non_inertia Cartesian reference frame by a time function.
+   * It will be used in ???.
+  */
+  // unique::Time_function_3d *non_inertia_reference_frame_pos = nullptr;
+
+  /**
+   * It represents the velocity of origin of the non_inertia Cartesian reference frame by a time function.
+   * It will be used in calculation of Temperature and Kinetic energy.
+  */
+  unique::Time_function_3d *non_inertia_reference_frame_vel = nullptr;
 
   /**   
    * check if a position is empty of any atom. Usage in fixing number of atoms

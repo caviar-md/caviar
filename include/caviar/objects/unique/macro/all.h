@@ -24,3 +24,4 @@
 #include "caviar/objects/unique/macro/random_1d.h"
 #include "caviar/objects/unique/macro/distribution.h"
 #include "caviar/objects/unique/macro/time_function.h"
+#include "caviar/objects/unique/macro/time_function_3d.h"

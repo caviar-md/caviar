@@ -14,14 +14,7 @@
 //
 //========================================================================
 
-#include "caviar/objects/unique/atom.h"
-#include "caviar/objects/unique/atom_group.h"
-#include "caviar/objects/unique/atom_list.h"
-#include "caviar/objects/unique/molecule.h"
-#include "caviar/objects/unique/molecule_group.h"
-#include "caviar/objects/unique/molecule_list.h"
-#include "caviar/objects/unique/grid_1d.h"
-#include "caviar/objects/unique/random_1d.h"
-#include "caviar/objects/unique/distribution.h"
-#include "caviar/objects/unique/time_function.h"
-#include "caviar/objects/unique/time_function_3d.h"
+#ifdef FC_CHECK_AND_CREATE_ACTIVATED
+FC_CHECK_AND_CREATE(Time_function,time_function_3d,objects::unique::Time_function_3d)
+#endif
+
