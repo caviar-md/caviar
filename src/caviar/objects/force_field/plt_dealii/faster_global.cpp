@@ -36,7 +36,10 @@
 //#include <deal.II/grid/grid_all_interpreter_tools.h>
 #include <deal.II/grid/grid_tools.h>
 
+#if DEALII_VERSION_MAJOR == 8
 #include <deal.II/grid/tria_boundary_lib.h>
+#endif
+
 #include <deal.II/grid/grid_refinement.h>
 #include <deal.II/dofs/dof_accessor.h>
 #include <deal.II/grid/manifold_lib.h>
@@ -66,8 +69,9 @@
 #include <deal.II/lac/solver_bicgstab.h>
 #include <deal.II/lac/precondition.h>
 #include <deal.II/lac/vector_memory.h>
+#if DEALII_VERSION_MAJOR == 8
 #include <deal.II/lac/filtered_matrix.h>
-
+#endif
 #include <cmath>
 #include <iomanip>
 
@@ -177,6 +181,7 @@ void Plt_dealii::fg_assemble_system ()
 
 void Plt_dealii::fg_solve ()
 {
+#if DEALII_VERSION_MAJOR == 8
 
   std::map<types::global_dof_index,double> boundary_values;
   
@@ -228,7 +233,9 @@ void Plt_dealii::fg_solve ()
   }
 
   //constraints.distribute (solution); //XXX no-hanging nodes
-
+#else
+    error->all(FC_FILE_LINE_FUNC,"Developed for DealII V8. Not implemented for DealII V9 . Use other 'solve_type' for PLT force_field such as 'simple_global' or 'simple_adaptive'.");
+#endif
 }
 
 

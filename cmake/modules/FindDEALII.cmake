@@ -28,6 +28,9 @@ IF(NOT ${deal.II_FOUND})
     "You may want to either pass a flag -DDEAL_II_DIR={/PATH/TO/deal.II} to cmake\n"
     "or set an environment variable \"DEAL_II_DIR\" that contains this path."
     )
+ELSE()
+  add_compile_definitions(DEALII_VERSION_MAJOR=${deal.II_VERSION_MAJOR})
+  add_compile_definitions(DEALII_VERSION_MINOR=${deal.II_VERSION_MINOR})
 ENDIF()
  
 DEAL_II_INITIALIZE_CACHED_VARIABLES()

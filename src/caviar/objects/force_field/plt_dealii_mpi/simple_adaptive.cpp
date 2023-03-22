@@ -36,7 +36,9 @@
 //#include <deal.II/grid/grid_all_interpreter_tools.h>
 #include <deal.II/grid/grid_tools.h>
 
+#if DEALII_VERSION_MAJOR == 8
 #include <deal.II/grid/tria_boundary_lib.h>
+#endif
 #include <deal.II/grid/grid_refinement.h>
 #include <deal.II/dofs/dof_accessor.h>
 #include <deal.II/grid/manifold_lib.h>

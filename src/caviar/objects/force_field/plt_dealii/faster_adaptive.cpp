@@ -37,7 +37,10 @@
 //#include <deal.II/grid/grid_all_interpreter_tools.h>
 #include <deal.II/grid/grid_tools.h>
 
+#if DEALII_VERSION_MAJOR == 8
 #include <deal.II/grid/tria_boundary_lib.h>
+#endif
+
 #include <deal.II/grid/grid_refinement.h>
 #include <deal.II/dofs/dof_accessor.h>
 #include <deal.II/grid/manifold_lib.h>
@@ -67,7 +70,9 @@
 #include <deal.II/lac/solver_bicgstab.h>
 #include <deal.II/lac/precondition.h>
 #include <deal.II/lac/vector_memory.h>
+#if DEALII_VERSION_MAJOR == 8
 #include <deal.II/lac/filtered_matrix.h>
+#endif
 
 #include <cmath>
 #include <iomanip>
@@ -178,6 +183,7 @@ void Plt_dealii::fa_assemble_system ()
 
 void Plt_dealii::fa_solve () // XXX note of two of them
 {
+#if DEALII_VERSION_MAJOR == 8
 
   std::map<types::global_dof_index,double> boundary_values;
   
@@ -231,7 +237,9 @@ void Plt_dealii::fa_solve () // XXX note of two of them
 
 
   constraints.distribute (solution);
-
+#else
+    error->all(FC_FILE_LINE_FUNC,"Developed for DealII V8. Not implemented for DealII V9 . Use other 'solve_type' for PLT force_field such as 'simple_global' or 'simple_adaptive'.");
+#endif
 }
 
 
@@ -242,6 +250,7 @@ void Plt_dealii::fa_solve () // XXX note of two of them
 
 void Plt_dealii::fa_solve_time_profile () // XXX note the time profile
 {
+#if DEALII_VERSION_MAJOR == 8
 
   double t1=0, t2=0, t3=0, t4=0, t5=0, t6=0;
   double t7=0, t8=0, t9=0, t10=0, t11=0, t12=0;
@@ -320,7 +329,9 @@ void Plt_dealii::fa_solve_time_profile () // XXX note the time profile
   std::cout << "t15 - t14: "   << (t15 - t14) << "\n";
   std::cout << "t16 - t15: "   << (t16 - t15) << "\n";
   std::cout << "t17 - t16: "   << (t17 - t16) << "\n";
-
+#else
+    error->all(FC_FILE_LINE_FUNC,"Developed for DealII V8. Not implemented for DealII V9 . Use other 'solve_type' for PLT force_field such as 'simple_global' or 'simple_adaptive'.");
+#endif
 }
 
 

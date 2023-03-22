@@ -35,8 +35,13 @@ Time_function_3d::Time_function_3d (CAVIAR *fptr) : Unique{fptr}
   export_values_to_file = false;
   export_file_append = false;
 #if defined(CAVIAR_WITH_MUPARSER)  
-  muParser = new mu::Parser;
-  muParser->DefineVar("t", &time_variable); 
+  muParser_x = new mu::Parser;
+  muParser_y = new mu::Parser;
+  muParser_z = new mu::Parser;
+  muParser_x->DefineVar("t", &time_variable); 
+  muParser_y->DefineVar("t", &time_variable); 
+  muParser_z->DefineVar("t", &time_variable); 
+
 #else
   error->all(FC_FILE_LINE_FUNC,"CAVIAR must be build with 'CAVIAR_WITH_MUPARSER=ON' for 'Time_function_3d'");
 #endif
@@ -45,8 +50,9 @@ Time_function_3d::Time_function_3d (CAVIAR *fptr) : Unique{fptr}
   
 Time_function_3d::~Time_function_3d () {
 #if defined(CAVIAR_WITH_MUPARSER)
-  delete muParser;
-
+  delete muParser_x;
+  delete muParser_y;
+  delete muParser_z;
 #endif  
   if (export_values_to_file)
     if (ofs_time_value.is_open())    ofs_time_value.close();  
@@ -103,7 +109,9 @@ bool Time_function_3d::read (caviar::interpreter::Parser* parser)
   
 void Time_function_3d::generate_formula () {	  
 #if defined(CAVIAR_WITH_MUPARSER)
-  muParser->SetExpr(function_definition);                                         
+  muParser_x->SetExpr(function_definition_x);  
+  muParser_y->SetExpr(function_definition_y);                                         
+  muParser_z->SetExpr(function_definition_z);                                                                                
 #endif
 }
 

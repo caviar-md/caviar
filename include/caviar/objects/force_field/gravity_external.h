@@ -27,7 +27,8 @@ namespace unique {
 namespace force_field {
 
 /**
- * This class makes an external acceleration as an gravitation force-field
+ * This class makes an external acceleration as an gravitation force-field.
+ * If 'non_inertia_reference_frame_acc' is set, 'direction' and 'amplitude' will be ignored.
  *
  */
 class Gravity_external : public Force_field {
