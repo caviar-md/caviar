@@ -18,6 +18,8 @@
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/objects/neighborlist.h"
 #include "caviar/objects/atom_data.h"
+#include "caviar/objects/unique/time_function_3d.h"
+
 #include <cmath>
 #include <iomanip>
 
@@ -48,7 +50,12 @@ bool Gravity_external::read (caviar::interpreter::Parser *parser) {
     } else if (string_cmp(t,"set_atom_data") || string_cmp(t,"atom_data")) {
       FIND_OBJECT_BY_NAME(atom_data,it)
       atom_data = object_container->atom_data[it->second.index];
-    } else FC_ERR_UNDEFINED_VAR(t)
+    } else if (string_cmp(t,"set_non_inertia_reference_frame_acc")) {
+      FIND_OBJECT_BY_NAME(unique,it)
+      FC_CHECK_OBJECT_CLASS_NAME(unique,it,time_function_3d)
+      objects::unique::Time_function_3d *a = dynamic_cast<objects::unique::Time_function_3d *>(object_container->unique[it->second.index]);
+      non_inertia_reference_frame_acc = a;
+    }else FC_ERR_UNDEFINED_VAR(t)
   }
   
   return in_file;
@@ -68,17 +75,27 @@ void Gravity_external::calculate_acceleration () {
 #ifdef CAVIAR_WITH_OPENMP
   #pragma omp parallel for
 #endif  
-  for (unsigned int i=0;i<pos.size();++i) {
-    //const auto type_i = atom_data -> owned.type [i] ;
-    //const auto mass_i = atom_data -> owned.mass [ type_i ];
+  if (non_inertia_reference_frame_acc == nullptr)
+  {
+    for (unsigned int i=0;i<pos.size();++i) {
+      //const auto type_i = atom_data -> owned.type [i] ;
+      //const auto mass_i = atom_data -> owned.mass [ type_i ];
 
-    //const auto force = amplitude * direction * mass_i;
-    //atom_data -> owned.acceleration [i] += force / mass_i;
+      //const auto force = amplitude * direction * mass_i;
+      //atom_data -> owned.acceleration [i] += force / mass_i;
 
-    const auto a = amplitude * direction;
-    atom_data -> owned.acceleration [i] += a;
-    
-  }  
+      const auto a = amplitude * direction;
+      atom_data -> owned.acceleration [i] += a;
+      
+    }  
+  }
+  else
+  {
+    for (unsigned int i=0;i<pos.size();++i) 
+    {
+      atom_data -> owned.acceleration [i] += non_inertia_reference_frame_acc->current_value;    
+    }  
+  }
 
 }
 

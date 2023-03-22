@@ -21,6 +21,9 @@
 
 namespace caviar {
 namespace objects {
+namespace unique {
+  class Time_function_3d;
+}
 namespace force_field {
 
 /**
@@ -39,7 +42,8 @@ public:
 
   double amplitude;
   Vector<double> direction;
- 
+  unique::Time_function_3d *non_inertia_reference_frame_acc = nullptr;
+
 };
 
 } //force_field
