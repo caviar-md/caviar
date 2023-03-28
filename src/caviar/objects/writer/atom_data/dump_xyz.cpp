@@ -19,6 +19,7 @@
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/interpreter/communicator.h"
 #include "caviar/utility/time_utility.h"
+#include "caviar/objects/unique/time_function_3d.h"
 
 namespace caviar {
 
@@ -41,12 +42,18 @@ void Atom_data::dump_xyz (int64_t i) {
 
 
   const auto &pos = atom_data -> owned.position;
+  //const auto &vel = atom_data -> owned.velocity;
+  //const auto &acc = atom_data -> owned.acceleration;
   const auto &id  = atom_data -> owned.id; 
   const auto &type = atom_data ->owned.type;  
 
   std::vector<std::vector<int>> all_id;
   std::vector<Vector<double>> all_pos;
+  //std::vector<Vector<double>> all_vel;
+  //std::vector<Vector<double>> all_acc;
+
   std::vector<int> all_type;
+  
   
   const auto nla = pos.size();//atom_data -> num_local_atoms;
   const auto nta = atom_data -> num_total_atoms;
@@ -148,12 +155,18 @@ void Atom_data::dump_xyz (int64_t i) {
 
   MPI_Barrier (mpi_comm);
 
+  Vector<double> p_o {0,0,0};
+  if (position_offset != nullptr) p_o = position_offset->current_value;
+
   if (my_mpi_rank == 0) {
 
     ofs_xyz << all_type.size() << "\nAtom\n";
+
     for (unsigned int i=0; i<all_type.size(); ++i) {
-      ofs_xyz << all_type[i] << " " << all_pos[i].x << " " << all_pos[i].y << " " << all_pos[i].z << "\n";
+      ofs_xyz << all_type[i] << " " << all_pos[i].x + p_o.x<< " " << all_pos[i].y + p_o.y<< " " << all_pos[i].z + p_o.z << "\n";
     }
+
+
     ofs_xyz << std::flush;
   }
 
@@ -171,28 +184,36 @@ void Atom_data::dump_xyz (int64_t i) {
   ofs_xyz << nta << "\nAtom\n";
 
   //if (my_mpi_rank==0) {
+
+  Vector<double> p_o {0,0,0};
+  if (position_offset != nullptr) p_o = position_offset->current_value;
+
   if (output_velocity && output_acceleration) {
-    for (unsigned int i = 0; i<nta; ++i) {
-      ofs_xyz << all_type[i] << " " << all_pos[i].x << " " << all_pos[i].y << " " << all_pos[i].z ;
+    for (unsigned int i = 0; i<nta; ++i) 
+    {
+      ofs_xyz << all_type[i] << " " << all_pos[i].x + p_o.x<< " " << all_pos[i].y + p_o.y<< " " << all_pos[i].z + p_o.z ;
       ofs_xyz << " " << all_vel[i].x << " " << all_vel[i].y << " " << all_vel[i].z ;
       ofs_xyz << " " << all_acc[i].x << " " << all_acc[i].y << " " << all_acc[i].z ;
       ofs_xyz << "\n";
     }
   } else if (output_velocity) {
-    for (unsigned int i = 0; i<nta; ++i) {
-      ofs_xyz << all_type[i] << " " << all_pos[i].x << " " << all_pos[i].y << " " << all_pos[i].z ;
+    for (unsigned int i = 0; i<nta; ++i) 
+    {
+      ofs_xyz << all_type[i] << " " << all_pos[i].x + p_o.x<< " " << all_pos[i].y + p_o.y<< " " << all_pos[i].z + p_o.z ;
       ofs_xyz << " " << all_vel[i].x << " " << all_vel[i].y << " " << all_vel[i].z ;
       ofs_xyz << "\n";
     }
   } else if (output_acceleration) {
-    for (unsigned int i = 0; i<nta; ++i) {
-      ofs_xyz << all_type[i] << " " << all_pos[i].x << " " << all_pos[i].y << " " << all_pos[i].z ;
+    for (unsigned int i = 0; i<nta; ++i) 
+    {
+      ofs_xyz << all_type[i] << " " << all_pos[i].x + p_o.x<< " " << all_pos[i].y + p_o.y<< " " << all_pos[i].z + p_o.z ;
       ofs_xyz << " " << all_acc[i].x << " " << all_acc[i].y << " " << all_acc[i].z ;
       ofs_xyz << "\n";
     }
   } else {
-    for (unsigned int i = 0; i<nta; ++i) {
-      ofs_xyz << all_type[i] << " " << all_pos[i].x << " " << all_pos[i].y << " " << all_pos[i].z ;
+    for (unsigned int i = 0; i<nta; ++i) 
+    {
+      ofs_xyz << all_type[i] << " " << all_pos[i].x + p_o.x<< " " << all_pos[i].y + p_o.y<< " " << all_pos[i].z + p_o.z ;
       ofs_xyz << "\n";
     }
   }

@@ -18,6 +18,8 @@
 #include "caviar/objects/atom_data.h"
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/utility/time_utility.h"
+#include "caviar/objects/unique/time_function_3d.h"
+
 #include <ctime>
 #include <sys/stat.h> // used for mkdir()
 
@@ -89,6 +91,11 @@ bool Atom_data::read (caviar::interpreter::Parser *parser) {
       for (unsigned int i=0;i<pos.size();++i) {
         ofs << i << " " << acc[i].x << "\t" << acc[i].y << "\t" << acc[i].z << "\n" ;
       }
+    } else if (string_cmp(t,"set_position_offset")) {
+      FIND_OBJECT_BY_NAME(unique,it)
+      FC_CHECK_OBJECT_CLASS_NAME(unique,it,time_function_3d)
+      objects::unique::Time_function_3d *a = dynamic_cast<objects::unique::Time_function_3d *>(object_container->unique[it->second.index]);
+      position_offset = a;
     } 
     else FC_ERR_UNDEFINED_VAR(t)
   }

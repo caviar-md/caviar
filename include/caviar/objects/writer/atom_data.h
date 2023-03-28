@@ -23,6 +23,9 @@ namespace caviar {
 namespace objects {
 class Atom_data;
 class Domain;
+namespace unique {
+  class Time_function_3d;
+}
 namespace writer {
 
 /**
@@ -46,6 +49,8 @@ class Atom_data : public Writer {
   void close_files();
   void generate();
   void dump_kinetic_energy();
+  
+  unique::Time_function_3d *position_offset = nullptr;
 
 
 
