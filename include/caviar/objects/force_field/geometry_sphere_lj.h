@@ -21,7 +21,10 @@
 
 namespace caviar {
 namespace objects {
-
+namespace unique
+{
+  class Time_function_3d;
+}
 namespace force_field {
 
 /**
@@ -39,6 +42,8 @@ public:
   void verify_settings ();
   void calculate_acceleration ();
 public:  
+  unique::Time_function_3d *position_offset = nullptr;
+
   bool inside;
   double radius;
   caviar::Vector<double> center;

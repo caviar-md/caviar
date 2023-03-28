@@ -18,6 +18,7 @@
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/objects/shape.h"
 #include "caviar/objects/atom_data.h"
+#include "caviar/objects/unique/time_function_3d.h"
 #include <string>
 #include <cmath>
 #include <fstream>
@@ -63,6 +64,16 @@ bool Geometry::read (class caviar::interpreter::Parser *parser) {
     } else if (string_cmp(t,"set_atom_data") || string_cmp(t,"atom_data")) {
       FIND_OBJECT_BY_NAME(atom_data,it)
       atom_data = object_container->atom_data[it->second.index];
+    } else if (string_cmp(t,"set_position_offset")) {
+      FIND_OBJECT_BY_NAME(unique,it)
+      FC_CHECK_OBJECT_CLASS_NAME(unique,it,time_function_3d)
+      objects::unique::Time_function_3d *a = dynamic_cast<objects::unique::Time_function_3d *>(object_container->unique[it->second.index]);
+      position_offset = a;
+    } else if (string_cmp(t,"set_velocity_offset")) {
+      FIND_OBJECT_BY_NAME(unique,it)
+      FC_CHECK_OBJECT_CLASS_NAME(unique,it,time_function_3d)
+      objects::unique::Time_function_3d *a = dynamic_cast<objects::unique::Time_function_3d *>(object_container->unique[it->second.index]);
+      position_offset = a;
     } else FC_ERR_UNDEFINED_VAR(t)
   }
   
@@ -82,7 +93,10 @@ void Geometry::verify_settings() {
 
 void Geometry::calculate_acceleration () {
   FC_OBJECT_VERIFY_SETTINGS
-
+  Vector<double> p_o {0,0,0};
+  if (position_offset != nullptr) p_o = position_offset->current_value;
+  Vector<double> v_o {0,0,0};
+  if (velocity_offset != nullptr) v_o = velocity_offset->current_value;
 
   const auto &pos = atom_data -> owned.position;
   const auto &vel = atom_data -> owned.velocity;  
@@ -99,9 +113,9 @@ void Geometry::calculate_acceleration () {
     //Vector <Real_t> contact_vector {0,0,0};
     for (unsigned int j=0; j<shape.size();++j) {
       Vector <Real_t> contact_vector {0,0,0};        
-      if (shape[j] -> in_contact(pos[i], r, contact_vector)) {
+      if (shape[j] -> in_contact(pos[i] - p_o, r, contact_vector)) {
         acc[i] -= mass_inv_i * contact_vector*(young_modulus
-                + (vel[i]*contact_vector)*dissip_coef/(contact_vector*contact_vector));
+                + ((vel[i]-v_o)*contact_vector)*dissip_coef/(contact_vector*contact_vector));
       }
     }
   }

@@ -21,7 +21,10 @@
 
 namespace caviar {
 namespace objects {
-
+namespace unique
+{
+  class Time_function_3d;
+}
 namespace force_field {
 
 /**
@@ -39,6 +42,8 @@ public:
   void verify_settings ();
   void calculate_acceleration ();
 public:  
+  unique::Time_function_3d *position_offset = nullptr;
+  unique::Time_function_3d *velocity_offset = nullptr;
   int symmetric;
   int slab_direction;
   double slab_position;

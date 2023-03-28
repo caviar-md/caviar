@@ -23,6 +23,10 @@
 namespace caviar {
 namespace objects {
 class Shape; 
+namespace unique
+{
+  class Time_function_3d;
+}
 namespace force_field {
 
 /**
@@ -39,6 +43,8 @@ public:
   void calculate_acceleration ();
 public:  
   std::vector<caviar::objects::Shape *> shape;
+
+  unique::Time_function_3d *position_offset = nullptr;
 
   // contains the type of epsilon_wall-sigma_wall. This is the case when we have
   // more than one shape objects but we want to have the same parameters.

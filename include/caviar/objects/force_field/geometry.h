@@ -22,6 +22,10 @@
 namespace caviar {
 namespace objects {
 class Shape;
+namespace unique
+{
+  class Time_function_3d;
+}
 namespace force_field {
 
 /**
@@ -37,6 +41,8 @@ public:
   void verify_settings ();
   void calculate_acceleration ();
 public:  
+  unique::Time_function_3d *position_offset = nullptr;
+  unique::Time_function_3d *velocity_offset = nullptr;
   std::vector<caviar::objects::Shape *> shape;
   bool shape_size_warning;
   std::vector<double> radius;

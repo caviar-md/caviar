@@ -17,6 +17,7 @@
 #include "caviar/objects/force_field/geometry_sphere.h"
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/objects/atom_data.h"
+#include "caviar/objects/unique/time_function_3d.h"
 #include <string>
 #include <cmath>
 #include <fstream>
@@ -65,6 +66,16 @@ bool Geometry_sphere::read (class caviar::interpreter::Parser *parser) {
     } else if (string_cmp(t,"set_atom_data") || string_cmp(t,"atom_data")) {
       FIND_OBJECT_BY_NAME(atom_data,it)
       atom_data = object_container->atom_data[it->second.index];
+    } else if (string_cmp(t,"set_position_offset")) {
+      FIND_OBJECT_BY_NAME(unique,it)
+      FC_CHECK_OBJECT_CLASS_NAME(unique,it,time_function_3d)
+      objects::unique::Time_function_3d *a = dynamic_cast<objects::unique::Time_function_3d *>(object_container->unique[it->second.index]);
+      position_offset = a;
+    } else if (string_cmp(t,"set_velocity_offset")) {
+      FIND_OBJECT_BY_NAME(unique,it)
+      FC_CHECK_OBJECT_CLASS_NAME(unique,it,time_function_3d)
+      objects::unique::Time_function_3d *a = dynamic_cast<objects::unique::Time_function_3d *>(object_container->unique[it->second.index]);
+      position_offset = a;
     } else FC_ERR_UNDEFINED_VAR(t)
   }
   
@@ -79,7 +90,10 @@ void Geometry_sphere::verify_settings() {
 
 void Geometry_sphere::calculate_acceleration () {
   FC_OBJECT_VERIFY_SETTINGS
-
+  Vector<double> p_o {0,0,0};
+  if (position_offset != nullptr) p_o = position_offset->current_value;
+  Vector<double> v_o {0,0,0};
+  if (velocity_offset != nullptr) v_o = velocity_offset->current_value;
 
   const auto &pos = atom_data -> owned.position;
   const auto &vel = atom_data -> owned.velocity;  
@@ -94,7 +108,7 @@ void Geometry_sphere::calculate_acceleration () {
       const auto type_i = atom_data -> owned.type [i] ;
       const auto mass_inv_i = atom_data -> owned.mass_inv [ type_i ];   
       
-      auto cp = (pos[i]-center);
+      auto cp = (pos[i]-center - p_o);
       auto cp_sq = cp*cp;
       auto cp_abs = std::sqrt(cp_sq);
       auto cp_norm = cp / cp_abs;
@@ -117,7 +131,7 @@ void Geometry_sphere::calculate_acceleration () {
       if (compression > 0) {
 
         acc[i] += mass_inv_i * cp_norm*(young_modulus*compression
-                - (vel[i]*cp_norm)*dissip_coef*vel_coef);
+                - ((vel[i]-v_o)*cp_norm)*dissip_coef*vel_coef);
         
       }
     }
