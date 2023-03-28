@@ -52,13 +52,13 @@ public:
    * It represents the position of the origin of non_inertia Cartesian reference frame by a time function.
    * It will be used in ???.
   */
-  // unique::Time_function_3d *non_inertia_reference_frame_pos = nullptr;
+  // unique::Time_function_3d *position_offset = nullptr;
 
   /**
    * It represents the velocity of origin of the non_inertia Cartesian reference frame by a time function.
    * It will be used in calculation of Temperature and Kinetic energy.
   */
-  unique::Time_function_3d *non_inertia_reference_frame_vel = nullptr;
+  unique::Time_function_3d *velocity_offset = nullptr;
 
   /**   
    * check if a position is empty of any atom. Usage in fixing number of atoms

@@ -50,12 +50,12 @@ bool Gravity_external::read (caviar::interpreter::Parser *parser) {
     } else if (string_cmp(t,"set_atom_data") || string_cmp(t,"atom_data")) {
       FIND_OBJECT_BY_NAME(atom_data,it)
       atom_data = object_container->atom_data[it->second.index];
-    } else if (string_cmp(t,"set_non_inertia_reference_frame_acc")) {
+    } else if (string_cmp(t,"set_time_function_3d")) {
       FIND_OBJECT_BY_NAME(unique,it)
       FC_CHECK_OBJECT_CLASS_NAME(unique,it,time_function_3d)
       objects::unique::Time_function_3d *a = dynamic_cast<objects::unique::Time_function_3d *>(object_container->unique[it->second.index]);
       non_inertia_reference_frame_acc = a;
-    }else FC_ERR_UNDEFINED_VAR(t)
+    } else FC_ERR_UNDEFINED_VAR(t)
   }
   
   return in_file;

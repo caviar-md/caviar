@@ -47,9 +47,9 @@ class Time_function_3d : public Unique {
   void update_time_variable(double t);
   void calculate ();
   
-  std::string function_definition_x = "";
-  std::string function_definition_y = "";
-  std::string function_definition_z = "";
+  std::string function_definition_x = "0";
+  std::string function_definition_y = "0";
+  std::string function_definition_z = "0";
   double time_variable;
   Vector<double> current_value;
   bool export_values_to_file;

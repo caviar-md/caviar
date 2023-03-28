@@ -27,6 +27,7 @@ namespace objects {
 namespace unique
 {
 class Time_function;
+class Time_function_3d;
 }
 class Atom_data;
 class Integrator;
@@ -203,6 +204,7 @@ class Md_simulator : public Pointers {
   std::vector<objects::Constraint *> constraint; 
   std::vector<objects::Writer *> writer; 
   std::vector<objects::unique::Time_function *> time_function; 
+  std::vector<objects::unique::Time_function_3d *> time_function_3d; 
   
   double time, dt;
   clock_t t_start, t_end;

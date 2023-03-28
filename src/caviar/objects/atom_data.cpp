@@ -199,11 +199,11 @@ bool Atom_data::read (caviar::interpreter::Parser *parser) {
     } else if (string_cmp(t,"n_r_df")) {
       GET_OR_CHOOSE_A_INT(n_r_df,"","")
     } 
-    else if (string_cmp(t,"set_non_inertia_reference_frame_vel")) {
+    else if (string_cmp(t,"set_velocity_offset")) {
       FIND_OBJECT_BY_NAME(unique,it)
       FC_CHECK_OBJECT_CLASS_NAME(unique,it,time_function_3d)
       objects::unique::Time_function_3d *a = dynamic_cast<objects::unique::Time_function_3d *>(object_container->unique[it->second.index]);
-      non_inertia_reference_frame_vel = a;
+      velocity_offset = a;
     } else FC_ERR_UNDEFINED_VAR(t)
 
   }

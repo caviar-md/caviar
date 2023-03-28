@@ -21,6 +21,7 @@
 #include "caviar/objects/constraint.h"
 #include "caviar/objects/writer.h"
 #include "caviar/objects/unique/time_function.h"
+#include "caviar/objects/unique/time_function_3d.h"
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/utility/time_utility.h"
 #include "caviar/interpreter/communicator.h"
@@ -114,6 +115,11 @@ bool Md_simulator::read (caviar::interpreter::Parser *parser) {
       FC_CHECK_OBJECT_CLASS_NAME(unique,it,time_function)
       objects::unique::Time_function *a = dynamic_cast<objects::unique::Time_function *>(object_container->unique[it->second.index]);
       time_function.push_back(a);            
+    } else if (string_cmp(t,"add_time_function_3d") || string_cmp(t,"time_function_3d")) {
+      FIND_OBJECT_BY_NAME(unique,it)
+      FC_CHECK_OBJECT_CLASS_NAME(unique,it,time_function_3d)
+      objects::unique::Time_function_3d *a = dynamic_cast<objects::unique::Time_function_3d *>(object_container->unique[it->second.index]);
+      time_function_3d.push_back(a);            
     } else  if (string_cmp(t,"step")) {
       //int i=0;
       //GET_OR_CHOOSE_A_INT(i,"","")
@@ -316,6 +322,7 @@ void Md_simulator::step () {
     time = dt*initial_step;
 
     for (auto&& tf: time_function) tf->update_time_variable (time);    
+    for (auto&& tf: time_function_3d) tf->update_time_variable (time); 
     
     setup();
   }
@@ -401,6 +408,7 @@ void Md_simulator::step () {
 
   time += dt;
   for (auto&& tf: time_function) tf->update_time_variable (time);
+  for (auto&& tf: time_function_3d) tf->update_time_variable (time);
 }
 
 
