@@ -25,33 +25,36 @@ namespace unique
 {
   class Time_function_3d;
 }
-namespace force_field {
+namespace force_field
+{
 
-/**
- * This class creates a force-field for the slab geometries.
- * The default is symmetric, meaning that the slab has no direction
- * The assymetric slab means that the position of the particles relative to 
- * the slab direction matters. It is good for using soft forcefields.
- */
-class Geometry_slab : public Force_field {
-public:
-  Geometry_slab (class CAVIAR *);
-  ~Geometry_slab ();
-  
-  bool read (class caviar::interpreter::Parser *);
-  void verify_settings ();
-  void calculate_acceleration ();
-public:  
-  unique::Time_function_3d *position_offset = nullptr;
-  unique::Time_function_3d *velocity_offset = nullptr;
-  int symmetric;
-  int slab_direction;
-  double slab_position;
-  std::vector<double> radius;
-  double young_modulus, dissip_coef;
-};
+  /**
+   * This class creates a force-field for the slab geometries.
+   * The default is symmetric, meaning that the slab has no direction
+   * The assymetric slab means that the position of the particles relative to
+   * the slab direction matters. It is good for using soft forcefields.
+   */
+  class Geometry_slab : public Force_field
+  {
+  public:
+    Geometry_slab(class CAVIAR *);
+    ~Geometry_slab();
 
-} //force_field
+    bool read(class caviar::interpreter::Parser *);
+    void verify_settings();
+    void calculate_acceleration();
+
+  public:
+    unique::Time_function_3d *position_offset = nullptr;
+    unique::Time_function_3d *velocity_offset = nullptr;
+    int symmetric;
+    int slab_direction;
+    double slab_position;
+    std::vector<double> radius;
+    double young_modulus, dissip_coef;
+  };
+
+} // force_field
 
 CAVIAR_NAMESPACE_CLOSE
 

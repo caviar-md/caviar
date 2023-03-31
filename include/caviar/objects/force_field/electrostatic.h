@@ -21,36 +21,38 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace force_field {
+namespace force_field
+{
 
-/**
- * This class has electrostatic force-field.
- * 
- * 
- */
-class Electrostatic : public Force_field {
-public:
-  Electrostatic (class CAVIAR *);
-  ~Electrostatic () {};
-  double potential (const Vector<double> &);
-  double potential (const int);
+  /**
+   * This class has electrostatic force-field.
+   *
+   *
+   */
+  class Electrostatic : public Force_field
+  {
+  public:
+    Electrostatic(class CAVIAR *);
+    ~Electrostatic(){};
+    double potential(const Vector<double> &);
+    double potential(const int);
 
-  Vector<double> field (const Vector<double> &);
-  Vector<double> field (const int);
+    Vector<double> field(const Vector<double> &);
+    Vector<double> field(const int);
 
-  double energy();
+    double energy();
 
-  bool read (class caviar::interpreter::Parser *);
-  void verify_settings ();
-  void calculate_acceleration ();
-public:
-  //std::vector<std::vector<Real_t>> epsilon,sigma;
-  double k_electrostatic;
-  Vector<double> external_field;
- 
-};
+    bool read(class caviar::interpreter::Parser *);
+    void verify_settings();
+    void calculate_acceleration();
 
-} //force_field
+  public:
+    // std::vector<std::vector<Real_t>> epsilon,sigma;
+    double k_electrostatic;
+    Vector<double> external_field;
+  };
+
+} // force_field
 
 CAVIAR_NAMESPACE_CLOSE
 

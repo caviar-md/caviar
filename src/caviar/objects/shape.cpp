@@ -18,26 +18,25 @@
 
 CAVIAR_NAMESPACE_OPEN
 
+Shape::Shape(CAVIAR *fptr) : Pointers{fptr} {
+                                 FC_OBJECT_INITIALIZE}
 
-
-Shape::Shape (CAVIAR *fptr) : Pointers{fptr} {
-  FC_OBJECT_INITIALIZE
+                             Shape::~Shape()
+{
 }
 
-Shape::~Shape () {}
-
-void Shape::verify_settings () {
-  
+void Shape::verify_settings()
+{
 }
 
-bool Shape::is_outside (const Vector<double> &v) {
+bool Shape::is_outside(const Vector<double> &v)
+{
   return !is_inside(v);
 }
-  
-bool Shape::is_outside (const Vector<double> &v, const double r) {
+
+bool Shape::is_outside(const Vector<double> &v, const double r)
+{
   return !is_inside(v, r);
 }
 
-
 CAVIAR_NAMESPACE_CLOSE
-

@@ -21,50 +21,48 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-
 /**
  * This class is the base class for all the domains.
  * Domain contains the value of the simulation boxes.
- * 
+ *
  */
-class Domain : public Pointers {
+class Domain : public Pointers
+{
 public:
-  Domain (class CAVIAR *);
-  virtual ~Domain ();
+  Domain(class CAVIAR *);
+  virtual ~Domain();
 
-  virtual bool read (class caviar::interpreter::Parser *) = 0;
+  virtual bool read(class caviar::interpreter::Parser *) = 0;
 
-  virtual void calculate_local_domain ();
+  virtual void calculate_local_domain();
   virtual void generate() = 0;
-  virtual void calculate_procs_grid ();
+  virtual void calculate_procs_grid();
 
-  /** 
+  /**
    * calculates process rank from it grid index
    */
-  virtual int grid2rank (int x, int y, int z); 
- 
+  virtual int grid2rank(int x, int y, int z);
+
   /**
    * with respect to the number of processes, makes a grid with lowest shared area possible.
    */
-  virtual void find_best_grid ();
+  virtual void find_best_grid();
 
   virtual double fix_distance_x(double d) = 0;
   virtual double fix_distance_y(double d) = 0;
   virtual double fix_distance_z(double d) = 0;
 
-  virtual caviar::Vector<double> fix_distance(caviar::Vector<double> v) = 0; 
+  virtual caviar::Vector<double> fix_distance(caviar::Vector<double> v) = 0;
 
+  virtual Vector<Real_t> periodic_distance(const Vector<Real_t>);
 
-  virtual Vector<Real_t> periodic_distance (const Vector<Real_t> );
-
-  Vector<int> boundary_condition; 
+  Vector<int> boundary_condition;
 
   int grid_index_x, grid_index_y, grid_index_z; // starts from (0) to (nprocs_i-1) ; i=x,y,z
-  int nprocs_x, nprocs_y, nprocs_z; // it can be at least (1) and at most (nprocs)
+  int nprocs_x, nprocs_y, nprocs_z;             // it can be at least (1) and at most (nprocs)
 
-  Vector <Real_t> lower_global, upper_global;
-  Vector <Real_t> lower_local, upper_local;
-  
+  Vector<Real_t> lower_global, upper_global;
+  Vector<Real_t> lower_local, upper_local;
 
   /**
    * used in MD_MPI case:
@@ -72,11 +70,9 @@ public:
    */
   int me, nprocs;
 
-
-
   /**
-   *  all neighborlist domains around the me=all [1][1][1]. left=all[0][1][1]. up=all[1][2][1]. 
-   *  if one domain exists, in one process case, all[i][j][k]=me for 0<=i,j,k<=2 
+   *  all neighborlist domains around the me=all [1][1][1]. left=all[0][1][1]. up=all[1][2][1].
+   *  if one domain exists, in one process case, all[i][j][k]=me for 0<=i,j,k<=2
    *  left&right: x direction, down&up: y direction, bottom&top: z direction. right&up&top are the positive directions
    */
   int all[3][3][3];
@@ -84,16 +80,11 @@ public:
   /**
    * defined to have a faster MPI when we have less than 27 processes or when domains can have similar neigbors
    */
-  std::vector<int> neighborlist_domains;  
-
-
+  std::vector<int> neighborlist_domains;
 
 public:
-
   FC_BASE_OBJECT_COMMON_TOOLS
 };
-
-
 
 CAVIAR_NAMESPACE_CLOSE
 

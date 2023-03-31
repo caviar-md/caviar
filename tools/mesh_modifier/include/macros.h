@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#define ERROR_COMMENT "\nERROR Called at file " << __FILE__ << " , at line "\
-  <<__LINE__ << " , in function '"<< __func__ << "' :\n "
+#define ERROR_COMMENT "\nERROR Called at file " << __FILE__ << " , at line " \
+                                                << __LINE__ << " , in function '" << __func__ << "' :\n "
 
-#define WARNING_COMMENT "\nWARNING Called at file " << __FILE__ << \
-  " , at line " <<__LINE__ << " , in function '"<< __func__ << "' :\n "
+#define WARNING_COMMENT "\nWARNING Called at file " << __FILE__ << " , at line " << __LINE__ << " , in function '" << __func__ << "' :\n "

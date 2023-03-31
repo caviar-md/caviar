@@ -15,4 +15,3 @@
 //========================================================================
 
 #include "caviar/objects/postprocess/macro/potential_sampler.h"
-

@@ -22,41 +22,43 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace shape {
-namespace polyhedron {
+namespace shape
+{
+  namespace polyhedron
+  {
 
-struct Polyhedron;
-/**
- * a utility class for polyhedrons
- */
-class Utility : public Pointers {
-public:
-  Utility (class CAVIAR *);
-  ~Utility ();
+    struct Polyhedron;
+    /**
+     * a utility class for polyhedrons
+     */
+    class Utility : public Pointers
+    {
+    public:
+      Utility(class CAVIAR *);
+      ~Utility();
 
-  /**
-   * after reading polyhedron file, it calculates normal vectors    
-   */
-  void make_normal (shape::polyhedron::Polyhedron &); 
+      /**
+       * after reading polyhedron file, it calculates normal vectors
+       */
+      void make_normal(shape::polyhedron::Polyhedron &);
 
-  /**
-   * makes normals of faces made of edges and other normals used in check_inside() algorithm.
-   */
-  void make_edge_norms (shape::polyhedron::Polyhedron &); 
+      /**
+       * makes normals of faces made of edges and other normals used in check_inside() algorithm.
+       */
+      void make_edge_norms(shape::polyhedron::Polyhedron &);
 
-  /**
-   * multiply all the normal Vectors with -1
-   */
-  void invert_normals (shape::polyhedron::Polyhedron &);
+      /**
+       * multiply all the normal Vectors with -1
+       */
+      void invert_normals(shape::polyhedron::Polyhedron &);
 
-  /**
-   * does what it says by using an inside point.
-   */
-  bool normals_are_pointing_outside(shape::polyhedron::Polyhedron & p_object, const Vector<double> &);
-
-};
-} //polyhedron
-} //shape
+      /**
+       * does what it says by using an inside point.
+       */
+      bool normals_are_pointing_outside(shape::polyhedron::Polyhedron &p_object, const Vector<double> &);
+    };
+  } // polyhedron
+} // shape
 
 CAVIAR_NAMESPACE_CLOSE
 

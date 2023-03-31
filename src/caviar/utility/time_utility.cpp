@@ -17,60 +17,70 @@
 //  Windows
 #ifdef _WIN32
 #include <Windows.h>
+#include "caviar/utility/caviar_config.h"
 
 CAVIAR_NAMESPACE_OPEN
-  
-double get_wall_time(){
-    LARGE_INTEGER time,freq;
-    if (!QueryPerformanceFrequency(&freq)){
+
+double get_wall_time()
+{
+    LARGE_INTEGER time, freq;
+    if (!QueryPerformanceFrequency(&freq))
+    {
         //  Handle error
         return 0;
     }
-    if (!QueryPerformanceCounter(&time)){
+    if (!QueryPerformanceCounter(&time))
+    {
         //  Handle error
         return 0;
     }
     return (double)time.QuadPart / freq.QuadPart;
 }
 
-double get_cpu_time(){
-    FILETIME a,b,c,d;
-    if (GetProcessTimes(GetCurrentProcess(),&a,&b,&c,&d) != 0){
+double get_cpu_time()
+{
+    FILETIME a, b, c, d;
+    if (GetProcessTimes(GetCurrentProcess(), &a, &b, &c, &d) != 0)
+    {
         //  Returns total user time.
         //  Can be tweaked to include kernel times as well.
-        return
-            (double)(d.dwLowDateTime |
-            ((unsigned long long)d.dwHighDateTime << 32)) * 0.0000001;
-    }else{
+        return (double)(d.dwLowDateTime |
+                        ((unsigned long long)d.dwHighDateTime << 32)) *
+               0.0000001;
+    }
+    else
+    {
         //  Handle error
         return 0;
     }
 }
-
-}
+CAVIAR_NAMESPACE_CLOSE
 
 //  Posix/Linux
 #else
 
 #include <time.h>
 #include <sys/time.h>
+#include "caviar/utility/caviar_config.h"
 
 CAVIAR_NAMESPACE_OPEN
 
-double get_wall_time(){
+double get_wall_time()
+{
     struct timeval time;
-    if (gettimeofday(&time,NULL)){
+    if (gettimeofday(&time, NULL))
+    {
         //  Handle error
         return 0;
     }
     return (double)time.tv_sec + (double)time.tv_usec * .000001;
 }
 
-double get_cpu_time(){
+double get_cpu_time()
+{
     return (double)clock() / CLOCKS_PER_SEC;
 }
-
-}
+CAVIAR_NAMESPACE_CLOSE
 #endif
 
 /*
@@ -97,7 +107,7 @@ void example_for_openmp (){
       //  Prevent Code Elimination
       cout << endl;
       cout << "Sum = " << sum << endl;
-    } 
+    }
     //----------------------------------------------
     {
       //  Start Timers

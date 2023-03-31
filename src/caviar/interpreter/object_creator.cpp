@@ -18,11 +18,10 @@
 #include "caviar/interpreter/object_creator/commands_map.h"
 
 CAVIAR_NAMESPACE_OPEN
-namespace interpreter {
-Object_creator::Object_creator (CAVIAR *fptr) : Pointers{fptr} { }
-  
-Object_creator::~Object_creator () { }
-} //interpreter
+namespace interpreter
+{
+    Object_creator::Object_creator(CAVIAR *fptr) : Pointers{fptr} {}
+
+    Object_creator::~Object_creator() {}
+} // interpreter
 CAVIAR_NAMESPACE_CLOSE
-
-

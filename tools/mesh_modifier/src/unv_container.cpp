@@ -16,11 +16,11 @@
 
 #include "unv_container.h"
 
-namespace mesh_modifier {
+namespace mesh_modifier
+{
 
   Unv_container::Unv_container() {}
 
-  Unv_container::~Unv_container() {}  
-  
+  Unv_container::~Unv_container() {}
 
 }

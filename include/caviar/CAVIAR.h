@@ -31,47 +31,48 @@
 #include "caviar/utility/common_template_functions.h"
 
 CAVIAR_NAMESPACE_OPEN
-namespace interpreter {
-class Communicator;
-class Error; 
-class Output; 
-class Input;
-class Object_handler;
-class Object_container;
-class Object_creator;
+namespace interpreter
+{
+  class Communicator;
+  class Error;
+  class Output;
+  class Input;
+  class Object_handler;
+  class Object_container;
+  class Object_creator;
 }
 
 /**
  * This class is the base of CAVIAR package. It contains all the input/output
- * classes and also the related class of objects. One instance of this class is 
+ * classes and also the related class of objects. One instance of this class is
  * created at the begining of any CAVIAR calculations.
  */
-class CAVIAR {
+class CAVIAR
+{
 public:
-
 #if defined(CAVIAR_WITH_MPI)
   /**
    * Constructor in mpi mode
    */
-  CAVIAR (int, char**, MPI_Comm);
+  CAVIAR(int, char **, MPI_Comm);
 #else
 
   /**
    * Constructor in serial mode
    */
-  CAVIAR (int, char**);
+  CAVIAR(int, char **);
 #endif
 
   /**
    * Destructor.
    */
-  ~CAVIAR ();
+  ~CAVIAR();
 
   /**
    *  the function to call all the calculations.
    */
-  void execute ();
-  
+  void execute();
+
 #if defined(CAVIAR_WITH_MPI)
   MPI_Comm mpi_comm;
 #endif
@@ -82,7 +83,7 @@ public:
   class interpreter::Object_handler *object_handler;
   class interpreter::Object_container *object_container;
   class interpreter::Object_creator *object_creator;
-  
+
   std::ofstream log;
   std::istream in;
   std::ostream out, err;

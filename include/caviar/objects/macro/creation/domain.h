@@ -15,11 +15,12 @@
 //========================================================================
 
 #ifdef FC_OBJECT_CREATOR_FUNCTION_DEFINITON
-FC_OBJECT_CREATOR_DEFAULT_FUNCTION(domain) {
+FC_OBJECT_CREATOR_DEFAULT_FUNCTION(domain)
+{
 
   FC_GET_OBJECT_TYPE_AND_NAME
 
-  Domain * p_sh = nullptr; 
+  Domain *p_sh = nullptr;
 
 #include "caviar/objects/domain/macro/all.h"
 

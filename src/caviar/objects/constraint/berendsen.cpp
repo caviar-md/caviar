@@ -18,70 +18,85 @@
 #include "caviar/objects/atom_data.h"
 #include "caviar/utility/interpreter_io_headers.h"
 
-
 CAVIAR_NAMESPACE_OPEN
 
-namespace constraint {
-
-Berendsen::Berendsen (CAVIAR *fptr) : Constraint{fptr}
+namespace constraint
 {
-  FC_OBJECT_INITIALIZE_INFO
-  coupling = -1.0;
-  dt = -1.0;
-  constraint_type = Constraint_t::Berendsen;  
-}
 
-Berendsen::~Berendsen () {}
-
-bool Berendsen::read (caviar::interpreter::Parser *parser) {
-  FC_OBJECT_READ_INFO
-  bool in_file = true;
-  while(true) {
-    GET_A_TOKEN_FOR_CREATION
-    auto t = token.string_value;
-    if (string_cmp(t,"temperature")) {
-      GET_OR_CHOOSE_A_REAL(temperature,"","")
-      if (temperature <= 0.0) error->all (FC_FILE_LINE_FUNC_PARSE, "Temperature have to non-negative."); 
-    } else if (string_cmp(t,"coupling")) {
-      GET_OR_CHOOSE_A_REAL(coupling,"","")
-      if (coupling <= 0.0) error->all (FC_FILE_LINE_FUNC_PARSE, "coupling have to non-negative."); 
-    } else if (string_cmp(t,"dt")) {
-      GET_OR_CHOOSE_A_REAL(dt,"","")
-      if (dt <= 0.0) error->all (FC_FILE_LINE_FUNC_PARSE, "dt have to non-negative."); 
-    } else if (string_cmp(t,"set_atom_data") || string_cmp(t,"atom_data")) {
-      FIND_OBJECT_BY_NAME(atom_data,it)
-      atom_data = object_container->atom_data[it->second.index];
-    } else {
-      error->all (FC_FILE_LINE_FUNC_PARSE, "Unknown variable or command");
-    }
+  Berendsen::Berendsen(CAVIAR *fptr) : Constraint{fptr}
+  {
+    FC_OBJECT_INITIALIZE_INFO
+    coupling = -1.0;
+    dt = -1.0;
+    constraint_type = Constraint_t::Berendsen;
   }
-  return in_file;
-}
 
-void Berendsen::verify_settings () {
-  FC_NULLPTR_CHECK(atom_data)
+  Berendsen::~Berendsen() {}
 
-  if (dt<0.0) error->all(FC_FILE_LINE_FUNC,"dt is not set.");
-  if (coupling<0.0) error->all(FC_FILE_LINE_FUNC,"coupling is not set.");
+  bool Berendsen::read(caviar::interpreter::Parser *parser)
+  {
+    FC_OBJECT_READ_INFO
+    bool in_file = true;
+    while (true)
+    {
+      GET_A_TOKEN_FOR_CREATION
+      auto t = token.string_value;
+      if (string_cmp(t, "temperature"))
+      {
+        GET_OR_CHOOSE_A_REAL(temperature, "", "")
+        if (temperature <= 0.0)
+          error->all(FC_FILE_LINE_FUNC_PARSE, "Temperature have to non-negative.");
+      }
+      else if (string_cmp(t, "coupling"))
+      {
+        GET_OR_CHOOSE_A_REAL(coupling, "", "")
+        if (coupling <= 0.0)
+          error->all(FC_FILE_LINE_FUNC_PARSE, "coupling have to non-negative.");
+      }
+      else if (string_cmp(t, "dt"))
+      {
+        GET_OR_CHOOSE_A_REAL(dt, "", "")
+        if (dt <= 0.0)
+          error->all(FC_FILE_LINE_FUNC_PARSE, "dt have to non-negative.");
+      }
+      else if (string_cmp(t, "set_atom_data") || string_cmp(t, "atom_data"))
+      {
+        FIND_OBJECT_BY_NAME(atom_data, it)
+        atom_data = object_container->atom_data[it->second.index];
+      }
+      else
+      {
+        error->all(FC_FILE_LINE_FUNC_PARSE, "Unknown variable or command");
+      }
+    }
+    return in_file;
+  }
 
-}
+  void Berendsen::verify_settings()
+  {
+    FC_NULLPTR_CHECK(atom_data)
 
+    if (dt < 0.0)
+      error->all(FC_FILE_LINE_FUNC, "dt is not set.");
+    if (coupling < 0.0)
+      error->all(FC_FILE_LINE_FUNC, "coupling is not set.");
+  }
 
-void Berendsen::apply_on_velocity (int64_t) { // step I
+  void Berendsen::apply_on_velocity(int64_t)
+  { // step I
 
-  FC_OBJECT_VERIFY_SETTINGS
+    FC_OBJECT_VERIFY_SETTINGS
 
-  auto t = atom_data -> temperature(); 
+    auto t = atom_data->temperature();
 
-  auto &vel = atom_data -> owned.velocity;
+    auto &vel = atom_data->owned.velocity;
 
-  double lambda = std::sqrt( 1.0 + (dt/coupling) * ((temperature/t) - 1.0) );
+    double lambda = std::sqrt(1.0 + (dt / coupling) * ((temperature / t) - 1.0));
 
-  for (auto &&v : vel) v *= lambda;
+    for (auto &&v : vel)
+      v *= lambda;
+  }
 
-}
-
-} //constraint
+} // constraint
 
 CAVIAR_NAMESPACE_CLOSE
-

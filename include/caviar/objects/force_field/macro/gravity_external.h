@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Gravity_external,gravity_external,force_field::Gravity_external)
+FC_CHECK_AND_CREATE(Gravity_external, gravity_external, force_field::Gravity_external)
 #endif

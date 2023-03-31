@@ -14,14 +14,13 @@
 //
 //========================================================================
 
-
-
 #ifdef FC_OBJECT_CREATOR_FUNCTION_DEFINITON
-FC_OBJECT_CREATOR_DEFAULT_FUNCTION(neighborlist) {
+FC_OBJECT_CREATOR_DEFAULT_FUNCTION(neighborlist)
+{
 
   FC_GET_OBJECT_TYPE_AND_NAME
 
-  Neighborlist * p_sh = nullptr; 
+  Neighborlist *p_sh = nullptr;
 
 #include "caviar/objects/neighborlist/macro/all.h"
 

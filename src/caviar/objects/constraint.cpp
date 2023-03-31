@@ -18,25 +18,20 @@
 
 CAVIAR_NAMESPACE_OPEN
 
+Constraint::Constraint(CAVIAR *fptr) : Pointers{fptr}, atom_data{nullptr} {
+                                                           FC_OBJECT_INITIALIZE}
 
-
-Constraint::Constraint (CAVIAR *fptr) : Pointers{fptr}, atom_data{nullptr} {
-  FC_OBJECT_INITIALIZE
+                                       Constraint::~Constraint()
+{
 }
 
-Constraint::~Constraint () {}
-
-void Constraint::verify_settings () {
-  
+void Constraint::verify_settings()
+{
 }
 
-void Constraint::apply (int64_t) { }
-void Constraint::apply_on_position (int64_t) { }
-void Constraint::apply_on_velocity (int64_t) { }
-void Constraint::apply_on_acceleration (int64_t) { }
-
-
-
+void Constraint::apply(int64_t) {}
+void Constraint::apply_on_position(int64_t) {}
+void Constraint::apply_on_velocity(int64_t) {}
+void Constraint::apply_on_acceleration(int64_t) {}
 
 CAVIAR_NAMESPACE_CLOSE
-

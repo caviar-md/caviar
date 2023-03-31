@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Rattle,rattle,constraint::Rattle)
+FC_CHECK_AND_CREATE(Rattle, rattle, constraint::Rattle)
 #endif

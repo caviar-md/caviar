@@ -21,21 +21,22 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace md_simulator {
+namespace md_simulator
+{
 
-/**
- * This class has the basic class implementation for md_simulator
- * 
- * 
- */
-class Basic : public Md_simulator {
- public:
-  Basic (class CAVIAR *);
-   ~Basic ( );
+   /**
+    * This class has the basic class implementation for md_simulator
+    *
+    *
+    */
+   class Basic : public Md_simulator
+   {
+   public:
+      Basic(class CAVIAR *);
+      ~Basic();
+   };
 
-};
-
-} //md_simulator
+} // md_simulator
 
 CAVIAR_NAMESPACE_CLOSE
 

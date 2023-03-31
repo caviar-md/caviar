@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Sphere,sphere,shape::Sphere)
+FC_CHECK_AND_CREATE(Sphere, sphere, shape::Sphere)
 #endif

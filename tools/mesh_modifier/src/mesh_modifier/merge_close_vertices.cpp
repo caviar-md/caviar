@@ -18,20 +18,16 @@
 
 #include <iostream>
 
-namespace mesh_modifier {
+namespace mesh_modifier
+{
 
-  void Mesh_modifier::merge_close_vertices (const double tolerance) {
+  void Mesh_modifier::merge_close_vertices(const double tolerance)
+  {
     unsigned uci = unv_container.size() - 1;
-    if (uci<0) {
+    if (uci < 0)
+    {
       std::cout << "error: there's no unv_container\n";
       return;
     }
   }
 }
-
-
-
-
-
-
-

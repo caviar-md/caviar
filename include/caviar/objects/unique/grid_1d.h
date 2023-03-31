@@ -22,42 +22,42 @@
 CAVIAR_NAMESPACE_OPEN
 class Parser;
 
-namespace unique {
+namespace unique
+{
 
-/**
- * This class creates grid positions for the initial position of the particles.
- * 
- */
-class Grid_1D : public Unique {
+  /**
+   * This class creates grid positions for the initial position of the particles.
+   *
+   */
+  class Grid_1D : public Unique
+  {
   public:
-    Grid_1D (class CAVIAR *) ;    
-    Grid_1D (class CAVIAR *, double MIN, double MAX, double increment, int segment) ;
-    ~Grid_1D () ;
-    void verify_settings ();    
-    bool read (caviar::interpreter::Parser *);
-    void generate (); // calculates the parameters
-    unsigned int no_points ();
-    double give_point ();
-    double give_point (int);
-    
+    Grid_1D(class CAVIAR *);
+    Grid_1D(class CAVIAR *, double MIN, double MAX, double increment, int segment);
+    ~Grid_1D();
+    void verify_settings();
+    bool read(caviar::interpreter::Parser *);
+    void generate(); // calculates the parameters
+    unsigned int no_points();
+    double give_point();
+    double give_point(int);
+
     void reset();
 
     double min, max, increment;
 
-    bool generated; // true if generate() has been called.    
+    bool generated; // true if generate() has been called.
     bool by_increment, by_segment;
-    
-    int segment;    
-    int no_given_points;     
-    int num; // number of random atoms or molecules to be created        
+
+    int segment;
+    int no_given_points;
+    int num; // number of random atoms or molecules to be created
     int type_int;
-   
+
     std::string TYPE;
-    
-};
+  };
 
-} //unique
-
+} // unique
 
 CAVIAR_NAMESPACE_CLOSE
 

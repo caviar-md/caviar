@@ -23,33 +23,34 @@
 
 CAVIAR_NAMESPACE_OPEN
 
+namespace force_field
+{
 
-namespace force_field {
+  /**
+   * This class dpd force-field with mpi implementation
+   *
+   *
+   */
+  class Dpd_mpi : public Force_field
+  { // this is maybe slower than dpd but more accurate, in the scense that it will send the force caclulated to the owned counterpart of ghost atoms.
+  public:
+    Dpd_mpi(class CAVIAR *);
+    ~Dpd_mpi(){};
 
-/**
- * This class dpd force-field with mpi implementation
- * 
- * 
- */
-class Dpd_mpi : public Force_field { // this is maybe slower than dpd but more accurate, in the scense that it will send the force caclulated to the owned counterpart of ghost atoms.
-public:
-  Dpd_mpi (class CAVIAR *);
-  ~Dpd_mpi () {};
-  
-  bool read (class caviar::interpreter::Parser *);
-  void verify_settings ();
-  void calculate_acceleration ();
-public:
-  std::vector<std::vector<Real_t>> conserv_coef, dissip_coef;
-  Real_t temperature, kBoltzman;
-  int rnd_seed;
-  std::mt19937 rnd_generator;
-  std::normal_distribution<double> rnd_ndist; // stddev() == 1
-  double dt;
+    bool read(class caviar::interpreter::Parser *);
+    void verify_settings();
+    void calculate_acceleration();
 
-};
+  public:
+    std::vector<std::vector<Real_t>> conserv_coef, dissip_coef;
+    Real_t temperature, kBoltzman;
+    int rnd_seed;
+    std::mt19937 rnd_generator;
+    std::normal_distribution<double> rnd_ndist; // stddev() == 1
+    double dt;
+  };
 
-} //force_field
+} // force_field
 
 CAVIAR_NAMESPACE_CLOSE
 

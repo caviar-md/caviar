@@ -21,25 +21,27 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace neighborlist {
+namespace neighborlist
+{
 
-/**
- * A verlet list.
- */
-class Verlet_list : public Neighborlist {
- public:
-  Verlet_list (class CAVIAR *);
-  bool read (class caviar::interpreter::Parser *);
-  void init ();
-  bool rebuild_neighlist ();
-  void build_neighlist ();
-  double dt, cutoff_extra;
-  double cutoff_extra_coef;
-//  double cutoff; // Defined in the base class
- public:
-};
+  /**
+   * A verlet list.
+   */
+  class Verlet_list : public Neighborlist
+  {
+  public:
+    Verlet_list(class CAVIAR *);
+    bool read(class caviar::interpreter::Parser *);
+    void init();
+    bool rebuild_neighlist();
+    void build_neighlist();
+    double dt, cutoff_extra;
+    double cutoff_extra_coef;
+    //  double cutoff; // Defined in the base class
+  public:
+  };
 
-} //neighborlist
+} // neighborlist
 
 CAVIAR_NAMESPACE_CLOSE
 

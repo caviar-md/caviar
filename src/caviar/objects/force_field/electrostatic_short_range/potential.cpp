@@ -20,58 +20,68 @@
 
 #include <cmath>
 
-
 CAVIAR_NAMESPACE_OPEN
 
-namespace force_field {
+namespace force_field
+{
 
-double Electrostatic_short_range::potential (const Vector<double> &r) {
-  if (!initialized) initialize();
+  double Electrostatic_short_range::potential(const Vector<double> &r)
+  {
+    if (!initialized)
+      initialize();
 
-  double potential_shifted_sum = 0 ;
+    double potential_shifted_sum = 0;
 
-  const auto &pos = atom_data -> owned.position;  
-#ifdef CAVIAR_WITH_OPENMP  
-  #pragma omp parallel for reduction (+:potential_shifted_sum)
-#endif       
-  for (unsigned int j=0;j<pos.size();++j) {
+    const auto &pos = atom_data->owned.position;
+#ifdef CAVIAR_WITH_OPENMP
+#pragma omp parallel for reduction(+ \
+                                   : potential_shifted_sum)
+#endif
+    for (unsigned int j = 0; j < pos.size(); ++j)
+    {
 
-    const auto type_j = atom_data -> owned.type [j] ;
-    const auto charge_j = atom_data -> owned.charge [ type_j ];      
-    const auto dr = r - pos[j]; 
-    const auto dr_sq = dr*dr;
-    if (dr_sq == 0.0) continue;
-    const auto dr_norm = std::sqrt(dr_sq);      
-    const auto potential = charge_j  / dr_norm;
-    potential_shifted_sum += potential + ((C * std::pow(dr_norm, beta)) + D)*charge_j;  
+      const auto type_j = atom_data->owned.type[j];
+      const auto charge_j = atom_data->owned.charge[type_j];
+      const auto dr = r - pos[j];
+      const auto dr_sq = dr * dr;
+      if (dr_sq == 0.0)
+        continue;
+      const auto dr_norm = std::sqrt(dr_sq);
+      const auto potential = charge_j / dr_norm;
+      potential_shifted_sum += potential + ((C * std::pow(dr_norm, beta)) + D) * charge_j;
+    }
+    return potential_shifted_sum * k_electrostatic;
   }
-  return potential_shifted_sum * k_electrostatic;
-}
 
-double Electrostatic_short_range::potential (const int i) {
-  if (!initialized) initialize();
-  
-  double potential_shifted_sum = 0 ;
+  double Electrostatic_short_range::potential(const int i)
+  {
+    if (!initialized)
+      initialize();
 
-  const auto &pos = atom_data -> owned.position;  
-#ifdef CAVIAR_WITH_OPENMP  
-  #pragma omp parallel for reduction (+:potential_shifted_sum)
-#endif         
-  for (unsigned int j=0;j<pos.size();++j) {
-    if (i==static_cast<int>(j)) continue;
-    const auto type_j = atom_data -> owned.type [j] ;
-    const auto charge_j = atom_data -> owned.charge [ type_j ];      
-    const auto dr = pos[i] - pos[j]; 
-    const auto dr_sq = dr*dr;
-    if (dr_sq == 0.0) continue;
-    const auto dr_norm = std::sqrt(dr_sq);      
-    const auto potential = charge_j  / dr_norm;
-    potential_shifted_sum += potential + ((C * std::pow(dr_norm, beta)) + D)*charge_j;  
+    double potential_shifted_sum = 0;
+
+    const auto &pos = atom_data->owned.position;
+#ifdef CAVIAR_WITH_OPENMP
+#pragma omp parallel for reduction(+ \
+                                   : potential_shifted_sum)
+#endif
+    for (unsigned int j = 0; j < pos.size(); ++j)
+    {
+      if (i == static_cast<int>(j))
+        continue;
+      const auto type_j = atom_data->owned.type[j];
+      const auto charge_j = atom_data->owned.charge[type_j];
+      const auto dr = pos[i] - pos[j];
+      const auto dr_sq = dr * dr;
+      if (dr_sq == 0.0)
+        continue;
+      const auto dr_norm = std::sqrt(dr_sq);
+      const auto potential = charge_j / dr_norm;
+      potential_shifted_sum += potential + ((C * std::pow(dr_norm, beta)) + D) * charge_j;
+    }
+    return potential_shifted_sum * k_electrostatic;
   }
-  return potential_shifted_sum * k_electrostatic;
-}
 
-} //force_field
+} // force_field
 
 CAVIAR_NAMESPACE_CLOSE
-

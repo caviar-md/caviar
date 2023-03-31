@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Plt_be,plt_be,force_field::Plt_be)
+FC_CHECK_AND_CREATE(Plt_be, plt_be, force_field::Plt_be)
 #endif

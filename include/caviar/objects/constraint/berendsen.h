@@ -21,31 +21,32 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace constraint {
+namespace constraint
+{
 
-/**
- * This class has Brendsen thermostat implemented. 
- * It is implemented according to
- * 'Berendsen and Nose-Hoover thermostats Victor Ruhle August 8, 2007'
- * 
- */
-class Berendsen : public Constraint {
- public:
-  Berendsen (class CAVIAR *);
-  ~Berendsen ( );
-  bool read (class caviar::interpreter::Parser *);
+    /**
+     * This class has Brendsen thermostat implemented.
+     * It is implemented according to
+     * 'Berendsen and Nose-Hoover thermostats Victor Ruhle August 8, 2007'
+     *
+     */
+    class Berendsen : public Constraint
+    {
+    public:
+        Berendsen(class CAVIAR *);
+        ~Berendsen();
+        bool read(class caviar::interpreter::Parser *);
 
-  void apply_on_velocity (int64_t);
+        void apply_on_velocity(int64_t);
 
-  void verify_settings();
+        void verify_settings();
 
-  double coupling, dt, temperature;
+        double coupling, dt, temperature;
 
- public:
+    public:
+    };
 
-};
-
-} //constraint
+} // constraint
 
 CAVIAR_NAMESPACE_CLOSE
 

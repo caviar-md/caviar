@@ -21,39 +21,39 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace force_field {
+namespace force_field
+{
 
-/**
- * This class adds a atomic bond between atoms/molecules
- * if the given conditions are satisfied.
- */
-class Fix_bond : public Force_field {
-public:
-  Fix_bond (class CAVIAR *);
-  ~Fix_bond () {};
-
-
-  bool read (class caviar::interpreter::Parser *);
-  void verify_settings ();
-  void calculate_acceleration ();
-  void create_atomic_bond ();
-public:
-
-  int type_i;
-  int type_j;
-  int btype;
-  double Rmin;
-  double blength;
-  
   /**
-   * Maximum number of bonds allowed for a atom type.
-   * This function uses 'Atom_data.owned.atomic_bond_count' vector.
+   * This class adds a atomic bond between atoms/molecules
+   * if the given conditions are satisfied.
    */
-  std::vector<int> bond_limit;
- 
-};
+  class Fix_bond : public Force_field
+  {
+  public:
+    Fix_bond(class CAVIAR *);
+    ~Fix_bond(){};
 
-} //force_field
+    bool read(class caviar::interpreter::Parser *);
+    void verify_settings();
+    void calculate_acceleration();
+    void create_atomic_bond();
+
+  public:
+    int type_i;
+    int type_j;
+    int btype;
+    double Rmin;
+    double blength;
+
+    /**
+     * Maximum number of bonds allowed for a atom type.
+     * This function uses 'Atom_data.owned.atomic_bond_count' vector.
+     */
+    std::vector<int> bond_limit;
+  };
+
+} // force_field
 
 CAVIAR_NAMESPACE_CLOSE
 

@@ -21,28 +21,30 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace force_field {
+namespace force_field
+{
 
-/**
- * This class makes gravitational forcefield for the particles
- *
- */
-class Gravity : public Force_field {
-public:
-  Gravity (class CAVIAR *);
-  ~Gravity () {};
-  
-  bool read (class caviar::interpreter::Parser *);
-  void verify_settings ();
-  void calculate_acceleration ();
-public:
-  //std::vector<std::vector<Real_t>> epsilon,sigma;
-  double k_gravity;
-  Vector<double> external_field;
- 
-};
+  /**
+   * This class makes gravitational forcefield for the particles
+   *
+   */
+  class Gravity : public Force_field
+  {
+  public:
+    Gravity(class CAVIAR *);
+    ~Gravity(){};
 
-} //force_field
+    bool read(class caviar::interpreter::Parser *);
+    void verify_settings();
+    void calculate_acceleration();
+
+  public:
+    // std::vector<std::vector<Real_t>> epsilon,sigma;
+    double k_gravity;
+    Vector<double> external_field;
+  };
+
+} // force_field
 
 CAVIAR_NAMESPACE_CLOSE
 

@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Berendsen,berendsen,constraint::Berendsen)
+FC_CHECK_AND_CREATE(Berendsen, berendsen, constraint::Berendsen)
 #endif

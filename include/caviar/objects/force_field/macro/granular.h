@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Granular,granular,force_field::Granular)
+FC_CHECK_AND_CREATE(Granular, granular, force_field::Granular)
 #endif

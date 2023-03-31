@@ -14,13 +14,13 @@
 //
 //========================================================================
 
-
 #ifdef FC_OBJECT_CREATOR_FUNCTION_DEFINITON
-FC_OBJECT_CREATOR_DEFAULT_FUNCTION(unique) {
+FC_OBJECT_CREATOR_DEFAULT_FUNCTION(unique)
+{
 
   FC_GET_OBJECT_TYPE_AND_NAME
 
-  Unique * p_sh = nullptr; 
+  Unique *p_sh = nullptr;
 
 #include "caviar/objects/unique/macro/all.h"
 

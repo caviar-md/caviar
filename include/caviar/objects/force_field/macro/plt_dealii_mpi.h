@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Plt_dealii_mpi,plt_dealii_mpi,force_field::Plt_dealii_mpi)
+FC_CHECK_AND_CREATE(Plt_dealii_mpi, plt_dealii_mpi, force_field::Plt_dealii_mpi)
 #endif

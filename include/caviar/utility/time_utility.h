@@ -13,11 +13,12 @@
 // the top level of the CAVIAR distribution.
 //
 //========================================================================
+#include "caviar/utility/caviar_config.h"
 
 CAVIAR_NAMESPACE_OPEN
-  
-double get_wall_time();  
 
-double get_cpu_time();  
+double get_wall_time();
 
-}
+double get_cpu_time();
+
+CAVIAR_NAMESPACE_CLOSE

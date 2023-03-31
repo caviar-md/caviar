@@ -15,45 +15,47 @@
 //========================================================================
 
 #ifdef CAVIAR_WITH_MPI
- #include <mpi.h>
+#include <mpi.h>
 #endif
 
 #include "caviar/CAVIAR.h"
 
 #ifdef CAVIAR_WITH_DEALII_MPI
- #include <deal.II/base/mpi.h>
+#include <deal.II/base/mpi.h>
 #endif
 
-int main (int argc, char* argv[]) {
+int main(int argc, char *argv[])
+{
 
 #if defined(CAVIAR_WITH_DEALII_MPI)
   dealii::Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
-  caviar::CAVIAR caviar (argc, argv, MPI::COMM_WORLD);  
+  caviar::CAVIAR caviar(argc, argv, MPI::COMM_WORLD);
 #elif defined(CAVIAR_WITH_MPI)
-  MPI_Init (&argc, &argv);  
-  caviar::CAVIAR caviar (argc, argv, MPI::COMM_WORLD);
+  MPI_Init(&argc, &argv);
+  caviar::CAVIAR caviar(argc, argv, MPI::COMM_WORLD);
 #else
-  caviar::CAVIAR caviar (argc, argv); 
+  caviar::CAVIAR caviar(argc, argv);
 #endif
 
-  try {  
-    caviar.execute ();
+  try
+  {
+    caviar.execute();
   }
-  catch (std::exception &exc) {
+  catch (std::exception &exc)
+  {
     std::cerr << "Exception on processing: " << std::endl
               << exc.what() << std::endl;
   }
-  catch (...) {
-    std::cerr << "Unknown exception!" << std::endl;  
+  catch (...)
+  {
+    std::cerr << "Unknown exception!" << std::endl;
   }
- 
+
 #if defined(CAVIAR_WITH_DEALII_MPI)
   // Do nothing
 #elif defined(CAVIAR_WITH_MPI)
-  MPI_Finalize ();
+  MPI_Finalize();
 #endif
 
   return 0;
 }
-
-

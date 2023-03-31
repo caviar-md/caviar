@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Spring_bond,spring_bond,force_field::Spring_bond)
+FC_CHECK_AND_CREATE(Spring_bond, spring_bond, force_field::Spring_bond)
 #endif

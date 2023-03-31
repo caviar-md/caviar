@@ -21,45 +21,43 @@
 
 CAVIAR_NAMESPACE_OPEN
 
+namespace constraint
+{
 
-namespace constraint {
+  /**
+   * This class has N-V-E thermostat. It is done simply by velocity re-scaling.
+   * It is the simplest way to control the energy in a MD simulation. However,
+   * it won't gives a correct fluctuation for canonical ensembles.
+   * The user has to set 'energy_tot' or 'energy_per_dof'.
+   *
+   * kinetic_energy (t)  = dof * k_b * T / 2   ,
+   *  T : instantaneous temperature at time = t;
+   *  dof : total degrees of freedom
+   *
+   * According to the formula above, we let the user to fix the temperatue if
+   * wanted to do so. In that case, the users have two alternatives,
+   * 1: set 'temperature' and 'k_b' (Boltzman constant)
+   * 2: set 'k_b_t'
+   *
+   */
+  class Nve : public Constraint
+  {
+  public:
+    Nve(class CAVIAR *);
+    ~Nve();
+    bool read(class caviar::interpreter::Parser *);
 
-/**
- * This class has N-V-E thermostat. It is done simply by velocity re-scaling.
- * It is the simplest way to control the energy in a MD simulation. However,
- * it won't gives a correct fluctuation for canonical ensembles.
- * The user has to set 'energy_tot' or 'energy_per_dof'.
- *
- * kinetic_energy (t)  = dof * k_b * T / 2   ,
- *  T : instantaneous temperature at time = t;
- *  dof : total degrees of freedom
- *
- * According to the formula above, we let the user to fix the temperatue if 
- * wanted to do so. In that case, the users have two alternatives,
- * 1: set 'temperature' and 'k_b' (Boltzman constant)
- * 2: set 'k_b_t' 
- *
- */
-class Nve : public Constraint {
- public:
-  Nve (class CAVIAR *);
-   ~Nve ( );
-  bool read (class caviar::interpreter::Parser *);
+    void apply_on_velocity(int64_t);
 
-  void apply_on_velocity (int64_t);
+    void verify_settings();
 
-  void verify_settings();
+    double energy_per_dof, energy_tot;
 
-  double energy_per_dof, energy_tot;
+    // if one has set_the temperature, it will use it a
+    double temperature, kb, kbt;
+  };
 
-  // if one has set_the temperature, it will use it a 
-  double temperature, kb, kbt;
-
-  
-
-};
-
-} //constraint
+} // constraint
 
 CAVIAR_NAMESPACE_CLOSE
 

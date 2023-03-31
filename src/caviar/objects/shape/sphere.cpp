@@ -19,59 +19,59 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace shape {
-  
-Sphere::Sphere (CAVIAR *fptr) : Shape {fptr} {
-  FC_OBJECT_INITIALIZE_INFO
-}
-Sphere::~Sphere() {}
-    
-bool Sphere::read (caviar::interpreter::Parser * parser) {
-  FC_OBJECT_READ_INFO
-  bool in_file = true;
-     
+namespace shape
+{
 
-  while(true) {
-    GET_A_TOKEN_FOR_CREATION
-    ASSIGN_REAL_3D_VECTOR(center,"SPHERE read: ","")
-    else ASSIGN_REAL(radius,"SPHERE read:","")
-    else error->all (FC_FILE_LINE_FUNC_PARSE, " SPHERE read: Unknown variable or command");
+  Sphere::Sphere(CAVIAR *fptr) : Shape{fptr} {
+                                     FC_OBJECT_INITIALIZE_INFO} Sphere::~Sphere() {}
+
+  bool Sphere::read(caviar::interpreter::Parser *parser)
+  {
+    FC_OBJECT_READ_INFO
+    bool in_file = true;
+
+    while (true)
+    {
+      GET_A_TOKEN_FOR_CREATION
+      ASSIGN_REAL_3D_VECTOR(center, "SPHERE read: ", "")
+      else ASSIGN_REAL(radius, "SPHERE read:", "") else error->all(FC_FILE_LINE_FUNC_PARSE, " SPHERE read: Unknown variable or command");
+    }
+
+    return in_file;
+    ;
   }
 
-  return in_file;;
+  bool Sphere::is_inside(const Vector<double> &v)
+  {
+    Vector<double> v_1 = v - center;
+    if (v_1 * v_1 > radius * radius)
+      return false;
+    return true;
+  }
 
-}
+  bool Sphere::is_inside(const Vector<double> &v, const double r)
+  {
+    Vector<double> v_1 = v - center;
+    if (v_1 * v_1 > (radius - r) * (radius - r))
+      return false;
+    return true;
+  }
 
+  bool Sphere::in_contact(const Vector<double> &v, const double r, Vector<double> &contact_vector)
+  {
+    Vector<double> v_dif = v - center;
+    const auto v_dif_sq = v_dif * v_dif;
+    if (v_dif_sq < (radius - r) * (radius - r))
+      return false;
+    if (v_dif_sq > (radius + r) * (radius + r))
+      return false;
+    const auto v_dif_sq_norm = std::sqrt(v_dif_sq);
+    const auto v_dif_norm = v_dif / v_dif_sq_norm;
+    Vector<double> tmp = -v_dif_norm * (v_dif_sq_norm - radius);
+    contact_vector += tmp;
+    return true;
+  }
 
-bool Sphere::is_inside(const Vector<double> &v) {
-  Vector<double> v_1 = v - center;
-  if (v_1*v_1 > radius*radius)
-    return false;
-  return true;
-}
-
-bool Sphere::is_inside(const Vector<double> &v, const double r) {
-  Vector<double> v_1 = v - center;
-  if (v_1*v_1 > (radius-r)*(radius-r))
-    return false;
-  return true;
-}     
-
-bool Sphere::in_contact(const Vector<double> &v, const double r, Vector<double> & contact_vector) {
-  Vector<double> v_dif = v - center;
-  const auto v_dif_sq = v_dif*v_dif;
-  if (v_dif_sq < (radius-r)*(radius-r)) return false;
-  if (v_dif_sq > (radius+r)*(radius+r))  return false;
-  const auto v_dif_sq_norm = std::sqrt(v_dif_sq);
-  const auto v_dif_norm = v_dif / v_dif_sq_norm;      
-  Vector<double> tmp = - v_dif_norm * (v_dif_sq_norm-radius);
-  contact_vector += tmp;
-  return true;
-}
-  
-} //shape
-
+} // shape
 
 CAVIAR_NAMESPACE_CLOSE
-
-

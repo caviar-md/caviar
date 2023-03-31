@@ -25,47 +25,48 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-
 class Domain;
-namespace constraint {
+namespace constraint
+{
 
+  /**
+   * This class fixes atomic bonds using M-Shake method
+   *
+   *
+   */
+  class M_shake : public Constraint
+  {
+  public:
+    M_shake(class CAVIAR *);
+    ~M_shake();
+    bool read(class caviar::interpreter::Parser *);
 
+    void apply_on_position(int64_t);
 
-/**
- * This class fixes atomic bonds using M-Shake method
- * 
- * 
- */
-class M_shake : public Constraint {
- public:
-  M_shake (class CAVIAR *);
-   ~M_shake ( );
-  bool read (class caviar::interpreter::Parser *);
+    void apply_on_velocity(int64_t);
 
-  void apply_on_position (int64_t);
-  
-  void apply_on_velocity (int64_t);
+    void bond_fix();
 
-  void bond_fix ();
+    void verify_settings();
 
-  void verify_settings();
+    inline double reset_distance(double);
 
-  inline double reset_distance (double );
+    static inline int delta(int a, int b)
+    {
+      if (a == b)
+        return 1;
+      else
+        return 0;
+    }
 
-  static inline int delta(int a,int b) {
-	  if(a==b)return 1;
-  	else return 0;
-  }
+    class Domain *domain;
 
-  class Domain *domain;
+    double dt;
+    double error_tolerance;
+    bool initialized;
+  };
 
-  double dt;
-  double error_tolerance;
-  bool initialized;
-
-};
-
-} //constraint
+} // constraint
 
 CAVIAR_NAMESPACE_CLOSE
 

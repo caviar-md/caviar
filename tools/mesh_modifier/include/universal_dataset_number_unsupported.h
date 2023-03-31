@@ -20,19 +20,18 @@
 #include <vector>
 #include <string>
 
-namespace mesh_modifier {
+namespace mesh_modifier
+{
 
-struct Universal_dataset_number_unsupported {
-/* 
-just to copy and paste lines.
-After merging unv files, only the first one should be printed.
-*/
-  std::vector<std::string> records;
-
-};
+  struct Universal_dataset_number_unsupported
+  {
+    /*
+    just to copy and paste lines.
+    After merging unv files, only the first one should be printed.
+    */
+    std::vector<std::string> records;
+  };
 
 }
 
 #endif
-
-

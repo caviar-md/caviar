@@ -24,43 +24,45 @@
 CAVIAR_NAMESPACE_OPEN
 
 class Domain;
-namespace constraint {
+namespace constraint
+{
 
-/**
- * This class fixes atomic bond using RATTLE algorithm
- * 
- * 
- */
-class Rattle : public Constraint {
- public:
-  Rattle (class CAVIAR *);
-   ~Rattle ( );
-  bool read (class caviar::interpreter::Parser *);
+  /**
+   * This class fixes atomic bond using RATTLE algorithm
+   *
+   *
+   */
+  class Rattle : public Constraint
+  {
+  public:
+    Rattle(class CAVIAR *);
+    ~Rattle();
+    bool read(class caviar::interpreter::Parser *);
 
-  void apply_on_position (int64_t);
-  
+    void apply_on_position(int64_t);
 
-  void bond_fix ();
+    void bond_fix();
 
+    void verify_settings();
 
-  void verify_settings();
+    static inline int delta(int a, int b)
+    {
+      if (a == b)
+        return 1;
+      else
+        return 0;
+    }
 
-  static inline int delta(int a,int b) {
-	  if(a==b)return 1;
-  	else return 0;
-  }
+    class Domain *domain;
 
-  class Domain *domain;
+    double dt;
+    double error_tolerance;
+    caviar::Vector<double> domain_dh;
+    caviar::Vector<int> domain_bc;
+    bool initialized;
+  };
 
-  double dt;
-  double error_tolerance;
-  caviar::Vector<double> domain_dh;
-  caviar::Vector<int> domain_bc;
-  bool initialized;
-
-};
-
-} //constraint
+} // constraint
 
 CAVIAR_NAMESPACE_CLOSE
 

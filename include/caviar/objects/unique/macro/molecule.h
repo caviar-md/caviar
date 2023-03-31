@@ -15,6 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Molecule,molecule,unique::Molecule)
+FC_CHECK_AND_CREATE(Molecule, molecule, unique::Molecule)
 #endif
-

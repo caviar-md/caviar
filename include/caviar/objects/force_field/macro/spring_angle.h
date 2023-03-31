@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Spring_angle,spring_angle,force_field::Spring_angle)
+FC_CHECK_AND_CREATE(Spring_angle, spring_angle, force_field::Spring_angle)
 #endif

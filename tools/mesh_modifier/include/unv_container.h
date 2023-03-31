@@ -21,25 +21,21 @@
 #include "universal_dataset_number_all.h"
 #include "vector.h"
 
-namespace mesh_modifier {
+namespace mesh_modifier
+{
 
+  class Unv_container
+  {
+  public:
+    Unv_container();
+    ~Unv_container();
 
-class Unv_container {
-public:
-  Unv_container ();
-  ~Unv_container ();  
-
-  
-  std::vector<Universal_dataset_number_2411> udn_2411;
-  std::vector<Universal_dataset_number_2412> udn_2412;
-  std::vector<Universal_dataset_number_2467> udn_2467;
-  std::vector<Universal_dataset_number_unsupported> udn_unsupported;
-  
-};
+    std::vector<Universal_dataset_number_2411> udn_2411;
+    std::vector<Universal_dataset_number_2412> udn_2412;
+    std::vector<Universal_dataset_number_2467> udn_2467;
+    std::vector<Universal_dataset_number_unsupported> udn_unsupported;
+  };
 
 }
 
 #endif
-
-
-

@@ -27,15 +27,16 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace atom_data {
+namespace atom_data
+{
 
-Basic::Basic (CAVIAR *fptr) : Atom_data{fptr} {
-  FC_OBJECT_INITIALIZE_INFO
-}
+  Basic::Basic(CAVIAR *fptr) : Atom_data{fptr} {
+                                   FC_OBJECT_INITIALIZE_INFO}
 
-Basic::~Basic() {}
+                               Basic::~Basic()
+  {
+  }
 
-} //atom_data
+} // atom_data
 
 CAVIAR_NAMESPACE_CLOSE
-

@@ -14,9 +14,8 @@
 //
 //========================================================================
 
-
 #ifdef FC_GENERAL_CLASSNAME_MACRO_ACTIVATED
-FC_GENERAL_CLASSNAME_MACRO(Force_field,force_field,Force_field)
+FC_GENERAL_CLASSNAME_MACRO(Force_field, force_field, Force_field)
 #endif
 
 #ifdef FC_COMPLETE_FORWARD_DECLERATION
@@ -26,5 +25,3 @@ class Force_field;
 
 CAVIAR_NAMESPACE_CLOSE
 #endif
-
-

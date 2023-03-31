@@ -25,207 +25,227 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace force_field {
+namespace force_field
+{
 
-Electrostatic_ewald_r::Electrostatic_ewald_r (CAVIAR *fptr) : Force_field{fptr},
-    k_electrostatic{1.0} {
-  FC_OBJECT_INITIALIZE_INFO
-  alpha = 1.0;
-}
-
-bool Electrostatic_ewald_r::read (caviar::interpreter::Parser *parser) {
-  FC_OBJECT_READ_INFO
-  bool in_file = true;
-
-  while(true) {
-    GET_A_TOKEN_FOR_CREATION
-    auto t = token.string_value;
-    if (string_cmp(t,"cutoff")) {
-      GET_OR_CHOOSE_A_REAL(cutoff,"","")
-      if (cutoff < 0.0) error->all (FC_FILE_LINE_FUNC_PARSE, "Force field cutoff have to non-negative.");      
-    } else if (string_cmp(t,"k_electrostatic")) {
-      GET_OR_CHOOSE_A_REAL(k_electrostatic,"","")    
-      if (k_electrostatic < 0)  error->all (FC_FILE_LINE_FUNC_PARSE, "k_electrostatic has to be non-negative.");            
-    } else if (string_cmp(t,"alpha")) {
-      GET_OR_CHOOSE_A_REAL(alpha,"","")
-      if (alpha < 0.0) error->all (FC_FILE_LINE_FUNC_PARSE, "alpha have to non-negative.");  
-    } else if (string_cmp(t,"set_neighborlist") || string_cmp(t,"neighborlist")) {
-      FIND_OBJECT_BY_NAME(neighborlist,it)
-      neighborlist = object_container->neighborlist[it->second.index];
-    } else if (string_cmp(t,"set_atom_data") || string_cmp(t,"atom_data")) {
-      FIND_OBJECT_BY_NAME(atom_data,it)
-      atom_data = object_container->atom_data[it->second.index];
-    } else FC_ERR_UNDEFINED_VAR(t)
+  Electrostatic_ewald_r::Electrostatic_ewald_r(CAVIAR *fptr) : Force_field{fptr},
+                                                               k_electrostatic{1.0}
+  {
+    FC_OBJECT_INITIALIZE_INFO
+    alpha = 1.0;
   }
-  
-  return in_file;
-}
 
-void Electrostatic_ewald_r::verify_settings() {
-  FC_NULLPTR_CHECK(atom_data)
-  FC_NULLPTR_CHECK(neighborlist)
-}
+  bool Electrostatic_ewald_r::read(caviar::interpreter::Parser *parser)
+  {
+    FC_OBJECT_READ_INFO
+    bool in_file = true;
 
+    while (true)
+    {
+      GET_A_TOKEN_FOR_CREATION
+      auto t = token.string_value;
+      if (string_cmp(t, "cutoff"))
+      {
+        GET_OR_CHOOSE_A_REAL(cutoff, "", "")
+        if (cutoff < 0.0)
+          error->all(FC_FILE_LINE_FUNC_PARSE, "Force field cutoff have to non-negative.");
+      }
+      else if (string_cmp(t, "k_electrostatic"))
+      {
+        GET_OR_CHOOSE_A_REAL(k_electrostatic, "", "")
+        if (k_electrostatic < 0)
+          error->all(FC_FILE_LINE_FUNC_PARSE, "k_electrostatic has to be non-negative.");
+      }
+      else if (string_cmp(t, "alpha"))
+      {
+        GET_OR_CHOOSE_A_REAL(alpha, "", "")
+        if (alpha < 0.0)
+          error->all(FC_FILE_LINE_FUNC_PARSE, "alpha have to non-negative.");
+      }
+      else if (string_cmp(t, "set_neighborlist") || string_cmp(t, "neighborlist"))
+      {
+        FIND_OBJECT_BY_NAME(neighborlist, it)
+        neighborlist = object_container->neighborlist[it->second.index];
+      }
+      else if (string_cmp(t, "set_atom_data") || string_cmp(t, "atom_data"))
+      {
+        FIND_OBJECT_BY_NAME(atom_data, it)
+        atom_data = object_container->atom_data[it->second.index];
+      }
+      else
+        FC_ERR_UNDEFINED_VAR(t)
+    }
 
-void Electrostatic_ewald_r::calculate_acceleration () {
-  FC_OBJECT_VERIFY_SETTINGS
+    return in_file;
+  }
 
-// XXX Working scheme (neighlist) with both 'cell_list' and 'verlet_list'
-///*
-  const auto &pos = atom_data -> owned.position;
-  const unsigned pos_size = pos.size();
-  const auto alpha_sq = alpha*alpha;
+  void Electrostatic_ewald_r::verify_settings()
+  {
+    FC_NULLPTR_CHECK(atom_data)
+    FC_NULLPTR_CHECK(neighborlist)
+  }
 
-  const auto &nlist = neighborlist -> neighlist;
+  void Electrostatic_ewald_r::calculate_acceleration()
+  {
+    FC_OBJECT_VERIFY_SETTINGS
+
+    // XXX Working scheme (neighlist) with both 'cell_list' and 'verlet_list'
+    ///*
+    const auto &pos = atom_data->owned.position;
+    const unsigned pos_size = pos.size();
+    const auto alpha_sq = alpha * alpha;
+
+    const auto &nlist = neighborlist->neighlist;
 #ifdef CAVIAR_WITH_OPENMP
-  #pragma omp parallel for
-#endif  
-  for (unsigned i = 0; i < pos_size; ++i) {
-    const auto pos_i = atom_data->owned.position [i];
-    const auto type_i = atom_data -> owned.type [ i ];      
-    const auto charge_i = atom_data -> owned.charge [ type_i ];      
-    const auto mass_inv_i = atom_data -> owned.mass_inv [ type_i ];      
-    for (auto j : nlist[i]) {
-      bool is_ghost = j >= pos_size;
-      Vector<Real_t> pos_j;
-      Real_t type_j;
-      if (is_ghost) {
-        j -= pos_size;
-        pos_j = atom_data->ghost.position [j];
-        type_j = atom_data->ghost.type [j];
-      } else {
-        pos_j = atom_data->owned.position [j];
-        type_j = atom_data->owned.type [j];
-      }
+#pragma omp parallel for
+#endif
+    for (unsigned i = 0; i < pos_size; ++i)
+    {
+      const auto pos_i = atom_data->owned.position[i];
+      const auto type_i = atom_data->owned.type[i];
+      const auto charge_i = atom_data->owned.charge[type_i];
+      const auto mass_inv_i = atom_data->owned.mass_inv[type_i];
+      for (auto j : nlist[i])
+      {
+        bool is_ghost = j >= pos_size;
+        Vector<Real_t> pos_j;
+        Real_t type_j;
+        if (is_ghost)
+        {
+          j -= pos_size;
+          pos_j = atom_data->ghost.position[j];
+          type_j = atom_data->ghost.type[j];
+        }
+        else
+        {
+          pos_j = atom_data->owned.position[j];
+          type_j = atom_data->owned.type[j];
+        }
 
-      const auto charge_j = atom_data -> owned.charge [ type_j ];      
-      const auto mass_inv_j = atom_data -> owned.mass_inv [ type_j ];      
-      const auto r_ij = pos_i - pos_j;
+        const auto charge_j = atom_data->owned.charge[type_j];
+        const auto mass_inv_j = atom_data->owned.mass_inv[type_j];
+        const auto r_ij = pos_i - pos_j;
 
-      if (r_ij.x==0 && r_ij.y==0 && r_ij.z==0) continue;
+        if (r_ij.x == 0 && r_ij.y == 0 && r_ij.z == 0)
+          continue;
 
-      const auto rijml = r_ij;
-      const auto rijml_sq = rijml*rijml;
-      const auto rijml_norm = std::sqrt(rijml_sq);
-      const auto erfc_arg = alpha*rijml_norm;
+        const auto rijml = r_ij;
+        const auto rijml_sq = rijml * rijml;
+        const auto rijml_norm = std::sqrt(rijml_sq);
+        const auto erfc_arg = alpha * rijml_norm;
 
-      //if (erfc_arg > erfc_cutoff) continue; 
+        // if (erfc_arg > erfc_cutoff) continue;
 
-      const auto sum_r = (2*alpha*FC_PIS_INV*std::exp(-alpha_sq*rijml_sq) 
-                       + std::erfc(erfc_arg) / rijml_norm )*(rijml/rijml_sq);
+        const auto sum_r = (2 * alpha * FC_PIS_INV * std::exp(-alpha_sq * rijml_sq) + std::erfc(erfc_arg) / rijml_norm) * (rijml / rijml_sq);
 
-      const auto force =  k_electrostatic * charge_i * charge_j *sum_r;    
+        const auto force = k_electrostatic * charge_i * charge_j * sum_r;
 
-      atom_data -> owned.acceleration[i] += force * mass_inv_i;
-      if (!is_ghost) {
-#ifdef CAVIAR_WITH_OPENMP        
-#pragma omp atomic 
-          atom_data -> owned.acceleration [j].x -= force.x * mass_inv_j;   
+        atom_data->owned.acceleration[i] += force * mass_inv_i;
+        if (!is_ghost)
+        {
+#ifdef CAVIAR_WITH_OPENMP
 #pragma omp atomic
-          atom_data -> owned.acceleration [j].y -= force.y * mass_inv_j;   
-#pragma omp atomic 
-          atom_data -> owned.acceleration [j].z -= force.z * mass_inv_j;   
+          atom_data->owned.acceleration[j].x -= force.x * mass_inv_j;
+#pragma omp atomic
+          atom_data->owned.acceleration[j].y -= force.y * mass_inv_j;
+#pragma omp atomic
+          atom_data->owned.acceleration[j].z -= force.z * mass_inv_j;
 #else
-          atom_data -> owned.acceleration [j] -= force * mass_inv_j;   
-#endif                        
-
-
+          atom_data->owned.acceleration[j] -= force * mass_inv_j;
+#endif
+        }
       }
-    
     }
-  }
-//*/
+    //*/
 
-// XXX Working scheme (binlist) of  'cell_list'
-/*
-  const auto &pos = atom_data -> owned.position;
-  const unsigned pos_size = pos.size();
-  const auto alpha_sq = alpha*alpha;
+    // XXX Working scheme (binlist) of  'cell_list'
+    /*
+      const auto &pos = atom_data -> owned.position;
+      const unsigned pos_size = pos.size();
+      const auto alpha_sq = alpha*alpha;
 
-  const auto &binlist = neighborlist -> binlist;
-  const auto &nb = neighborlist -> neigh_bin;
+      const auto &binlist = neighborlist -> binlist;
+      const auto &nb = neighborlist -> neigh_bin;
 
 
-  for (unsigned i = 0; i < pos_size; ++i) {
-    const auto pos_i = atom_data->owned.position [i];
-    const auto type_i = atom_data -> owned.type [ i ];      
-    const auto charge_i = atom_data -> owned.charge [ type_i ];      
-    const auto mass_inv_i = atom_data -> owned.mass_inv [ type_i ];      
+      for (unsigned i = 0; i < pos_size; ++i) {
+        const auto pos_i = atom_data->owned.position [i];
+        const auto type_i = atom_data -> owned.type [ i ];
+        const auto charge_i = atom_data -> owned.charge [ type_i ];
+        const auto mass_inv_i = atom_data -> owned.mass_inv [ type_i ];
 
-    const auto nb_i = neighborlist -> neigh_bin_index (pos_i);
-    for (unsigned nb_j = 0; nb_j < nb[nb_i].size(); ++nb_j) {
-    const auto &nb_ij = nb[nb_i][nb_j];
+        const auto nb_i = neighborlist -> neigh_bin_index (pos_i);
+        for (unsigned nb_j = 0; nb_j < nb[nb_i].size(); ++nb_j) {
+        const auto &nb_ij = nb[nb_i][nb_j];
 
-    for (unsigned bl_i = 0; bl_i < binlist [nb_ij.x] [nb_ij.y] [nb_ij.z].size(); ++bl_i) {
+        for (unsigned bl_i = 0; bl_i < binlist [nb_ij.x] [nb_ij.y] [nb_ij.z].size(); ++bl_i) {
 
-      unsigned int j = binlist[nb_ij.x] [nb_ij.y] [nb_ij.z][bl_i];
+          unsigned int j = binlist[nb_ij.x] [nb_ij.y] [nb_ij.z][bl_i];
 
-      if (i>j) continue; // Works as multiplying a '0.5' to the sum. ...
-      // ... We have to do this because  we use Newton's third law down there.
-      //
+          if (i>j) continue; // Works as multiplying a '0.5' to the sum. ...
+          // ... We have to do this because  we use Newton's third law down there.
+          //
 
-      bool is_ghost = j >= pos_size;
-      Vector<Real_t> pos_j;
-      Real_t type_j;
-      if (is_ghost) {
-        j -= pos_size;
-        pos_j = atom_data->ghost.position [j];
-        type_j = atom_data->ghost.type [j];
-      } else {
-        pos_j = atom_data->owned.position [j];
-        type_j = atom_data->owned.type [j];
+          bool is_ghost = j >= pos_size;
+          Vector<Real_t> pos_j;
+          Real_t type_j;
+          if (is_ghost) {
+            j -= pos_size;
+            pos_j = atom_data->ghost.position [j];
+            type_j = atom_data->ghost.type [j];
+          } else {
+            pos_j = atom_data->owned.position [j];
+            type_j = atom_data->owned.type [j];
 
+          }
+
+          const auto charge_j = atom_data -> owned.charge [ type_j ];
+          const auto mass_inv_j = atom_data -> owned.mass_inv [ type_j ];
+          const auto r_ij = pos_i - pos_j;
+
+          if (r_ij.x==0 && r_ij.y==0 && r_ij.z==0) continue;
+
+          const auto rijml = r_ij;
+          const auto rijml_sq = rijml*rijml;
+          const auto rijml_norm = std::sqrt(rijml_sq);
+          const auto erfc_arg = alpha*rijml_norm;
+
+          //if (erfc_arg > erfc_cutoff) continue;
+
+          const auto sum_r = (2*alpha*FC_PIS_INV*std::exp(-alpha_sq*rijml_sq)
+                           + std::erfc(erfc_arg) / rijml_norm )*(rijml/rijml_sq);
+
+          const auto force =  k_electrostatic * charge_i * charge_j *sum_r;
+
+          atom_data -> owned.acceleration[i] += force * mass_inv_i;
+          if (!is_ghost)
+            atom_data -> owned.acceleration[j] -= force * mass_inv_j;
+
+        }
+        }
       }
+    */
 
-      const auto charge_j = atom_data -> owned.charge [ type_j ];      
-      const auto mass_inv_j = atom_data -> owned.mass_inv [ type_j ];      
-      const auto r_ij = pos_i - pos_j;
+    // XXX Working Scheme using field functions. Only 'binlist' field works.
+    /*
+     const auto &pos = atom_data -> owned.position;
+     const unsigned pos_size = pos.size();
 
-      if (r_ij.x==0 && r_ij.y==0 && r_ij.z==0) continue;
+     for (unsigned i = 0; i < pos_size; ++i) {
+       const auto pos_i = atom_data->owned.position [i];
+       const auto type_i = atom_data -> owned.type [ i ];
+       const auto charge_i = atom_data -> owned.charge [ type_i ];
+       const auto mass_inv_i = atom_data -> owned.mass_inv [ type_i ];
 
-      const auto rijml = r_ij;
-      const auto rijml_sq = rijml*rijml;
-      const auto rijml_norm = std::sqrt(rijml_sq);
-      const auto erfc_arg = alpha*rijml_norm;
+       const auto force = charge_i * field (pos_i); // Working (binlist)
+   //    const auto force = charge_i * field (i); // XXX (neighlist) won't work
+       atom_data -> owned.acceleration[i] += force * mass_inv_i;
 
-      //if (erfc_arg > erfc_cutoff) continue; 
+     }
 
-      const auto sum_r = (2*alpha*FC_PIS_INV*std::exp(-alpha_sq*rijml_sq) 
-                       + std::erfc(erfc_arg) / rijml_norm )*(rijml/rijml_sq);
-
-      const auto force =  k_electrostatic * charge_i * charge_j *sum_r;    
-
-      atom_data -> owned.acceleration[i] += force * mass_inv_i;
-      if (!is_ghost)
-        atom_data -> owned.acceleration[j] -= force * mass_inv_j;        
-    
-    }
-    }
-  }
-*/
-
-// XXX Working Scheme using field functions. Only 'binlist' field works.
- /*
-  const auto &pos = atom_data -> owned.position;
-  const unsigned pos_size = pos.size();
-
-  for (unsigned i = 0; i < pos_size; ++i) {
-    const auto pos_i = atom_data->owned.position [i];
-    const auto type_i = atom_data -> owned.type [ i ];      
-    const auto charge_i = atom_data -> owned.charge [ type_i ];      
-    const auto mass_inv_i = atom_data -> owned.mass_inv [ type_i ];      
-
-    const auto force = charge_i * field (pos_i); // Working (binlist)
-//    const auto force = charge_i * field (i); // XXX (neighlist) won't work
-    atom_data -> owned.acceleration[i] += force * mass_inv_i;
-
+    */
   }
 
- */
-
-}
-
-} //force_field
+} // force_field
 
 CAVIAR_NAMESPACE_CLOSE
-

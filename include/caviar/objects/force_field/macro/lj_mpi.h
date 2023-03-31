@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Lj_mpi,lj_mpi,force_field::Lj_mpi)
+FC_CHECK_AND_CREATE(Lj_mpi, lj_mpi, force_field::Lj_mpi)
 #endif

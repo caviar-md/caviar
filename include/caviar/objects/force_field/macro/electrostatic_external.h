@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Electrostatic_external,electrostatic_external,force_field::Electrostatic_external)
+FC_CHECK_AND_CREATE(Electrostatic_external, electrostatic_external, force_field::Electrostatic_external)
 #endif

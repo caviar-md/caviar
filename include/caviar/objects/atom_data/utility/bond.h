@@ -19,14 +19,16 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace atom_data {
-// Bonds contain data for rigid atomic bonds which may be used in Shake like
-// constraint algorithms or soft atomic bonds in spring_bond force_fields
-struct Bond {
-  int index_1, index_2;  // atom index
-  int type; // used in soft atomic bonds in force_fields
-  double length; // bond length // TODO this can be stored by type in Atom_data
-};
+namespace atom_data
+{
+  // Bonds contain data for rigid atomic bonds which may be used in Shake like
+  // constraint algorithms or soft atomic bonds in spring_bond force_fields
+  struct Bond
+  {
+    int index_1, index_2; // atom index
+    int type;             // used in soft atomic bonds in force_fields
+    double length;        // bond length // TODO this can be stored by type in Atom_data
+  };
 }
 CAVIAR_NAMESPACE_CLOSE
 #endif

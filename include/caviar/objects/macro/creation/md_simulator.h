@@ -14,14 +14,13 @@
 //
 //========================================================================
 
-
-
 #ifdef FC_OBJECT_CREATOR_FUNCTION_DEFINITON
-FC_OBJECT_CREATOR_DEFAULT_FUNCTION(md_simulator) {
+FC_OBJECT_CREATOR_DEFAULT_FUNCTION(md_simulator)
+{
 
   FC_GET_OBJECT_TYPE_AND_NAME
 
-  Md_simulator * p_sh = nullptr; 
+  Md_simulator *p_sh = nullptr;
 
 #include "caviar/objects/md_simulator/macro/all.h"
 

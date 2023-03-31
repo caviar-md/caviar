@@ -21,30 +21,31 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace force_field {
+namespace force_field
+{
 
-/**
- * This class does a fene force-field on the molecular bonds
- *  
- */
-class Fene_bond : public Force_field {
-public:
-  Fene_bond (class CAVIAR *);
-  ~Fene_bond () {};
+  /**
+   * This class does a fene force-field on the molecular bonds
+   *
+   */
+  class Fene_bond : public Force_field
+  {
+  public:
+    Fene_bond(class CAVIAR *);
+    ~Fene_bond(){};
 
-  //double energy();
+    // double energy();
 
-  bool read (class caviar::interpreter::Parser *);
-  void verify_settings ();
-  void calculate_acceleration ();
-public:
+    bool read(class caviar::interpreter::Parser *);
+    void verify_settings();
+    void calculate_acceleration();
 
-  std::vector<Real_t> elastic_coef, dissip_coef, R, epsilon_coef, sigma_coef;
-  double repulsive_cutoff;
- 
-};
+  public:
+    std::vector<Real_t> elastic_coef, dissip_coef, R, epsilon_coef, sigma_coef;
+    double repulsive_cutoff;
+  };
 
-} //force_field
+} // force_field
 
 CAVIAR_NAMESPACE_CLOSE
 

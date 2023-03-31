@@ -19,41 +19,41 @@
 
 #include <vector>
 
-namespace mesh_modifier {
+namespace mesh_modifier
+{
 
+  struct Universal_dataset_number_2412
+  {
+    /*
+    Record 1:        FORMAT(6I10)
+                     Field 1       -- element label
+                     Field 2       -- fe descriptor id
+                     Field 3       -- physical property table number
+                     Field 4       -- material property table number
+                     Field 5       -- color
+                     Field 6       -- number of nodes on element
 
-struct Universal_dataset_number_2412 {
-/*
-Record 1:        FORMAT(6I10)
-                 Field 1       -- element label
-                 Field 2       -- fe descriptor id
-                 Field 3       -- physical property table number
-                 Field 4       -- material property table number
-                 Field 5       -- color
-                 Field 6       -- number of nodes on element
- 
-Record 2:  *** FOR NON-BEAM ELEMENTS ***
-                 FORMAT(8I10)
-                 Fields 1-n    -- node labels defining element
- 
-Record 2:  *** FOR BEAM ELEMENTS ONLY ***
-                 FORMAT(3I10)
-                 Field 1       -- beam orientation node number
-                 Field 2       -- beam fore-end cross section number
-                 Field 3       -- beam  aft-end cross section number
- 
-Record 3:  *** FOR BEAM ELEMENTS ONLY ***
-                 FORMAT(8I10)
-                 Fields 1-n    -- node labels defining element
- 
-Records 1 and 2 are repeated for each non-beam element in the model.
-Records 1 - 3 are repeated for each beam element in the model.
-*/
-  std::vector<unsigned int> record1;
-  std::vector<unsigned int> record2;
-  std::vector<unsigned int> record3;  
-};
+    Record 2:  *** FOR NON-BEAM ELEMENTS ***
+                     FORMAT(8I10)
+                     Fields 1-n    -- node labels defining element
 
+    Record 2:  *** FOR BEAM ELEMENTS ONLY ***
+                     FORMAT(3I10)
+                     Field 1       -- beam orientation node number
+                     Field 2       -- beam fore-end cross section number
+                     Field 3       -- beam  aft-end cross section number
+
+    Record 3:  *** FOR BEAM ELEMENTS ONLY ***
+                     FORMAT(8I10)
+                     Fields 1-n    -- node labels defining element
+
+    Records 1 and 2 are repeated for each non-beam element in the model.
+    Records 1 - 3 are repeated for each beam element in the model.
+    */
+    std::vector<unsigned int> record1;
+    std::vector<unsigned int> record2;
+    std::vector<unsigned int> record3;
+  };
 
 }
 

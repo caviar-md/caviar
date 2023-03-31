@@ -25,81 +25,91 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace force_field {
+namespace force_field
+{
 
-Gravity_external::Gravity_external (CAVIAR *fptr) : Force_field{fptr},
- amplitude{1.0}, direction{Vector<double>{0,0,0}}
- {
-  FC_OBJECT_INITIALIZE_INFO
-}
-
-bool Gravity_external::read (caviar::interpreter::Parser *parser) {
-  FC_OBJECT_READ_INFO
-  bool in_file = true;
-
-  while(true) {
-    GET_A_TOKEN_FOR_CREATION
-    auto t = token.string_value;
-    if (string_cmp(t,"amplitude")) {
-      GET_OR_CHOOSE_A_REAL(amplitude,"","")
-    } else if (string_cmp(t,"direction")) {
-      GET_OR_CHOOSE_A_REAL_3D_VECTOR(direction, "", "");
-      auto d_sq = direction*direction;
-      auto d_norm = std::sqrt(d_sq);
-      direction = direction/d_norm;
-    } else if (string_cmp(t,"set_atom_data") || string_cmp(t,"atom_data")) {
-      FIND_OBJECT_BY_NAME(atom_data,it)
-      atom_data = object_container->atom_data[it->second.index];
-    } else if (string_cmp(t,"set_time_function_3d")) {
-      FIND_OBJECT_BY_NAME(unique,it)
-      FC_CHECK_OBJECT_CLASS_NAME(unique,it,time_function_3d)
-      unique::Time_function_3d *a = dynamic_cast<unique::Time_function_3d *>(object_container->unique[it->second.index]);
-      non_inertia_reference_frame_acc = a;
-    } else FC_ERR_UNDEFINED_VAR(t)
+  Gravity_external::Gravity_external(CAVIAR *fptr) : Force_field{fptr},
+                                                     amplitude{1.0}, direction{Vector<double>{0, 0, 0}}
+  {
+    FC_OBJECT_INITIALIZE_INFO
   }
-  
-  return in_file;
-}
 
-void Gravity_external::verify_settings() {
-  FC_NULLPTR_CHECK(atom_data)
-}
+  bool Gravity_external::read(caviar::interpreter::Parser *parser)
+  {
+    FC_OBJECT_READ_INFO
+    bool in_file = true;
 
+    while (true)
+    {
+      GET_A_TOKEN_FOR_CREATION
+      auto t = token.string_value;
+      if (string_cmp(t, "amplitude"))
+      {
+        GET_OR_CHOOSE_A_REAL(amplitude, "", "")
+      }
+      else if (string_cmp(t, "direction"))
+      {
+        GET_OR_CHOOSE_A_REAL_3D_VECTOR(direction, "", "");
+        auto d_sq = direction * direction;
+        auto d_norm = std::sqrt(d_sq);
+        direction = direction / d_norm;
+      }
+      else if (string_cmp(t, "set_atom_data") || string_cmp(t, "atom_data"))
+      {
+        FIND_OBJECT_BY_NAME(atom_data, it)
+        atom_data = object_container->atom_data[it->second.index];
+      }
+      else if (string_cmp(t, "set_time_function_3d"))
+      {
+        FIND_OBJECT_BY_NAME(unique, it)
+        FC_CHECK_OBJECT_CLASS_NAME(unique, it, time_function_3d)
+        unique::Time_function_3d *a = dynamic_cast<unique::Time_function_3d *>(object_container->unique[it->second.index]);
+        non_inertia_reference_frame_acc = a;
+      }
+      else
+        FC_ERR_UNDEFINED_VAR(t)
+    }
 
-void Gravity_external::calculate_acceleration () {
-  FC_OBJECT_VERIFY_SETTINGS
+    return in_file;
+  }
 
+  void Gravity_external::verify_settings()
+  {
+    FC_NULLPTR_CHECK(atom_data)
+  }
 
-  const auto &pos = atom_data -> owned.position;  
+  void Gravity_external::calculate_acceleration()
+  {
+    FC_OBJECT_VERIFY_SETTINGS
+
+    const auto &pos = atom_data->owned.position;
 
 #ifdef CAVIAR_WITH_OPENMP
-  #pragma omp parallel for
-#endif  
-  if (non_inertia_reference_frame_acc == nullptr)
-  {
-    for (unsigned int i=0;i<pos.size();++i) {
-      //const auto type_i = atom_data -> owned.type [i] ;
-      //const auto mass_i = atom_data -> owned.mass [ type_i ];
-
-      //const auto force = amplitude * direction * mass_i;
-      //atom_data -> owned.acceleration [i] += force / mass_i;
-
-      const auto a = amplitude * direction;
-      atom_data -> owned.acceleration [i] += a;
-      
-    }  
-  }
-  else
-  {
-    for (unsigned int i=0;i<pos.size();++i) 
+#pragma omp parallel for
+#endif
+    if (non_inertia_reference_frame_acc == nullptr)
     {
-      atom_data -> owned.acceleration [i] += non_inertia_reference_frame_acc->current_value;    
-    }  
+      for (unsigned int i = 0; i < pos.size(); ++i)
+      {
+        // const auto type_i = atom_data -> owned.type [i] ;
+        // const auto mass_i = atom_data -> owned.mass [ type_i ];
+
+        // const auto force = amplitude * direction * mass_i;
+        // atom_data -> owned.acceleration [i] += force / mass_i;
+
+        const auto a = amplitude * direction;
+        atom_data->owned.acceleration[i] += a;
+      }
+    }
+    else
+    {
+      for (unsigned int i = 0; i < pos.size(); ++i)
+      {
+        atom_data->owned.acceleration[i] += non_inertia_reference_frame_acc->current_value;
+      }
+    }
   }
 
-}
-
-} //force_field
+} // force_field
 
 CAVIAR_NAMESPACE_CLOSE
-

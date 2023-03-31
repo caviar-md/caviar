@@ -22,38 +22,37 @@
 
 CAVIAR_NAMESPACE_OPEN
 
+namespace unique
+{
 
-namespace unique {
+  /**
+   * This class creates group of atoms.
+   * groups create copies of the atoms.
+   */
+  class Atom_group : public Unique
+  {
+  public:
+    Atom_group(class CAVIAR *);
+    Atom_group(const Atom_group &);
+    Atom_group();
+    ~Atom_group();
+    bool read(caviar::interpreter::Parser *);
+    Vector<double> pos_tot() const;
+    Vector<double> vel_tot() const;
+    void add_atom(const unique::Atom &);
+    void add_atom(const unique::Atom &,
+                  caviar::Vector<double> p = caviar::Vector<double>{0, 0, 0},
+                  caviar::Vector<double> v = caviar::Vector<double>{0, 0, 0});
 
-/**
- * This class creates group of atoms.
- * groups create copies of the atoms.
- */
-class Atom_group  : public Unique {
- public:
-  Atom_group (class CAVIAR *);    
-  Atom_group (const Atom_group &);
-  Atom_group ();
-  ~Atom_group () ;
-  bool read (caviar::interpreter::Parser *);
-  Vector<double> pos_tot () const;
-  Vector<double> vel_tot () const; 
-  void add_atom(const unique::Atom &);
-  void add_atom(const unique::Atom &,
-                caviar::Vector<double> p=caviar::Vector<double>{0,0,0},
-                caviar::Vector<double> v=caviar::Vector<double>{0,0,0});
+    std::vector<unique::Atom> atoms;
 
-  std::vector<unique::Atom> atoms;
+    bool part_of_a_atom_group;
+    Atom_group *upper_level_atom_group;
 
-  bool part_of_a_atom_group;    
-  Atom_group * upper_level_atom_group;
+    Vector<double> position, velocity;
+  };
 
-  Vector<double> position, velocity;
-
-};
-
-} //unique
-
+} // unique
 
 CAVIAR_NAMESPACE_CLOSE
 

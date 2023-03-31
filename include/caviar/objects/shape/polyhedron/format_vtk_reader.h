@@ -21,27 +21,28 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace shape {
-namespace polyhedron {
-struct Polyhedron;
-class Format_vtk_reader : public Pointers {
-public:
+namespace shape
+{
+  namespace polyhedron
+  {
+    struct Polyhedron;
+    class Format_vtk_reader : public Pointers
+    {
+    public:
+      Format_vtk_reader(class CAVIAR *);
+      ~Format_vtk_reader();
 
-  Format_vtk_reader (class CAVIAR *);
-  ~Format_vtk_reader();
-  
-  void read_polyhedron (shape::polyhedron::Polyhedron &, const std::string &);
-  void write_unstructured_vtk4 (shape::polyhedron::Polyhedron &, const std::string st_out="o_shape_unstructured.vtk");
-  void write_polydata_vtk4 (shape::polyhedron::Polyhedron &, const std::string st_out="o_shape_polydata.vtk");
+      void read_polyhedron(shape::polyhedron::Polyhedron &, const std::string &);
+      void write_unstructured_vtk4(shape::polyhedron::Polyhedron &, const std::string st_out = "o_shape_unstructured.vtk");
+      void write_polydata_vtk4(shape::polyhedron::Polyhedron &, const std::string st_out = "o_shape_polydata.vtk");
 
-// It checks if the two vertices are similar 
-// Then makes a map of all vertices to the similar
-// ones with the lower index, then clear
-// void merge_vertices (int); 
-
-};
-} //polyhedron
-} //shape
+      // It checks if the two vertices are similar
+      // Then makes a map of all vertices to the similar
+      // ones with the lower index, then clear
+      // void merge_vertices (int);
+    };
+  } // polyhedron
+} // shape
 
 CAVIAR_NAMESPACE_CLOSE
 

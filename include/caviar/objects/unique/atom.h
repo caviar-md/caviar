@@ -23,43 +23,41 @@
 
 CAVIAR_NAMESPACE_OPEN
 
+namespace unique
+{
+  class Molecule;
+  class Atom_group;
 
-namespace unique {
-class Molecule;
-class Atom_group;
+  /**
+   * This class creates atoms as a tool for initial position of the particles for
+   *  atom_data class
+   */
+  class Atom : public Unique
+  {
+  public:
+    Atom(class CAVIAR *);
+    Atom(const Atom &);
+    Atom();
+    ~Atom();
+    bool read(caviar::interpreter::Parser *);
+    void verify_settings();
+    Vector<double> pos_tot() const;
+    Vector<double> vel_tot() const;
 
+    void output_xyz(std::ofstream &);
+    void extract_all_e_pos_vel(std::vector<int> &, std::vector<Vector<double>> &, std::vector<Vector<double>> &);
 
-/**
- * This class creates atoms as a tool for initial position of the particles for
- *  atom_data class
- */
-class Atom  : public Unique {
- public:
-  Atom (class CAVIAR *);    
-  Atom (const Atom &);
-  Atom ();
-  ~Atom () ;
-  bool read (caviar::interpreter::Parser *);
-  void verify_settings ();
-  Vector<double> pos_tot () const;
-  Vector<double> vel_tot () const; 
+    bool part_of_a_molecule;
+    Molecule *upper_level_molecule;
 
-  void output_xyz (std::ofstream &);  
-  void extract_all_e_pos_vel (std::vector<int>&, std::vector<Vector<double>>&, std::vector<Vector<double>>&);      
+    bool part_of_a_atom_group;
+    Atom_group *upper_level_atom_group;
 
-  bool part_of_a_molecule;    
-  Molecule * upper_level_molecule;
+    Vector<double> position, velocity;
+    unsigned int type;
+  };
 
-  bool part_of_a_atom_group;    
-  Atom_group * upper_level_atom_group;
-  
-  Vector<double> position, velocity;
-  unsigned int type;
-
-};
-
-} //unique
-
+} // unique
 
 CAVIAR_NAMESPACE_CLOSE
 

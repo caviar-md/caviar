@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Force_field,force_field,writer::Force_field)
+FC_CHECK_AND_CREATE(Force_field, force_field, writer::Force_field)
 #endif

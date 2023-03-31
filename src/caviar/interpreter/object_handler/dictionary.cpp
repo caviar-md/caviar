@@ -17,11 +17,11 @@
 #include "caviar/interpreter/object_handler/dictionary.h"
 
 CAVIAR_NAMESPACE_OPEN
-namespace interpreter {
-namespace object_handler {
+namespace interpreter
+{
+    namespace object_handler
+    {
 
-
-
-} // object_handler
-} //interpreter
+    } // object_handler
+} // interpreter
 CAVIAR_NAMESPACE_CLOSE

@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Geometry_slab,geometry_slab,force_field::Geometry_slab)
+FC_CHECK_AND_CREATE(Geometry_slab, geometry_slab, force_field::Geometry_slab)
 #endif

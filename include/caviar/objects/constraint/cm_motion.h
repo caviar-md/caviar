@@ -21,35 +21,34 @@
 
 CAVIAR_NAMESPACE_OPEN
 
+namespace constraint
+{
 
-namespace constraint {
+  /**
+   * This class monitors and removes center of mass (CM) motions if requested.
+   * This overall CM motion may comes from applying thermostats  directly to the atomic velocities
+   * instead of internal velocities. This phenomenon and internal (peculiar) velocities are
+   * introduced in 'Adv. Polym. Sci. (2005) 173:105–149 DOI:10.1007/b99427'.
+   * In the current version, we use this remedy. TODO. we may change this solution (as an option)
+   * in the future releases.
+   */
+  class Cm_motion : public Constraint
+  {
+  public:
+    Cm_motion(class CAVIAR *);
+    ~Cm_motion();
+    bool read(class caviar::interpreter::Parser *);
 
-/**
- * This class monitors and removes center of mass (CM) motions if requested.
- * This overall CM motion may comes from applying thermostats  directly to the atomic velocities 
- * instead of internal velocities. This phenomenon and internal (peculiar) velocities are
- * introduced in 'Adv. Polym. Sci. (2005) 173:105–149 DOI:10.1007/b99427'.
- * In the current version, we use this remedy. TODO. we may change this solution (as an option)
- * in the future releases.
- */
-class Cm_motion : public Constraint {
- public:
-  Cm_motion (class CAVIAR *);
-   ~Cm_motion ( );
-  bool read (class caviar::interpreter::Parser *);
+    void apply_on_velocity(int64_t);
 
-  void apply_on_velocity (int64_t);
+    void fix_velocity();
+    void fix_angular_momentum();
 
+    int velocity_steps;
+    int angular_momentum_steps;
+  };
 
-  void fix_velocity();
-  void fix_angular_momentum();
-
-  int velocity_steps;
-  int angular_momentum_steps;  
-
-};
-
-} //constraint
+} // constraint
 
 CAVIAR_NAMESPACE_CLOSE
 

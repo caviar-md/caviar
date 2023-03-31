@@ -23,31 +23,34 @@
 
 /**
  * This class has dissipative particle dynamics force-field.
- * 
- * 
+ *
+ *
  */
 CAVIAR_NAMESPACE_OPEN
 
-namespace force_field {
+namespace force_field
+{
 
-class Dpd : public Force_field { // there's a numeric error due to using ghost atoms and different random number generated for their owned counterpart atom. // this problem is solved at Dpd_acc
-public:
-  Dpd (class CAVIAR *);
-  ~Dpd () {};
-  
-  bool read (class caviar::interpreter::Parser *);
-  void verify_settings ();
-  void calculate_acceleration ();
-public:
-  std::vector<std::vector<Real_t>> conserv_coef,dissip_coef;
-  Real_t temperature, kBoltzman;
-  int rnd_seed;
-  std::mt19937 rnd_generator;
-  std::normal_distribution<double> rnd_ndist; // stddev() == 1
-  double dt;
-};
+  class Dpd : public Force_field
+  { // there's a numeric error due to using ghost atoms and different random number generated for their owned counterpart atom. // this problem is solved at Dpd_acc
+  public:
+    Dpd(class CAVIAR *);
+    ~Dpd(){};
 
-} //force_field
+    bool read(class caviar::interpreter::Parser *);
+    void verify_settings();
+    void calculate_acceleration();
+
+  public:
+    std::vector<std::vector<Real_t>> conserv_coef, dissip_coef;
+    Real_t temperature, kBoltzman;
+    int rnd_seed;
+    std::mt19937 rnd_generator;
+    std::normal_distribution<double> rnd_ndist; // stddev() == 1
+    double dt;
+  };
+
+} // force_field
 
 CAVIAR_NAMESPACE_CLOSE
 

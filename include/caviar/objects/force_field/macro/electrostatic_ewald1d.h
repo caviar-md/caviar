@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Electrostatic_ewald1d,electrostatic_ewald1d,force_field::Electrostatic_ewald1d)
+FC_CHECK_AND_CREATE(Electrostatic_ewald1d, electrostatic_ewald1d, force_field::Electrostatic_ewald1d)
 #endif

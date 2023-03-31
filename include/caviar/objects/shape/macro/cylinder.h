@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Cylinder,cylinder,shape::Cylinder)
+FC_CHECK_AND_CREATE(Cylinder, cylinder, shape::Cylinder)
 #endif

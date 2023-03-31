@@ -21,25 +21,26 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace shape {
-namespace polyhedron {
-struct Polyhedron;
-class Format_stl_reader : public Pointers {
-public:
+namespace shape
+{
+  namespace polyhedron
+  {
+    struct Polyhedron;
+    class Format_stl_reader : public Pointers
+    {
+    public:
+      Format_stl_reader(class CAVIAR *);
+      ~Format_stl_reader();
 
-  Format_stl_reader (class CAVIAR *);
-  ~Format_stl_reader();
-  
-  void read_polyhedron (shape::polyhedron::Polyhedron &, const std::string &);
+      void read_polyhedron(shape::polyhedron::Polyhedron &, const std::string &);
 
-// It checks if the two vertices are similar 
-// Then makes a map of all vertices to the similar
-// ones with the lower index, then clear
-// void merge_vertices (int); 
-
-};
-} //polyhedron
-} //shape
+      // It checks if the two vertices are similar
+      // Then makes a map of all vertices to the similar
+      // ones with the lower index, then clear
+      // void merge_vertices (int);
+    };
+  } // polyhedron
+} // shape
 
 CAVIAR_NAMESPACE_CLOSE
 

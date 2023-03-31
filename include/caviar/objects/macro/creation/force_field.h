@@ -14,14 +14,13 @@
 //
 //========================================================================
 
-
-
 #ifdef FC_OBJECT_CREATOR_FUNCTION_DEFINITON
-FC_OBJECT_CREATOR_DEFAULT_FUNCTION(force_field) {
+FC_OBJECT_CREATOR_DEFAULT_FUNCTION(force_field)
+{
 
   FC_GET_OBJECT_TYPE_AND_NAME
 
-  Force_field * p_sh = nullptr; 
+  Force_field *p_sh = nullptr;
 
 #include "caviar/objects/force_field/macro/all.h"
 

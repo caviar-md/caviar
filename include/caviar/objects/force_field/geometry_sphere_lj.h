@@ -25,48 +25,49 @@ namespace unique
 {
   class Time_function_3d;
 }
-namespace force_field {
+namespace force_field
+{
 
-/**
- * This class creates a force-field for the slab geometries.
- * The default is symmetric, meaning that the slab has no direction
- * The assymetric slab means that the position of the particles relative to 
- * the slab direction matters. It is good for using soft forcefields.
- */
-class Geometry_sphere_lj : public Force_field {
-public:
-  Geometry_sphere_lj (class CAVIAR *);
-  ~Geometry_sphere_lj ();
-  
-  bool read (class caviar::interpreter::Parser *);
-  void verify_settings ();
-  void calculate_acceleration ();
-public:  
-  unique::Time_function_3d *position_offset = nullptr;
+  /**
+   * This class creates a force-field for the slab geometries.
+   * The default is symmetric, meaning that the slab has no direction
+   * The assymetric slab means that the position of the particles relative to
+   * the slab direction matters. It is good for using soft forcefields.
+   */
+  class Geometry_sphere_lj : public Force_field
+  {
+  public:
+    Geometry_sphere_lj(class CAVIAR *);
+    ~Geometry_sphere_lj();
 
-  bool inside;
-  double radius;
-  caviar::Vector<double> center;
+    bool read(class caviar::interpreter::Parser *);
+    void verify_settings();
+    void calculate_acceleration();
 
-  // epsilon - sigma of a single type. inter-type values will be deduced using these
-  std::vector<Real_t> epsilon_atom, sigma_atom; 
-  double epsilon_wall, sigma_wall; 
+  public:
+    unique::Time_function_3d *position_offset = nullptr;
 
-  // the epsilon-sigma of a LJ potential.
-  std::vector<Real_t> epsilon, sigma; 
+    bool inside;
+    double radius;
+    caviar::Vector<double> center;
 
-  // a force_coef in case we need a total shift of the forces.
-  Real_t force_coef;
+    // epsilon - sigma of a single type. inter-type values will be deduced using these
+    std::vector<Real_t> epsilon_atom, sigma_atom;
+    double epsilon_wall, sigma_wall;
 
-  bool wca; //Week-Chandler-Anderson (WCA) potential activated.
-  bool cutoff_list_activated;
-  std::vector<Real_t> cutoff_list; // list of cutoffs when it is needed.
-                                                // for example in WCA potentials
-  
-  
-};
+    // the epsilon-sigma of a LJ potential.
+    std::vector<Real_t> epsilon, sigma;
 
-} //force_field
+    // a force_coef in case we need a total shift of the forces.
+    Real_t force_coef;
+
+    bool wca; // Week-Chandler-Anderson (WCA) potential activated.
+    bool cutoff_list_activated;
+    std::vector<Real_t> cutoff_list; // list of cutoffs when it is needed.
+                                     // for example in WCA potentials
+  };
+
+} // force_field
 
 CAVIAR_NAMESPACE_CLOSE
 

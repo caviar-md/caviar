@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Geometry_lj,geometry_lj,force_field::Geometry_lj)
+FC_CHECK_AND_CREATE(Geometry_lj, geometry_lj, force_field::Geometry_lj)
 #endif

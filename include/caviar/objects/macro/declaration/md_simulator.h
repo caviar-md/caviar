@@ -14,9 +14,8 @@
 //
 //========================================================================
 
-
 #ifdef FC_GENERAL_CLASSNAME_MACRO_ACTIVATED
-FC_GENERAL_CLASSNAME_MACRO(Md_simulator,md_simulator,Md_simulator)
+FC_GENERAL_CLASSNAME_MACRO(Md_simulator, md_simulator, Md_simulator)
 #endif
 
 #ifdef FC_COMPLETE_FORWARD_DECLERATION
@@ -26,5 +25,3 @@ class Md_simulator;
 
 CAVIAR_NAMESPACE_CLOSE
 #endif
-
-

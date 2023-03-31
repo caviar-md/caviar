@@ -26,30 +26,33 @@ namespace unique
 {
   class Time_function_3d;
 }
-namespace force_field {
+namespace force_field
+{
 
-/**
- * This class creates a spring force-field for the shape geometries
- *
- */
-class Geometry : public Force_field {
-public:
-  Geometry (class CAVIAR *);
-  ~Geometry ();
-  
-  bool read (class caviar::interpreter::Parser *);
-  void verify_settings ();
-  void calculate_acceleration ();
-public:  
-  unique::Time_function_3d *position_offset = nullptr;
-  unique::Time_function_3d *velocity_offset = nullptr;
-  std::vector<caviar::Shape *> shape;
-  bool shape_size_warning;
-  std::vector<double> radius;
-  double young_modulus, dissip_coef;
-};
+  /**
+   * This class creates a spring force-field for the shape geometries
+   *
+   */
+  class Geometry : public Force_field
+  {
+  public:
+    Geometry(class CAVIAR *);
+    ~Geometry();
 
-} //force_field
+    bool read(class caviar::interpreter::Parser *);
+    void verify_settings();
+    void calculate_acceleration();
+
+  public:
+    unique::Time_function_3d *position_offset = nullptr;
+    unique::Time_function_3d *velocity_offset = nullptr;
+    std::vector<caviar::Shape *> shape;
+    bool shape_size_warning;
+    std::vector<double> radius;
+    double young_modulus, dissip_coef;
+  };
+
+} // force_field
 
 CAVIAR_NAMESPACE_CLOSE
 

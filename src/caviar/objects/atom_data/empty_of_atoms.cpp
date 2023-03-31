@@ -23,56 +23,58 @@
 
 #include <algorithm>
 
-
 CAVIAR_NAMESPACE_OPEN
 
-
-
-bool Atom_data::empty_of_atoms(const Vector<Real_t> p, double radius) {
+bool Atom_data::empty_of_atoms(const Vector<Real_t> p, double radius)
+{
   double radius_sq = radius * radius;
-  for (unsigned int i = 0; i < owned.position.size(); ++i) {
+  for (unsigned int i = 0; i < owned.position.size(); ++i)
+  {
     auto dp = owned.position[i] - p;
-    auto dp_sq = dp*dp;
-    if (dp_sq < radius_sq) return false;
+    auto dp_sq = dp * dp;
+    if (dp_sq < radius_sq)
+      return false;
   }
   return true;
 }
 
-bool Atom_data::empty_of_atoms(const Vector<Real_t> , int) {
+bool Atom_data::empty_of_atoms(const Vector<Real_t>, int)
+{
 
-  error->all(FC_FILE_LINE_FUNC,"not implemented");
-/*
-  double radius_sq = radius * radius;
-  for (int i = 0; i < owned.position.size(); ++i) {
-    auto dp = owned.position[i] - p;
-    auto dp_sq = dp*dp;
-    if (dp_sq < radius_sq) return false;
-  }
-*/
+  error->all(FC_FILE_LINE_FUNC, "not implemented");
+  /*
+    double radius_sq = radius * radius;
+    for (int i = 0; i < owned.position.size(); ++i) {
+      auto dp = owned.position[i] - p;
+      auto dp_sq = dp*dp;
+      if (dp_sq < radius_sq) return false;
+    }
+  */
   return true;
-
 }
 
-bool Atom_data::empty_of_atoms(unique::Atom &a) {
-  auto rad_a = owned.radius[ a.type ];
-  for (unsigned int i = 0; i < owned.position.size(); ++i) {
+bool Atom_data::empty_of_atoms(unique::Atom &a)
+{
+  auto rad_a = owned.radius[a.type];
+  for (unsigned int i = 0; i < owned.position.size(); ++i)
+  {
     auto dp = owned.position[i] - a.pos_tot();
-    auto dp_sq = dp*dp;
-    auto rad_sum = owned.radius[ owned.type[i] ] + rad_a;
-    if (dp_sq < rad_sum*rad_sum) return false;
+    auto dp_sq = dp * dp;
+    auto rad_sum = owned.radius[owned.type[i]] + rad_a;
+    if (dp_sq < rad_sum * rad_sum)
+      return false;
   }
   return true;
 }
 
-bool Atom_data::empty_of_atoms(unique::Molecule &m) {
-  for (auto && a : m.atoms) {
-    if (!empty_of_atoms(a)) return false;
+bool Atom_data::empty_of_atoms(unique::Molecule &m)
+{
+  for (auto &&a : m.atoms)
+  {
+    if (!empty_of_atoms(a))
+      return false;
   }
   return true;
 }
-
-
 
 CAVIAR_NAMESPACE_CLOSE
-
-

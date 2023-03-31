@@ -19,13 +19,15 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace atom_data {
-// Proper Dihedral contain data for rigid atomic proper dihedral which may be used in
-// constraint algorithms or soft atomic proper dihedral in harmonic_proper_dihedral force_fields
-struct Proper_dihedral {
-  int index_1, index_2, index_3, index_4;  
-  int type; // used in soft atomic proper dihedral in force_fields
-};
+namespace atom_data
+{
+  // Proper Dihedral contain data for rigid atomic proper dihedral which may be used in
+  // constraint algorithms or soft atomic proper dihedral in harmonic_proper_dihedral force_fields
+  struct Proper_dihedral
+  {
+    int index_1, index_2, index_3, index_4;
+    int type; // used in soft atomic proper dihedral in force_fields
+  };
 }
 CAVIAR_NAMESPACE_CLOSE
 #endif

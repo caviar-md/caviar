@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Electrostatic,electrostatic,force_field::Electrostatic)
+FC_CHECK_AND_CREATE(Electrostatic, electrostatic, force_field::Electrostatic)
 #endif

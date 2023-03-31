@@ -21,41 +21,43 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace force_field {
+namespace force_field
+{
 
-/**
- * This class calculates LJ potential for the particles.
- * 
- */
-class Lj : public Force_field {
-public:
-  Lj (class CAVIAR *);
-  ~Lj () {};
-  
-  bool read (class caviar::interpreter::Parser *);
-  void verify_settings ();
-  void calculate_acceleration ();
-public:
-  bool input_by_array;
-  std::vector<std::vector<Real_t>> epsilon,sigma;
-  bool make_off_diagonal_vectors;
+  /**
+   * This class calculates LJ potential for the particles.
+   *
+   */
+  class Lj : public Force_field
+  {
+  public:
+    Lj(class CAVIAR *);
+    ~Lj(){};
 
-  bool input_by_atom;
-  // epsilon - sigma of a single type. inter-type values will be deduced using these
-  std::vector<Real_t> epsilon_atom, sigma_atom; 
+    bool read(class caviar::interpreter::Parser *);
+    void verify_settings();
+    void calculate_acceleration();
 
-  // some helper variables, used for debugging
-  bool jump_fix, monitor_jump;
-  double jump_tol;
+  public:
+    bool input_by_array;
+    std::vector<std::vector<Real_t>> epsilon, sigma;
+    bool make_off_diagonal_vectors;
 
-  bool wca; //Week-Chandler-Anderson (WCA) potential activated.
-  bool cutoff_list_activated;
-  std::vector<std::vector<Real_t>> cutoff_list; // list of cutoffs when it is needed.
-                                                // for example in WCA potentials
-  
-};
+    bool input_by_atom;
+    // epsilon - sigma of a single type. inter-type values will be deduced using these
+    std::vector<Real_t> epsilon_atom, sigma_atom;
 
-} //force_field
+    // some helper variables, used for debugging
+    bool jump_fix, monitor_jump;
+    double jump_tol;
+
+    bool wca; // Week-Chandler-Anderson (WCA) potential activated.
+    bool cutoff_list_activated;
+    std::vector<std::vector<Real_t>> cutoff_list; // list of cutoffs when it is needed.
+                                                  // for example in WCA potentials
+  };
+
+} // force_field
 
 CAVIAR_NAMESPACE_CLOSE
 

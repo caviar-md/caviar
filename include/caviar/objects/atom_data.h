@@ -22,19 +22,22 @@
 #include "caviar/objects/atom_data/utility/angle.h"
 #include "caviar/objects/atom_data/utility/proper_dihedral.h"
 
-
 CAVIAR_NAMESPACE_OPEN
 
-
-
 class Domain;
-namespace unique { 
-class Atom; class Atom_group; class Atom_list;
-class Molecule; class Molecule_group; class Molecule_list; 
-class Time_function_3d;
+namespace unique
+{
+  class Atom;
+  class Atom_group;
+  class Atom_list;
+  class Molecule;
+  class Molecule_group;
+  class Molecule_list;
+  class Time_function_3d;
 }
-namespace neighborlist {
-class Cell_list;
+namespace neighborlist
+{
+  class Cell_list;
 }
 
 /**
@@ -42,37 +45,36 @@ class Cell_list;
  * Atom_data contains all of the molecular and atomic data for a MD simulation.
  * It also handles data exchange between MPI domains.
  */
-class Atom_data : public Pointers {
+class Atom_data : public Pointers
+{
 public:
-  Atom_data (class CAVIAR *);
-  virtual ~Atom_data ();
-  virtual bool read (class caviar::interpreter::Parser *);
+  Atom_data(class CAVIAR *);
+  virtual ~Atom_data();
+  virtual bool read(class caviar::interpreter::Parser *);
 
   /**
    * It represents the position of the origin of non_inertia Cartesian reference frame by a time function.
    * It will be used in ???.
-  */
+   */
   // unique::Time_function_3d *position_offset = nullptr;
 
   /**
    * It represents the velocity of origin of the non_inertia Cartesian reference frame by a time function.
    * It will be used in calculation of Temperature and Kinetic energy.
-  */
+   */
   unique::Time_function_3d *velocity_offset = nullptr;
 
-  /**   
+  /**
    * check if a position is empty of any atom. Usage in fixing number of atoms
    * or molarity when one wants to create atoms.
    */
   virtual bool empty_of_atoms(const Vector<Real_t>, double radius);
 
-  
   /**
    * Import an xyz file contaning atoms positions and maybe velocities
    */
-  bool add_xyz_data_file (caviar::interpreter::Parser *parser);
-  
-  
+  bool add_xyz_data_file(caviar::interpreter::Parser *parser);
+
   /**
    * checks by atom_type
    */
@@ -83,72 +85,71 @@ public:
   /**
    *  position of the center of mass
    */
-  virtual Vector<Real_t> owned_position_cm ();
+  virtual Vector<Real_t> owned_position_cm();
 
   /**
    *  velocity of the center of mass
    */
-  virtual Vector<Real_t> owned_velocity_cm ();
+  virtual Vector<Real_t> owned_velocity_cm();
 
   /**
    *  angular momentum of the center of mass
    */
-  virtual Vector<double> owned_angular_momentum_cm ()
+  virtual Vector<double> owned_angular_momentum_cm()
   {
-      return owned_angular_momentum_cm (owned_position_cm ());
+    return owned_angular_momentum_cm(owned_position_cm());
   }
 
   /**
    *  angular momentum of the center of mass
    */
-  virtual Vector<double> owned_angular_momentum_cm (const Vector<double> &p_cm);
-    
-  
+  virtual Vector<double> owned_angular_momentum_cm(const Vector<double> &p_cm);
+
   /**
    *  inertia_tensor of the center of mass. The tensor type may be modified
    *  in the future.
    */
-  virtual std::vector<std::vector<double> > owned_inertia_tensor_cm ()
+  virtual std::vector<std::vector<double>> owned_inertia_tensor_cm()
   {
-      return owned_inertia_tensor_cm (owned_position_cm ());
+    return owned_inertia_tensor_cm(owned_position_cm());
   }
-  
+
   /**
    *  inertia_tensor of the center of mass. The tensor type may be modified
    *  in the future.
    */
-  virtual std::vector<std::vector<double> > owned_inertia_tensor_cm (const Vector<double> &p_cm);
+  virtual std::vector<std::vector<double>> owned_inertia_tensor_cm(const Vector<double> &p_cm);
 
   /**
    * Initial setting of number of atoms.
    */
-  virtual void set_num_total_atoms (GlobalID_t);
+  virtual void set_num_total_atoms(GlobalID_t);
 
   /**
    * Initial setting of number of atom types.
    */
-  virtual void set_num_atom_types (AtomType_t n) {num_atom_types = n;}
+  virtual void set_num_atom_types(AtomType_t n) { num_atom_types = n; }
 
   /**
    * total number of system degree of freedom. For simple atomic simulations,
-   * it returns '3*num_total_atoms'. For molecular simulations, 
+   * it returns '3*num_total_atoms'. For molecular simulations,
    * '3*num_total_atoms - atomic_bonds - atomic_angles' is returned.
    * It should be developed for special cases.
    */
-  virtual int degree_of_freedoms ();
+  virtual int degree_of_freedoms();
 
   /**
    * reserve the owned std::vector for a faster push_back assignment
    */
-  virtual void reserve_owned_vectors ();  
+  virtual void reserve_owned_vectors();
 
   /**
    * gets the data and add it to the owned if it should be owned.
    */
-  virtual bool add_atom (GlobalID_t, 
-                         AtomType_t,
-                         const Vector<Real_t> &,
-                         const Vector<Real_t> &vel = Vector<Real_t>{0.0,0.0,0.0});
+  virtual bool add_atom(GlobalID_t,
+                        AtomType_t,
+                        const Vector<Real_t> &,
+                        const Vector<Real_t> &vel = Vector<Real_t>{0.0, 0.0, 0.0});
 
   /**
    * add unique::Atom to the owned data
@@ -168,67 +169,67 @@ public:
    * merging two molecules by their molecule index
    */
   void merge_molecules(int molecule_index_1, int molecule_index_2);
-  
+
   /**
    * adds a new bond between existing atoms in the  atom_data and merge molecules if possible
    */
-  void add_atomic_bond(const atom_data::Bond& bond); 
-  
+  void add_atomic_bond(const atom_data::Bond &bond);
+
   /**
    * adds a new bond between existing atoms in the  atom_data and merge molecules if possible
    */
-  void add_atomic_angle(const atom_data::Angle& angle);
-  
+  void add_atomic_angle(const atom_data::Angle &angle);
+
   /**
    * adds a new bond between existing atoms in the  atom_data and merge molecules if possible
    */
-  void add_atomic_properdihedral(const atom_data::Proper_dihedral& proper_dihedral);
+  void add_atomic_properdihedral(const atom_data::Proper_dihedral &proper_dihedral);
 
   /**
    * remove atomic bond if it exist. Also remove atomic angles and proper dihedrals if the bond is used in them.
    */
-  void remove_atomic_bond(const atom_data::Bond& bond); 
-  
-  /**
-   * remove atomic angle if it exist
-   */
-  void remove_atomic_angle(const atom_data::Angle& angle);
-  
-  /**
-   * remove atomic angle if it exist
-   */
-  void remove_atomic_properdihedral(const atom_data::Proper_dihedral& proper_dihedral);
+  void remove_atomic_bond(const atom_data::Bond &bond);
 
-    /**
+  /**
+   * remove atomic angle if it exist
+   */
+  void remove_atomic_angle(const atom_data::Angle &angle);
+
+  /**
+   * remove atomic angle if it exist
+   */
+  void remove_atomic_properdihedral(const atom_data::Proper_dihedral &proper_dihedral);
+
+  /**
    * remove atomic bond if it exist. Also remove atomic angles and proper dihedrals if the bond is used in them.
    */
-  bool check_atomic_bond_exist(const atom_data::Bond& bond); 
-  
+  bool check_atomic_bond_exist(const atom_data::Bond &bond);
+
   /**
    * remove atomic angle if it exist
    */
-  bool check_atomic_angle_exist(const atom_data::Angle& angle);
-  
+  bool check_atomic_angle_exist(const atom_data::Angle &angle);
+
   /**
    * remove atomic angle if it exist
    */
-  bool check_atomic_properdihedral_exist(const atom_data::Proper_dihedral& proper_dihedral);
-  
+  bool check_atomic_properdihedral_exist(const atom_data::Proper_dihedral &proper_dihedral);
+
   /**
    * sets the mass of an atom type
    */
-  virtual bool add_masses (unsigned int, Real_t);  
+  virtual bool add_masses(unsigned int, Real_t);
 
   /**
    * sets the charge of an atom type
    */
-  virtual bool add_charges (unsigned int, Real_t);  
+  virtual bool add_charges(unsigned int, Real_t);
 
-  /**  
+  /**
    * does as it says.
    */
   virtual void remove_atom(const int index);
-  virtual void remove_atom(std::vector<int> index_list);   
+  virtual void remove_atom(std::vector<int> index_list);
 
   /**
    * calculates the instantaneous temperature of all of the owned atoms.
@@ -256,12 +257,12 @@ public:
   /**
    * find and exchange owned atoms between domain or do periodic exchange
    */
-  virtual bool exchange_owned ();
+  virtual bool exchange_owned();
 
-  /**  
+  /**
    * find and exchange ghost atoms between domains or do periodic ghost
    */
-  virtual void exchange_ghost ();
+  virtual void exchange_ghost();
 
   /**
    * does as it says
@@ -269,10 +270,9 @@ public:
   virtual bool position_inside_local_domain(const Vector<double> &pos);
 
   /**
-   * finds the global_id of an Atom that's going to be added.  
+   * finds the global_id of an Atom that's going to be added.
    */
-  virtual GlobalID_t get_global_id ();  
-
+  virtual GlobalID_t get_global_id();
 
   /**
    * used when there are different MPI domains and all of them should know all
@@ -297,38 +297,34 @@ public:
    * xyz file.
    */
   virtual void initialize_reading_xyz_frames(std::string input_file_name);
-  
-  
+
   /**
    * This function is called after reading an xyz file,
-   * 
-   * 
+   *
+   *
    */
   virtual void finalize_reading_xyz_frames();
-  
-  
+
   /**
    * used by 'read_next_xyz_frame'. It is initialized in 'initialize_reading_xyz_frames'
-   * 
+   *
    */
   std::ifstream ifs_xyz_postprocess;
-  
-  
+
   /**
    * This function reads the next frame of xyz file.
    * it only sets the frame into atom_data if the 'set_frame'
    * argument is true.
    */
   virtual int read_next_xyz_frame(bool set_frame, bool read_velocity);
-  
-  
-  
-  /**  
+
+  /**
    * Here we define an unnamed interpreter and make two of it. It can have a name
-   * but since it is used only once here, its name won't be of any use. Also 
+   * but since it is used only once here, its name won't be of any use. Also
    * a good name would be 'atom_data' which is used before!.
    */
-  struct {
+  struct
+  {
     /**
      * 'id' is a global and unique number assigned to an atom.
      */
@@ -354,9 +350,9 @@ public:
     /**
      * simply the inverse value of 'mass' of an atom defined by the type.
      * since mass inverse is used in acceleration calculations.
-     * 
+     *
      */
-    std::vector<Real_t> mass_inv; 
+    std::vector<Real_t> mass_inv;
 
     /**
      * 'charge' of an atom defined by the type.
@@ -372,12 +368,12 @@ public:
     /**
      * Different by atom_id. Can be changed in simulation (it is needed to be sent-recv. by MPI)
      */
-    std::vector<Real_t> charge_atom; 
+    std::vector<Real_t> charge_atom;
 
     /**
      * Different by atom_id. Can be changed in simulation (it is needed to be sent-recv. by MPI)
      */
-    std::vector<Real_t> mass_atom; 
+    std::vector<Real_t> mass_atom;
 
     /**
      * Atom kinematic properties in the current time-step.
@@ -387,12 +383,12 @@ public:
     /**
      * This vectors are used in some integrator schemes and constraint methods.
      * They can be defined in their related objects, but they may be needed in
-     * more than one objects at once (for example, constraint::M_shake and 
+     * more than one objects at once (for example, constraint::M_shake and
      * integrator::Leap_frog). This makes it the reason to define it here.
      * This function may be needed to have MPI_send-recv. process in these case.
      * look up to it.
      */
-    std::vector<Vector<Real_t>> position_old, velocity_old, acceleration_old; 
+    std::vector<Vector<Real_t>> position_old, velocity_old, acceleration_old;
 
     /**
      * this vector is meaningful when there's one domain. We can calculate MSD
@@ -400,48 +396,46 @@ public:
      */
     std::vector<Vector<int>> msd_domain_cross;
 
-
     /**
      * this vector contain a molecule index for all the atoms. if it's '-1' the
      * atom is not of any molecule. This matters in the MPI process. All of the
      * atoms of a molecule should be existed in one process.
      */
-    std::vector <int> molecule_index; //
-    
-    /**    
+    std::vector<int> molecule_index; //
+
+    /**
      * number of total molecules.
      */
     int num_molecules;
-    
-    /**    
+
+    /**
      * The first std::vector, is the molecule index. the inner data contain bonds.
      */
-    std::vector <std::vector<atom_data::Bond>> atomic_bond_vector;
+    std::vector<std::vector<atom_data::Bond>> atomic_bond_vector;
 
-    /**    
+    /**
      * Number of atomic bonds each atom have. It is used to limit
      * the bond creations.
      */
-    std::vector <int> atomic_bond_count;
-    
+    std::vector<int> atomic_bond_count;
+
     /**
      * The first index, meaning
      * the first std::vector, is the molecule index. the inner data contain angles.
      */
-    std::vector <std::vector<atom_data::Angle>> atomic_angle_vector; 
+    std::vector<std::vector<atom_data::Angle>> atomic_angle_vector;
 
+    std::vector<std::vector<atom_data::Proper_dihedral>> atomic_properdihedral_vector;
 
-    std::vector <std::vector<atom_data::Proper_dihedral>> atomic_properdihedral_vector;
-    
- 
-  }  
+  }
   /**
    * There are two types of this unnamed interpreter: owned and ghost. 'owned' atoms
    * are the one that matter in integrators in the domain. Ghost particles are
    * the particle near the domain boundaries which are not from the domain. Their
    * usage is for short-range force-field calculations.
    */
-  owned, ghost; 
+  owned,
+      ghost;
 
   /**
    * it turns the process of recording owned data in the releated std::vector
@@ -497,7 +491,7 @@ public:
    *  number of external degrees of freedom according to page 114 of
    *  Philippe H. Hunenberger, Adv. Polym. Sci. (2005) 173:105–149  ,
    *  'N_r = 0 in the presence of stochastic and frictional forces.
-   *  N_r = 3 under periodic boundary conditions, 
+   *  N_r = 3 under periodic boundary conditions,
    *  N_r = 6 under vacuum boundary conditions'
    */
   int n_r_df;
@@ -508,13 +502,12 @@ public:
   int get_n_r_df();
 
   /**
-    * stochastic and frictional forces presence. It affects n_r_df. 
-    * If it is not activated, the system is under vacuum boundary condition or
-    * periodic boundary condition.
-    * This will be checked if 'n_r_df' has not been set.
-    */
+   * stochastic and frictional forces presence. It affects n_r_df.
+   * If it is not activated, the system is under vacuum boundary condition or
+   * periodic boundary condition.
+   * This will be checked if 'n_r_df' has not been set.
+   */
   bool stochastic_force_present;
-
 
   /**
    * usage
@@ -527,10 +520,7 @@ public:
   class neighborlist::Cell_list *cell_list;
 
   FC_BASE_OBJECT_COMMON_TOOLS
-
 };
-
-
 
 CAVIAR_NAMESPACE_CLOSE
 

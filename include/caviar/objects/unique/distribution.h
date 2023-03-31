@@ -21,48 +21,47 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-
 class Shape;
 class Atom_data;
-namespace unique {
-class Molecule;
-class Molecule_group;
-class Atom;
-class Atom_group;
-class Grid_1D;
-class Random_1D;
+namespace unique
+{
+  class Molecule;
+  class Molecule_group;
+  class Atom;
+  class Atom_group;
+  class Grid_1D;
+  class Random_1D;
 
-/**
- * This class creates initial arrangement of the particles using user's inputs.
- * It can put the atoms and molecules inside shapes.
- */
-class Distribution : public Unique {
- public:
-  Distribution (class CAVIAR *);
-  ~Distribution () ;
-  bool read (caviar::interpreter::Parser *);    
-  void verify_settings ();
-  bool distribute_grid_3D();
-  bool distribute_random_3D(const int num, const double r);
+  /**
+   * This class creates initial arrangement of the particles using user's inputs.
+   * It can put the atoms and molecules inside shapes.
+   */
+  class Distribution : public Unique
+  {
+  public:
+    Distribution(class CAVIAR *);
+    ~Distribution();
+    bool read(caviar::interpreter::Parser *);
+    void verify_settings();
+    bool distribute_grid_3D();
+    bool distribute_random_3D(const int num, const double r);
 
-  bool check_radius;
-  
-  class Atom_data *atom_data;
-  class Shape *boundary_shape;
-  class Atom *atom;
-  class Atom_group *atom_group;
-  class Molecule *molecule;
-  class Molecule_group *molecule_group;
+    bool check_radius;
 
-  class Grid_1D *grid_1d_x, *grid_1d_y, *grid_1d_z;
-  class Random_1D *random_1d_x, *random_1d_y, *random_1d_z;
-  
-  std::vector<double> radius_vector;
+    class Atom_data *atom_data;
+    class Shape *boundary_shape;
+    class Atom *atom;
+    class Atom_group *atom_group;
+    class Molecule *molecule;
+    class Molecule_group *molecule_group;
 
-};
+    class Grid_1D *grid_1d_x, *grid_1d_y, *grid_1d_z;
+    class Random_1D *random_1d_x, *random_1d_y, *random_1d_z;
 
-} //unique
+    std::vector<double> radius_vector;
+  };
 
+} // unique
 
 CAVIAR_NAMESPACE_CLOSE
 

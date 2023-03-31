@@ -18,29 +18,24 @@
 #include "caviar/objects/atom_data.h"
 #include "caviar/utility/interpreter_io_headers.h"
 
-
 CAVIAR_NAMESPACE_OPEN
 
+namespace writer
+{
 
+  void Atom_data::dump_temperature(int64_t i)
+  {
+    dump_temperature(i, 0.0);
+  }
 
-namespace writer {
+  void Atom_data::dump_temperature(int64_t i, double t)
+  {
 
+    double k_e = atom_data->temperature();
 
-void Atom_data::dump_temperature (int64_t i) {
-  dump_temperature(i,0.0);
-}
+    ofs_temperature << i << " " << t << " " << k_e << std::endl;
+  }
 
-void Atom_data::dump_temperature (int64_t i, double t) {
-
-
-  double k_e = atom_data -> temperature();
-
-  ofs_temperature << i << " " << t << " " << k_e << std::endl;
-}
-
-
-} // writer 
- 
+} // writer
 
 CAVIAR_NAMESPACE_CLOSE
-

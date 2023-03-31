@@ -21,22 +21,23 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace atom_data {
+namespace atom_data
+{
 
-/**
- * This class has the basic class implementation for Atom_data
- * 
- * 
- */
-class Basic : public Atom_data {
-public:
-  Basic (class CAVIAR *);
+  /**
+   * This class has the basic class implementation for Atom_data
+   *
+   *
+   */
+  class Basic : public Atom_data
+  {
+  public:
+    Basic(class CAVIAR *);
 
-  ~Basic ( );
-  
-};
+    ~Basic();
+  };
 
-} //atom_data
+} // atom_data
 
 CAVIAR_NAMESPACE_CLOSE
 

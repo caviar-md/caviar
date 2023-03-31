@@ -26,17 +26,16 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace md_simulator {
-
-Basic::Basic (CAVIAR *fptr) : Md_simulator{fptr}
+namespace md_simulator
 {
-  FC_OBJECT_INITIALIZE_INFO
-}
 
-Basic::~Basic () {}
+  Basic::Basic(CAVIAR *fptr) : Md_simulator{fptr} {
+                                   FC_OBJECT_INITIALIZE_INFO}
 
+                               Basic::~Basic()
+  {
+  }
 
-} //md_simulator
+} // md_simulator
 
 CAVIAR_NAMESPACE_CLOSE
-

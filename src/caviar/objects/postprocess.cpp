@@ -18,21 +18,15 @@
 
 CAVIAR_NAMESPACE_OPEN
 
+Postprocess::Postprocess(CAVIAR *fptr) : Pointers{fptr} {
+                                             FC_OBJECT_INITIALIZE}
 
-
-Postprocess::Postprocess (CAVIAR *fptr) : Pointers{fptr} {
-  FC_OBJECT_INITIALIZE
+                                         Postprocess::~Postprocess()
+{
 }
 
-Postprocess::~Postprocess () {}
-
-void Postprocess::verify_settings () {
-  
+void Postprocess::verify_settings()
+{
 }
-
-
-
-
 
 CAVIAR_NAMESPACE_CLOSE
-

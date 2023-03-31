@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Atom_molarity,atom_molarity,constraint::Atom_molarity)
+FC_CHECK_AND_CREATE(Atom_molarity, atom_molarity, constraint::Atom_molarity)
 #endif

@@ -21,64 +21,65 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace constraint {
+namespace constraint
+{
 
-/**
- * This class has Nose-Hoover thermostat.
- * It is implemented according to
- * 'Berendsen and Nose-Hoover thermostats Victor Ruhle August 8, 2007'
- * 
- */
-class Nose_hoover : public Constraint {
- public:
-  Nose_hoover (class CAVIAR *);
-  ~Nose_hoover ( );
-  bool read (class caviar::interpreter::Parser *);
+    /**
+     * This class has Nose-Hoover thermostat.
+     * It is implemented according to
+     * 'Berendsen and Nose-Hoover thermostats Victor Ruhle August 8, 2007'
+     *
+     */
+    class Nose_hoover : public Constraint
+    {
+    public:
+        Nose_hoover(class CAVIAR *);
+        ~Nose_hoover();
+        bool read(class caviar::interpreter::Parser *);
 
-  void apply_on_acceleration (int64_t);
+        void apply_on_acceleration(int64_t);
 
-  void verify_settings();
+        void verify_settings();
 
-  /**
-   * This fictious mass determines the coupling between heat bath and the system.
-   * Used in type 1 .
-   */
-  double mass;
+        /**
+         * This fictious mass determines the coupling between heat bath and the system.
+         * Used in type 1 .
+         */
+        double mass;
 
-  /**
-   * effective relaxation time. Used in type 2 .
-   */
-  double tau;
+        /**
+         * effective relaxation time. Used in type 2 .
+         */
+        double tau;
 
-  /**
-   * additional degree of freedom related to the heat bath
-   */
-  double zeta, zeta_dot;
+        /**
+         * additional degree of freedom related to the heat bath
+         */
+        double zeta, zeta_dot;
 
-  /**
-   * timestep value
-   */
-  double dt;
+        /**
+         * timestep value
+         */
+        double dt;
 
-  bool settings_verified;  
+        bool settings_verified;
 
-  /**
-   * the type of thermostat implementation
-   */
-  int type;
+        /**
+         * the type of thermostat implementation
+         */
+        int type;
 
-  /**
-   * Boltzman constant. Used in type 1 .
-   */
-  double kb;
+        /**
+         * Boltzman constant. Used in type 1 .
+         */
+        double kb;
 
-  double temperature;
+        double temperature;
 
- public:
+    public:
+    };
 
-};
-
-} //constraint
+} // constraint
 
 CAVIAR_NAMESPACE_CLOSE
 

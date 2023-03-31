@@ -22,27 +22,29 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace force_field {
+namespace force_field
+{
 
-double Electrostatic::energy () {
-// /* // XXX scheme using potential formula.
-  const auto &pos = atom_data -> owned.position;    
-  double energy_r = 0 ;
-#ifdef CAVIAR_WITH_OPENMP  
-  #pragma omp parallel for reduction (+:energy_r)
+  double Electrostatic::energy()
+  {
+    // /* // XXX scheme using potential formula.
+    const auto &pos = atom_data->owned.position;
+    double energy_r = 0;
+#ifdef CAVIAR_WITH_OPENMP
+#pragma omp parallel for reduction(+ \
+                                   : energy_r)
 #endif
-  for (unsigned int j=0;j<pos.size();++j) {
-    const auto type_j = atom_data -> owned.type [j] ;  
-    const auto charge_j = atom_data -> owned.charge [ type_j ];
-//    energy_r += charge_j * potential(j); // 
-    energy_r += charge_j * potential(pos [j]); //
+    for (unsigned int j = 0; j < pos.size(); ++j)
+    {
+      const auto type_j = atom_data->owned.type[j];
+      const auto charge_j = atom_data->owned.charge[type_j];
+      //    energy_r += charge_j * potential(j); //
+      energy_r += charge_j * potential(pos[j]); //
+    }
+    return 0.5 * energy_r;
+    // */
   }
-  return 0.5 * energy_r ;
-// */
 
-}
-
-} //force_field
+} // force_field
 
 CAVIAR_NAMESPACE_CLOSE
-

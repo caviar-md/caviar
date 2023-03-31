@@ -18,21 +18,15 @@
 
 CAVIAR_NAMESPACE_OPEN
 
+Unique::Unique(CAVIAR *fptr) : Pointers{fptr} {
+                                   FC_OBJECT_INITIALIZE}
 
-
-Unique::Unique (CAVIAR *fptr) : Pointers{fptr} {
-  FC_OBJECT_INITIALIZE
+                               Unique::~Unique()
+{
 }
 
-Unique::~Unique () {}
-
-void Unique::verify_settings () {
-  
+void Unique::verify_settings()
+{
 }
-
-
-
-
 
 CAVIAR_NAMESPACE_CLOSE
-

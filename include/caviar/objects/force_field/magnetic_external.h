@@ -21,29 +21,29 @@
 
 CAVIAR_NAMESPACE_OPEN
 
+namespace force_field
+{
 
-namespace force_field {
+  /**
+   * This class calculates a very simple external magnetic force-field for the charged
+   *  particles with velocity as 'F = q V x B'
+   */
+  class Magnetic_external : public Force_field
+  {
+  public:
+    Magnetic_external(class CAVIAR *);
+    ~Magnetic_external(){};
 
-/**
- * This class calculates a very simple external magnetic force-field for the charged 
- *  particles with velocity as 'F = q V x B'
- */
-class Magnetic_external : public Force_field {
-public:
-  Magnetic_external (class CAVIAR *);
-  ~Magnetic_external () {};
-  
-  bool read (class caviar::interpreter::Parser *);
-  void verify_settings ();
-  void calculate_acceleration ();
-public:
+    bool read(class caviar::interpreter::Parser *);
+    void verify_settings();
+    void calculate_acceleration();
 
-  double amplitude;
-  Vector<double> direction;
- 
-};
+  public:
+    double amplitude;
+    Vector<double> direction;
+  };
 
-} //force_field
+} // force_field
 
 CAVIAR_NAMESPACE_CLOSE
 

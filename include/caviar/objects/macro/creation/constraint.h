@@ -14,14 +14,13 @@
 //
 //========================================================================
 
-
-
 #ifdef FC_OBJECT_CREATOR_FUNCTION_DEFINITON
-FC_OBJECT_CREATOR_DEFAULT_FUNCTION(constraint) {
+FC_OBJECT_CREATOR_DEFAULT_FUNCTION(constraint)
+{
 
   FC_GET_OBJECT_TYPE_AND_NAME
 
-  Constraint * p_sh = nullptr; 
+  Constraint *p_sh = nullptr;
 
 #include "caviar/objects/constraint/macro/all.h"
 

@@ -14,9 +14,8 @@
 //
 //========================================================================
 
-
 #ifdef FC_GENERAL_CLASSNAME_MACRO_ACTIVATED
-FC_GENERAL_CLASSNAME_MACRO(Postprocess,postprocess,Postprocess)
+FC_GENERAL_CLASSNAME_MACRO(Postprocess, postprocess, Postprocess)
 #endif
 
 #ifdef FC_COMPLETE_FORWARD_DECLERATION
@@ -26,5 +25,3 @@ class Postprocess;
 
 CAVIAR_NAMESPACE_CLOSE
 #endif
-
-

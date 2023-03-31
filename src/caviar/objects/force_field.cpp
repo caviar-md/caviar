@@ -19,45 +19,44 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-
-
-Force_field::Force_field (CAVIAR *fptr) : Pointers{fptr}, 
-  atom_data{nullptr}, domain{nullptr}, neighborlist{nullptr} {
+Force_field::Force_field(CAVIAR *fptr) : Pointers{fptr},
+                                         atom_data{nullptr}, domain{nullptr}, neighborlist{nullptr}
+{
   FC_OBJECT_INITIALIZE
 }
 
-void Force_field::verify_settings () {
-  
+void Force_field::verify_settings()
+{
 }
 
-double Force_field::energy() {
+double Force_field::energy()
+{
   error->all(FC_FILE_LINE_FUNC, "The energy calculation of this force_field is not implemented");
   return 0.0;
 }
 
-double Force_field::potential (const Vector<double> &) {
+double Force_field::potential(const Vector<double> &)
+{
   error->all(FC_FILE_LINE_FUNC, "The potential calculation of this force_field is not implemented");
   return 0.0;
 }
 
-double Force_field::potential (const int) {
+double Force_field::potential(const int)
+{
   error->all(FC_FILE_LINE_FUNC, "The potential calculation of this force_field is not implemented");
   return 0.0;
 }
 
-
-Vector<double> Force_field::field (const Vector<double> &) {
+Vector<double> Force_field::field(const Vector<double> &)
+{
   error->all(FC_FILE_LINE_FUNC, "The field calculation of this force_field is not implemented");
-  return Vector<double> {0,0,0};
+  return Vector<double>{0, 0, 0};
 }
 
-Vector<double> Force_field::field (const int) {
+Vector<double> Force_field::field(const int)
+{
   error->all(FC_FILE_LINE_FUNC, "The field calculation of this force_field is not implemented");
-  return Vector<double> {0,0,0};
+  return Vector<double>{0, 0, 0};
 }
-
-
-
 
 CAVIAR_NAMESPACE_CLOSE
-

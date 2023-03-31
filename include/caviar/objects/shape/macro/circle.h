@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Circle,circle,shape::Circle)
+FC_CHECK_AND_CREATE(Circle, circle, shape::Circle)
 #endif

@@ -19,38 +19,37 @@
 
 #include "caviar/objects/shape.h"
 
-
 CAVIAR_NAMESPACE_OPEN
 
-namespace shape {
+namespace shape
+{
 
-/**
- * This class has a spherical shape.
- * 
- * 
- */
-class Sphere : public Shape {
-public:
-  Sphere (class CAVIAR *) ;
-  ~Sphere ();
-  
-  bool read(class caviar::interpreter::Parser *);
+  /**
+   * This class has a spherical shape.
+   *
+   *
+   */
+  class Sphere : public Shape
+  {
+  public:
+    Sphere(class CAVIAR *);
+    ~Sphere();
 
-  double radius;
+    bool read(class caviar::interpreter::Parser *);
 
-  Vector<double> center;
+    double radius;
 
-  bool is_inside (const Vector<double> &v);
-  bool is_inside (const Vector<double> &, const double rad);   
-  bool in_contact (const Vector<double> &, const double rad, Vector<double> & contact_vector);
-   
-  bool make_basis_vectors();
+    Vector<double> center;
 
-};
+    bool is_inside(const Vector<double> &v);
+    bool is_inside(const Vector<double> &, const double rad);
+    bool in_contact(const Vector<double> &, const double rad, Vector<double> &contact_vector);
 
-} //shape 
+    bool make_basis_vectors();
+  };
+
+} // shape
 
 CAVIAR_NAMESPACE_CLOSE
 
 #endif
-

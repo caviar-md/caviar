@@ -21,25 +21,27 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace shape {
-namespace polyhedron {
+namespace shape
+{
+  namespace polyhedron
+  {
 
-struct Polyhedron;
-class Preprocess : public Pointers {
-public:
-  Preprocess (class CAVIAR *);
-  ~Preprocess ();
+    struct Polyhedron;
+    class Preprocess : public Pointers
+    {
+    public:
+      Preprocess(class CAVIAR *);
+      ~Preprocess();
 
-  /**
-   * checks neighborlist faces and sorts the vertices so that their normal vectors would be alighned when created.
-   */
-  void pre_correct_normals (shape::polyhedron::Polyhedron&); 
+      /**
+       * checks neighborlist faces and sorts the vertices so that their normal vectors would be alighned when created.
+       */
+      void pre_correct_normals(shape::polyhedron::Polyhedron &);
 
-  void merge_vertices (shape::polyhedron::Polyhedron&);
-  
-};
-} //polyhedron
-} //shape
+      void merge_vertices(shape::polyhedron::Polyhedron &);
+    };
+  } // polyhedron
+} // shape
 
 CAVIAR_NAMESPACE_CLOSE
 

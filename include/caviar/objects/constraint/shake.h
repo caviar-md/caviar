@@ -24,43 +24,48 @@
 CAVIAR_NAMESPACE_OPEN
 
 class Domain;
-namespace constraint {
+namespace constraint
+{
 
-/**
- * This class fixes atomic bonds using SHAKE method
- * 
- * 
- */
-class Shake : public Constraint {
- public:
-  Shake (class CAVIAR *);
-   ~Shake ( );
-  bool read (class caviar::interpreter::Parser *);
+  /**
+   * This class fixes atomic bonds using SHAKE method
+   *
+   *
+   */
+  class Shake : public Constraint
+  {
+  public:
+    Shake(class CAVIAR *);
+    ~Shake();
+    bool read(class caviar::interpreter::Parser *);
 
-  void apply_on_position (int64_t);
-  
-  void apply_on_velocity (int64_t);
+    void apply_on_position(int64_t);
 
-  void bond_fix ();
+    void apply_on_velocity(int64_t);
 
-  void verify_settings();
+    void bond_fix();
 
-  static inline int delta(int a,int b) {
-	  if(a==b)return 1;
-  	else return 0;
-  }
+    void verify_settings();
 
-  class Domain *domain;
+    static inline int delta(int a, int b)
+    {
+      if (a == b)
+        return 1;
+      else
+        return 0;
+    }
 
-  double dt;
-  double error_tolerance;
+    class Domain *domain;
 
-  bool initialized;
+    double dt;
+    double error_tolerance;
 
-  int shake_type;
-};
+    bool initialized;
 
-} //constraint
+    int shake_type;
+  };
+
+} // constraint
 
 CAVIAR_NAMESPACE_CLOSE
 

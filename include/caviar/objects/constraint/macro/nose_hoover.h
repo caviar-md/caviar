@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Nose_hoover,nose_hoover,constraint::Nose_hoover)
+FC_CHECK_AND_CREATE(Nose_hoover, nose_hoover, constraint::Nose_hoover)
 #endif

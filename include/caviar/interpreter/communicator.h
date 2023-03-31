@@ -20,31 +20,31 @@
 #include "caviar/utility/pointers.h"
 
 CAVIAR_NAMESPACE_OPEN
-namespace interpreter {
+namespace interpreter
+{
 
+  /**
+   * This class handles MPI process base communications.
+   *
+   */
+  class Communicator : public Pointers
+  {
+  public:
+    Communicator(CAVIAR *);
 
-/**
- * This class handles MPI process base communications.
- * 
- */
-class Communicator : public Pointers {
-public:
-  Communicator (CAVIAR *);
+    // broadcast a variable from the root process to others
+    void broadcast(bool &);
+    void broadcast(size_t &);
+    void broadcast(size_t &, char *);
+    void broadcast(std::string &);
 
-  // broadcast a variable from the root process to others
-  void broadcast (bool &);
-  void broadcast (size_t &);
-  void broadcast (size_t &, char *);
-  void broadcast (std::string &);
-
-#if defined (CAVIAR_WITH_MPI)
-  MPI_Datatype  mpi_fc_vector_type;
+#if defined(CAVIAR_WITH_MPI)
+    MPI_Datatype mpi_fc_vector_type;
 #endif
 
-  int me, nprocs;// MPI process rank and number of processes
-
-};
-} //interpreter
+    int me, nprocs; // MPI process rank and number of processes
+  };
+} // interpreter
 CAVIAR_NAMESPACE_CLOSE
 
 #endif

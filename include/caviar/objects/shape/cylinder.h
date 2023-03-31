@@ -21,35 +21,35 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace shape {
+namespace shape
+{
 
-/**
- * This class has a cylinder shape.
- * 
- * 
- */
-class Cylinder : public Shape {
-public:
-  Cylinder (class CAVIAR *) ;
-  ~Cylinder ();
+  /**
+   * This class has a cylinder shape.
+   *
+   *
+   */
+  class Cylinder : public Shape
+  {
+  public:
+    Cylinder(class CAVIAR *);
+    ~Cylinder();
 
-// there are different ways to define a circle: 3 points on it, centre and one point on it, centre and radius and normal,...
-  bool read(class caviar::interpreter::Parser *);
-  double radius;
-  double flatness_tol;
-  Vector<double> center;
-  Vector<double> normal;
-  bool on_the_plane (const Vector<double> &v);
-  bool is_inside (const Vector<double> &v);
-  bool is_inside (const Vector<double> &, const double rad);  
-  bool in_contact (const Vector<double> &, const double rad, Vector<double> & contact_vector);  
-  
-  bool make_basis_vectors();
+    // there are different ways to define a circle: 3 points on it, centre and one point on it, centre and radius and normal,...
+    bool read(class caviar::interpreter::Parser *);
+    double radius;
+    double flatness_tol;
+    Vector<double> center;
+    Vector<double> normal;
+    bool on_the_plane(const Vector<double> &v);
+    bool is_inside(const Vector<double> &v);
+    bool is_inside(const Vector<double> &, const double rad);
+    bool in_contact(const Vector<double> &, const double rad, Vector<double> &contact_vector);
 
+    bool make_basis_vectors();
+  };
 
-};
-
-} //shape
+} // shape
 
 CAVIAR_NAMESPACE_CLOSE
 

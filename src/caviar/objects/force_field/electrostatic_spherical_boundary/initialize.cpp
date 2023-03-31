@@ -24,80 +24,86 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace force_field {
+namespace force_field
+{
 
-void Electrostatic_spherical_boundary::initialize () {
+  void Electrostatic_spherical_boundary::initialize()
+  {
 
-    auto &pos = atom_data -> owned.position;  
+    auto &pos = atom_data->owned.position;
     auto pos_size = pos.size();
 
-    if (uncharged_particles_optimization) {
+    if (uncharged_particles_optimization)
+    {
       int num_of_charged = 0;
-      for (unsigned int i = 0; i < pos_size; ++i) {
-        auto type_i = atom_data -> owned.type[i];
-        auto charge_i = atom_data -> owned.charge[type_i];
-        if (charge_i != 0.0) ++num_of_charged;
+      for (unsigned int i = 0; i < pos_size; ++i)
+      {
+        auto type_i = atom_data->owned.type[i];
+        auto charge_i = atom_data->owned.charge[type_i];
+        if (charge_i != 0.0)
+          ++num_of_charged;
       }
 
-      image.position.resize(num_of_charged, Vector<double> {0,0,0});
+      image.position.resize(num_of_charged, Vector<double>{0, 0, 0});
       image.charge.resize(num_of_charged, 0);
-
-    } else {
-      if (image.position.size() < pos_size) {
-        image.position.resize(pos_size, Vector<double> {0,0,0});
+    }
+    else
+    {
+      if (image.position.size() < pos_size)
+      {
+        image.position.resize(pos_size, Vector<double>{0, 0, 0});
         image.charge.resize(pos_size, 0);
       }
-
     }
 
+    calculate_image_charges();
+  }
 
- 
-  calculate_image_charges();
-}
+  //==================================================
+  //==================================================
+  //==================================================
 
-//==================================================
-//==================================================
-//==================================================
+  void Electrostatic_spherical_boundary::calculate_image_charges()
+  {
 
-void Electrostatic_spherical_boundary::calculate_image_charges() {
+    const auto &pos = atom_data->owned.position;
+    const auto rad_sq = radius * radius;
+#ifdef CAVIAR_WITH_OPENMP
+#pragma omp parallel for
+#endif
+    for (unsigned int i = 0; i < pos.size(); ++i)
+    {
+      auto type_i = atom_data->owned.type[i];
+      double charge_i = atom_data->owned.charge[type_i];
 
-  const auto &pos = atom_data -> owned.position;  
-  const auto rad_sq = radius*radius;
-#ifdef CAVIAR_WITH_OPENMP  
-  #pragma omp parallel for
-#endif         
-  for (unsigned int i = 0; i < pos.size(); ++i) {
-    auto type_i = atom_data -> owned.type[i];
-    double charge_i = atom_data -> owned.charge[type_i];
+      if (uncharged_particles_optimization)
+        if (charge_i == 0.0)
+          continue;
 
+      const auto p_rel = pos[i] - center;
+      const auto p_sq = p_rel * p_rel;
+      const auto p_sq_inv = 1.0 / p_sq;
 
-    if (uncharged_particles_optimization)
-      if (charge_i == 0.0) continue; 
+      if (p_sq == 0)
+        continue;
+      if (p_sq > rad_sq)
+      {
+        error->all(FC_FILE_LINE_FUNC, "particle outside sphere is not implemented yet.");
+      }
+      else if (p_sq == rad_sq)
+      {
+        error->all(FC_FILE_LINE_FUNC, "particle is on the shell.");
+      }
+      else
+      {
 
+        image.charge[i] = -charge_i * radius * std::sqrt(p_sq_inv);
 
-    const auto p_rel =  pos[i]-center;
-    const auto p_sq = p_rel*p_rel;
-    const auto p_sq_inv = 1.0/p_sq;
-
-    if (p_sq==0) continue;
-    if (p_sq>rad_sq) {
-      error->all (FC_FILE_LINE_FUNC, "particle outside sphere is not implemented yet.");
-    } else if (p_sq == rad_sq) {
-      error->all (FC_FILE_LINE_FUNC, "particle is on the shell.");
-    } else {
-
-      image.charge[i] = - charge_i * radius * std::sqrt(p_sq_inv);
-
-      image.position[i] = (p_rel * radius * radius * p_sq_inv) + center;
-       
+        image.position[i] = (p_rel * radius * radius * p_sq_inv) + center;
+      }
     }
   }
 
-}
-
-
-
-} //force_field
+} // force_field
 
 CAVIAR_NAMESPACE_CLOSE
-

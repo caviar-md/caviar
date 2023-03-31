@@ -21,22 +21,23 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace shape {
-namespace polyhedron {
-struct Polyhedron;
-class Input : public Pointers {
-public:
-  Input (class CAVIAR *);
-  ~Input ();
+namespace shape
+{
+  namespace polyhedron
+  {
+    struct Polyhedron;
+    class Input : public Pointers
+    {
+    public:
+      Input(class CAVIAR *);
+      ~Input();
 
-  void read_unv (shape::polyhedron::Polyhedron&, const std::string &);   
-  void read_vtk (shape::polyhedron::Polyhedron&, const std::string &); 
-  void read_stl (shape::polyhedron::Polyhedron&, const std::string &); 
-
-
-};
-} //polyhedron
-} //shape
+      void read_unv(shape::polyhedron::Polyhedron &, const std::string &);
+      void read_vtk(shape::polyhedron::Polyhedron &, const std::string &);
+      void read_stl(shape::polyhedron::Polyhedron &, const std::string &);
+    };
+  } // polyhedron
+} // shape
 
 CAVIAR_NAMESPACE_CLOSE
 

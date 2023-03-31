@@ -21,12 +21,10 @@
 #include <iostream>
 #include <limits>
 
-namespace mesh_modifier {
+namespace mesh_modifier
+{
 
-
-  Mesh_modifier::Mesh_modifier () : unv_container() { }
-  Mesh_modifier::~Mesh_modifier () { }
+  Mesh_modifier::Mesh_modifier() : unv_container() {}
+  Mesh_modifier::~Mesh_modifier() {}
 
 }
-
-

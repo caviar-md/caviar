@@ -21,33 +21,34 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace domain {
+namespace domain
+{
 
-/**
- * This class emulates a 3D box for a simulation domain
- * 
- * 
- */
-class Box : public Domain {
-public:
-  Box (class CAVIAR *);
-  bool read (class caviar::interpreter::Parser *);
-  void calculate_local_domain ();
-  void generate ();  
+  /**
+   * This class emulates a 3D box for a simulation domain
+   *
+   *
+   */
+  class Box : public Domain
+  {
+  public:
+    Box(class CAVIAR *);
+    bool read(class caviar::interpreter::Parser *);
+    void calculate_local_domain();
+    void generate();
 
-  double fix_distance_x(double d);
-  double fix_distance_y(double d);
-  double fix_distance_z(double d);
+    double fix_distance_x(double d);
+    double fix_distance_y(double d);
+    double fix_distance_z(double d);
 
-  caviar::Vector<double> fix_distance(caviar::Vector<double> v); 
+    caviar::Vector<double> fix_distance(caviar::Vector<double> v);
 
-  Vector <Real_t> half_edge;
+    Vector<Real_t> half_edge;
 
-public:
-  
-};
+  public:
+  };
 
-} //domain
+} // domain
 
 CAVIAR_NAMESPACE_CLOSE
 

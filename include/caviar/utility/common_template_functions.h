@@ -33,15 +33,16 @@ CAVIAR_NAMESPACE_OPEN
  * Object names won't be compared by this function, so they are case sensitive.
  */
 template <typename T1, typename T2>
-bool string_cmp(const T1 a, const T2 b) {
+bool string_cmp(const T1 a, const T2 b)
+{
 #ifdef CAVIAR_SCRIPT_COMMAND_CASE_INSENSITIVE
   T1 a_lowercase = a;
   T1 b_lowercase = b;
-  std::transform(a_lowercase.begin(), a_lowercase.end(), a_lowercase.begin(), ::tolower);  
-  std::transform(b_lowercase.begin(), b_lowercase.end(), b_lowercase.begin(), ::tolower);  
+  std::transform(a_lowercase.begin(), a_lowercase.end(), a_lowercase.begin(), ::tolower);
+  std::transform(b_lowercase.begin(), b_lowercase.end(), b_lowercase.begin(), ::tolower);
   return (a_lowercase == b_lowercase);
 #else
-  return (a==b);
+  return (a == b);
 #endif
 }
 
@@ -49,11 +50,12 @@ bool string_cmp(const T1 a, const T2 b) {
  * default case insensitive string compare template function
  */
 template <typename T1, typename T2>
-bool string_cmp_i(const T1 a, const T2 b) {
+bool string_cmp_i(const T1 a, const T2 b)
+{
   T1 a_lowercase = a;
   T1 b_lowercase = b;
-  std::transform(a_lowercase.begin(), a_lowercase.end(), a_lowercase.begin(), ::tolower);  
-  std::transform(b_lowercase.begin(), b_lowercase.end(), b_lowercase.begin(), ::tolower);  
+  std::transform(a_lowercase.begin(), a_lowercase.end(), a_lowercase.begin(), ::tolower);
+  std::transform(b_lowercase.begin(), b_lowercase.end(), b_lowercase.begin(), ::tolower);
   return (a_lowercase == b_lowercase);
 }
 
@@ -61,7 +63,8 @@ bool string_cmp_i(const T1 a, const T2 b) {
  * minimum function (returns in compile time if possible)
  */
 template <typename T>
-constexpr T min (T a, T b) {
+constexpr T min(T a, T b)
+{
   return a < b ? a : b;
 }
 
@@ -69,7 +72,8 @@ constexpr T min (T a, T b) {
  * maximum function (returns in compile time if possible)
  */
 template <typename T>
-constexpr T max (T a, T b) {
+constexpr T max(T a, T b)
+{
   return a > b ? a : b;
 }
 
@@ -77,8 +81,9 @@ constexpr T max (T a, T b) {
  * integer power function (returns in compile time if possible)
  */
 template <typename T>
-constexpr T ipow (T num, unsigned pow) {
-  return pow ? num*ipow(num, pow-1) : 1;
+constexpr T ipow(T num, unsigned pow)
+{
+  return pow ? num * ipow(num, pow - 1) : 1;
 }
 
 /**
@@ -86,41 +91,47 @@ constexpr T ipow (T num, unsigned pow) {
  *  type 'std::vector < std::vector < typename > >' . It
  */
 template <typename T>
-int matrix_inverse(std::vector<std::vector<T>>&A, std::vector<std::vector<T>>&A_inv) {
+int matrix_inverse(std::vector<std::vector<T>> &A, std::vector<std::vector<T>> &A_inv)
+{
 
   const auto A_size = A.size();
-  for (auto &&i : A) {
+  for (auto &&i : A)
+  {
     if (i.size() != A_size)
       return 3;
   }
 
-  switch (A_size) {
+  switch (A_size)
+  {
 
-  case(2) : {
-    T det=(A[0][0]*A[1][1]) - (A[0][1]*A[1][0]);
+  case (2):
+  {
+    T det = (A[0][0] * A[1][1]) - (A[0][1] * A[1][0]);
 
-    if (det==static_cast<T>(0)) {
+    if (det == static_cast<T>(0))
+    {
       return 1;
     }
 
     T det_inv = 1.0 / det;
 
-    A_inv[0][0] =  A[1][1] * det_inv;
+    A_inv[0][0] = A[1][1] * det_inv;
     A_inv[0][1] = -A[0][1] * det_inv;
     A_inv[1][0] = -A[1][0] * det_inv;
-    A_inv[1][1] =  A[0][0] * det_inv;
+    A_inv[1][1] = A[0][0] * det_inv;
     return 0;
   }
 
-  case(3) : {
-    T det=(A[0][0] * (A[1][1] * A[2][2] - A[2][1] * A[1][2])) - 
-  	    (A[0][1] * (A[1][0] * A[2][2] - A[1][2] * A[2][0])) + 
-	      (A[0][2] * (A[1][0] * A[2][1] - A[1][1] * A[2][0]));//+0.00001;
+  case (3):
+  {
+    T det = (A[0][0] * (A[1][1] * A[2][2] - A[2][1] * A[1][2])) -
+            (A[0][1] * (A[1][0] * A[2][2] - A[1][2] * A[2][0])) +
+            (A[0][2] * (A[1][0] * A[2][1] - A[1][1] * A[2][0])); //+0.00001;
 
-    if (det==static_cast<T>(0)) {
+    if (det == static_cast<T>(0))
+    {
       return 1;
     }
-
 
     double det_inv = 1.0 / det;
 
@@ -136,38 +147,38 @@ int matrix_inverse(std::vector<std::vector<T>>&A, std::vector<std::vector<T>>&A_
     return 0;
   }
 
-//  case(4) : {  }
+    //  case(4) : {  }
 
-
-  default: {
+  default:
+  {
     return 2;
   }
-
   }
 }
-
 
 /**
  *  Product of Matrix on a Vector which results in a vector
  *  type 'std::vector < std::vector < typename > >' . It
  */
 template <typename T>
-int matrix_Vector_product (const std::vector<std::vector<T>>&A, const Vector<T>&V, Vector<T>&R ) {
+int matrix_Vector_product(const std::vector<std::vector<T>> &A, const Vector<T> &V, Vector<T> &R)
+{
 
   const auto A_size = A.size();
-  if (A_size != 3) return 3;
-  for (auto &&i : A) {
+  if (A_size != 3)
+    return 3;
+  for (auto &&i : A)
+  {
     if (i.size() != A_size)
       return 3;
   }
-  
+
   R.x = A[0][0] * V.x + A[0][1] * V.y + A[0][2] * V.z;
   R.y = A[1][0] * V.x + A[1][1] * V.y + A[1][2] * V.z;
   R.z = A[2][0] * V.x + A[2][1] * V.y + A[2][2] * V.z;
-  
+
   return 0;
 }
-
 
 CAVIAR_NAMESPACE_CLOSE
 

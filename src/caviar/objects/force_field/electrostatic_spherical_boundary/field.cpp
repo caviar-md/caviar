@@ -22,81 +22,84 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace force_field {
+namespace force_field
+{
 
-Vector<double> Electrostatic_spherical_boundary::field (const Vector<double> &r) {
+  Vector<double> Electrostatic_spherical_boundary::field(const Vector<double> &r)
+  {
 
-  initialize();
+    initialize();
 
-  Vector<double> field_sum {0,0,0};
-  //const auto &pos = atom_data -> owned.position;  
+    Vector<double> field_sum{0, 0, 0};
+    // const auto &pos = atom_data -> owned.position;
 
-  // particle-particle interaction part.
-  /* 
-  for (unsigned int j=0;j<pos.size();++j) {
-    const auto type_j = atom_data -> owned.type [j] ;
-    const auto charge_j = atom_data -> owned.charge [ type_j ];      
-    const auto dr = r - pos[j]; 
-    const auto dr_sq = dr*dr;
-    if (dr_sq == 0.0) continue;
-    const auto dr_norm = std::sqrt(dr_sq);      
-    field_sum += charge_j * dr / (dr_sq*dr_norm);
-  }
-  */
+    // particle-particle interaction part.
+    /*
+    for (unsigned int j=0;j<pos.size();++j) {
+      const auto type_j = atom_data -> owned.type [j] ;
+      const auto charge_j = atom_data -> owned.charge [ type_j ];
+      const auto dr = r - pos[j];
+      const auto dr_sq = dr*dr;
+      if (dr_sq == 0.0) continue;
+      const auto dr_norm = std::sqrt(dr_sq);
+      field_sum += charge_j * dr / (dr_sq*dr_norm);
+    }
+    */
 
-  // image-particle interaction .
-#ifdef CAVIAR_WITH_OPENMP  
-  #pragma omp parallel for reduction (+:field_sum)
-#endif         
-  for (unsigned int j=0;j<image.position.size();++j) {
-    const auto charge_j = image.charge [j];      
-    const auto dr = r - image.position[j]; 
-    const auto dr_sq = dr*dr;
-    const auto dr_norm = std::sqrt(dr_sq);      
-    field_sum += charge_j * dr / (dr_sq*dr_norm);
-  }
+    // image-particle interaction .
+#ifdef CAVIAR_WITH_OPENMP
+#pragma omp parallel for reduction(+ \
+                                   : field_sum)
+#endif
+    for (unsigned int j = 0; j < image.position.size(); ++j)
+    {
+      const auto charge_j = image.charge[j];
+      const auto dr = r - image.position[j];
+      const auto dr_sq = dr * dr;
+      const auto dr_norm = std::sqrt(dr_sq);
+      field_sum += charge_j * dr / (dr_sq * dr_norm);
+    }
 
-  return field_sum  * k_electrostatic ;
-}
-
-
-Vector<double> Electrostatic_spherical_boundary::field (const int i) {
-  initialize();
-
-  Vector<double> field_sum {0,0,0};
-  const auto &pos = atom_data -> owned.position;  
-
-  // particle-particle interaction part.
-  /* 
-  for (unsigned int j=0;j<pos.size();++j) {
-    if (i==static_cast<int>(j)) continue;
-    const auto type_j = atom_data -> owned.type [j] ;
-    const auto charge_j = atom_data -> owned.charge [ type_j ];      
-    const auto dr = pos[i] - pos[j]; 
-    const auto dr_sq = dr*dr;
-    const auto dr_norm = std::sqrt(dr_sq);      
-    field_sum += charge_j * dr / (dr_sq*dr_norm);
-  }
-  */
-
-  // image-particle interaction part.
-#ifdef CAVIAR_WITH_OPENMP  
-  #pragma omp parallel for reduction (+:field_sum)
-#endif         
-  for (unsigned int j=0;j<image.position.size();++j) {
-    const auto charge_j = image.charge [j];      
-    const auto dr = pos[i] - image.position[j]; 
-    const auto dr_sq = dr*dr;
-    const auto dr_norm = std::sqrt(dr_sq);      
-    field_sum += charge_j * dr / (dr_sq*dr_norm);
+    return field_sum * k_electrostatic;
   }
 
-  return field_sum * k_electrostatic ;
-}
+  Vector<double> Electrostatic_spherical_boundary::field(const int i)
+  {
+    initialize();
 
+    Vector<double> field_sum{0, 0, 0};
+    const auto &pos = atom_data->owned.position;
 
+    // particle-particle interaction part.
+    /*
+    for (unsigned int j=0;j<pos.size();++j) {
+      if (i==static_cast<int>(j)) continue;
+      const auto type_j = atom_data -> owned.type [j] ;
+      const auto charge_j = atom_data -> owned.charge [ type_j ];
+      const auto dr = pos[i] - pos[j];
+      const auto dr_sq = dr*dr;
+      const auto dr_norm = std::sqrt(dr_sq);
+      field_sum += charge_j * dr / (dr_sq*dr_norm);
+    }
+    */
 
-} //force_field
+    // image-particle interaction part.
+#ifdef CAVIAR_WITH_OPENMP
+#pragma omp parallel for reduction(+ \
+                                   : field_sum)
+#endif
+    for (unsigned int j = 0; j < image.position.size(); ++j)
+    {
+      const auto charge_j = image.charge[j];
+      const auto dr = pos[i] - image.position[j];
+      const auto dr_sq = dr * dr;
+      const auto dr_norm = std::sqrt(dr_sq);
+      field_sum += charge_j * dr / (dr_sq * dr_norm);
+    }
+
+    return field_sum * k_electrostatic;
+  }
+
+} // force_field
 
 CAVIAR_NAMESPACE_CLOSE
-

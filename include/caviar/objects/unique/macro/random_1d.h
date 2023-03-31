@@ -15,6 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Random_1D,random_1d,unique::Random_1D)
+FC_CHECK_AND_CREATE(Random_1D, random_1d, unique::Random_1D)
 #endif
-

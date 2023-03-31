@@ -17,18 +17,22 @@
 #include "caviar/interpreter/object_handler/gdst.h"
 
 CAVIAR_NAMESPACE_OPEN
-namespace interpreter {
-namespace object_handler {
+namespace interpreter
+{
+  namespace object_handler
+  {
 
-int gdst (const std::string & t) { //get_dictionary_second_type 
-  for (int i = 0; i <  static_cast<int>(object_handler::dictionary_second_type.size()); ++i) {
-    if (dictionary_second_type[i]==t) return i;
-  }
-  return 0;
-}
+    int gdst(const std::string &t)
+    { // get_dictionary_second_type
+      for (int i = 0; i < static_cast<int>(object_handler::dictionary_second_type.size()); ++i)
+      {
+        if (dictionary_second_type[i] == t)
+          return i;
+      }
+      return 0;
+    }
 
-} //object_handler
-} //interpreter
+  } // object_handler
+} // interpreter
 
 CAVIAR_NAMESPACE_CLOSE
-

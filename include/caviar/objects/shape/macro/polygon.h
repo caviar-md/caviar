@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Polygon,polygon,shape::Polygon)
+FC_CHECK_AND_CREATE(Polygon, polygon, shape::Polygon)
 #endif

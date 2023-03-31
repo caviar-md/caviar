@@ -20,26 +20,27 @@
 #include "caviar/utility/caviar_config.h"
 #include <string>
 #include <vector>
-//#include <map>
+// #include <map>
 
 CAVIAR_NAMESPACE_OPEN
-namespace interpreter {
-namespace object_handler {
+namespace interpreter
+{
+  namespace object_handler
+  {
 
+    /**
+     * This is a object to search and get a object index by means of its name.
+     *
+     *
+     */
+    int gdst(const std::string &); // get_dictionary_second_type
+    // const static std::map<std::string,int> dictionary_second_type;
 
-/**
- * This is a object to search and get a object index by means of its name.
- * 
- * 
- */
-int gdst(const std::string &);//get_dictionary_second_type
-//const static std::map<std::string,int> dictionary_second_type;
+    const std::vector<std::string> dictionary_second_type = {
+        "wrong_type",
 
-const std::vector<std::string> dictionary_second_type = {
-  "wrong_type",
-
-#define FC_GENERAL_CLASSNAME_MACRO(VAR1,VAR2,VAR3) \
-  #VAR2 , 
+#define FC_GENERAL_CLASSNAME_MACRO(VAR1, VAR2, VAR3) \
+#VAR2,
 
 #define FC_GENERAL_CLASSNAME_MACRO_ACTIVATED
 
@@ -48,18 +49,17 @@ const std::vector<std::string> dictionary_second_type = {
 #undef FC_GENERAL_CLASSNAME_MACRO_ACTIVATED
 #undef FC_GENERAL_CLASSNAME_MACRO
 
-#define FC_BASIC_TYPES_MACRO(VAR1)\
-  #VAR1 ,
+#define FC_BASIC_TYPES_MACRO(VAR1) \
+#VAR1,
 
 #define FC_BASIC_TYPES_MACRO_ACTIVATED
 #include "caviar/interpreter/object_handler/all_basic_types_macro.h"
 #undef FC_BASIC_TYPES_MACRO_ACTIVATED
 #undef FC_BASIC_TYPES_MACRO
-};
+    };
 
-}
-} //interpreter
+  }
+} // interpreter
 CAVIAR_NAMESPACE_CLOSE
 
 #endif
- 

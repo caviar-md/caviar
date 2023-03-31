@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Electrostatic_short_range,electrostatic_short_range,force_field::Electrostatic_short_range)
+FC_CHECK_AND_CREATE(Electrostatic_short_range, electrostatic_short_range, force_field::Electrostatic_short_range)
 #endif

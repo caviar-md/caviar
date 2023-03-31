@@ -20,27 +20,28 @@
 #include "caviar/utility/caviar_config.h"
 
 CAVIAR_NAMESPACE_OPEN
-namespace interpreter {
-namespace object_handler {
+namespace interpreter
+{
+  namespace object_handler
+  {
 
-/**
- * This class is a simple structure relating object types and index.
- * 
- * 
- */
-class Dictionary {
-  public:
-  Dictionary () { };
-  Dictionary (int t, int i) : type(t), index(i){ };
-  ~Dictionary () {};
-  int type; 
-  int index; 
+    /**
+     * This class is a simple structure relating object types and index.
+     *
+     *
+     */
+    class Dictionary
+    {
+    public:
+      Dictionary(){};
+      Dictionary(int t, int i) : type(t), index(i){};
+      ~Dictionary(){};
+      int type;
+      int index;
+    };
 
-};
-
-} // object_handler
-} //interpreter
+  } // object_handler
+} // interpreter
 CAVIAR_NAMESPACE_CLOSE
 
 #endif
- 

@@ -15,7 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Grid_1D,grid_1d,unique::Grid_1D)
+FC_CHECK_AND_CREATE(Grid_1D, grid_1d, unique::Grid_1D)
 #endif
-
-

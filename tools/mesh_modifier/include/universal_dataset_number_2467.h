@@ -19,44 +19,45 @@
 
 #include <vector>
 
-namespace mesh_modifier {
+namespace mesh_modifier
+{
 
-struct Universal_dataset_number_2467 {
-/*
-Record 1:        FORMAT(8I10)
-                 Field 1       -- group number
-                 Field 2       -- active constraint set no. for group
-                 Field 3       -- active restraint set no. for group
-                 Field 4       -- active load set no. for group
-                 Field 5       -- active dof set no. for group
-                 Field 6       -- active temperature set no. for group
-                 Field 7       -- active contact set no. for group
-                 Field 8       -- number of entities in group
+    struct Universal_dataset_number_2467
+    {
+        /*
+        Record 1:        FORMAT(8I10)
+                         Field 1       -- group number
+                         Field 2       -- active constraint set no. for group
+                         Field 3       -- active restraint set no. for group
+                         Field 4       -- active load set no. for group
+                         Field 5       -- active dof set no. for group
+                         Field 6       -- active temperature set no. for group
+                         Field 7       -- active contact set no. for group
+                         Field 8       -- number of entities in group
 
-Record 2:        FORMAT(20A2)
-                 Field 1       -- group name
+        Record 2:        FORMAT(20A2)
+                         Field 1       -- group name
 
-Record 3-N:      FORMAT(8I10)
-                 Field 1       -- entity type code
-                 Field 2       -- entity tag
-                 Field 3       -- entity node leaf id.
-                 Field 4       -- entity component/ ham id.
-                 Field 5       -- entity type code
-                 Field 6       -- entity tag
-                 Field 7       -- entity node leaf id.
-                 Field 8       -- entity component/ ham id.
+        Record 3-N:      FORMAT(8I10)
+                         Field 1       -- entity type code
+                         Field 2       -- entity tag
+                         Field 3       -- entity node leaf id.
+                         Field 4       -- entity component/ ham id.
+                         Field 5       -- entity type code
+                         Field 6       -- entity tag
+                         Field 7       -- entity node leaf id.
+                         Field 8       -- entity component/ ham id.
 
-Repeat record 3 for all entities as defined by record 1, field 8.
-Records 1 thru n are repeated for each group in the model.
-Entity node leaf id. and the component/ ham id. are zero for all
-entities except "reference point", "reference point series"
-and "coordinate system".
-*/
- std::vector<unsigned int> record1;
- unsigned int record2;
- std::vector<unsigned int> record3;
-};
-
+        Repeat record 3 for all entities as defined by record 1, field 8.
+        Records 1 thru n are repeated for each group in the model.
+        Entity node leaf id. and the component/ ham id. are zero for all
+        entities except "reference point", "reference point series"
+        and "coordinate system".
+        */
+        std::vector<unsigned int> record1;
+        unsigned int record2;
+        std::vector<unsigned int> record3;
+    };
 
 }
 
@@ -102,7 +103,7 @@ and "coordinate system".
           33                displacement on edge (restraint)
           34                displacement on surface (restraint)
           35                temperature on point (restraint)
-          36                temperature on edge (restraint) 
+          36                temperature on edge (restraint)
           37                temperature on face (restraint)
           38                temperature on point (temperature)
           39                temperature on edge (temperature)
@@ -148,4 +149,3 @@ PERMANENT GROUP1
         14        22         0         0
     -1
 */
-

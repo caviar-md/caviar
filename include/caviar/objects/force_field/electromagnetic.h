@@ -21,29 +21,30 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace force_field {
+namespace force_field
+{
 
-/**
- * This class a very simple EM force-field.
- * 
- * 
- */
-class Electromagnetic : public Force_field {
-public:
-  Electromagnetic (class CAVIAR *);
-  ~Electromagnetic () {};
-  
-  bool read (class caviar::interpreter::Parser *);
-  void verify_settings ();
-  void calculate_acceleration ();
-public:
+  /**
+   * This class a very simple EM force-field.
+   *
+   *
+   */
+  class Electromagnetic : public Force_field
+  {
+  public:
+    Electromagnetic(class CAVIAR *);
+    ~Electromagnetic(){};
 
-  double amplitude_E, amplitude_B;
-  Vector<double> direction_E, direction_B;
- 
-};
+    bool read(class caviar::interpreter::Parser *);
+    void verify_settings();
+    void calculate_acceleration();
 
-} //force_field
+  public:
+    double amplitude_E, amplitude_B;
+    Vector<double> direction_E, direction_B;
+  };
+
+} // force_field
 
 CAVIAR_NAMESPACE_CLOSE
 

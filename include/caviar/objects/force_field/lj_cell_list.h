@@ -21,25 +21,28 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace force_field {
+namespace force_field
+{
 
-/**
- * This class calculates LJ potential for the particles. It specially designed
- * for a Cell-list objects.
- */
-class Lj_cell_list : public Force_field {
-public:
-  Lj_cell_list (class CAVIAR *);
-  ~Lj_cell_list () {};
-  
-  bool read (class caviar::interpreter::Parser *);
-  void verify_settings ();
-  void calculate_acceleration ();
-public:
-  std::vector<std::vector<Real_t>> epsilon,sigma;  
-};
+  /**
+   * This class calculates LJ potential for the particles. It specially designed
+   * for a Cell-list objects.
+   */
+  class Lj_cell_list : public Force_field
+  {
+  public:
+    Lj_cell_list(class CAVIAR *);
+    ~Lj_cell_list(){};
 
-} //force_field
+    bool read(class caviar::interpreter::Parser *);
+    void verify_settings();
+    void calculate_acceleration();
+
+  public:
+    std::vector<std::vector<Real_t>> epsilon, sigma;
+  };
+
+} // force_field
 
 CAVIAR_NAMESPACE_CLOSE
 

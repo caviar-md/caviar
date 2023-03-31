@@ -30,44 +30,46 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace force_field {
-
-namespace plt_dealii_mpi {
-
-// for ewald in dealii_poisson_mpi:
-// if We want to change from Cell List to Verlet List, we have to implement a new
-// function for DealII, similar to what it does in 'interpolate_boundary_condition'
-
-double BoundaryValues::potential_of_free_charges (const dealii::Point<3> &p) const
+namespace force_field
 {
+
+  namespace plt_dealii_mpi
+  {
+
+    // for ewald in dealii_poisson_mpi:
+    // if We want to change from Cell List to Verlet List, we have to implement a new
+    // function for DealII, similar to what it does in 'interpolate_boundary_condition'
+
+    double BoundaryValues::potential_of_free_charges(const dealii::Point<3> &p) const
+    {
 
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
 
-  const Vector<double> r = {p[0], p[1], p[2]};
+      const Vector<double> r = {p[0], p[1], p[2]};
 
-  double potential = 0.0;
+      double potential = 0.0;
 
-  for (auto &&f : deal_force -> force_field_custom)
-    potential += f->potential (r);
+      for (auto &&f : deal_force->force_field_custom)
+        potential += f->potential(r);
 
-  return potential;
+      return potential;
 #else
-  return 0.0;
+      return 0.0;
 #endif
-}
+    }
 
-double BoundaryValues::value (const Point<3> &p, const unsigned int ) const
-{
+    double BoundaryValues::value(const Point<3> &p, const unsigned int) const
+    {
 
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
-  return total_potential - potential_of_free_charges (p);
+      return total_potential - potential_of_free_charges(p);
 #else
-  return 0.0;
+      return 0.0;
 #endif
-}
+    }
 
-} // plt_dealii
-} //force_field
+  } // plt_dealii
+} // force_field
 
 CAVIAR_NAMESPACE_CLOSE
 #endif

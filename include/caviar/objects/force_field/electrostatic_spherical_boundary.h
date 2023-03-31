@@ -21,66 +21,68 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace force_field {
+namespace force_field
+{
 
-/**
- * This class have electrostatic for charged particles in the spherical metalic
- * boundary. It has been used as a test for PLT method
- */
-class Electrostatic_spherical_boundary : public Force_field {
-public:
-  Electrostatic_spherical_boundary (class CAVIAR *);
-  ~Electrostatic_spherical_boundary () {};
-  double potential (const Vector<double> &);
-  double potential (const int);
+  /**
+   * This class have electrostatic for charged particles in the spherical metalic
+   * boundary. It has been used as a test for PLT method
+   */
+  class Electrostatic_spherical_boundary : public Force_field
+  {
+  public:
+    Electrostatic_spherical_boundary(class CAVIAR *);
+    ~Electrostatic_spherical_boundary(){};
+    double potential(const Vector<double> &);
+    double potential(const int);
 
-  Vector<double> field (const Vector<double> &);
-  Vector<double> field (const int);
+    Vector<double> field(const Vector<double> &);
+    Vector<double> field(const int);
 
-  double energy();
+    double energy();
 
-  bool read (class caviar::interpreter::Parser *);
-  void verify_settings ();
-  void calculate_acceleration ();
+    bool read(class caviar::interpreter::Parser *);
+    void verify_settings();
+    void calculate_acceleration();
 
-  void calculate_image_charges();
-  void initialize ();
-  
-  double potential_of_charge (const Vector<double> &, unsigned int i);
-  double potential_of_image (const Vector<double> &, unsigned int i);
-  
-  double potential_of_charges (const Vector<double> &);// tot. potential at a point  due to charge only
-  double potential_of_charges (unsigned int i);          // tot. potential at a point  due to charge only
-  
-  Vector<double> field_of_charge (const Vector<double> &, unsigned int i);
-  Vector<double> field_of_image (const Vector<double> &, unsigned int i);
-   
-  Vector<double> field_of_charges (const Vector<double> &); // tot. field at a point due to real charges
-  Vector<double> field_of_charges (unsigned int i); // tot. field on a charge from others
+    void calculate_image_charges();
+    void initialize();
 
-public:
-  bool calculated_once;
-  double k_electrostatic;
-  Vector<double> external_field;
+    double potential_of_charge(const Vector<double> &, unsigned int i);
+    double potential_of_image(const Vector<double> &, unsigned int i);
 
-  double radius;         // radius of the spherical boundary
-  Vector<double> center; // center of the spherical boundary
-  double voltage;        // voltage on the spherical boundary 
+    double potential_of_charges(const Vector<double> &); // tot. potential at a point  due to charge only
+    double potential_of_charges(unsigned int i);         // tot. potential at a point  due to charge only
 
-  // this will optimise in the case of the existence of uncharged particles 
-  // but it will cost one-to-one particle-image correspondance.
-  bool uncharged_particles_optimization;
+    Vector<double> field_of_charge(const Vector<double> &, unsigned int i);
+    Vector<double> field_of_image(const Vector<double> &, unsigned int i);
 
-  struct {
-    std::vector<Real_t> charge; // note that the charge can be different for
-                                // each of images. So the charge in this struct
-                                // is different from Atom_data's owned charge. 
-    std::vector<Vector<Real_t>> position;
-  } image;
- 
-};
+    Vector<double> field_of_charges(const Vector<double> &); // tot. field at a point due to real charges
+    Vector<double> field_of_charges(unsigned int i);         // tot. field on a charge from others
 
-} //force_field
+  public:
+    bool calculated_once;
+    double k_electrostatic;
+    Vector<double> external_field;
+
+    double radius;         // radius of the spherical boundary
+    Vector<double> center; // center of the spherical boundary
+    double voltage;        // voltage on the spherical boundary
+
+    // this will optimise in the case of the existence of uncharged particles
+    // but it will cost one-to-one particle-image correspondance.
+    bool uncharged_particles_optimization;
+
+    struct
+    {
+      std::vector<Real_t> charge; // note that the charge can be different for
+                                  // each of images. So the charge in this struct
+                                  // is different from Atom_data's owned charge.
+      std::vector<Vector<Real_t>> position;
+    } image;
+  };
+
+} // force_field
 
 CAVIAR_NAMESPACE_CLOSE
 

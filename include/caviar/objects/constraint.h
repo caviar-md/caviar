@@ -24,7 +24,8 @@ CAVIAR_NAMESPACE_OPEN
 class Integrator;
 class Atom_data;
 
-enum class Constraint_t {
+enum class Constraint_t
+{
   Atom_molarity,
   Atoms_molarity,
   Berendsen,
@@ -43,35 +44,32 @@ enum class Constraint_t {
  * different parts of the virtual functions to be called at the desired moments
  * see the md_simulator objects to understant the time of call.
  */
-class Constraint : public Pointers {
- public:
-  Constraint (class CAVIAR *);
-  virtual ~Constraint ( );
-  virtual bool read (class caviar::interpreter::Parser *) = 0;
+class Constraint : public Pointers
+{
+public:
+  Constraint(class CAVIAR *);
+  virtual ~Constraint();
+  virtual bool read(class caviar::interpreter::Parser *) = 0;
 
   // it will be applied at the start of each time step
-  virtual void apply (int64_t); 
-  
-  // it should be used after calculating new position to fix it before using it for acceleration calculation
-  virtual void apply_on_position (int64_t); // shake, m-shake, rattle
-  
-  // it should be used after calculating velocity to fix it
-  virtual void apply_on_velocity (int64_t); // shake, m-shake, rattle, nve,
-  
-  // it should be used after calculating acceleration to fix it
-  virtual void apply_on_acceleration (int64_t); //Nose_hoover
-  
-  
-  class Atom_data *atom_data;
-  
-  Constraint_t constraint_type;
-  
- public:
+  virtual void apply(int64_t);
 
+  // it should be used after calculating new position to fix it before using it for acceleration calculation
+  virtual void apply_on_position(int64_t); // shake, m-shake, rattle
+
+  // it should be used after calculating velocity to fix it
+  virtual void apply_on_velocity(int64_t); // shake, m-shake, rattle, nve,
+
+  // it should be used after calculating acceleration to fix it
+  virtual void apply_on_acceleration(int64_t); // Nose_hoover
+
+  class Atom_data *atom_data;
+
+  Constraint_t constraint_type;
+
+public:
   FC_BASE_OBJECT_COMMON_TOOLS
 };
-
-
 
 CAVIAR_NAMESPACE_CLOSE
 

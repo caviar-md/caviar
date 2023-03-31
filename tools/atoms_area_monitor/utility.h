@@ -19,30 +19,32 @@
 #include <fstream>
 #include <sstream>
 
-inline bool file_exists_0 (const std::string& name) 
+inline bool file_exists_0(const std::string &name)
 {
     std::ifstream f(name.c_str());
     return f.good();
 }
 
-inline bool file_exists_1 (const std::string& name) 
+inline bool file_exists_1(const std::string &name)
 {
-    if (FILE *file = fopen(name.c_str(), "r")) {
+    if (FILE *file = fopen(name.c_str(), "r"))
+    {
         fclose(file);
         return true;
-    } else {
+    }
+    else
+    {
         return false;
-    }   
+    }
 }
 
-inline bool file_exists_2 (const std::string& name) 
+inline bool file_exists_2(const std::string &name)
 {
-    return ( access( name.c_str(), F_OK ) != -1 );
+    return (access(name.c_str(), F_OK) != -1);
 }
 
-inline bool file_exists_3 (const std::string& name) // best performance
+inline bool file_exists_3(const std::string &name) // best performance
 {
-  struct stat buffer;   
-  return (stat (name.c_str(), &buffer) == 0); 
+    struct stat buffer;
+    return (stat(name.c_str(), &buffer) == 0);
 }
-

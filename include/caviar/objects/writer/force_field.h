@@ -21,31 +21,32 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace writer {
+namespace writer
+{
 
-/**
- * This class has a writer for force-field
- * 
- * 
- */
-class Force_field : public Writer {
- public:
-  Force_field (class CAVIAR *);
-  ~Force_field ( );
-  bool read (class caviar::interpreter::Parser *);
-  void initialize();
-  void write();
-  void write(int64_t); // current time_step
-  void write(double); // current time
-  void write(int64_t, double); //time_step and time
-  void start_new_files(); //add_time_to_previous
-  void start_new_files(std::string &); //add_time_to_previous
+    /**
+     * This class has a writer for force-field
+     *
+     *
+     */
+    class Force_field : public Writer
+    {
+    public:
+        Force_field(class CAVIAR *);
+        ~Force_field();
+        bool read(class caviar::interpreter::Parser *);
+        void initialize();
+        void write();
+        void write(int64_t);                 // current time_step
+        void write(double);                  // current time
+        void write(int64_t, double);         // time_step and time
+        void start_new_files();              // add_time_to_previous
+        void start_new_files(std::string &); // add_time_to_previous
 
- public:
+    public:
+    };
 
-};
-
-} //writer
+} // writer
 
 CAVIAR_NAMESPACE_CLOSE
 

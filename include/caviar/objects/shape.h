@@ -19,45 +19,41 @@
 
 #include "caviar/utility/objects_common_headers.h"
 
-
 CAVIAR_NAMESPACE_OPEN
 
-
-
-inline void normalize (Vector<Real_t> & v) {
-  v /= std::sqrt(v*v);
+inline void normalize(Vector<Real_t> &v)
+{
+  v /= std::sqrt(v * v);
 }
 
 /**
  * This class is the base class for all the shapes.
- * 
- * 
+ *
+ *
  */
-class Shape : public Pointers {
- public:
-
+class Shape : public Pointers
+{
+public:
   /**
    * Constructor.
    */
-  Shape (class CAVIAR *);
+  Shape(class CAVIAR *);
 
   /**
    * Destructor.
    */
   virtual ~Shape();
 
-  virtual bool read(class caviar::interpreter::Parser *)=0;
-  virtual bool is_inside (const Vector<double> &)=0;
-  virtual bool is_outside (const Vector<double> &);
-  virtual bool is_inside (const Vector<double> &, const double rad)=0;
-  virtual bool is_outside (const Vector<double> &, const double rad);
-  virtual bool in_contact (const Vector<double> &, const double rad, Vector<double> & contact_vector)=0;
+  virtual bool read(class caviar::interpreter::Parser *) = 0;
+  virtual bool is_inside(const Vector<double> &) = 0;
+  virtual bool is_outside(const Vector<double> &);
+  virtual bool is_inside(const Vector<double> &, const double rad) = 0;
+  virtual bool is_outside(const Vector<double> &, const double rad);
+  virtual bool in_contact(const Vector<double> &, const double rad, Vector<double> &contact_vector) = 0;
 
   FC_BASE_OBJECT_COMMON_TOOLS
 };
 
-
 CAVIAR_NAMESPACE_CLOSE
 
 #endif
- 

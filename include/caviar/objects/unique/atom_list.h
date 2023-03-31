@@ -22,28 +22,27 @@
 
 CAVIAR_NAMESPACE_OPEN
 
+namespace unique
+{
 
-namespace unique {
+  /**
+   * This class creates list of atoms.
+   * list contains references of the atoms.
+   */
+  class Atom_list : public Unique
+  {
+  public:
+    Atom_list(class CAVIAR *);
+    Atom_list(const Atom_list &);
+    Atom_list();
+    ~Atom_list();
+    bool read(caviar::interpreter::Parser *);
+    void verify_settings();
+    void add_atom(const unique::Atom &);
+    std::vector<unique::Atom *> atoms;
+  };
 
-/**
- * This class creates list of atoms.
- * list contains references of the atoms.
- */
-class Atom_list  : public Unique {
- public:
-  Atom_list (class CAVIAR *);    
-  Atom_list (const Atom_list &);
-  Atom_list ();
-  ~Atom_list () ;
-  bool read (caviar::interpreter::Parser *);
-  void verify_settings ();
-  void add_atom(const unique::Atom &);
-  std::vector<unique::Atom *> atoms;
-
-};
-
-} //unique
-
+} // unique
 
 CAVIAR_NAMESPACE_CLOSE
 

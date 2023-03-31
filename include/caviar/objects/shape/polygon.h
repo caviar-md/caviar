@@ -21,45 +21,45 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-namespace shape {
+namespace shape
+{
 
-/**
- * This class has a polygon shape.
- * 
- * 
- */
-class Polygon : public Shape {
-public:
-  Polygon (class CAVIAR *) ;
-  ~Polygon ();  
-  
-  bool read(class caviar::interpreter::Parser *);
-  //bool read (caviar::interpreter::Parser *, class Object_container *);  
+  /**
+   * This class has a polygon shape.
+   *
+   *
+   */
+  class Polygon : public Shape
+  {
+  public:
+    Polygon(class CAVIAR *);
+    ~Polygon();
 
-  bool is_inside (const Vector<double> &v);
-  bool is_inside (const Vector<double> &, const double rad);  
-  bool in_contact (const Vector<double> &, const double rad, Vector<double> & contact_vector);
-  
-  std::vector<Vector<Real_t>> p_3D; // vertex points of the shape in 3D space
-  Vector<Real_t> n_vector, u_vector, v_vector; //  basis vectors of the plane: normal and (u,v)
-  std::vector<Real_t> u_list, v_list; // array containing u and v coordinates of the vertices in the plane
-  Real_t mat_inv[3][3]; // inverse of the transformation matrix;
+    bool read(class caviar::interpreter::Parser *);
+    // bool read (caviar::interpreter::Parser *, class Object_container *);
 
-  double flatness_tol;
-  
+    bool is_inside(const Vector<double> &v);
+    bool is_inside(const Vector<double> &, const double rad);
+    bool in_contact(const Vector<double> &, const double rad, Vector<double> &contact_vector);
 
-  void make_basis_vectors() ;
-  void make_uv_vectors() ; 
-  void make_transform_matrix();
-  void uv_to_xyz (Real_t u_i, Real_t v_i, Vector<Real_t> &p_i);
-  void xyz_to_uv (const Vector<Real_t> &p_i, Real_t &u_i, Real_t &v_i) ;
-  bool is_inside (double u_i, double v_i); // using Jordan curve theorem,
-      // checks whether the point is inside the curve or not;
-      // it has a bug when (v_list[i] == v_list[j]);
+    std::vector<Vector<Real_t>> p_3D;            // vertex points of the shape in 3D space
+    Vector<Real_t> n_vector, u_vector, v_vector; //  basis vectors of the plane: normal and (u,v)
+    std::vector<Real_t> u_list, v_list;          // array containing u and v coordinates of the vertices in the plane
+    Real_t mat_inv[3][3];                        // inverse of the transformation matrix;
 
-};
+    double flatness_tol;
 
-} //shape
+    void make_basis_vectors();
+    void make_uv_vectors();
+    void make_transform_matrix();
+    void uv_to_xyz(Real_t u_i, Real_t v_i, Vector<Real_t> &p_i);
+    void xyz_to_uv(const Vector<Real_t> &p_i, Real_t &u_i, Real_t &v_i);
+    bool is_inside(double u_i, double v_i); // using Jordan curve theorem,
+                                            // checks whether the point is inside the curve or not;
+                                            // it has a bug when (v_list[i] == v_list[j]);
+  };
+
+} // shape
 
 CAVIAR_NAMESPACE_CLOSE
 

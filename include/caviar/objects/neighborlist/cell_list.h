@@ -22,38 +22,41 @@
 CAVIAR_NAMESPACE_OPEN
 
 class Domain;
-namespace neighborlist {
-
-/**
- * A cell list with an internal verlet list.
- * to this point, the
- * cell list usage is in the potential calculation of electrostatic_ewald_r force_field
- * on the finite_element mesh boundaries, 
- */
-class Cell_list : public Neighborlist {
- public:
-  Cell_list (class CAVIAR *);
-  bool read (class caviar::interpreter::Parser *);
-  void init ();
-  bool rebuild_neighlist ();
-  void build_neighlist ();
-  void build_binlist ();
-  Vector<int> binlist_index (const Vector<double> &);
-  int neigh_bin_index (const Vector<double> &);
- public:
-  void make_neigh_bin ();
-  class Domain *domain;
-  bool domain_set;
+namespace neighborlist
+{
 
   /**
-   * if 'true' one can use this class as a 'verlet_list'.
+   * A cell list with an internal verlet list.
+   * to this point, the
+   * cell list usage is in the potential calculation of electrostatic_ewald_r force_field
+   * on the finite_element mesh boundaries,
    */
-  bool make_neighlist; 
+  class Cell_list : public Neighborlist
+  {
+  public:
+    Cell_list(class CAVIAR *);
+    bool read(class caviar::interpreter::Parser *);
+    void init();
+    bool rebuild_neighlist();
+    void build_neighlist();
+    void build_binlist();
+    Vector<int> binlist_index(const Vector<double> &);
+    int neigh_bin_index(const Vector<double> &);
 
-  double cutoff_neighlist;
-};
+  public:
+    void make_neigh_bin();
+    class Domain *domain;
+    bool domain_set;
 
-} //neighborlist
+    /**
+     * if 'true' one can use this class as a 'verlet_list'.
+     */
+    bool make_neighlist;
+
+    double cutoff_neighlist;
+  };
+
+} // neighborlist
 
 CAVIAR_NAMESPACE_CLOSE
 

@@ -19,5 +19,4 @@
 #include "caviar/interpreter/error.h"
 #include "caviar/interpreter/output.h"
 #include "caviar/interpreter/object_handler/all.h" // accessing object finding functions
-#include "caviar/interpreter/object_container.h" 
-
+#include "caviar/interpreter/object_container.h"

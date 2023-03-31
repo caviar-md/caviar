@@ -19,26 +19,22 @@
 
 #include "caviar/utility/objects_common_headers.h"
 
-
 CAVIAR_NAMESPACE_OPEN
-
-
 
 /**
  * This class is the base class for all the unique objects.
  * These type of objects does not need a base class, but in order to have them
  * organized, we create them as the child of this class.
  */
-class Unique : public Pointers {
- public:
-  Unique (class CAVIAR *);
-   virtual ~Unique ( );
-  virtual bool read (class caviar::interpreter::Parser *) = 0;
+class Unique : public Pointers
+{
+public:
+  Unique(class CAVIAR *);
+  virtual ~Unique();
+  virtual bool read(class caviar::interpreter::Parser *) = 0;
 
   FC_BASE_OBJECT_COMMON_TOOLS
 };
-
-
 
 CAVIAR_NAMESPACE_CLOSE
 
