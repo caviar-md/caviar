@@ -17,7 +17,7 @@
 #include "caviar/objects/shape/polygon.h"
 #include "caviar/utility/interpreter_io_headers.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace shape {
   
@@ -152,6 +152,6 @@ bool Polygon::in_contact(const Vector<double> &v, const double r, Vector<double>
 
 } //shape
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 

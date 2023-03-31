@@ -17,7 +17,7 @@
 #include "caviar/objects/force_field.h"
 #include "caviar/interpreter/error.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 
 
@@ -59,5 +59,5 @@ Vector<double> Force_field::field (const int) {
 
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

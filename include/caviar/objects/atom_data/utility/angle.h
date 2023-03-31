@@ -17,7 +17,7 @@
 #ifndef CAVIAR_OBJECTS_ATOMDATA_UTILITY_ANGLE_H
 #define CAVIAR_OBJECTS_ATOMDATA_UTILITY_ANGLE_H
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace atom_data {
 // Angle contain data for rigid atomic angles which may be used in
@@ -28,6 +28,5 @@ struct Angle {
   double value; // angle value stored in radians. // TODO this can be stored by type in Atom_data
 };
 }
-}
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 #endif

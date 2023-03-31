@@ -26,7 +26,7 @@
 
 //#define DEBUG_ME
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 // used in order to remove 'if' or 'elseif' from the line and get the condition
 /*
@@ -128,5 +128,5 @@ bool Input::read_command (Parser * parser) {
 }
 } //interpreter
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

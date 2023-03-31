@@ -19,7 +19,7 @@
 #include "caviar/objects/shape/polyhedron/preprocess.h"
 #include "caviar/utility/interpreter_io_headers.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace shape {
 namespace polyhedron {
@@ -237,5 +237,5 @@ void Format_vtk_reader::write_polydata_vtk4 (shape::polyhedron::Polyhedron &p_ob
 } //polyhedron
 } //shape
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

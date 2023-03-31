@@ -19,7 +19,7 @@
 #include "caviar/objects/shape/polyhedron/preprocess.h"
 #include "caviar/utility/interpreter_io_headers.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace shape {
 namespace polyhedron {
@@ -217,5 +217,5 @@ void Format_stl_reader::read_polyhedron (shape::polyhedron::Polyhedron &p_object
 } //polyhedron
 } //shape
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

@@ -20,7 +20,7 @@
 
 #include <string>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 
 bool Atom_data::add_xyz_data_file (caviar::interpreter::Parser *parser) {
@@ -144,5 +144,5 @@ bool Atom_data::add_xyz_data_file (caviar::interpreter::Parser *parser) {
 
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

@@ -21,7 +21,7 @@
 
 
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 
 namespace writer {
@@ -209,5 +209,5 @@ void Atom_data::dump_povray (int64_t ) {
 } //writer
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

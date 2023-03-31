@@ -16,7 +16,7 @@
 
 #include "caviar/interpreter/object_handler/dictionary.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 namespace object_handler {
 
@@ -24,4 +24,4 @@ namespace object_handler {
 
 } // object_handler
 } //interpreter
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE

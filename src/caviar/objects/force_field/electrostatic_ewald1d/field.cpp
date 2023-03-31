@@ -21,7 +21,7 @@
 
 #include <cmath>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace force_field {
 
@@ -213,5 +213,5 @@ Vector<double> Electrostatic_ewald1d::field_k (const int i) {
 
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

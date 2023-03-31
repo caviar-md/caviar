@@ -23,7 +23,7 @@
 #include "caviar/objects/atom_data/utility/proper_dihedral.h"
 
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 
 
@@ -532,6 +532,6 @@ public:
 
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

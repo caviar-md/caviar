@@ -22,7 +22,7 @@
 #include "caviar/utility/interpreter_io_headers.h"
 #include <string>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace constraint {
 
@@ -208,6 +208,6 @@ void M_shake::apply_on_velocity (int64_t) { // step III
 
 } //constraint
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 

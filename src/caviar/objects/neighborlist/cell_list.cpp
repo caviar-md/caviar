@@ -21,7 +21,7 @@
 
 #include <cmath>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace neighborlist {
 inline int int_floor(double x) 
@@ -218,5 +218,5 @@ void Cell_list::make_neigh_bin () {
 
 } //neighborlist
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

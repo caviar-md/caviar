@@ -23,7 +23,7 @@
 
 //#define ABS(x) (x<0 ? -x : x)
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace constraint {
 
@@ -175,5 +175,5 @@ void Shake::apply_on_velocity (int64_t) {
 
 } //constraint
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

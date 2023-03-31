@@ -37,7 +37,7 @@
 #include <deal.II/lac/sparse_matrix.h>
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 class Atom_data;
 namespace unique
@@ -239,11 +239,11 @@ public:
 } //plt_dealii
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #else
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace force_field {
 
@@ -258,7 +258,7 @@ public:
 };
 } //finite_element
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif
 #endif

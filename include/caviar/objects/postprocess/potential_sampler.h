@@ -21,7 +21,7 @@
 #include "caviar/utility/vector.h"
 #include <vector>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 
 class Atom_data;
@@ -86,6 +86,6 @@ class Potential_sampler  : public Postprocess {
 } //postproces
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

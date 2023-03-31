@@ -20,11 +20,11 @@ FC_GENERAL_CLASSNAME_MACRO(Constraint,constraint,Constraint)
 #endif
 
 #ifdef FC_COMPLETE_FORWARD_DECLERATION
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 class Constraint;
-}
-} // namespace caviar
+
+CAVIAR_NAMESPACE_CLOSE
 #endif
 
 

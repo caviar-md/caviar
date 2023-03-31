@@ -19,7 +19,7 @@
 
 #include "caviar/objects/unique.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 
 class Shape;
@@ -64,6 +64,6 @@ class Distribution : public Unique {
 } //unique
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

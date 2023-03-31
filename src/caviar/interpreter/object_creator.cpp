@@ -17,12 +17,12 @@
 #include "caviar/interpreter/object_creator.h"
 #include "caviar/interpreter/object_creator/commands_map.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 Object_creator::Object_creator (CAVIAR *fptr) : Pointers{fptr} { }
   
 Object_creator::~Object_creator () { }
 } //interpreter
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 

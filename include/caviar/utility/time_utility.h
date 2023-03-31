@@ -14,7 +14,7 @@
 //
 //========================================================================
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
   
 double get_wall_time();  
 

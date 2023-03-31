@@ -21,7 +21,7 @@
 #include "caviar/objects/domain.h"
 #include <cmath>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace force_field {
 
@@ -320,5 +320,5 @@ void Lj::calculate_acceleration () {
 
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

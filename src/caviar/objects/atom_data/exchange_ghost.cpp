@@ -20,7 +20,7 @@
 
 #include <algorithm>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 
 
@@ -533,6 +533,6 @@ bool ::self_ghost_check () {
 
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 

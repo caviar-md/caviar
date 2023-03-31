@@ -18,7 +18,7 @@
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/objects/all_derived_classes.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 
 
@@ -71,5 +71,5 @@ namespace interpreter {
 #undef FC_ADD_OBJECT_TO_CONTAINER
 
 } //interpreter
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

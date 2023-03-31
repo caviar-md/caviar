@@ -23,7 +23,7 @@
 #include <random>
 #include <algorithm>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace constraint {
 
@@ -254,5 +254,5 @@ void Atom_molarity::apply (int64_t steps) { // III
 
 } //constraint
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

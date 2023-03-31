@@ -19,7 +19,7 @@
 #include "caviar/utility/interpreter_io_headers.h"
 
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace constraint {
 
@@ -142,5 +142,5 @@ void Nose_hoover::apply_on_acceleration (int64_t) { // step I
 
 } //constraint
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

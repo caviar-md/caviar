@@ -19,7 +19,7 @@
 
 #include "caviar/objects/shape.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace shape {
 
@@ -50,5 +50,5 @@ class Mixed : public caviar::Shape {
 };
 } //shape
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 #endif

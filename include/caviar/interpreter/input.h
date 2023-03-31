@@ -21,7 +21,7 @@
 #include <istream>
 #include <map>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 // a pointer to boolean function of Input class.
 //using InputCommandFunc = bool (Input::*) (class caviar::interpreter::Parser *); 
@@ -127,7 +127,7 @@ public:
 
 };
 } //interpreter
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif
 

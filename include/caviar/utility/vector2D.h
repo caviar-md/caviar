@@ -22,7 +22,7 @@
 #include <iostream>
 #include <cmath>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 template <typename T>
 struct Vector2D {
@@ -125,6 +125,6 @@ constexpr T norm (const Vector2D<T> &v1) {
   return  std::sqrt(v1.x*v1.x + v1.y*v1.y);
 }
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

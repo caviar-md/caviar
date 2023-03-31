@@ -17,7 +17,7 @@
 #ifndef CAVIAR_OBJECTS_ATOMDATA_UTILITY_BOND_H
 #define CAVIAR_OBJECTS_ATOMDATA_UTILITY_BOND_H
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace atom_data {
 // Bonds contain data for rigid atomic bonds which may be used in Shake like
@@ -28,6 +28,5 @@ struct Bond {
   double length; // bond length // TODO this can be stored by type in Atom_data
 };
 }
-}
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 #endif

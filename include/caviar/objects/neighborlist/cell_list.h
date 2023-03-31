@@ -19,7 +19,7 @@
 
 #include "caviar/objects/neighborlist.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 class Domain;
 namespace neighborlist {
@@ -55,6 +55,6 @@ class Cell_list : public Neighborlist {
 
 } //neighborlist
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

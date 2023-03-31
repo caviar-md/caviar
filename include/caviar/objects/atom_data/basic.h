@@ -19,7 +19,7 @@
 
 #include "caviar/objects/atom_data.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace atom_data {
 
@@ -38,6 +38,6 @@ public:
 
 } //atom_data
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

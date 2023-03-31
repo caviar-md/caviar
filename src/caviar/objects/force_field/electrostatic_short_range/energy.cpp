@@ -20,7 +20,7 @@
 
 #include <cmath>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace force_field {
 
@@ -45,5 +45,5 @@ double Electrostatic_short_range::energy () {
 
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

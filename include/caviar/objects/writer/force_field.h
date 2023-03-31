@@ -19,7 +19,7 @@
 
 #include "caviar/objects/writer.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace writer {
 
@@ -47,6 +47,6 @@ class Force_field : public Writer {
 
 } //writer
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

@@ -21,7 +21,7 @@
 #if defined(CAVIAR_WITH_MUPARSER)
   #include <muParser.h>
 #endif
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace unique {
 
@@ -137,5 +137,5 @@ void Time_function::calculate ()
 } //unique
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

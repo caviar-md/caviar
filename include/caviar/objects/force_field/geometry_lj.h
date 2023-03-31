@@ -20,7 +20,7 @@
 #include "caviar/objects/force_field.h"
 
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 class Shape; 
 namespace unique
@@ -69,6 +69,6 @@ public:
 
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

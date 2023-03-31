@@ -19,7 +19,7 @@
 //#include "caviar/objects/atom_data.h"
 //#include <ctime>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace writer {
 
@@ -63,5 +63,5 @@ void Force_field::start_new_files(std::string &){} //add_time_to_previous
 
 } //Force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

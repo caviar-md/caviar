@@ -17,7 +17,7 @@
 #ifndef CAVIAR_OBJECTS_ATOMDATA_UTILITY_PROPERDIHEDRAL_H
 #define CAVIAR_OBJECTS_ATOMDATA_UTILITY_PROPERDIHEDRAL_H
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace atom_data {
 // Proper Dihedral contain data for rigid atomic proper dihedral which may be used in
@@ -27,6 +27,5 @@ struct Proper_dihedral {
   int type; // used in soft atomic proper dihedral in force_fields
 };
 }
-}
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 #endif

@@ -18,7 +18,7 @@
 #include "caviar/interpreter/communicator.h"
 #include "caviar/utility/interpreter_io_headers.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace domain {
 
@@ -141,5 +141,5 @@ caviar::Vector<double> Box::fix_distance(caviar::Vector<double> v) {
 
 } //domain
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

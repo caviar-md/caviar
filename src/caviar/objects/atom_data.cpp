@@ -34,7 +34,7 @@
 #include <algorithm>
 #include <random>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 
 
@@ -559,6 +559,6 @@ int Atom_data::read_next_xyz_frame (bool set_frame, bool read_velocity) {
 
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 

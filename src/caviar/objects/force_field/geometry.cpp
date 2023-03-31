@@ -23,7 +23,7 @@
 #include <cmath>
 #include <fstream>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace force_field {
 
@@ -123,5 +123,5 @@ void Geometry::calculate_acceleration () {
 
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

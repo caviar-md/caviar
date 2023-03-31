@@ -19,7 +19,7 @@
 
 #include "caviar/interpreter/object_handler.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 //using CommandFunc_object_handler = bool (Object_handler::*) (Parser *); // a pointer to boolean function of ...
 
@@ -32,6 +32,6 @@ const std::map<std::string, CommandFunc_object_handler> Object_handler::commands
 
 };
 } //interpreter
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

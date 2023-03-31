@@ -23,7 +23,7 @@
 
 //#define DEBUG_ME
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 // this operator is used in debugging parser.
 std::ostream& operator<<(std::ostream& out, const Kind value){
@@ -658,5 +658,5 @@ Vector<Real_t> Parser::primary_3d (bool get) {
 }
 */
 } //interpreter
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

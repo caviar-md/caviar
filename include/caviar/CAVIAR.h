@@ -30,7 +30,7 @@
 
 #include "caviar/utility/common_template_functions.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 class Communicator;
 class Error; 
@@ -97,6 +97,6 @@ public:
   bool interpreter_continue_called;
 };
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

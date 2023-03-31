@@ -19,7 +19,7 @@
 
 #include "caviar/interpreter/object_creator.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 //using CommandFunc_object_creator = bool (Object_creator::*) (Parser *); // a pointer to boolean function of ...
 
@@ -64,6 +64,6 @@ const std::map<std::string, CommandFunc_object_creator> Object_creator::commands
     {  "bool", &Object_creator::boolean_variable},
 };
 } //interpreter
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

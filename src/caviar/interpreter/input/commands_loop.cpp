@@ -23,7 +23,7 @@
 #include <cmath>
 #include <algorithm>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 // used in order to remove 'if' or 'elseif' from the line and get the condition
 static std::string remove_the_first_word (const std::string &str) {
@@ -141,5 +141,5 @@ char Input::command_continue (Parser *) {
 
 
 } //interpreter
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

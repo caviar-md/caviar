@@ -25,7 +25,7 @@
 #include "caviar/objects/neighborlist/cell_list.h"
 #include "caviar/interpreter/object_handler/preprocessors_new.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace atom_data {
 
@@ -37,5 +37,5 @@ Basic::~Basic() {}
 
 } //atom_data
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

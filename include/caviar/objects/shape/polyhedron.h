@@ -19,7 +19,7 @@
 
 #include "caviar/objects/shape.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace shape {
 namespace polyhedron { class Handler; }
@@ -50,6 +50,6 @@ class Polyhedron : public Shape {
 };
 } //shape
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

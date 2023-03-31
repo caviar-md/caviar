@@ -32,7 +32,7 @@
 #include "caviar/objects/macro/declaration/all.h"
 #undef FC_COMPLETE_FORWARD_DECLERATION
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 class Parser;
 
@@ -77,7 +77,7 @@ public:
 
 } ;
 } //interpreter
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif
  

@@ -21,7 +21,7 @@
 #include "caviar/objects/force_field.h"
 
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace force_field {
 
@@ -55,7 +55,7 @@ public:
 
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif
 

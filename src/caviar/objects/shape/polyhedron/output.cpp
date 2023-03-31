@@ -21,7 +21,7 @@
 #include <cmath>
 #include <fstream>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace shape {
 namespace polyhedron {
@@ -252,5 +252,5 @@ void Output::mesh_vfptr (const std::vector<polyhedron::Polyhedron> & shapes) {
 } //polyhedron
 } //shape
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

@@ -27,7 +27,7 @@
 
 
 /// U(teta) = 1/2 {K1[1+cos(teta)] + K2[1-cos(2*teta)] + K3[1+cos(3*teta)] - K4[1-cos(4*teta)] }
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace force_field {
 
@@ -191,5 +191,5 @@ void Opls_proper_dihedral::calculate_acceleration () {
 
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

@@ -20,7 +20,7 @@
 #include "caviar/objects/unique.h"
 #include "caviar/objects/unique/atom.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 
 namespace unique {
@@ -55,6 +55,6 @@ class Atom_group  : public Unique {
 } //unique
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

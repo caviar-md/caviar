@@ -20,7 +20,7 @@
 #include "caviar/utility/pointers.h"
 #include "caviar/utility/vector.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 /**
  * Parser, is an important part of script reading by any code that does so.
@@ -176,6 +176,6 @@ public:
   unsigned int &col;
 };
 } //interpreter
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

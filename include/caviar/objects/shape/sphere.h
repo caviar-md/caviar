@@ -20,7 +20,7 @@
 #include "caviar/objects/shape.h"
 
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace shape {
 
@@ -50,7 +50,7 @@ public:
 
 } //shape 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif
 

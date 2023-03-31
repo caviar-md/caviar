@@ -19,7 +19,7 @@
 
 #include "caviar/interpreter/input.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 //using CommandFunc = bool (Input::*) (class caviar::interpreter::Parser *); 
 
@@ -88,6 +88,6 @@ const std::map<std::string,InputCommandFunc> Input::commands_map = {
 };
 
 } //interpreter
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

@@ -25,7 +25,7 @@
 
 #include "caviar/interpreter/all.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 #if defined(CAVIAR_WITH_MPI)
 CAVIAR::CAVIAR (int argc, char **argv, MPI_Comm mpi_comm) :
@@ -86,5 +86,5 @@ void CAVIAR::execute () {
   input->read ();
 }
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

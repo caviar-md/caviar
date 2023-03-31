@@ -23,7 +23,7 @@
 #include <iomanip>
 #include <complex>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace force_field {
 
@@ -103,5 +103,5 @@ double Electrostatic_ewald_k::energy () {
 
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

@@ -31,7 +31,7 @@
 #include <cmath>
 #include <fstream>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace shape {
 namespace polyhedron {
@@ -222,5 +222,5 @@ void  Handler::command_generate () {
 } //polyhedron
 } //shape
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

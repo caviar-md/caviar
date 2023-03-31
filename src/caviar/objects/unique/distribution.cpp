@@ -25,7 +25,7 @@
 #include "caviar/objects/unique/molecule_group.h"
 #include "caviar/utility/interpreter_io_headers.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace unique {
 
@@ -289,5 +289,5 @@ bool Distribution::distribute_random_3D(const int num_of_atoms, const double ) {
 } //unique
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

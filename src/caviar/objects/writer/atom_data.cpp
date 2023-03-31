@@ -23,7 +23,7 @@
 #include <ctime>
 #include <sys/stat.h> // used for mkdir()
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace writer {
 
@@ -236,5 +236,5 @@ void Atom_data::start_new_files(std::string &){} //add_time_to_previous
 
 } //Atom_data
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

@@ -20,11 +20,11 @@ FC_GENERAL_CLASSNAME_MACRO(Md_simulator,md_simulator,Md_simulator)
 #endif
 
 #ifdef FC_COMPLETE_FORWARD_DECLERATION
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 class Md_simulator;
-}
-} // namespace caviar
+
+CAVIAR_NAMESPACE_CLOSE
 #endif
 
 

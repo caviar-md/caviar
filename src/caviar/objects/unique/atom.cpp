@@ -20,7 +20,7 @@
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/interpreter/object_handler/preprocessors_new.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace unique {
 
@@ -98,5 +98,5 @@ Vector<double> Atom::vel_tot () const {
 } //unique
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

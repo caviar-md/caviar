@@ -20,7 +20,7 @@
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/objects/all.h" // this is needed b.c. we want to call read()
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 Object_handler::Object_handler (CAVIAR *fptr) : Pointers{fptr} {}
 
@@ -138,5 +138,5 @@ bool Object_handler::read_object (Parser * parser, const std::string object_name
   return in_file; //WARNING
 }
 } //interpreter
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

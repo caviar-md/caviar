@@ -22,7 +22,7 @@
 #include <cmath>
 #include <map>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace force_field {
 
@@ -225,5 +225,5 @@ void Dpd_mpi::calculate_acceleration () {
 
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

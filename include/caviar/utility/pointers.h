@@ -23,7 +23,7 @@
 
 #include "caviar/CAVIAR.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 class Parser;
 class Lexer;
@@ -82,6 +82,6 @@ public:
   bool &log_flag, &out_flag, &err_flag;
 };
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

@@ -19,7 +19,7 @@
 
 #include "caviar/objects/writer.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 class Atom_data;
 class Domain;
@@ -104,6 +104,6 @@ class Atom_data : public Writer {
 
 } //writer
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

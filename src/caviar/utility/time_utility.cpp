@@ -18,7 +18,7 @@
 #ifdef _WIN32
 #include <Windows.h>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
   
 double get_wall_time(){
     LARGE_INTEGER time,freq;
@@ -55,7 +55,7 @@ double get_cpu_time(){
 #include <time.h>
 #include <sys/time.h>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 double get_wall_time(){
     struct timeval time;

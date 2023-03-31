@@ -22,7 +22,7 @@
 #include <cmath>
 
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace force_field {
 
@@ -194,5 +194,5 @@ double Electrostatic_ewald1d::potential_k (const int i) {
 
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

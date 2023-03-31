@@ -34,7 +34,7 @@
 #include <time.h>
 
    
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace force_field {
 
@@ -1286,5 +1286,5 @@ void Plt_be::calculate_all_particles_mesh_force_acc() {
 
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

@@ -16,7 +16,7 @@
 
 #include "caviar/interpreter/object_handler/gdst.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 namespace object_handler {
 
@@ -30,5 +30,5 @@ int gdst (const std::string & t) { //get_dictionary_second_type
 } //object_handler
 } //interpreter
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

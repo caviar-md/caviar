@@ -24,7 +24,7 @@
 
 #include "caviar/utility/pointers.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 // enum class's underlying type is 'char'
 // 'enum class' is preferred over 'enum' since the names are local.
@@ -104,6 +104,6 @@ public:
 };
 
 } //interpreter
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

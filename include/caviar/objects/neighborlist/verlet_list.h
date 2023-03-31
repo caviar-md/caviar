@@ -19,7 +19,7 @@
 
 #include "caviar/objects/neighborlist.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace neighborlist {
 
@@ -41,6 +41,6 @@ class Verlet_list : public Neighborlist {
 
 } //neighborlist
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

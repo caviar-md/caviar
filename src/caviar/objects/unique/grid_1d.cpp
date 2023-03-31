@@ -17,7 +17,7 @@
 #include "caviar/objects/unique/grid_1d.h"
 #include "caviar/utility/interpreter_io_headers.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace unique {
 
@@ -123,5 +123,5 @@ void Grid_1D::reset ()
 } //unique
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

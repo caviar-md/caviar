@@ -20,7 +20,7 @@
 
 //#define DEBUG_ME
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 static constexpr size_t max_buffer_size = 1024;
 
@@ -431,5 +431,5 @@ Token Token_stream::get_string_literal (char delim) {
   return ct;
 }
 } //interpreter
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

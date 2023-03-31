@@ -28,7 +28,7 @@
 #include <cmath>
 #include <iomanip>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace force_field {
 
@@ -69,5 +69,5 @@ double BoundaryValues::value (const Point<3> &p, const unsigned int ) const
 } // plt_dealii
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 #endif

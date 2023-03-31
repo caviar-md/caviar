@@ -19,7 +19,7 @@
 
 #include "caviar/utility/pointers.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 
 /**
@@ -54,6 +54,6 @@ public:
 
 
 } //interpreter
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

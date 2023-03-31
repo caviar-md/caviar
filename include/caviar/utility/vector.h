@@ -22,7 +22,7 @@
 #include <iostream>
 #include <cmath>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 template <typename T>
 struct Vector {
@@ -163,6 +163,6 @@ constexpr T norm (const Vector<T> &v1) {
 
 #endif
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

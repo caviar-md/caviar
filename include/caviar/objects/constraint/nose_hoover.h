@@ -19,7 +19,7 @@
 
 #include "caviar/objects/constraint.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace constraint {
 
@@ -80,6 +80,6 @@ class Nose_hoover : public Constraint {
 
 } //constraint
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

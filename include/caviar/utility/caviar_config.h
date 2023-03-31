@@ -26,5 +26,7 @@
 
 // #define CAVIAR_SCRIPT_COMMAND_CASE_INSENSITIVE
 
+#define CAVIAR_NAMESPACE_OPEN namespace caviar {
+#define CAVIAR_NAMESPACE_CLOSE }
 
 #endif

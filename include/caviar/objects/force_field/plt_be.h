@@ -20,7 +20,7 @@
 #include "caviar/objects/force_field.h"
 
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 class Atom_data;
 namespace shape {
@@ -163,6 +163,6 @@ public:
 
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

@@ -25,7 +25,7 @@ namespace mu
 class Parser;
 }
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 class Parser;
 
 namespace unique {
@@ -62,7 +62,7 @@ class Time_function : public Unique {
 } //unique
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif
 

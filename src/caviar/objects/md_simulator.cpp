@@ -26,7 +26,7 @@
 #include "caviar/utility/time_utility.h"
 #include "caviar/interpreter/communicator.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 
 
@@ -677,5 +677,5 @@ void Md_simulator::integrate_verlet () {
 
 }
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

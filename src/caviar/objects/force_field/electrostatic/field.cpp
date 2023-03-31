@@ -20,7 +20,7 @@
 
 #include <cmath>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace force_field {
 
@@ -64,5 +64,5 @@ Vector<double> Electrostatic::field (const int i) {
 
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

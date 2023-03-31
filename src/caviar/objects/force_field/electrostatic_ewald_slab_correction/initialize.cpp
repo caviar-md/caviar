@@ -24,7 +24,7 @@
 #include <iomanip>
 #include <algorithm>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace force_field {
 
@@ -241,5 +241,5 @@ void Electrostatic_ewald_slab_correction::make_slab_chi_vectors () {
 
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

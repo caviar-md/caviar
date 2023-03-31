@@ -21,7 +21,7 @@
 #include "caviar/objects/md_simulator.h"
 #include "caviar/objects/unique/grid_1d.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace postprocess {
 
@@ -269,5 +269,5 @@ double Grid_1D::give_point (int i) {
 } //postprocess
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

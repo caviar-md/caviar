@@ -93,7 +93,7 @@
 #include "caviar/objects/force_field/utility/plt_dealii_functions.h"
 #include "caviar/objects/neighborlist.h" // used for ml training
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace force_field {
 
@@ -1771,11 +1771,11 @@ double Plt_dealii::potential (const Vector<double> &v) {
 
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #else
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace force_field {
 
@@ -1798,5 +1798,5 @@ void Plt_dealii::calculate_acceleration () {
 
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 #endif

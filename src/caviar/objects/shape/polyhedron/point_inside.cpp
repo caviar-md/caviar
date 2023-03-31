@@ -23,7 +23,7 @@
 #include <fstream>
 
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace shape {
 namespace polyhedron {
@@ -873,5 +873,5 @@ bool Point_Inside::in_contact_all (shape::polyhedron::Polyhedron & p_object,
 } //polyhedron
 } //shape
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

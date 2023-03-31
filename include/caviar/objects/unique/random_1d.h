@@ -20,7 +20,7 @@
 #include "caviar/objects/unique.h"
 #include <random>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 class Parser;
 
 namespace unique {
@@ -58,7 +58,7 @@ class Random_1D : public Unique {
 } //unique
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif
 

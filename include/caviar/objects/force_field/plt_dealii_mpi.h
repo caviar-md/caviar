@@ -91,7 +91,7 @@ namespace LA {
 
 
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 class Atom_data;
 namespace force_field {
@@ -244,11 +244,11 @@ public:
 } //plt_dealii_mpi
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #else
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace force_field {
 
@@ -263,7 +263,7 @@ public:
 };
 } //finite_element
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif
 #endif

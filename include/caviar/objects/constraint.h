@@ -19,7 +19,7 @@
 
 #include "caviar/utility/objects_common_headers.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 class Integrator;
 class Atom_data;
@@ -73,6 +73,6 @@ class Constraint : public Pointers {
 
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

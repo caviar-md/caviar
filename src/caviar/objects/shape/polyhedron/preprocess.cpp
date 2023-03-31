@@ -22,7 +22,7 @@
 #include <cmath>
 #include <fstream>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace shape {
 namespace polyhedron {
@@ -246,5 +246,5 @@ std::cout << "XXX HEY 2 " << std::endl;
 } //polyhedron
 } //shape
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

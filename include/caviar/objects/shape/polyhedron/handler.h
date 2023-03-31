@@ -22,7 +22,7 @@
 #include "caviar/objects/shape/polyhedron/polyhedron.h"
 #include <vector>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace shape {
 namespace polyhedron {
@@ -79,6 +79,6 @@ public:
 } //shape
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

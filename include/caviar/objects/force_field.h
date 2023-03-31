@@ -20,7 +20,8 @@
 
 #include "caviar/utility/objects_common_headers.h"
 
-namespace caviar {
+
+CAVIAR_NAMESPACE_OPEN
 
 class Atom_data; 
 class Domain;
@@ -52,6 +53,6 @@ class Force_field  : public Pointers {
 
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

@@ -22,7 +22,7 @@
 #include <cmath>
 #include <iomanip>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace force_field {
 
@@ -225,5 +225,5 @@ Vector<double> Electrostatic_ewald_slab_correction::dipole_field () {
 
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

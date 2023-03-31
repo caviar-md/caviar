@@ -19,7 +19,7 @@
 
 #include "caviar/objects/unique.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 class Parser;
 
 namespace unique {
@@ -59,6 +59,6 @@ class Grid_1D : public Unique {
 } //unique
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

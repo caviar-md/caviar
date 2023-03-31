@@ -17,7 +17,7 @@
 #include "caviar/objects/domain.h"
 #include "caviar/interpreter/communicator.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 
 
@@ -166,5 +166,5 @@ Vector<Real_t> Domain::periodic_distance (const Vector<Real_t> v) {
 
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

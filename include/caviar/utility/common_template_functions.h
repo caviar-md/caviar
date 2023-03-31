@@ -26,7 +26,7 @@
  * This file contains some small and useful functions used in the CAVIAR.
  */
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 /**
  * A function that compares two strings. It can be defined case sensitive or not.
@@ -169,6 +169,6 @@ int matrix_Vector_product (const std::vector<std::vector<T>>&A, const Vector<T>&
 }
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

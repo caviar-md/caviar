@@ -23,7 +23,7 @@
 #include <cmath>
 #include <iomanip>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace force_field {
 
@@ -144,5 +144,5 @@ Vector<double> Electrostatic_ewald_r::field (const int i) {
 
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

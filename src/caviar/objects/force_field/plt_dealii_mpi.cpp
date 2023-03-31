@@ -85,7 +85,7 @@
 #include "caviar/objects/force_field/utility/plt_dealii_functions.h"
 
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace force_field {
 
@@ -738,11 +738,11 @@ void Plt_dealii_mpi::calculate_all_particles_mesh_force_acc() {
 
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #else
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace force_field {
 
@@ -765,5 +765,5 @@ void Plt_dealii_mpi::calculate_acceleration () {
 
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 #endif

@@ -19,7 +19,7 @@
 #include "caviar/utility/interpreter_io_headers.h"
 
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace constraint {
 
@@ -83,5 +83,5 @@ void Berendsen::apply_on_velocity (int64_t) { // step I
 
 } //constraint
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

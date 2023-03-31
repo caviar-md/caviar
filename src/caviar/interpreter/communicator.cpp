@@ -17,7 +17,7 @@
 #include "caviar/interpreter/communicator.h"
 #include "caviar/utility/vector.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 Communicator::Communicator (CAVIAR *fptr) : Pointers{fptr} {
 #if defined(CAVIAR_WITH_MPI)
@@ -102,5 +102,5 @@ void Communicator::broadcast (std::string &str) {
 
 
 } //interpreter
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

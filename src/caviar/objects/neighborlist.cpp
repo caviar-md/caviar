@@ -17,7 +17,7 @@
 #include "caviar/objects/neighborlist.h"
 #include "caviar/interpreter/error.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 Neighborlist::Neighborlist (CAVIAR *fptr) : Pointers{fptr}, 
     atom_data{nullptr} {
@@ -40,5 +40,5 @@ int Neighborlist::neigh_bin_index (const Vector<double> &a) {
 }
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

@@ -16,7 +16,7 @@
 
 #include "caviar/objects/constraint.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 
 
@@ -38,5 +38,5 @@ void Constraint::apply_on_acceleration (int64_t) { }
 
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

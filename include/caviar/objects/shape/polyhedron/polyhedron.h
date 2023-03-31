@@ -23,7 +23,7 @@
 #include <vector>
 #include <map>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace shape {
 namespace polyhedron {
@@ -117,6 +117,6 @@ struct Polyhedron {
 } //shape
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

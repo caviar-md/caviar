@@ -19,7 +19,7 @@
 
 #include "caviar/objects/domain.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace domain {
 
@@ -49,6 +49,6 @@ public:
 
 } //domain
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

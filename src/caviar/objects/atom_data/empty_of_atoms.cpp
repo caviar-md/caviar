@@ -24,7 +24,7 @@
 #include <algorithm>
 
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 
 
@@ -73,6 +73,6 @@ bool Atom_data::empty_of_atoms(unique::Molecule &m) {
 
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 

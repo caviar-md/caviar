@@ -19,7 +19,7 @@
 
 #include "caviar/objects/force_field.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace unique {
   class Time_function_3d;
@@ -49,6 +49,6 @@ public:
 
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

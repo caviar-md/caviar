@@ -21,7 +21,7 @@
 #include "caviar/utility/time_utility.h"
 #include "caviar/objects/unique/time_function_3d.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 
 
@@ -235,5 +235,5 @@ void Atom_data::dump_xyz (int64_t i) {
 } // writer 
  
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

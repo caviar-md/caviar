@@ -19,7 +19,7 @@
 
 #include "caviar/objects/md_simulator.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace md_simulator {
 
@@ -37,6 +37,6 @@ class Basic : public Md_simulator {
 
 } //md_simulator
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

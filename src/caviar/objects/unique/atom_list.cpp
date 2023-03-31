@@ -20,7 +20,7 @@
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/interpreter/object_handler/preprocessors_new.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace unique {
 
@@ -69,5 +69,5 @@ void Atom_list::add_atom(const unique::Atom &) {
 } //unique
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

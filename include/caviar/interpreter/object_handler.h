@@ -21,7 +21,7 @@
 #include <string>
 #include <map>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 class Parser;
 using CommandFunc_object_handler = bool (Object_handler::*) (class caviar::interpreter::Parser *); // a pointer to boolean function of ...
@@ -45,7 +45,7 @@ public:
 
 } ;
 } //interpreter
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif
  

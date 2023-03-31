@@ -17,7 +17,7 @@
 #include "caviar/objects/unique/random_1d.h"
 #include "caviar/utility/interpreter_io_headers.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace unique {
 
@@ -114,5 +114,5 @@ double Random_1D::give_value () {
 } //unique
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

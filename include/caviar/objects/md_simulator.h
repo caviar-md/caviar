@@ -21,7 +21,8 @@
 
 #include <random> // used for velocity_verlet_langevin
 
-namespace caviar {
+
+CAVIAR_NAMESPACE_OPEN
 
 
 namespace unique
@@ -236,6 +237,6 @@ class Md_simulator : public Pointers {
 
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

@@ -21,7 +21,7 @@
 #include "caviar/objects/unique/molecule_group.h"
 
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace unique {
 
@@ -282,5 +282,5 @@ Vector<double> Molecule::vel_tot () const {
 } //unique
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

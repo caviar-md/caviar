@@ -27,7 +27,7 @@
 #include <algorithm>
 #include <random>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 
 
@@ -574,6 +574,6 @@ bool Atom_data::add_molecule(caviar::unique::Molecule_list &ml) {
 
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 

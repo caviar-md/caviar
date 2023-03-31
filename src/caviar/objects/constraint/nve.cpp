@@ -19,7 +19,7 @@
 #include "caviar/utility/interpreter_io_headers.h"
 
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace constraint {
 
@@ -152,5 +152,5 @@ void Nve::apply_on_velocity (int64_t) {
 
 } //constraint
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

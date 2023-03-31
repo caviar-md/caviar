@@ -18,7 +18,7 @@
 #include "caviar/utility/interpreter_io_headers.h"
 //#include <ctime>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace writer {
 /*
@@ -54,5 +54,5 @@ void Md_simulator::output_total_energy() {
 */
 } //Force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

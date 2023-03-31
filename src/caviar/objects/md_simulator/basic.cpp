@@ -24,7 +24,7 @@
 
 #include <ctime>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace md_simulator {
 
@@ -38,5 +38,5 @@ Basic::~Basic () {}
 
 } //md_simulator
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

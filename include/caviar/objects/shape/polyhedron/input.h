@@ -19,7 +19,7 @@
 
 #include "caviar/utility/pointers.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace shape {
 namespace polyhedron {
@@ -38,6 +38,6 @@ public:
 } //polyhedron
 } //shape
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

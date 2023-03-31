@@ -21,7 +21,7 @@
 #include "caviar/utility/vector.h"
 #include <vector>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 
 namespace unique {
@@ -61,6 +61,6 @@ class Atom  : public Unique {
 } //unique
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

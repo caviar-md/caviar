@@ -23,7 +23,7 @@
 #define FC_FILE_LINE_FUNC_PARSE __FILE__,__LINE__,__func__,parser->line,parser->col
 #define FC_FILE_LINE_FUNC __FILE__,__LINE__,__func__
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 
 /**
@@ -51,6 +51,6 @@ public:
   void one (const char *, int, const char *, const std::string &);
 };
 } //interpreter
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

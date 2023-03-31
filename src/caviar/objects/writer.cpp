@@ -17,7 +17,7 @@
 #include "caviar/objects/writer.h"
 #include "caviar/interpreter/communicator.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 
 
@@ -46,5 +46,5 @@ void Writer::generate() {}
 
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

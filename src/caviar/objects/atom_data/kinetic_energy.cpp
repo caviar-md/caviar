@@ -23,7 +23,7 @@
 #include <algorithm>
 
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 
 
@@ -219,6 +219,6 @@ double Atom_data::temperature () {
 
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 

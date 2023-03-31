@@ -20,7 +20,7 @@
 
 #include <cmath>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace neighborlist {
 Verlet_list::Verlet_list (CAVIAR *fptr) : Neighborlist{fptr} 
@@ -138,5 +138,5 @@ void Verlet_list::build_neighlist () {
 
 } //neighborlist
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

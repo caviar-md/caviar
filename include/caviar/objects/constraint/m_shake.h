@@ -23,7 +23,7 @@
 
 #include <vector>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 
 class Domain;
@@ -67,6 +67,6 @@ class M_shake : public Constraint {
 
 } //constraint
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

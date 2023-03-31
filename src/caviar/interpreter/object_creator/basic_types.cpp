@@ -17,7 +17,7 @@
 #include "caviar/interpreter/object_creator.h"
 #include "caviar/utility/interpreter_io_headers.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 bool Object_creator::string_variable (Parser * parser) {
   std::string this_object_full_type = __func__;
@@ -432,6 +432,6 @@ bool Object_creator::real_3d_vector (Parser * parser) {
   return in_file; //WARNING
 }
 } //interpreter
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 

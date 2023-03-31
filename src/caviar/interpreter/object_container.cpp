@@ -18,7 +18,7 @@
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/objects/all.h" // used in deletion
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 
 Object_container::Object_container (CAVIAR *fptr) : Pointers{fptr} { }
@@ -63,5 +63,5 @@ void Object_container::report () {
 }
 
 } // interpreter
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

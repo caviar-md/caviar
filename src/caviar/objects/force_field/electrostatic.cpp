@@ -23,7 +23,7 @@
 #include <cmath>
 #include <iomanip>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace force_field {
 
@@ -124,5 +124,5 @@ void Electrostatic::calculate_acceleration () {
 
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

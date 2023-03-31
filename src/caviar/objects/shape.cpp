@@ -16,7 +16,7 @@
 
 #include "caviar/objects/shape.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 
 
@@ -39,5 +39,5 @@ bool Shape::is_outside (const Vector<double> &v, const double r) {
 }
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

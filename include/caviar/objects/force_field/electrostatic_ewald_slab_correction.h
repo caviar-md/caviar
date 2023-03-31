@@ -21,7 +21,7 @@
 
 #include <complex>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 
 namespace force_field {
@@ -111,6 +111,6 @@ inline Vector<double> give_slab_local_coordinates(const Vector<double> &vg) {
 
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

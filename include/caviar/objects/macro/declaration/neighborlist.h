@@ -20,11 +20,11 @@ FC_GENERAL_CLASSNAME_MACRO(Neighborlist,neighborlist,Neighborlist)
 #endif
 
 #ifdef FC_COMPLETE_FORWARD_DECLERATION
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 class Neighborlist;
-}
-} // namespace caviar
+
+CAVIAR_NAMESPACE_CLOSE
 #endif
 
 

@@ -16,7 +16,7 @@
 
 #include "caviar/objects/unique.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 
 
@@ -34,5 +34,5 @@ void Unique::verify_settings () {
 
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

@@ -21,7 +21,7 @@
 // XXX: Note that (for now!) this file should be included after Deal.II usual 
 // inclusions.
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace force_field {
 namespace dealii_functions {
@@ -395,5 +395,5 @@ void refine_grid_adaptive (T_tria &triangulation,
 } //dealii_functions
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 #endif

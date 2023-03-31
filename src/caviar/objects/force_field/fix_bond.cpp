@@ -26,7 +26,7 @@
 #include <cmath>
 #include <iomanip>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace force_field {
 
@@ -135,5 +135,5 @@ void Fix_bond::calculate_acceleration () {
 }
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

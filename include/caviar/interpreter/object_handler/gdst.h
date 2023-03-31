@@ -22,7 +22,7 @@
 #include <vector>
 //#include <map>
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 namespace object_handler {
 
@@ -59,7 +59,7 @@ const std::vector<std::string> dictionary_second_type = {
 
 }
 } //interpreter
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif
  

@@ -22,7 +22,7 @@
 #include <algorithm>
 
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 
 
@@ -329,6 +329,6 @@ bool Atom_data::exchange_owned () {
 
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 

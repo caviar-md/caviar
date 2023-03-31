@@ -16,7 +16,7 @@
 
 #include "caviar/interpreter/error.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 Error::Error (CAVIAR *fptr) : Pointers{fptr} {}
 
@@ -195,5 +195,5 @@ void Error::one (const char *file, int line, const char *func, const std::string
 #endif
 }
 } //interpreter
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

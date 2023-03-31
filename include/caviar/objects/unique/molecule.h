@@ -22,7 +22,7 @@
 #include "caviar/objects/atom_data/utility/angle.h"
 #include "caviar/objects/atom_data/utility/proper_dihedral.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 
 namespace unique {
@@ -84,6 +84,6 @@ class Molecule : public Unique {
 } //unique
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

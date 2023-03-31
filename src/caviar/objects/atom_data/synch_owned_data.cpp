@@ -22,7 +22,7 @@
 #include <algorithm>
 
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 
 
@@ -113,6 +113,6 @@ void Atom_data::synch_owned_data (int ) {
 
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 

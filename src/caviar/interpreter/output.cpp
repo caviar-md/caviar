@@ -20,7 +20,7 @@
 
 
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 Output::Output (CAVIAR *fptr) : Pointers{fptr}
  {
@@ -163,5 +163,5 @@ bool Output::read (caviar::interpreter::Parser * parser) {
 }
 
 } //interpreter
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

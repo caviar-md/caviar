@@ -17,7 +17,7 @@
 #include "caviar/objects/shape/sphere.h"
 #include "caviar/utility/interpreter_io_headers.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace shape {
   
@@ -72,6 +72,6 @@ bool Sphere::in_contact(const Vector<double> &v, const double r, Vector<double> 
 } //shape
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 

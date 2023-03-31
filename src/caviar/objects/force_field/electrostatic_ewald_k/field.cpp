@@ -29,7 +29,7 @@
       omp_out += omp_in)
 #endif
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace force_field {
 
@@ -126,5 +126,5 @@ Vector<double> Electrostatic_ewald_k::field (const Vector<double> &r) {
 
 } //force_field
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

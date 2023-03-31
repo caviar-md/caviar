@@ -19,7 +19,7 @@
 #include "caviar/utility/interpreter_io_headers.h"
 
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace constraint {
 
@@ -80,5 +80,5 @@ void Cm_motion::fix_angular_momentum () {
 
 } //constraint
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

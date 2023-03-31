@@ -19,7 +19,7 @@
 #include "caviar/utility/interpreter_io_headers.h"
 
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 
 
@@ -42,5 +42,5 @@ void Atom_data::dump_energy (int64_t i, double t) {
 } // writer 
  
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 

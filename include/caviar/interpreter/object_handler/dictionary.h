@@ -19,7 +19,7 @@
 
 #include "caviar/utility/caviar_config.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 namespace interpreter {
 namespace object_handler {
 
@@ -40,7 +40,7 @@ class Dictionary {
 
 } // object_handler
 } //interpreter
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif
  

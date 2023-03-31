@@ -19,7 +19,8 @@
 
 #include "caviar/utility/objects_common_headers.h"
 
-namespace caviar {
+
+CAVIAR_NAMESPACE_OPEN
 
 
 
@@ -39,6 +40,6 @@ class Unique : public Pointers {
 
 
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
 #endif

@@ -21,7 +21,7 @@
 #include "caviar/objects/domain.h"
 #include "caviar/utility/interpreter_io_headers.h"
 
-namespace caviar {
+CAVIAR_NAMESPACE_OPEN
 
 namespace constraint {
 
@@ -158,5 +158,5 @@ void Rattle::apply_on_position (int64_t) {
 
 } //constraint
 
-} // namespace caviar
+CAVIAR_NAMESPACE_CLOSE
 
