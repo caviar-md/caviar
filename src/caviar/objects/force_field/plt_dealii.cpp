@@ -25,6 +25,7 @@
 #include "caviar/utility/macro_constants.h"
 #include "caviar/utility/time_utility.h"
 #include "caviar/objects/unique/time_function.h"
+#include "caviar/objects/unique/time_function_3d.h"
 #include "caviar/objects/unique/grid_1d.h"
 
 #ifdef CAVIAR_WITH_DEALII
@@ -291,7 +292,12 @@ bool Plt_dealii::read (caviar::interpreter::Parser *parser) {
     } else if (string_cmp(t,"generate_ml_training_data")) {
       generate_ml_training_data(parser);
       return in_file;
-    }
+    } else if (string_cmp(t,"set_position_offset")) {
+      FIND_OBJECT_BY_NAME(unique,it)
+      FC_CHECK_OBJECT_CLASS_NAME(unique,it,time_function_3d)
+      objects::unique::Time_function_3d *a = dynamic_cast<objects::unique::Time_function_3d *>(object_container->unique[it->second.index]);
+      position_offset = a;
+    } 
     else FC_ERR_UNDEFINED_VAR(t)
   }
   
@@ -674,6 +680,10 @@ void Plt_dealii::output_field_vectors(caviar::interpreter::Parser *parser) {
 
   std::ofstream ofs;
 
+  Vector<double> po {0,0,0};
+  if (position_offset != nullptr)
+    po += position_offset->current_value;
+
   ofs.open(file_name.c_str());
 
   for (unsigned int i = 0; i < grid_1d_x->no_points(); ++i) {
@@ -686,8 +696,8 @@ void Plt_dealii::output_field_vectors(caviar::interpreter::Parser *parser) {
 
     caviar::Vector<double> field_tot = {0, 0, 0};
 
-
-      const dealii::Point<3> r = {x, y, z};
+      //const dealii::Point<3> r = {x, y, z};
+      const dealii::Point<3> r = {x - po.x, y - po.y, z - po.z}; // Is it necessary ??
 
       dealii::Tensor<1, 3, double> field_sm;
 
@@ -793,6 +803,10 @@ void Plt_dealii::output_potential_values(caviar::interpreter::Parser *parser) {
   std::ofstream ofs;
   std::ofstream ofs_x, ofs_y, ofs_z, ofs_p;
 
+  Vector<double> po {0,0,0};
+  if (position_offset != nullptr)
+    po += position_offset->current_value;
+
   ofs.open(file_name.c_str());
   ofs_x.open(st_ofs_x.c_str());
   ofs_y.open(st_ofs_y.c_str());
@@ -809,7 +823,8 @@ void Plt_dealii::output_potential_values(caviar::interpreter::Parser *parser) {
 
     double potential_tot = 0;
 
-    const dealii::Point<3> r = {x, y, z};
+      // const dealii::Point<3> r = {x , y , z }; 
+      const dealii::Point<3> r = {x - po.x, y - po.y, z - po.z}; // Is it necessary ??
 
 
 
@@ -1191,7 +1206,9 @@ void Plt_dealii::output_boundary_id_areas () {
 double Plt_dealii::calculate_induced_charge (int t, const int requested_id) {
 
   std::vector<double> induced_charge(boundary_id_max + 1, 0);  
-
+  Vector<double> po {0,0,0};
+  if (position_offset != nullptr)
+    po += position_offset->current_value;
 
   // Not sure if this loop can or should be parallelized with openmp
   // Since there's field() calculation inside, it already has an intrinsic opm
@@ -1219,7 +1236,7 @@ double Plt_dealii::calculate_induced_charge (int t, const int requested_id) {
       f_sm = - VectorTools::point_gradient (dof_handler, solution, p1);
     }
 
-    caviar::Vector<double> pos_j {p1[0], p1[1], p1[2]};
+    caviar::Vector<double> pos_j {p1[0] + po.x, p1[1] + po.y, p1[2] + po.z };
 
     caviar::Vector<double> f_si {0.0, 0.0, 0.0};
     for (auto &&f_custom : force_field_custom)
@@ -1687,6 +1704,9 @@ void Plt_dealii::calculate_acceleration () {
 
 void Plt_dealii::calculate_all_particles_mesh_force_acc() {
   const auto &pos = atom_data -> owned.position;    
+  Vector<double> po {0,0,0};
+  if (position_offset != nullptr)
+    po += position_offset->current_value;
 #ifdef CAVIAR_WITH_OPENMP
   #pragma omp parallel for
 #endif  
@@ -1695,7 +1715,7 @@ void Plt_dealii::calculate_all_particles_mesh_force_acc() {
     const auto mass_inv_i = atom_data -> owned.mass_inv [ type_i ];
     const auto charge_i = atom_data -> owned.charge [ type_i ];
 
-    const dealii::Point<3> r = {pos[i].x, pos[i].y, pos[i].z};
+    const dealii::Point<3> r = {pos[i].x - po.x, pos[i].y - po.y, pos[i].z - po.z};
     dealii::Tensor<1, 3, double> field;
     if (ignore_point_out_of_mesh) {
       try {
@@ -1728,12 +1748,15 @@ double Plt_dealii::potential (const Vector<double> &v) {
   for (auto &&f : force_field_custom)
     potential_singular += f->potential (v);
 
+  Vector<double> po {0,0,0};
+  if (position_offset != nullptr)
+    po += position_offset->current_value;
 
-  const dealii::Point<3> r = {v.x, v.y, v.z};
+  const dealii::Point<3> r = {v.x - po.x, v.y - po.y, v.z - po.z};
 
   double potential_smooth = 0.0;
   try {
-     potential_smooth = VectorTools::point_value (dof_handler, solution, r);
+      potential_smooth = VectorTools::point_value (dof_handler, solution, r );    
   } catch (...) {
 
   }
@@ -1758,19 +1781,19 @@ namespace force_field {
 
 Plt_dealii::Plt_dealii(CAVIAR * fptr) : 
     caviar::objects::Force_field{fptr} { 
-  error->all(FC_FILE_LINE_FUNC,"please recompile with DEAL.II library.");
+  error->all(FC_FILE_LINE_FUNC,"Recompile CAVIAR with DEAL.II library.");
 }
 
 Plt_dealii::~Plt_dealii() {}
 
 bool Plt_dealii::read (caviar::interpreter::Parser *parser) {
-  error->all(FC_FILE_LINE_FUNC,"please recompile with DEAL.II library.");
+  error->all(FC_FILE_LINE_FUNC,"Recompile CAVIAR with DEAL.II library.");
   parser->get_val_token();
   return true;
 }
 
 void Plt_dealii::calculate_acceleration () {
-  error->all(FC_FILE_LINE_FUNC,"please recompile with DEAL.II library.");
+  error->all(FC_FILE_LINE_FUNC,"Recompile CAVIAR with DEAL.II library.");
 }
 
 } //force_field

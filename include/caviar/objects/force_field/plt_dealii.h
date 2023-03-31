@@ -43,6 +43,7 @@ class Atom_data;
 namespace unique
 {
 class Time_function;
+class Time_function_3d;
 }
 namespace force_field {
 using namespace dealii;
@@ -161,6 +162,8 @@ public:
 
   bool initialized;
   
+  unique::Time_function_3d *position_offset = nullptr;
+
   std::vector<std::pair<int,double>> boundary_id_value;
   std::vector<std::pair<int,caviar::objects::unique::Time_function*>> boundary_id_time_function;
   std::vector<int> refine_sequence_type, refine_sequence_value;  

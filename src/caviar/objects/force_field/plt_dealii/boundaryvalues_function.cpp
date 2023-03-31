@@ -24,6 +24,7 @@
 #include "caviar/objects/force_field/plt_dealii.h"
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/objects/domain.h"
+#include "caviar/objects/unique/time_function_3d.h"
 //#include "caviar/objects/atom_data.h"
 
 #include <cmath>
@@ -44,8 +45,12 @@ double BoundaryValues::potential_of_free_charges (const dealii::Point<3> &p) con
   const Vector<double> r = {p[0], p[1], p[2]};
 
   double potential = 0.0;
-  for (auto &&f : deal_force -> force_field_custom)
-    potential += f->potential (r);
+  if (deal_force->position_offset == nullptr)
+    for (auto &&f : deal_force -> force_field_custom)
+      potential += f->potential (r);
+  else
+    for (auto &&f : deal_force -> force_field_custom)
+      potential += f->potential (r + deal_force->position_offset->current_value);
 
   return potential;
 }
