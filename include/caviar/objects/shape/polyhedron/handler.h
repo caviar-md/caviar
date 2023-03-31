@@ -23,7 +23,7 @@
 #include <vector>
 
 namespace caviar {
-namespace objects {
+
 namespace shape {
 namespace polyhedron {
 class Input; 
@@ -54,7 +54,7 @@ public:
   class shape::polyhedron::Output * polyhedron_output;
   
   
-  struct caviar::objects::shape::polyhedron::Polyhedron polyhedron;   
+  struct caviar::shape::polyhedron::Polyhedron polyhedron;   
 
   // this variable will be set for polyhedron.grid_tol .
   double radius_max;
@@ -77,7 +77,7 @@ public:
 };
 } //polyhedron
 } //shape
-} //objects
+
 
 } // namespace caviar
 

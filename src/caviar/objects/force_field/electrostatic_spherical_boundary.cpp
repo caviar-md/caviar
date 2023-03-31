@@ -23,7 +23,7 @@
 #include <iomanip>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 Electrostatic_spherical_boundary::Electrostatic_spherical_boundary (CAVIAR *fptr) : Force_field{fptr}, k_electrostatic{1.0}, external_field{Vector<double>{0,0,0}}
@@ -125,6 +125,6 @@ void Electrostatic_spherical_boundary::calculate_acceleration () {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

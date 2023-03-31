@@ -24,7 +24,7 @@
 #include <map>
 
 namespace caviar {
-namespace objects {
+
 namespace shape {
 namespace polyhedron {
 struct Polyhedron {
@@ -115,7 +115,7 @@ struct Polyhedron {
 };
 } //polyhedron
 } //shape
-} //objects
+
 
 } // namespace caviar
 

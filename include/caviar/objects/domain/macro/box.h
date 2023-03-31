@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Box,box,objects::domain::Box)
+FC_CHECK_AND_CREATE(Box,box,domain::Box)
 #endif

@@ -32,7 +32,7 @@
 #include <fstream>
 
 namespace caviar {
-namespace objects {
+
 namespace shape {
 namespace polyhedron {
 
@@ -221,6 +221,6 @@ void  Handler::command_generate () {
 
 } //polyhedron
 } //shape
-} //objects
+
 } // namespace caviar
 

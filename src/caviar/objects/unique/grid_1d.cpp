@@ -18,7 +18,7 @@
 #include "caviar/utility/interpreter_io_headers.h"
 
 namespace caviar {
-namespace objects {
+
 namespace unique {
 
 
@@ -121,7 +121,7 @@ void Grid_1D::reset ()
 }
 
 } //unique
-} //objects
+
 
 } // namespace caviar
 

@@ -20,7 +20,7 @@
 #include "caviar/objects/force_field.h"
 
 namespace caviar {
-namespace objects {
+
 class Shape;
 namespace unique
 {
@@ -43,14 +43,14 @@ public:
 public:  
   unique::Time_function_3d *position_offset = nullptr;
   unique::Time_function_3d *velocity_offset = nullptr;
-  std::vector<caviar::objects::Shape *> shape;
+  std::vector<caviar::Shape *> shape;
   bool shape_size_warning;
   std::vector<double> radius;
   double young_modulus, dissip_coef;
 };
 
 } //force_field
-} //objects
+
 } // namespace caviar
 
 #endif

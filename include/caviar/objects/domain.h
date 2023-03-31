@@ -20,7 +20,7 @@
 #include "caviar/utility/objects_common_headers.h"
 
 namespace caviar {
-namespace objects {
+
 
 /**
  * This class is the base class for all the domains.
@@ -93,7 +93,7 @@ public:
   FC_BASE_OBJECT_COMMON_TOOLS
 };
 
-} //objects
+
 
 } // namespace caviar
 

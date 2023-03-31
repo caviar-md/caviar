@@ -20,7 +20,7 @@
 #include "caviar/objects/writer.h"
 
 namespace caviar {
-namespace objects {
+
 class Atom_data;
 class Domain;
 namespace unique {
@@ -57,10 +57,10 @@ class Atom_data : public Writer {
 /////////////
 
  
-  objects::Atom_data *atom_data;
+  Atom_data *atom_data;
 
   // used in msd calculations
-  objects::Domain *domain;
+  Domain *domain;
 
   void dump_energy (int64_t); // dump energy to file 
   void dump_energy (int64_t, double); // dump energy to file
@@ -103,7 +103,7 @@ class Atom_data : public Writer {
 };
 
 } //writer
-} //objects
+
 } // namespace caviar
 
 #endif

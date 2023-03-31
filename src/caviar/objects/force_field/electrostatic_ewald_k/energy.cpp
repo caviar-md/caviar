@@ -24,7 +24,7 @@
 #include <complex>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 
@@ -102,6 +102,6 @@ double Electrostatic_ewald_k::energy () {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

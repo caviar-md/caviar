@@ -24,7 +24,7 @@
 #include <iomanip>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 Electrostatic_short_range::Electrostatic_short_range (CAVIAR *fptr) : Force_field{fptr}, 
@@ -151,6 +151,6 @@ void Electrostatic_short_range::calculate_acceleration () {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

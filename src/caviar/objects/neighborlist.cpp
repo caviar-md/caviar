@@ -18,7 +18,7 @@
 #include "caviar/interpreter/error.h"
 
 namespace caviar {
-namespace objects {
+
 Neighborlist::Neighborlist (CAVIAR *fptr) : Pointers{fptr}, 
     atom_data{nullptr} {
   FC_OBJECT_INITIALIZE
@@ -39,6 +39,6 @@ int Neighborlist::neigh_bin_index (const Vector<double> &a) {
   return a.x;
 }
 
-} //objects
+
 } // namespace caviar
 

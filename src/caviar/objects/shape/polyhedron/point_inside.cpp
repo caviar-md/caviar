@@ -24,7 +24,7 @@
 
 
 namespace caviar {
-namespace objects {
+
 namespace shape {
 namespace polyhedron {
 
@@ -872,6 +872,6 @@ bool Point_Inside::in_contact_all (shape::polyhedron::Polyhedron & p_object,
 
 } //polyhedron
 } //shape
-} //objects
+
 } // namespace caviar
 

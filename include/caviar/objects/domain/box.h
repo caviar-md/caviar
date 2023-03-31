@@ -20,7 +20,7 @@
 #include "caviar/objects/domain.h"
 
 namespace caviar {
-namespace objects {
+
 namespace domain {
 
 /**
@@ -48,7 +48,7 @@ public:
 };
 
 } //domain
-} //objects
+
 } // namespace caviar
 
 #endif

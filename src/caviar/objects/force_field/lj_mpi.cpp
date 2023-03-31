@@ -22,7 +22,7 @@
 #include <cmath>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 Lj_mpi::Lj_mpi (CAVIAR *fptr) : Force_field{fptr} {
@@ -215,6 +215,6 @@ void Lj_mpi::calculate_acceleration () { // this scheme may make you to only sen
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

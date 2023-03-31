@@ -28,7 +28,7 @@
 
 namespace caviar {
 
-namespace objects {
+
 
 Md_simulator::Md_simulator (CAVIAR *fptr) : Pointers{fptr},
     atom_data{nullptr},
@@ -113,12 +113,12 @@ bool Md_simulator::read (caviar::interpreter::Parser *parser) {
     } else if (string_cmp(t,"add_time_function") || string_cmp(t,"time_function")) {
       FIND_OBJECT_BY_NAME(unique,it)
       FC_CHECK_OBJECT_CLASS_NAME(unique,it,time_function)
-      objects::unique::Time_function *a = dynamic_cast<objects::unique::Time_function *>(object_container->unique[it->second.index]);
+      unique::Time_function *a = dynamic_cast<unique::Time_function *>(object_container->unique[it->second.index]);
       time_function.push_back(a);            
     } else if (string_cmp(t,"add_time_function_3d") || string_cmp(t,"time_function_3d")) {
       FIND_OBJECT_BY_NAME(unique,it)
       FC_CHECK_OBJECT_CLASS_NAME(unique,it,time_function_3d)
-      objects::unique::Time_function_3d *a = dynamic_cast<objects::unique::Time_function_3d *>(object_container->unique[it->second.index]);
+      unique::Time_function_3d *a = dynamic_cast<unique::Time_function_3d *>(object_container->unique[it->second.index]);
       time_function_3d.push_back(a);            
     } else  if (string_cmp(t,"step")) {
       //int i=0;

@@ -24,7 +24,7 @@
 namespace caviar {
 
 
-namespace objects {
+
 namespace writer {
 
 
@@ -233,7 +233,7 @@ void Atom_data::dump_xyz (int64_t i) {
 
 
 } // writer 
-} //objects 
+ 
 
 } // namespace caviar
 

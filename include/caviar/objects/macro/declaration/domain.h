@@ -16,12 +16,12 @@
 
 
 #ifdef FC_GENERAL_CLASSNAME_MACRO_ACTIVATED
-FC_GENERAL_CLASSNAME_MACRO(Domain,domain,objects::Domain)
+FC_GENERAL_CLASSNAME_MACRO(Domain,domain,Domain)
 #endif
 
 #ifdef FC_COMPLETE_FORWARD_DECLERATION
 namespace caviar {
-namespace objects {
+
 class Domain;
 }
 } // namespace caviar

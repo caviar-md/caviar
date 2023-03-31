@@ -92,7 +92,7 @@ namespace LA {
 
 
 namespace caviar {
-namespace objects {
+
 class Atom_data;
 namespace force_field {
 using namespace dealii;
@@ -173,7 +173,7 @@ public:
   double solver_control_tolerance;  
   bool use_preconditioner;
 
-  class caviar::objects::Atom_data * atom_data;
+  class caviar::Atom_data * atom_data;
 
   bool initialized;
   
@@ -203,7 +203,7 @@ public:
   std::vector<Vector<double>> face_center_pos, face_center_field;
   std::vector<double> face_center_potential;
 
-  std::vector<caviar::objects::Force_field*> force_field_custom;
+  std::vector<caviar::Force_field*> force_field_custom;
 
   bool ignore_point_out_of_mesh;
 
@@ -225,7 +225,7 @@ public:
   BoundaryValues (double tp) : Function<3>(), total_potential{tp} {}  
   
   BoundaryValues (double tp,
-    class caviar::objects::force_field::Plt_dealii_mpi* df )
+    class caviar::force_field::Plt_dealii_mpi* df )
     : 
     Function<3>(),
     total_potential{tp},
@@ -239,17 +239,17 @@ public:
   double total_potential;
   double potential_of_free_charges  (const dealii::Point<3> &p) const;
 
-  class caviar::objects::force_field::Plt_dealii_mpi *deal_force;
+  class caviar::force_field::Plt_dealii_mpi *deal_force;
 };
 } //plt_dealii_mpi
 } //force_field
-} //objects
+
 } // namespace caviar
 
 #else
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 class Plt_dealii_mpi : public Force_field
@@ -262,7 +262,7 @@ public:
 
 };
 } //finite_element
-} //objects
+
 } // namespace caviar
 
 #endif

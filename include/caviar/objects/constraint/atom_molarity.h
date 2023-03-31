@@ -20,7 +20,7 @@
 #include "caviar/objects/constraint.h"
 
 namespace caviar {
-namespace objects {
+
 namespace unique {
 class Atom; class Molecule;
 }
@@ -56,7 +56,7 @@ class Atom_molarity : public Constraint {
 };
 
 } //constraint
-} //objects
+
 } // namespace caviar
 
 #endif

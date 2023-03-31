@@ -19,7 +19,7 @@
 #include "caviar/utility/interpreter_io_headers.h"
 
 namespace caviar {
-namespace objects {
+
 namespace shape {
 
 Polyhedron::Polyhedron (CAVIAR *fptr) : Shape {fptr},
@@ -51,7 +51,7 @@ bool Polyhedron::in_contact(const Vector<double> &v, const double r, Vector<doub
 }
 
 } //shape
-} //objects
+
 } // namespace caviar
 
 

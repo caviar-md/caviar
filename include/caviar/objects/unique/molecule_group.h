@@ -22,7 +22,7 @@
 
 namespace caviar {
 
-namespace objects {
+
 class Atom_data;
 namespace unique {
 
@@ -43,12 +43,12 @@ class Molecule_group : public Unique {
   Vector<double> pos_tot () const;
   Vector<double> vel_tot () const; 
 
-  void add_molecule(const objects::unique::Molecule &);
-  void add_molecule(const objects::unique::Molecule &,
+  void add_molecule(const unique::Molecule &);
+  void add_molecule(const unique::Molecule &,
                     caviar::Vector<double> p=caviar::Vector<double>{0,0,0},
                     caviar::Vector<double> v=caviar::Vector<double>{0,0,0});
 
-  std::vector<objects::unique::Molecule> molecules;
+  std::vector<unique::Molecule> molecules;
 
   bool part_of_a_molecule_group;    
   Molecule_group * upper_level_molecule_group;
@@ -58,7 +58,7 @@ class Molecule_group : public Unique {
 };
 
 } //unique
-} //objects
+
 
 } // namespace caviar
 

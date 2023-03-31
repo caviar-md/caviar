@@ -38,7 +38,7 @@
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
 
 namespace caviar {
-namespace objects {
+
 class Atom_data;
 namespace unique
 {
@@ -158,14 +158,14 @@ public:
   bool use_preconditioner;
   double preconditioner_relaxation; // as is said in dealii docs,  0 < preconditioner_relaxation < 2
  
-  class caviar::objects::Atom_data * atom_data;
+  class caviar::Atom_data * atom_data;
 
   bool initialized;
   
   unique::Time_function_3d *position_offset = nullptr;
 
   std::vector<std::pair<int,double>> boundary_id_value;
-  std::vector<std::pair<int,caviar::objects::unique::Time_function*>> boundary_id_time_function;
+  std::vector<std::pair<int,caviar::unique::Time_function*>> boundary_id_time_function;
   std::vector<int> refine_sequence_type, refine_sequence_value;  
   double k_electrostatic;
   std::vector<std::string> unv_mesh_filename;  
@@ -192,12 +192,12 @@ public:
   std::vector<Vector<double>> face_center_pos, face_center_field;
   std::vector<double> face_center_potential;
 
-  std::vector<caviar::objects::Force_field*> force_field_custom;
+  std::vector<caviar::Force_field*> force_field_custom;
 
   bool ignore_point_out_of_mesh;
   bool time_profile;
 
-  caviar::objects::Force_field *test_force_spherical;
+  caviar::Force_field *test_force_spherical;
   std::ofstream ofs_test_force_spherical;
   bool init_test_force_spherical;
   std::string spherical_test_file_name;
@@ -220,7 +220,7 @@ public:
   BoundaryValues (double tp) : Function<3>(), total_potential{tp} {}  
   
   BoundaryValues (double tp,
-    class caviar::objects::force_field::Plt_dealii* df )
+    class caviar::force_field::Plt_dealii* df )
     : 
     Function<3>(),
     total_potential{tp},
@@ -233,18 +233,18 @@ public:
   double total_potential;
   double potential_of_free_charges  (const dealii::Point<3> &p) const;
 
-  class caviar::objects::force_field::Plt_dealii *deal_force;
+  class caviar::force_field::Plt_dealii *deal_force;
 
 };
 } //plt_dealii
 } //force_field
-} //objects
+
 } // namespace caviar
 
 #else
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 class Plt_dealii : public Force_field
@@ -257,7 +257,7 @@ public:
 
 };
 } //finite_element
-} //objects
+
 } // namespace caviar
 
 #endif

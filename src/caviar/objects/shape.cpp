@@ -18,7 +18,7 @@
 
 namespace caviar {
 
-namespace objects {
+
 
 Shape::Shape (CAVIAR *fptr) : Pointers{fptr} {
   FC_OBJECT_INITIALIZE
@@ -37,7 +37,7 @@ bool Shape::is_outside (const Vector<double> &v) {
 bool Shape::is_outside (const Vector<double> &v, const double r) {
   return !is_inside(v, r);
 }
-} //objects
+
 
 } // namespace caviar
 

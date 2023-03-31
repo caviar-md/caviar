@@ -21,7 +21,7 @@ FC_OBJECT_CREATOR_DEFAULT_FUNCTION(shape) {
 
   FC_GET_OBJECT_TYPE_AND_NAME
 
-  objects::Shape * p_sh = nullptr; 
+  Shape * p_sh = nullptr; 
 
 #include "caviar/objects/shape/macro/all.h"
 

@@ -25,7 +25,7 @@
 
 
 namespace caviar {
-namespace objects {
+
 
 
 bool Atom_data::empty_of_atoms(const Vector<Real_t> p, double radius) {
@@ -53,7 +53,7 @@ bool Atom_data::empty_of_atoms(const Vector<Real_t> , int) {
 
 }
 
-bool Atom_data::empty_of_atoms(objects::unique::Atom &a) {
+bool Atom_data::empty_of_atoms(unique::Atom &a) {
   auto rad_a = owned.radius[ a.type ];
   for (unsigned int i = 0; i < owned.position.size(); ++i) {
     auto dp = owned.position[i] - a.pos_tot();
@@ -64,14 +64,14 @@ bool Atom_data::empty_of_atoms(objects::unique::Atom &a) {
   return true;
 }
 
-bool Atom_data::empty_of_atoms(objects::unique::Molecule &m) {
+bool Atom_data::empty_of_atoms(unique::Molecule &m) {
   for (auto && a : m.atoms) {
     if (!empty_of_atoms(a)) return false;
   }
   return true;
 }
 
-} //objects
+
 
 } // namespace caviar
 

@@ -20,7 +20,7 @@
 #include "caviar/utility/interpreter_io_headers.h"
 
 namespace caviar {
-namespace objects {
+
 namespace shape {
 namespace polyhedron {
 
@@ -236,6 +236,6 @@ void Format_vtk_reader::write_polydata_vtk4 (shape::polyhedron::Polyhedron &p_ob
 
 } //polyhedron
 } //shape
-} //objects
+
 } // namespace caviar
 

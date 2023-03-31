@@ -22,7 +22,7 @@
 #include <iomanip>
 
 namespace caviar {
-namespace objects {
+
 namespace shape {
 namespace polyhedron {
 
@@ -429,6 +429,6 @@ void Format_unv_reader::make_label_to_index (const std::vector<int> & u
 
 } //polyhedron
 } //shape
-} //objects
+
 } // namespace caviar
 

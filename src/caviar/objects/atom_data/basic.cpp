@@ -26,7 +26,7 @@
 #include "caviar/interpreter/object_handler/preprocessors_new.h"
 
 namespace caviar {
-namespace objects {
+
 namespace atom_data {
 
 Basic::Basic (CAVIAR *fptr) : Atom_data{fptr} {
@@ -36,6 +36,6 @@ Basic::Basic (CAVIAR *fptr) : Atom_data{fptr} {
 Basic::~Basic() {}
 
 } //atom_data
-} //objects
+
 } // namespace caviar
 

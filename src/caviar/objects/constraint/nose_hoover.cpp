@@ -20,7 +20,7 @@
 
 
 namespace caviar {
-namespace objects {
+
 namespace constraint {
 
 Nose_hoover::Nose_hoover (CAVIAR *fptr) : Constraint{fptr} {
@@ -141,6 +141,6 @@ void Nose_hoover::apply_on_acceleration (int64_t) { // step I
 
 
 } //constraint
-} //objects
+
 } // namespace caviar
 

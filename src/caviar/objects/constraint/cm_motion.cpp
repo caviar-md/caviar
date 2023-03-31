@@ -20,7 +20,7 @@
 
 
 namespace caviar {
-namespace objects {
+
 namespace constraint {
 
 Cm_motion::Cm_motion (CAVIAR *fptr) : Constraint{fptr} {
@@ -79,6 +79,6 @@ void Cm_motion::fix_angular_momentum () {
 }
 
 } //constraint
-} //objects
+
 } // namespace caviar
 

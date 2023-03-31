@@ -28,11 +28,11 @@
 #include <random>
 
 namespace caviar {
-namespace objects {
 
 
 
-bool Atom_data::add_atom(caviar::objects::unique::Atom &a) {
+
+bool Atom_data::add_atom(caviar::unique::Atom &a) {
 
   const auto id = get_global_id();
   const auto t = a.type;
@@ -43,14 +43,14 @@ bool Atom_data::add_atom(caviar::objects::unique::Atom &a) {
   return false;
 }
 
-bool Atom_data::add_atom(caviar::objects::unique::Atom_group &ag) {
+bool Atom_data::add_atom(caviar::unique::Atom_group &ag) {
   for (auto&& a : ag.atoms)
     add_atom(a);
   return true; 
 }
 
 
-bool Atom_data::add_atom(caviar::objects::unique::Atom_list &al) {
+bool Atom_data::add_atom(caviar::unique::Atom_list &al) {
   for (auto&& a : al.atoms)
     add_atom(*a);
   return true; 
@@ -62,7 +62,7 @@ inline bool FC_COMPARE_PAIRS(int a1,int a2,int b1, int b2) {
     return false;
 }
 
-void Atom_data::remove_atomic_bond(const objects::atom_data::Bond& bond) 
+void Atom_data::remove_atomic_bond(const atom_data::Bond& bond) 
 {
     
     int mi_1 = owned.molecule_index[bond.index_1];
@@ -138,7 +138,7 @@ void Atom_data::remove_atomic_bond(const objects::atom_data::Bond& bond)
     owned.atomic_bond_count[bond.index_2]--;
 }
 
-void Atom_data::remove_atomic_angle(const objects::atom_data::Angle& angle) 
+void Atom_data::remove_atomic_angle(const atom_data::Angle& angle) 
 {
     
     int mi_1 = owned.molecule_index[angle.index_1];
@@ -172,7 +172,7 @@ void Atom_data::remove_atomic_angle(const objects::atom_data::Angle& angle)
 
 
 
-void Atom_data::remove_atomic_properdihedral(const objects::atom_data::Proper_dihedral& pd) 
+void Atom_data::remove_atomic_properdihedral(const atom_data::Proper_dihedral& pd) 
 {
     
     int mi_1 = owned.molecule_index[pd.index_1];
@@ -207,7 +207,7 @@ void Atom_data::remove_atomic_properdihedral(const objects::atom_data::Proper_di
 }
 
 
-void Atom_data::add_atomic_bond(const objects::atom_data::Bond& bond) {
+void Atom_data::add_atomic_bond(const atom_data::Bond& bond) {
 
     int molecule_index_1 = owned.molecule_index[bond.index_1];
     int molecule_index_2 = owned.molecule_index[bond.index_2];
@@ -337,7 +337,7 @@ void Atom_data::add_atomic_bond(const objects::atom_data::Bond& bond) {
 }
 
 
-void Atom_data::add_atomic_angle(const objects::atom_data::Angle& angle) 
+void Atom_data::add_atomic_angle(const atom_data::Angle& angle) 
 {
     
     int mi_1 = owned.molecule_index[angle.index_1];
@@ -356,7 +356,7 @@ void Atom_data::add_atomic_angle(const objects::atom_data::Angle& angle)
     
 }
 
-void Atom_data::add_atomic_properdihedral(const objects::atom_data::Proper_dihedral& proper_dihedral) 
+void Atom_data::add_atomic_properdihedral(const atom_data::Proper_dihedral& proper_dihedral) 
 {
     
     int mi_1 = owned.molecule_index[proper_dihedral.index_1];
@@ -379,7 +379,7 @@ void Atom_data::add_atomic_properdihedral(const objects::atom_data::Proper_dihed
 
 
 
-bool Atom_data::check_atomic_bond_exist(const objects::atom_data::Bond& bond) 
+bool Atom_data::check_atomic_bond_exist(const atom_data::Bond& bond) 
 {
     int mi_1 = owned.molecule_index[bond.index_1];
     int mi_2 = owned.molecule_index[bond.index_2];
@@ -400,7 +400,7 @@ bool Atom_data::check_atomic_bond_exist(const objects::atom_data::Bond& bond)
 
 }
 
-bool Atom_data::check_atomic_angle_exist(const objects::atom_data::Angle& angle) 
+bool Atom_data::check_atomic_angle_exist(const atom_data::Angle& angle) 
 {
     
     int mi_1 = owned.molecule_index[angle.index_1];
@@ -430,7 +430,7 @@ bool Atom_data::check_atomic_angle_exist(const objects::atom_data::Angle& angle)
 
 
 
-bool Atom_data::check_atomic_properdihedral_exist(const objects::atom_data::Proper_dihedral& pd) 
+bool Atom_data::check_atomic_properdihedral_exist(const atom_data::Proper_dihedral& pd) 
 {
     
     int mi_1 = owned.molecule_index[pd.index_1];
@@ -462,7 +462,7 @@ bool Atom_data::check_atomic_properdihedral_exist(const objects::atom_data::Prop
 
 
 
-bool Atom_data::add_molecule(caviar::objects::unique::Molecule &m) {
+bool Atom_data::add_molecule(caviar::unique::Molecule &m) {
   
   //------------------------------------------
   // increasing Molecules' containers size  //
@@ -558,13 +558,13 @@ bool Atom_data::add_molecule(caviar::objects::unique::Molecule &m) {
   return true;
 }
 
-bool Atom_data::add_molecule(caviar::objects::unique::Molecule_group &mg) {
+bool Atom_data::add_molecule(caviar::unique::Molecule_group &mg) {
   for (auto&& a : mg.molecules)
     add_molecule(a);
   return true;
 }
 
-bool Atom_data::add_molecule(caviar::objects::unique::Molecule_list &ml) {
+bool Atom_data::add_molecule(caviar::unique::Molecule_list &ml) {
   for (auto&& a : ml.molecules)
     add_molecule(*a);
   return true;
@@ -572,7 +572,7 @@ bool Atom_data::add_molecule(caviar::objects::unique::Molecule_list &ml) {
 
 
 
-} //objects
+
 
 } // namespace caviar
 

@@ -16,12 +16,12 @@
 
 
 #ifdef FC_GENERAL_CLASSNAME_MACRO_ACTIVATED
-FC_GENERAL_CLASSNAME_MACRO(Writer,writer,objects::Writer)
+FC_GENERAL_CLASSNAME_MACRO(Writer,writer,Writer)
 #endif
 
 #ifdef FC_COMPLETE_FORWARD_DECLERATION
 namespace caviar {
-namespace objects {
+
 class Writer;
 }
 } // namespace caviar

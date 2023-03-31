@@ -19,7 +19,7 @@
 //#include <ctime>
 
 namespace caviar {
-namespace objects {
+
 namespace writer {
 /*
 void Md_simulator::output_total_force() {
@@ -53,6 +53,6 @@ void Md_simulator::output_total_energy() {
 }
 */
 } //Force_field
-} //objects
+
 } // namespace caviar
 

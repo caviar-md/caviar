@@ -21,7 +21,7 @@
 #include <string>
 
 namespace caviar {
-namespace objects {
+
 
 bool Atom_data::add_xyz_data_file (caviar::interpreter::Parser *parser) {
   output->info("Basic::add_xyz_data_file ");
@@ -143,6 +143,6 @@ bool Atom_data::add_xyz_data_file (caviar::interpreter::Parser *parser) {
 }
 
 
-} //objects
+
 } // namespace caviar
 

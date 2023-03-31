@@ -22,7 +22,7 @@
 #include <complex>
 
 namespace caviar {
-namespace objects {
+
 
 namespace force_field {
 
@@ -110,7 +110,7 @@ inline Vector<double> give_slab_local_coordinates(const Vector<double> &vg) {
 };
 
 } //force_field
-} //objects
+
 } // namespace caviar
 
 #endif

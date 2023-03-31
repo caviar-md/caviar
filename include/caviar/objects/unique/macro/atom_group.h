@@ -15,6 +15,6 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Atom_group,atom_group,objects::unique::Atom_group)
+FC_CHECK_AND_CREATE(Atom_group,atom_group,unique::Atom_group)
 #endif
 

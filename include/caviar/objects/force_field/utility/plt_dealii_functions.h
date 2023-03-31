@@ -22,7 +22,7 @@
 // inclusions.
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 namespace dealii_functions {
 
@@ -394,6 +394,6 @@ void refine_grid_adaptive (T_tria &triangulation,
 
 } //dealii_functions
 } //force_field
-} //objects
+
 } // namespace caviar
 #endif

@@ -21,7 +21,7 @@
 #include <cmath>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 Vector<double> Electrostatic_short_range::field (const Vector<double> &r) {
@@ -67,6 +67,6 @@ Vector<double> Electrostatic_short_range::field (const int i) {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

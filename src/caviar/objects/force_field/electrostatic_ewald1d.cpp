@@ -24,7 +24,7 @@
 #include <iomanip>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 Electrostatic_ewald1d::Electrostatic_ewald1d (CAVIAR *fptr) : Force_field{fptr}, k_electrostatic{1.0}
@@ -215,6 +215,6 @@ void Electrostatic_ewald1d::calculate_acceleration () {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

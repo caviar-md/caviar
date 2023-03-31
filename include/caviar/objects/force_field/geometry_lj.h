@@ -21,7 +21,7 @@
 
 
 namespace caviar {
-namespace objects {
+
 class Shape; 
 namespace unique
 {
@@ -42,7 +42,7 @@ public:
   void verify_settings ();
   void calculate_acceleration ();
 public:  
-  std::vector<caviar::objects::Shape *> shape;
+  std::vector<caviar::Shape *> shape;
 
   unique::Time_function_3d *position_offset = nullptr;
 
@@ -68,7 +68,7 @@ public:
 };
 
 } //force_field
-} //objects
+
 } // namespace caviar
 
 #endif

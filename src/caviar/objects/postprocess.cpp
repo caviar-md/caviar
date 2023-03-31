@@ -18,7 +18,7 @@
 
 namespace caviar {
 
-namespace objects {
+
 
 Postprocess::Postprocess (CAVIAR *fptr) : Pointers{fptr} {
   FC_OBJECT_INITIALIZE
@@ -30,7 +30,7 @@ void Postprocess::verify_settings () {
   
 }
 
-} //objects
+
 
 
 

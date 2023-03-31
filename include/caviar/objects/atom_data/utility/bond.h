@@ -18,7 +18,7 @@
 #define CAVIAR_OBJECTS_ATOMDATA_UTILITY_BOND_H
 
 namespace caviar {
-namespace objects {
+
 namespace atom_data {
 // Bonds contain data for rigid atomic bonds which may be used in Shake like
 // constraint algorithms or soft atomic bonds in spring_bond force_fields

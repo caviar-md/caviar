@@ -21,7 +21,7 @@
 #include <cmath>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 Dpd::Dpd (CAVIAR *fptr) : Force_field{fptr} {
@@ -146,6 +146,6 @@ void Dpd::calculate_acceleration () {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

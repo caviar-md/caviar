@@ -25,7 +25,7 @@
 #include <algorithm>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 void Electrostatic_ewald_slab_correction::initialize () {
@@ -240,6 +240,6 @@ void Electrostatic_ewald_slab_correction::make_slab_chi_vectors () {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

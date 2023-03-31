@@ -22,7 +22,7 @@
 #include <fstream>
 
 namespace caviar {
-namespace objects {
+
 namespace shape {
 namespace polyhedron {
 
@@ -221,6 +221,6 @@ void Postprocess::make_grid (shape::polyhedron::Polyhedron & p_object) {
 }
 } //polyhedron
 } //shape
-} //objects
+
 } // namespace caviar
 

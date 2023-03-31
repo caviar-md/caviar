@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Magnetic_external,magnetic_external,objects::force_field::Magnetic_external)
+FC_CHECK_AND_CREATE(Magnetic_external,magnetic_external,force_field::Magnetic_external)
 #endif

@@ -23,7 +23,7 @@
 #include <fstream>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 Geometry_sphere::Geometry_sphere (CAVIAR *fptr) : Force_field {fptr}
@@ -69,12 +69,12 @@ bool Geometry_sphere::read (class caviar::interpreter::Parser *parser) {
     } else if (string_cmp(t,"set_position_offset")) {
       FIND_OBJECT_BY_NAME(unique,it)
       FC_CHECK_OBJECT_CLASS_NAME(unique,it,time_function_3d)
-      objects::unique::Time_function_3d *a = dynamic_cast<objects::unique::Time_function_3d *>(object_container->unique[it->second.index]);
+      unique::Time_function_3d *a = dynamic_cast<unique::Time_function_3d *>(object_container->unique[it->second.index]);
       position_offset = a;
     } else if (string_cmp(t,"set_velocity_offset")) {
       FIND_OBJECT_BY_NAME(unique,it)
       FC_CHECK_OBJECT_CLASS_NAME(unique,it,time_function_3d)
-      objects::unique::Time_function_3d *a = dynamic_cast<objects::unique::Time_function_3d *>(object_container->unique[it->second.index]);
+      unique::Time_function_3d *a = dynamic_cast<unique::Time_function_3d *>(object_container->unique[it->second.index]);
       position_offset = a;
     } else FC_ERR_UNDEFINED_VAR(t)
   }
@@ -139,6 +139,6 @@ void Geometry_sphere::calculate_acceleration () {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

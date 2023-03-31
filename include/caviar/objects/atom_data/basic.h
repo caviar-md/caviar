@@ -20,7 +20,7 @@
 #include "caviar/objects/atom_data.h"
 
 namespace caviar {
-namespace objects {
+
 namespace atom_data {
 
 /**
@@ -37,7 +37,7 @@ public:
 };
 
 } //atom_data
-} //objects
+
 } // namespace caviar
 
 #endif

@@ -18,7 +18,7 @@
 #define CAVIAR_OBJECTS_ATOMDATA_UTILITY_PROPERDIHEDRAL_H
 
 namespace caviar {
-namespace objects {
+
 namespace atom_data {
 // Proper Dihedral contain data for rigid atomic proper dihedral which may be used in
 // constraint algorithms or soft atomic proper dihedral in harmonic_proper_dihedral force_fields

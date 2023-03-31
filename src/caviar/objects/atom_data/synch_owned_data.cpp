@@ -23,7 +23,7 @@
 
 
 namespace caviar {
-namespace objects {
+
 
 
 void Atom_data::synch_owned_data (int ) {
@@ -111,7 +111,7 @@ void Atom_data::synch_owned_data (int ) {
 #endif
 }
 
-} //objects
+
 
 } // namespace caviar
 

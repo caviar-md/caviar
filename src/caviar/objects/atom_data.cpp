@@ -36,7 +36,7 @@
 
 namespace caviar {
 
-namespace objects {
+
 
 constexpr auto expected_imbalance_factor = 1.1;
 
@@ -99,32 +99,32 @@ bool Atom_data::read (caviar::interpreter::Parser *parser) {
     } else if (string_cmp(t,"add_atom")) {
       FIND_OBJECT_BY_NAME(unique,it)
       FC_CHECK_OBJECT_CLASS_NAME(unique,it,atom)
-      objects::unique::Atom *a = dynamic_cast<objects::unique::Atom *>(object_container->unique[it->second.index]);
+      unique::Atom *a = dynamic_cast<unique::Atom *>(object_container->unique[it->second.index]);
       add_atom(*a);
     } else if (string_cmp(t,"add_atom_group")) {
       FIND_OBJECT_BY_NAME(unique,it)
       FC_CHECK_OBJECT_CLASS_NAME(unique,it,atom_group)
-      objects::unique::Atom_group *a = dynamic_cast<objects::unique::Atom_group *>(object_container->unique[it->second.index]);
+      unique::Atom_group *a = dynamic_cast<unique::Atom_group *>(object_container->unique[it->second.index]);
       add_atom(*a);
     } else if (string_cmp(t,"add_atom_list")) {
       FIND_OBJECT_BY_NAME(unique,it)
       FC_CHECK_OBJECT_CLASS_NAME(unique,it,atom_list)
-      objects::unique::Atom_list *a = dynamic_cast<objects::unique::Atom_list *>(object_container->unique[it->second.index]);
+      unique::Atom_list *a = dynamic_cast<unique::Atom_list *>(object_container->unique[it->second.index]);
       add_atom(*a);
     } else if (string_cmp(t,"add_molecule")) {
       FIND_OBJECT_BY_NAME(unique,it)
       FC_CHECK_OBJECT_CLASS_NAME(unique,it,molecule)
-      objects::unique::Molecule *a = dynamic_cast<objects::unique::Molecule *>(object_container->unique[it->second.index]);
+      unique::Molecule *a = dynamic_cast<unique::Molecule *>(object_container->unique[it->second.index]);
       add_molecule(*a);
     } else if (string_cmp(t,"add_molecule_group")) {
       FIND_OBJECT_BY_NAME(unique,it)
       FC_CHECK_OBJECT_CLASS_NAME(unique,it,molecule_group)
-      objects::unique::Molecule_group *a = dynamic_cast<objects::unique::Molecule_group *>(object_container->unique[it->second.index]);
+      unique::Molecule_group *a = dynamic_cast<unique::Molecule_group *>(object_container->unique[it->second.index]);
       add_molecule(*a);
     } else if (string_cmp(t,"add_molecule_list")) {
       FIND_OBJECT_BY_NAME(unique,it)
       FC_CHECK_OBJECT_CLASS_NAME(unique,it,molecule_list)
-      objects::unique::Molecule_list *a = dynamic_cast<objects::unique::Molecule_list *>(object_container->unique[it->second.index]);
+      unique::Molecule_list *a = dynamic_cast<unique::Molecule_list *>(object_container->unique[it->second.index]);
       add_molecule(*a);
     } else if (string_cmp(t,"add_type_radius")) {
       //auto ind = parser->get_positive_int();
@@ -171,7 +171,7 @@ bool Atom_data::read (caviar::interpreter::Parser *parser) {
     } else if (string_cmp(t,"set_cell_list") || string_cmp(t,"cell_list")) {
       FIND_OBJECT_BY_NAME(neighborlist,it)
       FC_CHECK_OBJECT_CLASS_NAME(neighborlist,it,cell_list)
-      cell_list = dynamic_cast<objects::neighborlist::Cell_list *>(object_container->neighborlist[it->second.index]);
+      cell_list = dynamic_cast<neighborlist::Cell_list *>(object_container->neighborlist[it->second.index]);
     } else if (string_cmp(t,"add_xyz_data_file")) {
       add_xyz_data_file(parser);
       return true;
@@ -202,7 +202,7 @@ bool Atom_data::read (caviar::interpreter::Parser *parser) {
     else if (string_cmp(t,"set_velocity_offset")) {
       FIND_OBJECT_BY_NAME(unique,it)
       FC_CHECK_OBJECT_CLASS_NAME(unique,it,time_function_3d)
-      objects::unique::Time_function_3d *a = dynamic_cast<objects::unique::Time_function_3d *>(object_container->unique[it->second.index]);
+      unique::Time_function_3d *a = dynamic_cast<unique::Time_function_3d *>(object_container->unique[it->second.index]);
       velocity_offset = a;
     } else FC_ERR_UNDEFINED_VAR(t)
 
@@ -557,7 +557,7 @@ int Atom_data::read_next_xyz_frame (bool set_frame, bool read_velocity) {
   return 0;
 }
 
-} //objects
+
 
 } // namespace caviar
 

@@ -27,7 +27,7 @@
 #include <iomanip>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 Fene_bond::Fene_bond (CAVIAR *fptr) : Force_field{fptr}
@@ -150,6 +150,6 @@ void Fene_bond::calculate_acceleration () {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

@@ -21,7 +21,7 @@
 #include "caviar/utility/objects_common_headers.h"
 
 namespace caviar {
-namespace objects {
+
 class Atom_data; 
 class Domain;
 class Neighborlist; 
@@ -43,14 +43,14 @@ class Force_field  : public Pointers {
   virtual Vector<double> field (const Vector<double> &);
   virtual Vector<double> field (const int);
   double cutoff;
-  class objects::Atom_data *atom_data;
-  class objects::Domain *domain;
-  class objects::Neighborlist *neighborlist;
+  class Atom_data *atom_data;
+  class Domain *domain;
+  class Neighborlist *neighborlist;
 
   FC_BASE_OBJECT_COMMON_TOOLS
 };
 
-} //objects
+
 
 } // namespace caviar
 

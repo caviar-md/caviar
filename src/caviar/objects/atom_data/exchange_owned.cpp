@@ -23,7 +23,7 @@
 
 
 namespace caviar {
-namespace objects {
+
 
 
 bool Atom_data::exchange_owned () {
@@ -327,7 +327,7 @@ bool Atom_data::exchange_owned () {
   return make_neighlist;
 }
 
-} //objects
+
 
 } // namespace caviar
 

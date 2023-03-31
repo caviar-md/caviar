@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Dpd_mpi,dpd_mpi,objects::force_field::Dpd_mpi)
+FC_CHECK_AND_CREATE(Dpd_mpi,dpd_mpi,force_field::Dpd_mpi)
 #endif

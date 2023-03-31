@@ -94,7 +94,7 @@
 #include "caviar/objects/neighborlist.h" // used for ml training
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 //==================================================
@@ -104,7 +104,7 @@ namespace force_field {
 
 
 Plt_dealii::Plt_dealii(CAVIAR * fptr) : 
-    caviar::objects::Force_field{fptr},
+    caviar::Force_field{fptr},
     fe (FC_DEALII_FE_Q_POLY_DEGREE),
     dof_handler (triangulation), 
     num_quadrature_points{FC_DEALII_FE_Q_POLY_DEGREE+1}, 
@@ -190,7 +190,7 @@ bool Plt_dealii::read (caviar::interpreter::Parser *parser) {
       }
       FIND_OBJECT_BY_NAME(unique,it)
       FC_CHECK_OBJECT_CLASS_NAME(unique,it,time_function)
-      objects::unique::Time_function *a = dynamic_cast<objects::unique::Time_function *>(object_container->unique[it->second.index]);           
+      unique::Time_function *a = dynamic_cast<unique::Time_function *>(object_container->unique[it->second.index]);           
       boundary_id_time_function.push_back(std::make_pair(id, a));
     } else if (string_cmp(t,"k_electrostatic")) {
       GET_OR_CHOOSE_A_REAL(k_electrostatic,"","")    
@@ -295,7 +295,7 @@ bool Plt_dealii::read (caviar::interpreter::Parser *parser) {
     } else if (string_cmp(t,"set_position_offset")) {
       FIND_OBJECT_BY_NAME(unique,it)
       FC_CHECK_OBJECT_CLASS_NAME(unique,it,time_function_3d)
-      objects::unique::Time_function_3d *a = dynamic_cast<objects::unique::Time_function_3d *>(object_container->unique[it->second.index]);
+      unique::Time_function_3d *a = dynamic_cast<unique::Time_function_3d *>(object_container->unique[it->second.index]);
       position_offset = a;
     } 
     else FC_ERR_UNDEFINED_VAR(t)
@@ -312,7 +312,7 @@ void Plt_dealii::generate_ml_training_data(caviar::interpreter::Parser *parser) 
 
       
   unique::Grid_1D *grid_1d_x = nullptr, *grid_1d_y = nullptr, *grid_1d_z = nullptr;
-  objects::Neighborlist *neighborlist = nullptr;
+  Neighborlist *neighborlist = nullptr;
   bool in_file = true;
   if (in_file==true) {
     // removes a warning
@@ -324,16 +324,16 @@ void Plt_dealii::generate_ml_training_data(caviar::interpreter::Parser *parser) 
 
     if (string_cmp(t,"neighborlist")) {
       FIND_OBJECT_BY_NAME(neighborlist,it)
-      neighborlist = static_cast<objects::Neighborlist*> (object_container->neighborlist[it->second.index]);
+      neighborlist = static_cast<Neighborlist*> (object_container->neighborlist[it->second.index]);
     } else if (string_cmp(t,"grid_1d_x")) {
       FIND_OBJECT_BY_NAME(unique,it)
-      grid_1d_x = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+      grid_1d_x = static_cast<unique::Grid_1D*> (object_container->unique[it->second.index]);
     } else if (string_cmp(t,"grid_1d_y")) {
       FIND_OBJECT_BY_NAME(unique,it)
-      grid_1d_y = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+      grid_1d_y = static_cast<unique::Grid_1D*> (object_container->unique[it->second.index]);
     } else  if (string_cmp(t,"grid_1d_z")) {
       FIND_OBJECT_BY_NAME(unique,it)
-      grid_1d_z = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+      grid_1d_z = static_cast<unique::Grid_1D*> (object_container->unique[it->second.index]);
     }
 
     else FC_ERR_UNDEFINED_VAR(t)
@@ -661,13 +661,13 @@ void Plt_dealii::output_field_vectors(caviar::interpreter::Parser *parser) {
       limit  = t2.real_value;
     } else if (string_cmp(t,"grid_1d_x")) {
       FIND_OBJECT_BY_NAME(unique,it)
-      grid_1d_x = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+      grid_1d_x = static_cast<unique::Grid_1D*> (object_container->unique[it->second.index]);
     } else if (string_cmp(t,"grid_1d_y")) {
       FIND_OBJECT_BY_NAME(unique,it)
-      grid_1d_y = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+      grid_1d_y = static_cast<unique::Grid_1D*> (object_container->unique[it->second.index]);
     } else  if (string_cmp(t,"grid_1d_z")) {
       FIND_OBJECT_BY_NAME(unique,it)
-      grid_1d_z = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+      grid_1d_z = static_cast<unique::Grid_1D*> (object_container->unique[it->second.index]);
     } 
 
     else FC_ERR_UNDEFINED_VAR(t)
@@ -778,13 +778,13 @@ void Plt_dealii::output_potential_values(caviar::interpreter::Parser *parser) {
 
     } else if (string_cmp(t,"grid_1d_x")) {
       FIND_OBJECT_BY_NAME(unique,it)        
-      grid_1d_x = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+      grid_1d_x = static_cast<unique::Grid_1D*> (object_container->unique[it->second.index]);
     } else if (string_cmp(t,"grid_1d_y")) {
       FIND_OBJECT_BY_NAME(unique,it)        
-      grid_1d_y = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+      grid_1d_y = static_cast<unique::Grid_1D*> (object_container->unique[it->second.index]);
     } else  if (string_cmp(t,"grid_1d_z")) {
       FIND_OBJECT_BY_NAME(unique,it)        
-      grid_1d_z = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+      grid_1d_z = static_cast<unique::Grid_1D*> (object_container->unique[it->second.index]);
     } 
 
     else FC_ERR_UNDEFINED_VAR(t)
@@ -1770,17 +1770,17 @@ double Plt_dealii::potential (const Vector<double> &v) {
 
 
 } //force_field
-} //objects
+
 } // namespace caviar
 
 #else
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 Plt_dealii::Plt_dealii(CAVIAR * fptr) : 
-    caviar::objects::Force_field{fptr} { 
+    caviar::Force_field{fptr} { 
   error->all(FC_FILE_LINE_FUNC,"Recompile CAVIAR with DEAL.II library.");
 }
 
@@ -1797,6 +1797,6 @@ void Plt_dealii::calculate_acceleration () {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 #endif

@@ -30,7 +30,7 @@
 #endif
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 
@@ -125,6 +125,6 @@ Vector<double> Electrostatic_ewald_k::field (const Vector<double> &r) {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

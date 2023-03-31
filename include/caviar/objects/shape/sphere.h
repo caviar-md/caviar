@@ -21,7 +21,7 @@
 
 
 namespace caviar {
-namespace objects {
+
 namespace shape {
 
 /**
@@ -49,7 +49,7 @@ public:
 };
 
 } //shape 
-} //objects
+
 } // namespace caviar
 
 #endif

@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Electromagnetic_external,electromagnetic_external,objects::force_field::Electromagnetic_external)
+FC_CHECK_AND_CREATE(Electromagnetic_external,electromagnetic_external,force_field::Electromagnetic_external)
 #endif

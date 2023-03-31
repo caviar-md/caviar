@@ -22,7 +22,7 @@
 #include <cmath>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 //======= total potential
@@ -212,6 +212,6 @@ Vector<double> Electrostatic_ewald1d::field_k (const int i) {
 
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

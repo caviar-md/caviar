@@ -21,7 +21,7 @@
 #include <cmath>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 double Electrostatic::energy () {
@@ -43,6 +43,6 @@ double Electrostatic::energy () {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

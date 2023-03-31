@@ -23,7 +23,7 @@
 #include <map>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 Dpd_mpi::Dpd_mpi (CAVIAR *fptr) : Force_field{fptr} {
@@ -224,6 +224,6 @@ void Dpd_mpi::calculate_acceleration () {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

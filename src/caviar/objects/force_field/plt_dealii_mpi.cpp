@@ -86,7 +86,7 @@
 
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 //==================================================
@@ -96,7 +96,7 @@ namespace force_field {
 
 
 Plt_dealii_mpi::Plt_dealii_mpi(CAVIAR * fptr) : 
-    caviar::objects::Force_field{fptr},
+    caviar::Force_field{fptr},
     triangulation (mpi_comm,
                    typename Triangulation<3>::MeshSmoothing
                    (Triangulation<3>::smoothing_on_refinement |
@@ -737,17 +737,17 @@ void Plt_dealii_mpi::calculate_all_particles_mesh_force_acc() {
 
 
 } //force_field
-} //objects
+
 } // namespace caviar
 
 #else
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 Plt_dealii_mpi::Plt_dealii_mpi(CAVIAR * fptr) : 
-    caviar::objects::Force_field{fptr} {
+    caviar::Force_field{fptr} {
   error->all(FC_FILE_LINE_FUNC,"please recompile with DEAL.II library.");
 }
 
@@ -764,6 +764,6 @@ void Plt_dealii_mpi::calculate_acceleration () {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 #endif

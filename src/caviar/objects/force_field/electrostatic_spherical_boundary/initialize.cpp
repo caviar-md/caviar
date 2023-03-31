@@ -23,7 +23,7 @@
 #include <iomanip>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 void Electrostatic_spherical_boundary::initialize () {
@@ -98,6 +98,6 @@ void Electrostatic_spherical_boundary::calculate_image_charges() {
 
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

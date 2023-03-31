@@ -19,7 +19,7 @@
 
 namespace caviar {
 
-namespace objects {
+
 
 Writer::Writer (CAVIAR *fptr) : Pointers{fptr}, initialized{false}, my_mpi_rank{comm->me},
     mpi_world_size{comm->nprocs}
@@ -43,7 +43,7 @@ void Writer::start_new_files(std::string &){} //add_time_to_previous
 void Writer::open_files() {}
 void Writer::close_files() {}
 void Writer::generate() {}
-} //objects
+
 
 
 } // namespace caviar

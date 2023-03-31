@@ -18,7 +18,7 @@
 #include "caviar/utility/interpreter_io_headers.h"
 
 namespace caviar {
-namespace objects {
+
 namespace shape {
 
 Triangle::Triangle (CAVIAR *fptr) : Shape {fptr},  flatness_tol{0.001} {
@@ -77,6 +77,6 @@ bool Triangle::in_contact(const Vector<double> &v, const double r, Vector<double
 }
   
 } //shape
-} //objects
+
 } // namespace caviar
 

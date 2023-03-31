@@ -21,7 +21,7 @@
 #include <cmath>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 Lj_cell_list::Lj_cell_list (CAVIAR *fptr) : Force_field{fptr} {
@@ -143,6 +143,6 @@ void Lj_cell_list::calculate_acceleration () {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

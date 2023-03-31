@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Nve,nve,objects::constraint::Nve)
+FC_CHECK_AND_CREATE(Nve,nve,constraint::Nve)
 #endif

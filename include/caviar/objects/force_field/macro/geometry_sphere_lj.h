@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Geometry_sphere_lj,geometry_sphere_lj,objects::force_field::Geometry_sphere_lj)
+FC_CHECK_AND_CREATE(Geometry_sphere_lj,geometry_sphere_lj,force_field::Geometry_sphere_lj)
 #endif

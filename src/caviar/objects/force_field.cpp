@@ -19,7 +19,7 @@
 
 namespace caviar {
 
-namespace objects {
+
 
 Force_field::Force_field (CAVIAR *fptr) : Pointers{fptr}, 
   atom_data{nullptr}, domain{nullptr}, neighborlist{nullptr} {
@@ -57,7 +57,7 @@ Vector<double> Force_field::field (const int) {
 }
 
 
-} //objects
+
 
 } // namespace caviar
 

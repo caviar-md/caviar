@@ -21,7 +21,7 @@
 
 namespace caviar {
 
-namespace objects {
+
 class Shape;
 class Atom_data;
 namespace unique {
@@ -62,7 +62,7 @@ class Distribution : public Unique {
 };
 
 } //unique
-} //objects
+
 
 } // namespace caviar
 

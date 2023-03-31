@@ -20,7 +20,7 @@
 #include "caviar/objects/writer.h"
 
 namespace caviar {
-namespace objects {
+
 namespace writer {
 
 /**
@@ -46,7 +46,7 @@ class Force_field : public Writer {
 };
 
 } //writer
-} //objects
+
 } // namespace caviar
 
 #endif

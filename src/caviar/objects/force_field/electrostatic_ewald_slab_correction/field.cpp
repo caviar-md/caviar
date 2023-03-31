@@ -23,7 +23,7 @@
 #include <iomanip>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 Vector<double> Electrostatic_ewald_slab_correction::field (const Vector<double> &r) {
@@ -224,6 +224,6 @@ Vector<double> Electrostatic_ewald_slab_correction::dipole_field () {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

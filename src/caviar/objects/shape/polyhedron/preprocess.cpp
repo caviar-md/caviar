@@ -23,7 +23,7 @@
 #include <fstream>
 
 namespace caviar {
-namespace objects {
+
 namespace shape {
 namespace polyhedron {
 
@@ -245,6 +245,6 @@ std::cout << "XXX HEY 2 " << std::endl;
 
 } //polyhedron
 } //shape
-} //objects
+
 } // namespace caviar
 

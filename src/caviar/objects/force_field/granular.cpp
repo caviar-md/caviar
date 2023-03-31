@@ -23,7 +23,7 @@
 #include <cmath>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 Granular::Granular (CAVIAR *fptr) : Force_field{fptr} {
@@ -192,6 +192,6 @@ void Granular::calculate_acceleration () {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

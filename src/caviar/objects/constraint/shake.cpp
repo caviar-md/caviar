@@ -24,7 +24,7 @@
 //#define ABS(x) (x<0 ? -x : x)
 
 namespace caviar {
-namespace objects {
+
 namespace constraint {
 
 Shake::Shake (CAVIAR *fptr) : Constraint{fptr},
@@ -174,6 +174,6 @@ void Shake::apply_on_velocity (int64_t) {
 
 
 } //constraint
-} //objects
+
 } // namespace caviar
 

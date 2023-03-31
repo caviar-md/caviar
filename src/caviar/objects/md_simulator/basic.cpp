@@ -25,7 +25,7 @@
 #include <ctime>
 
 namespace caviar {
-namespace objects {
+
 namespace md_simulator {
 
 Basic::Basic (CAVIAR *fptr) : Md_simulator{fptr}
@@ -37,6 +37,6 @@ Basic::~Basic () {}
 
 
 } //md_simulator
-} //objects
+
 } // namespace caviar
 

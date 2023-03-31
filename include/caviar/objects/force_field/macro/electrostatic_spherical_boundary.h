@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Electrostatic_spherical_boundary,electrostatic_spherical_boundary,objects::force_field::Electrostatic_spherical_boundary)
+FC_CHECK_AND_CREATE(Electrostatic_spherical_boundary,electrostatic_spherical_boundary,force_field::Electrostatic_spherical_boundary)
 #endif

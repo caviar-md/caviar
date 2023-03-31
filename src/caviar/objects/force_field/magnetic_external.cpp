@@ -22,7 +22,7 @@
 #include <iomanip>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 Magnetic_external::Magnetic_external (CAVIAR *fptr) : Force_field{fptr},
@@ -84,6 +84,6 @@ void Magnetic_external::calculate_acceleration () {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

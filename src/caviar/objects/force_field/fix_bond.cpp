@@ -27,7 +27,7 @@
 #include <iomanip>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 Fix_bond::Fix_bond (CAVIAR *fptr) : Force_field{fptr}
@@ -110,7 +110,7 @@ void Fix_bond::create_atomic_bond () {
                 
                 if (dr_sq < Rmin*Rmin){
                     
-                    objects::atom_data::Bond b;
+                    atom_data::Bond b;
                     b.type = btype;
                     b.length = blength;
                     b.index_1 = i;
@@ -134,6 +134,6 @@ void Fix_bond::calculate_acceleration () {
   create_atomic_bond ();
 }
 } //force_field
-} //objects
+
 } // namespace caviar
 

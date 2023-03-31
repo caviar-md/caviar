@@ -21,7 +21,7 @@
 
 namespace caviar {
 
-namespace objects {
+
 class Atom_data;
 
 /**
@@ -48,12 +48,12 @@ public:
   Vector<int> no_bins;
   double cutoff; 
 
-  class caviar::objects::Atom_data *atom_data;
+  class caviar::Atom_data *atom_data;
 
   FC_BASE_OBJECT_COMMON_TOOLS
 };
 
-} //objects
+
 
 } // namespace caviar
 

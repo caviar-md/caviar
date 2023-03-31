@@ -21,7 +21,7 @@
 
 namespace caviar {
 
-namespace objects {
+
 
 inline void normalize (Vector<Real_t> & v) {
   v /= std::sqrt(v*v);
@@ -54,7 +54,7 @@ class Shape : public Pointers {
 
   FC_BASE_OBJECT_COMMON_TOOLS
 };
-} //objects
+
 
 } // namespace caviar
 

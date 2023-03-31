@@ -23,7 +23,7 @@
 #include <string>
 
 namespace caviar {
-namespace objects {
+
 namespace constraint {
 
 
@@ -207,7 +207,7 @@ void M_shake::apply_on_velocity (int64_t) { // step III
 
 
 } //constraint
-} //objects
+
 } // namespace caviar
 
 

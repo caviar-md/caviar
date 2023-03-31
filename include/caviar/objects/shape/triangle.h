@@ -20,12 +20,12 @@
 #include "caviar/objects/shape.h"
 
 namespace caviar {
-namespace objects {
+
 namespace shape {
 
 /**
- * This class has a triangle shape. It could be used in order to mmake more 
- * difficult shapes
+ * This class has a triangle shape. It could be used in order to make more 
+ * complex shapes
  * 
  */
 class Triangle : public Shape {
@@ -50,7 +50,7 @@ public:
 };
 
 } //shape
-} //objects
+
 } // namespace caviar
 
 #endif

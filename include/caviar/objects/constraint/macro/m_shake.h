@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(M_shake,m_shake,objects::constraint::M_shake)
+FC_CHECK_AND_CREATE(M_shake,m_shake,constraint::M_shake)
 #endif

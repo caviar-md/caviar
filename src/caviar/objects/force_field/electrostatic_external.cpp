@@ -23,7 +23,7 @@
 #include <iomanip>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 Electrostatic_external::Electrostatic_external (CAVIAR *fptr) : Force_field{fptr}, 
@@ -80,6 +80,6 @@ void Electrostatic_external::calculate_acceleration () {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

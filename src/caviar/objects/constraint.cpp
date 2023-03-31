@@ -18,7 +18,7 @@
 
 namespace caviar {
 
-namespace objects {
+
 
 Constraint::Constraint (CAVIAR *fptr) : Pointers{fptr}, atom_data{nullptr} {
   FC_OBJECT_INITIALIZE
@@ -35,7 +35,7 @@ void Constraint::apply_on_position (int64_t) { }
 void Constraint::apply_on_velocity (int64_t) { }
 void Constraint::apply_on_acceleration (int64_t) { }
 
-} //objects
+
 
 
 } // namespace caviar

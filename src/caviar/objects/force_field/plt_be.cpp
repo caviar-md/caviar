@@ -35,7 +35,7 @@
 
    
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 //==================================================
@@ -45,7 +45,7 @@ namespace force_field {
 
 
 Plt_be::Plt_be(CAVIAR * fptr) : 
-    caviar::objects::Force_field{fptr}
+    caviar::Force_field{fptr}
 /*
 
     fe (FC_DEALII_FE_Q_POLY_DEGREE),
@@ -537,7 +537,7 @@ bool Plt_be::read (caviar::interpreter::Parser *parser) {
     } else if (string_cmp(t,"add_polyhedron")) {
       FIND_OBJECT_BY_NAME(shape,it)
       FC_CHECK_OBJECT_CLASS_NAME(shape,it,polyhedron)
-      objects::shape::Polyhedron *p = dynamic_cast<objects::shape::Polyhedron *>(object_container->shape[it->second.index]);
+      shape::Polyhedron *p = dynamic_cast<shape::Polyhedron *>(object_container->shape[it->second.index]);
       polyhedron = p;
     } else if (string_cmp(t,"k_electrostatic")) {
       GET_OR_CHOOSE_A_REAL(k_electrostatic,"","")    
@@ -1285,6 +1285,6 @@ void Plt_be::calculate_all_particles_mesh_force_acc() {
 
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

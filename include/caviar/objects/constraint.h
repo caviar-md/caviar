@@ -20,7 +20,7 @@
 #include "caviar/utility/objects_common_headers.h"
 
 namespace caviar {
-namespace objects {
+
 class Integrator;
 class Atom_data;
 
@@ -62,7 +62,7 @@ class Constraint : public Pointers {
   virtual void apply_on_acceleration (int64_t); //Nose_hoover
   
   
-  class objects::Atom_data *atom_data;
+  class Atom_data *atom_data;
   
   Constraint_t constraint_type;
   
@@ -71,7 +71,7 @@ class Constraint : public Pointers {
   FC_BASE_OBJECT_COMMON_TOOLS
 };
 
-} //objects
+
 
 } // namespace caviar
 

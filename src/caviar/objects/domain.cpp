@@ -19,7 +19,7 @@
 
 namespace caviar {
 
-namespace objects {
+
 
 Domain::Domain (CAVIAR *fptr) : Pointers{fptr},
     boundary_condition{Vector<int> {0,0,0}},
@@ -164,7 +164,7 @@ Vector<Real_t> Domain::periodic_distance (const Vector<Real_t> v) {
   return vf;
 }
 
-} //objects
+
 
 } // namespace caviar
 

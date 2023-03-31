@@ -22,7 +22,7 @@
 #include "caviar/objects/unique/grid_1d.h"
 
 namespace caviar {
-namespace objects {
+
 namespace postprocess {
 
 
@@ -66,15 +66,15 @@ bool Potential_sampler::read (caviar::interpreter::Parser* parser) {
     } 
     else if (string_cmp(t,"grid_1d_x")) {
       FIND_OBJECT_BY_NAME(unique,it)        
-      grid_x = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+      grid_x = static_cast<unique::Grid_1D*> (object_container->unique[it->second.index]);
     } 
     else if (string_cmp(t,"grid_1d_y")) {
       FIND_OBJECT_BY_NAME(unique,it)        
-      grid_y = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+      grid_y = static_cast<unique::Grid_1D*> (object_container->unique[it->second.index]);
     } 
     else if (string_cmp(t,"grid_1d_z")) {
       FIND_OBJECT_BY_NAME(unique,it)        
-      grid_z = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+      grid_z = static_cast<unique::Grid_1D*> (object_container->unique[it->second.index]);
     } 
     else if (string_cmp(t,"set_md_simulator") || string_cmp(t,"md_simulator")) {
       FIND_OBJECT_BY_NAME(md_simulator,it)
@@ -267,7 +267,7 @@ double Grid_1D::give_point (int i) {
 }
 */
 } //postprocess
-} //objects
+
 
 } // namespace caviar
 

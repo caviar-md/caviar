@@ -20,7 +20,7 @@
 
 
 namespace caviar {
-namespace objects {
+
 namespace constraint {
 
 Nve::Nve (CAVIAR *fptr) : Constraint{fptr} {
@@ -151,6 +151,6 @@ void Nve::apply_on_velocity (int64_t) {
 
 
 } //constraint
-} //objects
+
 } // namespace caviar
 

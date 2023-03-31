@@ -20,7 +20,7 @@
 #include "caviar/objects/md_simulator.h"
 
 namespace caviar {
-namespace objects {
+
 namespace md_simulator {
 
 /**
@@ -36,7 +36,7 @@ class Basic : public Md_simulator {
 };
 
 } //md_simulator
-} //objects
+
 } // namespace caviar
 
 #endif

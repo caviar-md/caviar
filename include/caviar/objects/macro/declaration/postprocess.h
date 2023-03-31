@@ -16,12 +16,12 @@
 
 
 #ifdef FC_GENERAL_CLASSNAME_MACRO_ACTIVATED
-FC_GENERAL_CLASSNAME_MACRO(Postprocess,postprocess,objects::Postprocess)
+FC_GENERAL_CLASSNAME_MACRO(Postprocess,postprocess,Postprocess)
 #endif
 
 #ifdef FC_COMPLETE_FORWARD_DECLERATION
 namespace caviar {
-namespace objects {
+
 class Postprocess;
 }
 } // namespace caviar

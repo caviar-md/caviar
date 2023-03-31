@@ -22,7 +22,7 @@
 #include <cmath>
 
 namespace caviar {
-namespace objects {
+
 namespace neighborlist {
 inline int int_floor(double x) 
 { 
@@ -217,6 +217,6 @@ void Cell_list::make_neigh_bin () {
 }
 
 } //neighborlist
-} //objects
+
 } // namespace caviar
 

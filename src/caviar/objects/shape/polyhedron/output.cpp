@@ -22,7 +22,7 @@
 #include <fstream>
 
 namespace caviar {
-namespace objects {
+
 namespace shape {
 namespace polyhedron {
 
@@ -251,6 +251,6 @@ void Output::mesh_vfptr (const std::vector<polyhedron::Polyhedron> & shapes) {
 */
 } //polyhedron
 } //shape
-} //objects
+
 } // namespace caviar
 

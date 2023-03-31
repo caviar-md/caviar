@@ -19,7 +19,7 @@ FC_OBJECT_CREATOR_DEFAULT_FUNCTION(domain) {
 
   FC_GET_OBJECT_TYPE_AND_NAME
 
-  objects::Domain * p_sh = nullptr; 
+  Domain * p_sh = nullptr; 
 
 #include "caviar/objects/domain/macro/all.h"
 

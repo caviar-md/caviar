@@ -23,7 +23,7 @@
 
 namespace caviar {
 
-namespace objects {
+
 namespace unique
 {
 class Time_function;
@@ -197,14 +197,14 @@ class Md_simulator : public Pointers {
   //virtual void verify_settings ();
   virtual void re_calculate_acc();
   
-  class objects::Atom_data *atom_data;
-  //class objects::Integrator *integrator;
-  std::vector<class objects::Neighborlist *> neighborlist;
-  std::vector<objects::Force_field *> force_field; 
-  std::vector<objects::Constraint *> constraint; 
-  std::vector<objects::Writer *> writer; 
-  std::vector<objects::unique::Time_function *> time_function; 
-  std::vector<objects::unique::Time_function_3d *> time_function_3d; 
+  class Atom_data *atom_data;
+  //class Integrator *integrator;
+  std::vector<class Neighborlist *> neighborlist;
+  std::vector<Force_field *> force_field; 
+  std::vector<Constraint *> constraint; 
+  std::vector<Writer *> writer; 
+  std::vector<unique::Time_function *> time_function; 
+  std::vector<unique::Time_function_3d *> time_function_3d; 
   
   double time, dt;
   clock_t t_start, t_end;
@@ -234,7 +234,7 @@ class Md_simulator : public Pointers {
   FC_BASE_OBJECT_COMMON_TOOLS
 };
 
-} //objects
+
 
 } // namespace caviar
 

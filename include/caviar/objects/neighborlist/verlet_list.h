@@ -20,7 +20,7 @@
 #include "caviar/objects/neighborlist.h"
 
 namespace caviar {
-namespace objects {
+
 namespace neighborlist {
 
 /**
@@ -40,7 +40,7 @@ class Verlet_list : public Neighborlist {
 };
 
 } //neighborlist
-} //objects
+
 } // namespace caviar
 
 #endif

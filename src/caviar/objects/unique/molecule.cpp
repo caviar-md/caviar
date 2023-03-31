@@ -22,7 +22,7 @@
 
 
 namespace caviar {
-namespace objects {
+
 namespace unique {
 
 
@@ -72,7 +72,7 @@ bool Molecule::read ( caviar::interpreter::Parser * parser) {
     FC_IF_RAW_TOKEN_EOF_EOL
     FC_IF_GET_REAL3D(position)
     else if (string_cmp(ts,"add_atomic_bond") || string_cmp(ts,"atomic_bond") ) {
-      objects::atom_data::Bond b;
+      atom_data::Bond b;
       GET_OR_CHOOSE_A_INT(b.index_1,"","")
       GET_OR_CHOOSE_A_INT(b.index_2,"","")
       GET_OR_CHOOSE_A_INT(b.type,"","")
@@ -95,7 +95,7 @@ bool Molecule::read ( caviar::interpreter::Parser * parser) {
 
 
     } else if (string_cmp(ts,"add_atomic_angle") || string_cmp(ts,"atomic_angle") ) {
-      objects::atom_data::Angle b;
+      atom_data::Angle b;
       GET_OR_CHOOSE_A_INT(b.index_1,"","")
       GET_OR_CHOOSE_A_INT(b.index_2,"","")
       GET_OR_CHOOSE_A_INT(b.index_3,"","")
@@ -122,7 +122,7 @@ bool Molecule::read ( caviar::interpreter::Parser * parser) {
 
 
     } else if (string_cmp(ts,"add_atomic_properdihedral") || string_cmp(ts,"atomic_properdihedral") ) {
-      objects::atom_data::Proper_dihedral b;
+      atom_data::Proper_dihedral b;
       GET_OR_CHOOSE_A_INT(b.index_1,"","")
       GET_OR_CHOOSE_A_INT(b.index_2,"","")
       GET_OR_CHOOSE_A_INT(b.index_3,"","")
@@ -168,7 +168,7 @@ bool Molecule::add_atom ( caviar::interpreter::Parser * parser) {
 
   FIND_OBJECT_BY_NAME(unique,it)
   FC_CHECK_OBJECT_CLASS_NAME(unique,it,atom)
-  auto a =  *dynamic_cast<objects::unique::Atom *>(object_container->unique[it->second.index]);
+  auto a =  *dynamic_cast<unique::Atom *>(object_container->unique[it->second.index]);
 
   bool in_file = true;
   Vector<double> pos_ = {0,0,0};
@@ -248,7 +248,7 @@ void Molecule::output_xyz (std::ofstream & out_file) {
 
 
 
-bool Molecule::add_atom (const objects::unique::Atom &a, const Vector<double> &p, const Vector<double> &v) {
+bool Molecule::add_atom (const unique::Atom &a, const Vector<double> &p, const Vector<double> &v) {
   unsigned int i = atoms.size();
   atoms.push_back (a);
   atoms[i].upper_level_molecule = this;
@@ -259,7 +259,7 @@ bool Molecule::add_atom (const objects::unique::Atom &a, const Vector<double> &p
 }
 
 
-bool Molecule::add_atom (const objects::unique::Atom & a){
+bool Molecule::add_atom (const unique::Atom & a){
   unsigned int i = atoms.size();
   atoms.push_back (a);
   atoms[i].upper_level_molecule = this;
@@ -280,7 +280,7 @@ Vector<double> Molecule::vel_tot () const {
 }
 
 } //unique
-} //objects
+
 
 } // namespace caviar
 

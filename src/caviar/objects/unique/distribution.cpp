@@ -26,7 +26,7 @@
 #include "caviar/utility/interpreter_io_headers.h"
 
 namespace caviar {
-namespace objects {
+
 namespace unique {
 
 
@@ -65,19 +65,19 @@ bool Distribution::read (caviar::interpreter::Parser* parser) {
     } else if (string_cmp(t,"atom")) {
       FIND_OBJECT_BY_NAME(unique,it)
       FC_CHECK_OBJECT_CLASS_NAME(unique,it,atom)
-      atom = static_cast<objects::unique::Atom*> (object_container->unique[it->second.index]);
+      atom = static_cast<unique::Atom*> (object_container->unique[it->second.index]);
     } else if (string_cmp(t,"atom_group")) {
       FIND_OBJECT_BY_NAME(unique,it)
       FC_CHECK_OBJECT_CLASS_NAME(unique,it,atom_group)
-      atom_group = static_cast<objects::unique::Atom_group*> (object_container->unique[it->second.index]);
+      atom_group = static_cast<unique::Atom_group*> (object_container->unique[it->second.index]);
     } else if (string_cmp(t,"molecule")) {
       FIND_OBJECT_BY_NAME(unique,it)
       FC_CHECK_OBJECT_CLASS_NAME(unique,it,molecule)
-      molecule = static_cast<objects::unique::Molecule*> (object_container->unique[it->second.index]);
+      molecule = static_cast<unique::Molecule*> (object_container->unique[it->second.index]);
     } else if (string_cmp(t,"molecule_group")) {
       FIND_OBJECT_BY_NAME(unique,it)
       FC_CHECK_OBJECT_CLASS_NAME(unique,it,molecule_group)
-      molecule_group = static_cast<objects::unique::Molecule_group*> (object_container->unique[it->second.index]);
+      molecule_group = static_cast<unique::Molecule_group*> (object_container->unique[it->second.index]);
     } else if (string_cmp(t,"distribute_grid_3d")) {
       distribute_grid_3D();
       return in_file;
@@ -90,22 +90,22 @@ bool Distribution::read (caviar::interpreter::Parser* parser) {
       return in_file;
     } else if (string_cmp(t,"grid_1d_x")) {
       FIND_OBJECT_BY_NAME(unique,it)        
-      grid_1d_x = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+      grid_1d_x = static_cast<unique::Grid_1D*> (object_container->unique[it->second.index]);
     } else if (string_cmp(t,"grid_1d_y")) {
       FIND_OBJECT_BY_NAME(unique,it)        
-      grid_1d_y = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+      grid_1d_y = static_cast<unique::Grid_1D*> (object_container->unique[it->second.index]);
     } else  if (string_cmp(t,"grid_1d_z")) {
       FIND_OBJECT_BY_NAME(unique,it)        
-      grid_1d_z = static_cast<objects::unique::Grid_1D*> (object_container->unique[it->second.index]);
+      grid_1d_z = static_cast<unique::Grid_1D*> (object_container->unique[it->second.index]);
     } else  if (string_cmp(t,"random_1d_x")) {
       FIND_OBJECT_BY_NAME(unique,it)        
-      random_1d_x = static_cast<objects::unique::Random_1D*> (object_container->unique[it->second.index]);
+      random_1d_x = static_cast<unique::Random_1D*> (object_container->unique[it->second.index]);
     } else  if (string_cmp(t,"random_1d_y")) {
       FIND_OBJECT_BY_NAME(unique,it)        
-      random_1d_y = static_cast<objects::unique::Random_1D*> (object_container->unique[it->second.index]);
+      random_1d_y = static_cast<unique::Random_1D*> (object_container->unique[it->second.index]);
     } else  if (string_cmp(t,"random_1d_z")) {
       FIND_OBJECT_BY_NAME(unique,it)        
-      random_1d_z = static_cast<objects::unique::Random_1D*> (object_container->unique[it->second.index]);
+      random_1d_z = static_cast<unique::Random_1D*> (object_container->unique[it->second.index]);
     } else if (string_cmp(t,"add_radius")) {
       int i=0;
       double m = 0;
@@ -287,7 +287,7 @@ bool Distribution::distribute_random_3D(const int num_of_atoms, const double ) {
 }
   
 } //unique
-} //objects
+
 
 } // namespace caviar
 

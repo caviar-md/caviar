@@ -20,7 +20,7 @@
 #include "caviar/objects/constraint.h"
 
 namespace caviar {
-namespace objects {
+
 
 namespace constraint {
 
@@ -60,7 +60,7 @@ class Nve : public Constraint {
 };
 
 } //constraint
-} //objects
+
 } // namespace caviar
 
 #endif

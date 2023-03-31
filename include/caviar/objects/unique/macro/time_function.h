@@ -15,6 +15,6 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Time_function,time_function,objects::unique::Time_function)
+FC_CHECK_AND_CREATE(Time_function,time_function,unique::Time_function)
 #endif
 

@@ -23,7 +23,7 @@
 
 namespace caviar {
 
-namespace objects {
+
 class Atom_data;
 class Md_simulator;
 class Force_field;
@@ -71,20 +71,20 @@ class Potential_sampler  : public Postprocess {
   std::string input_xyz_file_name;
   std::string output_file_name;
 
-  class caviar::objects::Atom_data *atom_data;
-  class caviar::objects::Md_simulator *md_simulator;
+  class caviar::Atom_data *atom_data;
+  class caviar::Md_simulator *md_simulator;
   
-  std::vector<objects::Force_field *> force_field; 
+  std::vector<Force_field *> force_field; 
   
-  class caviar::objects::unique::Grid_1D *grid_x;
-  class caviar::objects::unique::Grid_1D *grid_y;
-  class caviar::objects::unique::Grid_1D *grid_z;
+  class caviar::unique::Grid_1D *grid_x;
+  class caviar::unique::Grid_1D *grid_y;
+  class caviar::unique::Grid_1D *grid_z;
 
   std::ofstream ofs_out;
 };
 
 } //postproces
-} //objects
+
 
 } // namespace caviar
 

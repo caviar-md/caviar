@@ -21,7 +21,7 @@
 
 
 namespace caviar {
-namespace objects {
+
 class Atom_data;
 namespace shape {
 class Polyhedron;
@@ -44,18 +44,18 @@ public:
   void verify_settings ();
   bool read (caviar::interpreter::Parser *);
 
-  caviar::objects::shape::Polyhedron *polyhedron;
+  caviar::shape::Polyhedron *polyhedron;
   
   double k_electrostatic;
 
-  std::vector<caviar::objects::Force_field*> force_field_custom;
+  std::vector<caviar::Force_field*> force_field_custom;
 
   //double total_potential_of_charges (const dealii::Point<3> &p);
   
   void start_spherical_test();
   void write_spherical_test();
 
-  caviar::objects::Force_field *test_force_spherical;
+  caviar::Force_field *test_force_spherical;
   std::ofstream ofs_test_force_spherical;
   bool init_test_force_spherical;
   std::string spherical_test_file_name;
@@ -123,7 +123,7 @@ public:
   bool use_preconditioner;
   double preconditioner_relaxation; // as is said in dealii docs,  0 < preconditioner_relaxation < 2
  
-  class caviar::objects::Atom_data * atom_data;
+  class caviar::Atom_data * atom_data;
 
   bool initialized;
   
@@ -162,7 +162,7 @@ public:
 
 
 } //force_field
-} //objects
+
 } // namespace caviar
 
 #endif

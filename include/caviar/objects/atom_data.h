@@ -25,7 +25,7 @@
 
 namespace caviar {
 
-namespace objects {
+
 
 class Domain;
 namespace unique { 
@@ -77,8 +77,8 @@ public:
    * checks by atom_type
    */
   virtual bool empty_of_atoms(const Vector<Real_t>, int type);
-  virtual bool empty_of_atoms(objects::unique::Atom &a);
-  virtual bool empty_of_atoms(objects::unique::Molecule &m);
+  virtual bool empty_of_atoms(unique::Atom &a);
+  virtual bool empty_of_atoms(unique::Molecule &m);
 
   /**
    *  position of the center of mass
@@ -153,16 +153,16 @@ public:
   /**
    * add unique::Atom to the owned data
    */
-  virtual bool add_atom(caviar::objects::unique::Atom &a);
-  virtual bool add_atom(caviar::objects::unique::Atom_group &a);
-  virtual bool add_atom(caviar::objects::unique::Atom_list &a);
+  virtual bool add_atom(caviar::unique::Atom &a);
+  virtual bool add_atom(caviar::unique::Atom_group &a);
+  virtual bool add_atom(caviar::unique::Atom_list &a);
 
   /**
    * add unique::Molecule to the owned data
    */
-  virtual bool add_molecule(caviar::objects::unique::Molecule &m);
-  virtual bool add_molecule(caviar::objects::unique::Molecule_group &m);
-  virtual bool add_molecule(caviar::objects::unique::Molecule_list &m);
+  virtual bool add_molecule(caviar::unique::Molecule &m);
+  virtual bool add_molecule(caviar::unique::Molecule_group &m);
+  virtual bool add_molecule(caviar::unique::Molecule_list &m);
 
   /**
    * merging two molecules by their molecule index
@@ -172,47 +172,47 @@ public:
   /**
    * adds a new bond between existing atoms in the  atom_data and merge molecules if possible
    */
-  void add_atomic_bond(const objects::atom_data::Bond& bond); 
+  void add_atomic_bond(const atom_data::Bond& bond); 
   
   /**
    * adds a new bond between existing atoms in the  atom_data and merge molecules if possible
    */
-  void add_atomic_angle(const objects::atom_data::Angle& angle);
+  void add_atomic_angle(const atom_data::Angle& angle);
   
   /**
    * adds a new bond between existing atoms in the  atom_data and merge molecules if possible
    */
-  void add_atomic_properdihedral(const objects::atom_data::Proper_dihedral& proper_dihedral);
+  void add_atomic_properdihedral(const atom_data::Proper_dihedral& proper_dihedral);
 
   /**
    * remove atomic bond if it exist. Also remove atomic angles and proper dihedrals if the bond is used in them.
    */
-  void remove_atomic_bond(const objects::atom_data::Bond& bond); 
+  void remove_atomic_bond(const atom_data::Bond& bond); 
   
   /**
    * remove atomic angle if it exist
    */
-  void remove_atomic_angle(const objects::atom_data::Angle& angle);
+  void remove_atomic_angle(const atom_data::Angle& angle);
   
   /**
    * remove atomic angle if it exist
    */
-  void remove_atomic_properdihedral(const objects::atom_data::Proper_dihedral& proper_dihedral);
+  void remove_atomic_properdihedral(const atom_data::Proper_dihedral& proper_dihedral);
 
     /**
    * remove atomic bond if it exist. Also remove atomic angles and proper dihedrals if the bond is used in them.
    */
-  bool check_atomic_bond_exist(const objects::atom_data::Bond& bond); 
+  bool check_atomic_bond_exist(const atom_data::Bond& bond); 
   
   /**
    * remove atomic angle if it exist
    */
-  bool check_atomic_angle_exist(const objects::atom_data::Angle& angle);
+  bool check_atomic_angle_exist(const atom_data::Angle& angle);
   
   /**
    * remove atomic angle if it exist
    */
-  bool check_atomic_properdihedral_exist(const objects::atom_data::Proper_dihedral& proper_dihedral);
+  bool check_atomic_properdihedral_exist(const atom_data::Proper_dihedral& proper_dihedral);
   
   /**
    * sets the mass of an atom type
@@ -416,7 +416,7 @@ public:
     /**    
      * The first std::vector, is the molecule index. the inner data contain bonds.
      */
-    std::vector <std::vector<objects::atom_data::Bond>> atomic_bond_vector;
+    std::vector <std::vector<atom_data::Bond>> atomic_bond_vector;
 
     /**    
      * Number of atomic bonds each atom have. It is used to limit
@@ -428,10 +428,10 @@ public:
      * The first index, meaning
      * the first std::vector, is the molecule index. the inner data contain angles.
      */
-    std::vector <std::vector<objects::atom_data::Angle>> atomic_angle_vector; 
+    std::vector <std::vector<atom_data::Angle>> atomic_angle_vector; 
 
 
-    std::vector <std::vector<objects::atom_data::Proper_dihedral>> atomic_properdihedral_vector;
+    std::vector <std::vector<atom_data::Proper_dihedral>> atomic_properdihedral_vector;
     
  
   }  
@@ -519,18 +519,18 @@ public:
   /**
    * usage
    */
-  class objects::Domain *domain;
+  class Domain *domain;
 
   /**
    * usage in 'empty_of_atoms()' functions.
    */
-  class objects::neighborlist::Cell_list *cell_list;
+  class neighborlist::Cell_list *cell_list;
 
   FC_BASE_OBJECT_COMMON_TOOLS
 
 };
 
-} //objects
+
 
 } // namespace caviar
 

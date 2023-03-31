@@ -29,7 +29,7 @@
 #include <iomanip>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 namespace plt_dealii_mpi {
@@ -68,6 +68,6 @@ double BoundaryValues::value (const Point<3> &p, const unsigned int ) const
 
 } // plt_dealii
 } //force_field
-} //objects
+
 } // namespace caviar
 #endif

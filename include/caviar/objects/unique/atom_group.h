@@ -22,7 +22,7 @@
 
 namespace caviar {
 
-namespace objects {
+
 namespace unique {
 
 /**
@@ -38,12 +38,12 @@ class Atom_group  : public Unique {
   bool read (caviar::interpreter::Parser *);
   Vector<double> pos_tot () const;
   Vector<double> vel_tot () const; 
-  void add_atom(const objects::unique::Atom &);
-  void add_atom(const objects::unique::Atom &,
+  void add_atom(const unique::Atom &);
+  void add_atom(const unique::Atom &,
                 caviar::Vector<double> p=caviar::Vector<double>{0,0,0},
                 caviar::Vector<double> v=caviar::Vector<double>{0,0,0});
 
-  std::vector<objects::unique::Atom> atoms;
+  std::vector<unique::Atom> atoms;
 
   bool part_of_a_atom_group;    
   Atom_group * upper_level_atom_group;
@@ -53,7 +53,7 @@ class Atom_group  : public Unique {
 };
 
 } //unique
-} //objects
+
 
 } // namespace caviar
 

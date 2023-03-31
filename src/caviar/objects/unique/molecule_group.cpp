@@ -21,7 +21,7 @@
 #include "caviar/interpreter/object_handler/preprocessors_new.h"
 
 namespace caviar {
-namespace objects {
+
 namespace unique {
 
 Molecule_group::Molecule_group (CAVIAR *fptr) : Unique{fptr},
@@ -56,7 +56,7 @@ bool Molecule_group::read ( caviar::interpreter::Parser * parser) {
     else if (string_cmp(ts,"add_molecule")) {
       FIND_OBJECT_BY_NAME(unique,it)
       FC_CHECK_OBJECT_CLASS_NAME(unique,it,molecule)
-      auto m =  *dynamic_cast<objects::unique::Molecule *>(object_container->unique[it->second.index]);
+      auto m =  *dynamic_cast<unique::Molecule *>(object_container->unique[it->second.index]);
 
       Vector<double> pos {0.,0.,0.};
       auto t = parser->get_raw_token(); 
@@ -78,11 +78,11 @@ bool Molecule_group::read ( caviar::interpreter::Parser * parser) {
   return true;
 }
 
-void Molecule_group::add_molecule(const objects::unique::Molecule &m) {
+void Molecule_group::add_molecule(const unique::Molecule &m) {
   molecules.push_back(m);
 }
 
-void Molecule_group::add_molecule(const objects::unique::Molecule &m,
+void Molecule_group::add_molecule(const unique::Molecule &m,
                           caviar::Vector<double> p,
                           caviar::Vector<double> v) {
   auto mt = m;
@@ -105,7 +105,7 @@ Vector<double> Molecule_group::vel_tot () const {
 }
 
 } //unique
-} //objects
+
 
 } // namespace caviar
 

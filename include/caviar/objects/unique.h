@@ -21,7 +21,7 @@
 
 namespace caviar {
 
-namespace objects {
+
 
 /**
  * This class is the base class for all the unique objects.
@@ -37,7 +37,7 @@ class Unique : public Pointers {
   FC_BASE_OBJECT_COMMON_TOOLS
 };
 
-} //objects
+
 
 } // namespace caviar
 

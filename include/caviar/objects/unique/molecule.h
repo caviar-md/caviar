@@ -24,7 +24,7 @@
 
 namespace caviar {
 
-namespace objects {
+
 namespace unique {
 class Atom;
 class Molecule_group;
@@ -69,20 +69,20 @@ class Molecule : public Unique {
   Vector<double> position, velocity;
   std::vector<Atom> atoms;
 
-  std::vector<objects::atom_data::Bond> atomic_bond; 
+  std::vector<atom_data::Bond> atomic_bond; 
   std::vector<int> atomic_bond_index; 
 
-  std::vector<objects::atom_data::Angle> atomic_angle; 
+  std::vector<atom_data::Angle> atomic_angle; 
   std::vector<int> atomic_angle_index; 
 
-  std::vector<objects::atom_data::Proper_dihedral> atomic_properdihedral; 
+  std::vector<atom_data::Proper_dihedral> atomic_properdihedral; 
   std::vector<int> atomic_properdihedral_index;
 
   
 };
 
 } //unique
-} //objects
+
 
 } // namespace caviar
 

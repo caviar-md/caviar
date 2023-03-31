@@ -22,7 +22,7 @@
 
 namespace caviar {
 
-namespace objects {
+
 namespace unique {
 
 /**
@@ -37,13 +37,13 @@ class Atom_list  : public Unique {
   ~Atom_list () ;
   bool read (caviar::interpreter::Parser *);
   void verify_settings ();
-  void add_atom(const objects::unique::Atom &);
-  std::vector<objects::unique::Atom *> atoms;
+  void add_atom(const unique::Atom &);
+  std::vector<unique::Atom *> atoms;
 
 };
 
 } //unique
-} //objects
+
 
 } // namespace caviar
 

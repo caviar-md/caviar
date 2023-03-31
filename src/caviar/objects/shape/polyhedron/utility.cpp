@@ -24,7 +24,7 @@
 
 
 namespace caviar {
-namespace objects {
+
 namespace shape {
 namespace polyhedron {
 
@@ -151,7 +151,7 @@ bool Utility::normals_are_pointing_outside(shape::polyhedron::Polyhedron & p_obj
 
 } //polyhedron
 } //shape
-} //objects
+
 } // namespace caviar
 
 

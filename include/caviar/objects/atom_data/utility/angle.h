@@ -18,7 +18,7 @@
 #define CAVIAR_OBJECTS_ATOMDATA_UTILITY_ANGLE_H
 
 namespace caviar {
-namespace objects {
+
 namespace atom_data {
 // Angle contain data for rigid atomic angles which may be used in
 // constraint algorithms or soft atomic angles in spring_angle force_fields

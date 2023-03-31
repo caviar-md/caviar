@@ -16,12 +16,12 @@
 
 
 #ifdef FC_GENERAL_CLASSNAME_MACRO_ACTIVATED
-FC_GENERAL_CLASSNAME_MACRO(Atom_data,atom_data,objects::Atom_data)
+FC_GENERAL_CLASSNAME_MACRO(Atom_data,atom_data,Atom_data)
 #endif
 
 #ifdef FC_COMPLETE_FORWARD_DECLERATION
 namespace caviar {
-namespace objects {
+
 class Atom_data;
 }
 } // namespace caviar

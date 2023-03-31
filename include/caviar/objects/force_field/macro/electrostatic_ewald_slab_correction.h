@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Electrostatic_ewald_slab_correction,electrostatic_ewald_slab_correction,objects::force_field::Electrostatic_ewald_slab_correction)
+FC_CHECK_AND_CREATE(Electrostatic_ewald_slab_correction,electrostatic_ewald_slab_correction,force_field::Electrostatic_ewald_slab_correction)
 #endif

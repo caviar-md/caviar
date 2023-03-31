@@ -24,7 +24,7 @@
 #include <iomanip>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 
@@ -140,6 +140,6 @@ double Electrostatic_ewald_k::dipole_potential (const int i) {
 
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

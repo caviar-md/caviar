@@ -23,7 +23,7 @@
 
 namespace caviar {
 
-namespace objects {
+
 namespace writer {
 
 void Atom_data::dump_povray (int64_t ) {
@@ -207,7 +207,7 @@ void Atom_data::dump_povray (int64_t ) {
 }
 
 } //writer
-} //objects
+
 
 } // namespace caviar
 

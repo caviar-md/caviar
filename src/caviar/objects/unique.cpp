@@ -18,7 +18,7 @@
 
 namespace caviar {
 
-namespace objects {
+
 
 Unique::Unique (CAVIAR *fptr) : Pointers{fptr} {
   FC_OBJECT_INITIALIZE
@@ -30,7 +30,7 @@ void Unique::verify_settings () {
   
 }
 
-} //objects
+
 
 
 

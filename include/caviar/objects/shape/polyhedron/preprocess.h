@@ -20,7 +20,7 @@
 #include "caviar/utility/pointers.h"
 
 namespace caviar {
-namespace objects {
+
 namespace shape {
 namespace polyhedron {
 
@@ -40,7 +40,7 @@ public:
 };
 } //polyhedron
 } //shape
-} //objects
+
 } // namespace caviar
 
 #endif

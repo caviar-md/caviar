@@ -21,7 +21,7 @@
 #include "caviar/utility/vector.h"
 
 namespace caviar {
-namespace objects {
+
 namespace shape {
 namespace polyhedron {
 struct Polyhedron;
@@ -80,7 +80,7 @@ public:
 };
 } //polyhedron
 } //shape
-} //objects
+
 
 } // namespace caviar
 

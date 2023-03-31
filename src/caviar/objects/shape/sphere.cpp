@@ -18,7 +18,7 @@
 #include "caviar/utility/interpreter_io_headers.h"
 
 namespace caviar {
-namespace objects {
+
 namespace shape {
   
 Sphere::Sphere (CAVIAR *fptr) : Shape {fptr} {
@@ -70,7 +70,7 @@ bool Sphere::in_contact(const Vector<double> &v, const double r, Vector<double> 
 }
   
 } //shape
-} //objects
+
 
 } // namespace caviar
 

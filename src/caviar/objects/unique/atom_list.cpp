@@ -21,7 +21,7 @@
 #include "caviar/interpreter/object_handler/preprocessors_new.h"
 
 namespace caviar {
-namespace objects {
+
 namespace unique {
 
 Atom_list::Atom_list (CAVIAR *fptr) : Unique{fptr} {
@@ -50,7 +50,7 @@ bool Atom_list::read ( caviar::interpreter::Parser * parser) {
     if (string_cmp(ts,"add_atom")) {
       FIND_OBJECT_BY_NAME(unique,it)
       FC_CHECK_OBJECT_CLASS_NAME(unique,it,atom)
-      auto a =  dynamic_cast<objects::unique::Atom *>(object_container->unique[it->second.index]);
+      auto a =  dynamic_cast<unique::Atom *>(object_container->unique[it->second.index]);
 
       atoms.push_back(a);
       continue;
@@ -62,12 +62,12 @@ bool Atom_list::read ( caviar::interpreter::Parser * parser) {
   return true;
 }
 
-void Atom_list::add_atom(const objects::unique::Atom &) {
+void Atom_list::add_atom(const unique::Atom &) {
 
 }
 
 } //unique
-} //objects
+
 
 } // namespace caviar
 

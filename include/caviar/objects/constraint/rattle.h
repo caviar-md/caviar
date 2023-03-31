@@ -22,7 +22,7 @@
 #include "caviar/objects/constraint.h"
 
 namespace caviar {
-namespace objects {
+
 class Domain;
 namespace constraint {
 
@@ -50,7 +50,7 @@ class Rattle : public Constraint {
   	else return 0;
   }
 
-  class objects::Domain *domain;
+  class Domain *domain;
 
   double dt;
   double error_tolerance;
@@ -61,7 +61,7 @@ class Rattle : public Constraint {
 };
 
 } //constraint
-} //objects
+
 } // namespace caviar
 
 #endif

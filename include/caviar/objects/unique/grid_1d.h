@@ -21,7 +21,7 @@
 
 namespace caviar {
 class Parser;
-namespace objects {
+
 namespace unique {
 
 /**
@@ -57,7 +57,7 @@ class Grid_1D : public Unique {
 };
 
 } //unique
-} //objects
+
 
 } // namespace caviar
 

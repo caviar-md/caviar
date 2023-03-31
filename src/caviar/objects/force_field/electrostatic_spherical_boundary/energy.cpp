@@ -21,7 +21,7 @@
 #include <cmath>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 double Electrostatic_spherical_boundary::energy () {
@@ -44,6 +44,6 @@ double Electrostatic_spherical_boundary::energy () {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

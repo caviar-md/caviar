@@ -20,7 +20,7 @@
 #include "caviar/objects/constraint.h"
 
 namespace caviar {
-namespace objects {
+
 
 namespace constraint {
 
@@ -50,7 +50,7 @@ class Cm_motion : public Constraint {
 };
 
 } //constraint
-} //objects
+
 } // namespace caviar
 
 #endif

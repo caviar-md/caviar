@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Opls_proper_dihedral,opls_proper_dihedral,objects::force_field::Opls_proper_dihedral)
+FC_CHECK_AND_CREATE(Opls_proper_dihedral,opls_proper_dihedral,force_field::Opls_proper_dihedral)
 #endif

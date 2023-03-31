@@ -24,7 +24,7 @@
 #include <iomanip>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 Gravity_external::Gravity_external (CAVIAR *fptr) : Force_field{fptr},
@@ -53,7 +53,7 @@ bool Gravity_external::read (caviar::interpreter::Parser *parser) {
     } else if (string_cmp(t,"set_time_function_3d")) {
       FIND_OBJECT_BY_NAME(unique,it)
       FC_CHECK_OBJECT_CLASS_NAME(unique,it,time_function_3d)
-      objects::unique::Time_function_3d *a = dynamic_cast<objects::unique::Time_function_3d *>(object_container->unique[it->second.index]);
+      unique::Time_function_3d *a = dynamic_cast<unique::Time_function_3d *>(object_container->unique[it->second.index]);
       non_inertia_reference_frame_acc = a;
     } else FC_ERR_UNDEFINED_VAR(t)
   }
@@ -100,6 +100,6 @@ void Gravity_external::calculate_acceleration () {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

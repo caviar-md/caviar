@@ -23,7 +23,7 @@
 #include <fstream>
 
 namespace caviar {
-namespace objects {
+
 namespace shape {
 namespace polyhedron {
 
@@ -48,6 +48,6 @@ void Input::read_unv (shape::polyhedron::Polyhedron & p_object, const std::strin
 
 } //polyhedron
 } //shape
-} //objects
+
 } // namespace caviar
 

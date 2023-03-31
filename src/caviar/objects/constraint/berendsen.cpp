@@ -20,7 +20,7 @@
 
 
 namespace caviar {
-namespace objects {
+
 namespace constraint {
 
 Berendsen::Berendsen (CAVIAR *fptr) : Constraint{fptr}
@@ -82,6 +82,6 @@ void Berendsen::apply_on_velocity (int64_t) { // step I
 }
 
 } //constraint
-} //objects
+
 } // namespace caviar
 

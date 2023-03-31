@@ -26,7 +26,7 @@
 #define FC_POW2(X) (X*X)
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 
@@ -160,7 +160,7 @@ double Electrostatic_ewald_slab_correction::dipole_energy () {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 
 

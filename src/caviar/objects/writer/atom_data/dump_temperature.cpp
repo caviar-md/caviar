@@ -22,7 +22,7 @@
 namespace caviar {
 
 
-namespace objects {
+
 namespace writer {
 
 
@@ -40,7 +40,7 @@ void Atom_data::dump_temperature (int64_t i, double t) {
 
 
 } // writer 
-} //objects 
+ 
 
 } // namespace caviar
 

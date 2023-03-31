@@ -22,7 +22,7 @@
 #include <iomanip>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 Gravity::Gravity (CAVIAR *fptr) : Force_field{fptr}, k_gravity{1.0}, external_field{Vector<double>{0,0,0}}
@@ -107,6 +107,6 @@ void Gravity::calculate_acceleration () {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

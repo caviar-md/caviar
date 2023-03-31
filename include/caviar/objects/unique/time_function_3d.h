@@ -27,7 +27,7 @@ class Parser;
 
 namespace caviar {
 class Parser;
-namespace objects {
+
 namespace unique {
 
 /**
@@ -64,7 +64,7 @@ class Time_function_3d : public Unique {
 };
 
 } //unique
-} //objects
+
 
 } // namespace caviar
 

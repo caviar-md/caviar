@@ -23,7 +23,7 @@
 #include <iomanip>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 Electromagnetic::Electromagnetic (CAVIAR *fptr) : Force_field{fptr}, 
@@ -91,6 +91,6 @@ void Electromagnetic::calculate_acceleration () {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

@@ -22,7 +22,7 @@
 #include "caviar/utility/interpreter_io_headers.h"
 
 namespace caviar {
-namespace objects {
+
 namespace constraint {
 
 Rattle::Rattle (CAVIAR *fptr) : Constraint{fptr},
@@ -157,6 +157,6 @@ void Rattle::apply_on_position (int64_t) {
 
 
 } //constraint
-} //objects
+
 } // namespace caviar
 

@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Triangle,triangle,objects::shape::Triangle)
+FC_CHECK_AND_CREATE(Triangle,triangle,shape::Triangle)
 #endif

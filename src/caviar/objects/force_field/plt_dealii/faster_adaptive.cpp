@@ -78,7 +78,7 @@
 #include <iomanip>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 
@@ -336,6 +336,6 @@ void Plt_dealii::fa_solve_time_profile () // XXX note the time profile
 
 
 } //force_field
-} //objects
+
 } // namespace caviar
 #endif

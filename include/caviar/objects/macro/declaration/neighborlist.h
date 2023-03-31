@@ -16,12 +16,12 @@
 
 
 #ifdef FC_GENERAL_CLASSNAME_MACRO_ACTIVATED
-FC_GENERAL_CLASSNAME_MACRO(Neighborlist,neighborlist,objects::Neighborlist)
+FC_GENERAL_CLASSNAME_MACRO(Neighborlist,neighborlist,Neighborlist)
 #endif
 
 #ifdef FC_COMPLETE_FORWARD_DECLERATION
 namespace caviar {
-namespace objects {
+
 class Neighborlist;
 }
 } // namespace caviar

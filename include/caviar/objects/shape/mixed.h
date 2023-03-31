@@ -20,14 +20,14 @@
 #include "caviar/objects/shape.h"
 
 namespace caviar {
-namespace objects {
+
 namespace shape {
 
 /**
  * This class creates mixes of different shapes in order to define new shapes.
  * 
  */
-class Mixed : public caviar::objects::Shape {
+class Mixed : public caviar::Shape {
   public:
     Mixed (class CAVIAR *);
     ~Mixed ();
@@ -43,12 +43,12 @@ class Mixed : public caviar::objects::Shape {
     
     //bool is_all (const Vector<double> &); //checks 'is_inside()' if 'inside_check==true'
 
-    std::vector<caviar::objects::Shape*> shapes;
+    std::vector<caviar::Shape*> shapes;
     std::vector<int> operators; // 1:and_inside, -1:and_outside, 2:or_inside, -2:or_outside
     bool shape_add;
 
 };
 } //shape
-} //objects
+
 } // namespace caviar
 #endif

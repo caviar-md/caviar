@@ -22,7 +22,7 @@
 
 namespace caviar {
 
-namespace objects {
+
 
 void Atom_data::exchange_ghost () {
 
@@ -531,7 +531,7 @@ bool ::self_ghost_check () {
 
 
 
-} //objects
+
 
 } // namespace caviar
 

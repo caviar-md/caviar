@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Plane,plane,objects::shape::Plane)
+FC_CHECK_AND_CREATE(Plane,plane,shape::Plane)
 #endif

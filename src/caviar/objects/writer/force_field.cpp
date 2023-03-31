@@ -20,7 +20,7 @@
 //#include <ctime>
 
 namespace caviar {
-namespace objects {
+
 namespace writer {
 
 Force_field::Force_field (CAVIAR *fptr) : Writer{fptr}
@@ -62,6 +62,6 @@ void Force_field::start_new_files(){} //add_time_to_previous
 void Force_field::start_new_files(std::string &){} //add_time_to_previous
 
 } //Force_field
-} //objects
+
 } // namespace caviar
 

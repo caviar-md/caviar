@@ -21,7 +21,7 @@ FC_OBJECT_CREATOR_DEFAULT_FUNCTION(writer) {
 
   FC_GET_OBJECT_TYPE_AND_NAME
 
-  objects::Writer * p_sh = nullptr; 
+  Writer * p_sh = nullptr; 
 
 #include "caviar/objects/writer/macro/all.h"
 

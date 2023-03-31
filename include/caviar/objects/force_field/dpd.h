@@ -27,7 +27,7 @@
  * 
  */
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 class Dpd : public Force_field { // there's a numeric error due to using ghost atoms and different random number generated for their owned counterpart atom. // this problem is solved at Dpd_acc
@@ -48,7 +48,7 @@ public:
 };
 
 } //force_field
-} //objects
+
 } // namespace caviar
 
 #endif

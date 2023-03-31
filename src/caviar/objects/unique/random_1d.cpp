@@ -18,7 +18,7 @@
 #include "caviar/utility/interpreter_io_headers.h"
 
 namespace caviar {
-namespace objects {
+
 namespace unique {
 
 //====================================
@@ -112,7 +112,7 @@ double Random_1D::give_value () {
 }
   
 } //unique
-} //objects
+
 
 } // namespace caviar
 

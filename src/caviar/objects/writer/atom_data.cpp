@@ -24,7 +24,7 @@
 #include <sys/stat.h> // used for mkdir()
 
 namespace caviar {
-namespace objects {
+
 namespace writer {
 
 Atom_data::Atom_data (CAVIAR *fptr) : Writer{fptr},
@@ -94,7 +94,7 @@ bool Atom_data::read (caviar::interpreter::Parser *parser) {
     } else if (string_cmp(t,"set_position_offset")) {
       FIND_OBJECT_BY_NAME(unique,it)
       FC_CHECK_OBJECT_CLASS_NAME(unique,it,time_function_3d)
-      objects::unique::Time_function_3d *a = dynamic_cast<objects::unique::Time_function_3d *>(object_container->unique[it->second.index]);
+      unique::Time_function_3d *a = dynamic_cast<unique::Time_function_3d *>(object_container->unique[it->second.index]);
       position_offset = a;
     } 
     else FC_ERR_UNDEFINED_VAR(t)
@@ -235,6 +235,6 @@ void Atom_data::start_new_files(){} //add_time_to_previous
 void Atom_data::start_new_files(std::string &){} //add_time_to_previous
 
 } //Atom_data
-} //objects
+
 } // namespace caviar
 

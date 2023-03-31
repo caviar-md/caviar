@@ -21,7 +21,7 @@
 
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 /**
@@ -44,7 +44,7 @@ public:
 };
 
 } //force_field
-} //objects
+
 } // namespace caviar
 
 #endif

@@ -23,7 +23,7 @@
 
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 //======= total potential
@@ -193,6 +193,6 @@ double Electrostatic_ewald1d::potential_k (const int i) {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

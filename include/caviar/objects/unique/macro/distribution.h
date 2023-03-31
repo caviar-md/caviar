@@ -15,6 +15,6 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Distribution,distribution,objects::unique::Distribution)
+FC_CHECK_AND_CREATE(Distribution,distribution,unique::Distribution)
 #endif
 

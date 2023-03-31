@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Fene_bond,fene_bond,objects::force_field::Fene_bond)
+FC_CHECK_AND_CREATE(Fene_bond,fene_bond,force_field::Fene_bond)
 #endif

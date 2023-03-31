@@ -20,7 +20,7 @@
 #include "caviar/objects/force_field.h"
 
 namespace caviar {
-namespace objects {
+
 namespace unique
 {
   class Time_function_3d;
@@ -51,7 +51,7 @@ public:
 };
 
 } //force_field
-} //objects
+
 } // namespace caviar
 
 #endif

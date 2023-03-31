@@ -24,7 +24,7 @@
 #include <algorithm>
 
 namespace caviar {
-namespace objects {
+
 namespace constraint {
 
 static inline int int_floor(double x) 
@@ -95,12 +95,12 @@ bool Atom_molarity::read (caviar::interpreter::Parser *parser) {
     } else if (string_cmp(t,"set_creation_molecule") || string_cmp(t,"creation_molecule")) {
       FIND_OBJECT_BY_NAME(unique,it)
       FC_CHECK_OBJECT_CLASS_NAME(unique,it,molecule)
-      objects::unique::Molecule *a = dynamic_cast<objects::unique::Molecule *>(object_container->unique[it->second.index]);
+      unique::Molecule *a = dynamic_cast<unique::Molecule *>(object_container->unique[it->second.index]);
       creation_molecule = a;
     } else if (string_cmp(t,"set_creation_atom") || string_cmp(t,"creation_atom")) {
       FIND_OBJECT_BY_NAME(unique,it)
       FC_CHECK_OBJECT_CLASS_NAME(unique,it,atom)
-      objects::unique::Atom *a = dynamic_cast<objects::unique::Atom *>(object_container->unique[it->second.index]);
+      unique::Atom *a = dynamic_cast<unique::Atom *>(object_container->unique[it->second.index]);
       creation_atom = a;
     } else {
       error->all (FC_FILE_LINE_FUNC_PARSE, "Unknown variable or command");
@@ -253,6 +253,6 @@ void Atom_molarity::apply (int64_t steps) { // III
 }
 
 } //constraint
-} //objects
+
 } // namespace caviar
 

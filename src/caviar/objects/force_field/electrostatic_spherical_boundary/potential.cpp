@@ -22,7 +22,7 @@
 
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 double Electrostatic_spherical_boundary::potential (const Vector<double> &r) {
@@ -100,6 +100,6 @@ double Electrostatic_spherical_boundary::potential (const int i) {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

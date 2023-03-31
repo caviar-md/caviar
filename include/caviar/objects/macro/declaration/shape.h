@@ -16,12 +16,12 @@
 
 
 #ifdef FC_GENERAL_CLASSNAME_MACRO_ACTIVATED
-FC_GENERAL_CLASSNAME_MACRO(Shape,shape,objects::Shape)
+FC_GENERAL_CLASSNAME_MACRO(Shape,shape,Shape)
 #endif
 
 #ifdef FC_COMPLETE_FORWARD_DECLERATION
 namespace caviar {
-namespace objects {
+
 class Shape;
 }
 } // namespace caviar

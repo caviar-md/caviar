@@ -24,7 +24,7 @@
 #include <vector>
 
 namespace caviar {
-namespace objects {
+
 
 class Domain;
 namespace constraint {
@@ -57,7 +57,7 @@ class M_shake : public Constraint {
   	else return 0;
   }
 
-  class objects::Domain *domain;
+  class Domain *domain;
 
   double dt;
   double error_tolerance;
@@ -66,7 +66,7 @@ class M_shake : public Constraint {
 };
 
 } //constraint
-} //objects
+
 } // namespace caviar
 
 #endif

@@ -76,7 +76,7 @@
 #include <iomanip>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 
@@ -240,6 +240,6 @@ void Plt_dealii::fg_solve ()
 
 
 } //force_field
-} //objects
+
 } // namespace caviar
 #endif

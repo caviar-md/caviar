@@ -16,12 +16,12 @@
 
 
 #ifdef FC_GENERAL_CLASSNAME_MACRO_ACTIVATED
-FC_GENERAL_CLASSNAME_MACRO(Force_field,force_field,objects::Force_field)
+FC_GENERAL_CLASSNAME_MACRO(Force_field,force_field,Force_field)
 #endif
 
 #ifdef FC_COMPLETE_FORWARD_DECLERATION
 namespace caviar {
-namespace objects {
+
 class Force_field;
 }
 } // namespace caviar

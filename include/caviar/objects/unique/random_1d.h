@@ -22,7 +22,7 @@
 
 namespace caviar {
 class Parser;
-namespace objects {
+
 namespace unique {
 
 /**
@@ -56,7 +56,7 @@ class Random_1D : public Unique {
 };
 
 } //unique
-} //objects
+
 
 } // namespace caviar
 

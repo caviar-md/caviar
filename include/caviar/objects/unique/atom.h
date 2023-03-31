@@ -23,7 +23,7 @@
 
 namespace caviar {
 
-namespace objects {
+
 namespace unique {
 class Molecule;
 class Atom_group;
@@ -59,7 +59,7 @@ class Atom  : public Unique {
 };
 
 } //unique
-} //objects
+
 
 } // namespace caviar
 

@@ -21,7 +21,7 @@ FC_OBJECT_CREATOR_DEFAULT_FUNCTION(atom_data) {
 
   FC_GET_OBJECT_TYPE_AND_NAME
 
-  objects::Atom_data * p_sh = nullptr; 
+  Atom_data * p_sh = nullptr; 
 
 #include "caviar/objects/atom_data/macro/all.h"
 

@@ -21,7 +21,7 @@
 #include "caviar/interpreter/object_handler/preprocessors_new.h"
 
 namespace caviar {
-namespace objects {
+
 namespace unique {
 
 Atom::Atom (CAVIAR *fptr) : Unique{fptr},
@@ -96,7 +96,7 @@ Vector<double> Atom::vel_tot () const {
 
 
 } //unique
-} //objects
+
 
 } // namespace caviar
 

@@ -22,7 +22,7 @@
   #include <muParser.h>
 #endif
 namespace caviar {
-namespace objects {
+
 namespace unique {
 
 //====================================
@@ -158,7 +158,7 @@ void Time_function_3d::calculate ()
 }
   
 } //unique
-} //objects
+
 
 } // namespace caviar
 

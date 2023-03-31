@@ -20,7 +20,7 @@ FC_OBJECT_CREATOR_DEFAULT_FUNCTION(postprocess) {
 
   FC_GET_OBJECT_TYPE_AND_NAME
 
-  objects::Postprocess * p_sh = nullptr; 
+  Postprocess * p_sh = nullptr; 
 
 #include "caviar/objects/postprocess/macro/all.h"
 

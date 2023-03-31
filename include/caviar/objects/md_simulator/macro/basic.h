@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Basic,basic,objects::md_simulator::Basic)
+FC_CHECK_AND_CREATE(Basic,basic,md_simulator::Basic)
 #endif

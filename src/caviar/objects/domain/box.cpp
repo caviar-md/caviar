@@ -19,7 +19,7 @@
 #include "caviar/utility/interpreter_io_headers.h"
 
 namespace caviar {
-namespace objects {
+
 namespace domain {
 
 Box::Box (CAVIAR *fptr) : Domain{fptr} {
@@ -140,6 +140,6 @@ caviar::Vector<double> Box::fix_distance(caviar::Vector<double> v) {
 
 
 } //domain
-} //objects
+
 } // namespace caviar
 

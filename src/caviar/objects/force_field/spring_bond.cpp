@@ -24,7 +24,7 @@
 #include <iomanip>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 Spring_bond::Spring_bond (CAVIAR *fptr) : Force_field{fptr}
@@ -127,6 +127,6 @@ void Spring_bond::calculate_acceleration () {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

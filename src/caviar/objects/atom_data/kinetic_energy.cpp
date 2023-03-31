@@ -24,7 +24,7 @@
 
 
 namespace caviar {
-namespace objects {
+
 
 
 double Atom_data::kinetic_energy () {
@@ -217,7 +217,7 @@ double Atom_data::temperature () {
 
 }
 
-} //objects
+
 
 } // namespace caviar
 

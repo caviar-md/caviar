@@ -24,7 +24,7 @@
 #include <iomanip>
 
 namespace caviar {
-namespace objects {
+
 namespace force_field {
 
 void Electrostatic_ewald_k::initialize () {
@@ -81,7 +81,7 @@ void Electrostatic_ewald_k::calculate_dipole_sum() {
     dipole_sum = Vector<double> {0, 0, 0};
 #ifdef CAVIAR_WITH_OPENMP  
   //#pragma omp parallel for reduction (+:dipole_sum) //weird error in gavazang compiler but no error in my laptop
-    //  error: ‘caviar::objects::force_field::Electrostatic_ewald_k::dipole_sum’ is not a variable in clause ‘reduction’
+    //  error: ‘caviar::force_field::Electrostatic_ewald_k::dipole_sum’ is not a variable in clause ‘reduction’
 #endif    
     for (unsigned int j=0;j<pos.size();++j) {
       const auto type_j = atom_data -> owned.type [j] ;
@@ -188,6 +188,6 @@ void Electrostatic_ewald_k::make_k_vectors () {
 }
 
 } //force_field
-} //objects
+
 } // namespace caviar
 

@@ -20,7 +20,7 @@
 #include "caviar/objects/neighborlist.h"
 
 namespace caviar {
-namespace objects {
+
 class Domain;
 namespace neighborlist {
 
@@ -42,7 +42,7 @@ class Cell_list : public Neighborlist {
   int neigh_bin_index (const Vector<double> &);
  public:
   void make_neigh_bin ();
-  class objects::Domain *domain;
+  class Domain *domain;
   bool domain_set;
 
   /**
@@ -54,7 +54,7 @@ class Cell_list : public Neighborlist {
 };
 
 } //neighborlist
-} //objects
+
 } // namespace caviar
 
 #endif

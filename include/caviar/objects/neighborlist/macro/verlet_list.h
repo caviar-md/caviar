@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Verlet_list,verlet_list,objects::neighborlist::Verlet_list)
+FC_CHECK_AND_CREATE(Verlet_list,verlet_list,neighborlist::Verlet_list)
 #endif
