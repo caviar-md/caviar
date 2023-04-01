@@ -258,11 +258,11 @@ namespace writer
 
     if (output_energy)
       if (i % energy_step == 0)
-        dump_energy(i);
+        dump_energy(i, t);
 
     if (output_temperature)
       if (i % temperature_step == 0)
-        dump_temperature(i);
+        dump_temperature(i, t);
 
     if (output_povray)
       if (i % povray_step == 0)
