@@ -1,0 +1,281 @@
+
+#=======================================================================
+# 
+# Copyright (C) 2019 by Morad Biagooi and Ehsan Nedaaee Oskoee.
+# 
+# This file is part of the CAVIAR package.
+# 
+# The CAVIAR package is free software; you can use it, redistribute
+# it, and/or modify it under the terms of the GNU Lesser General
+# Public License as published by the Free Software Foundation; either
+# version 3.0 of the License, or (at your option) any later version.
+# The full text of the license can be found in the file LICENSE at
+# the top level of the CAVIAR distribution.
+# 
+#=======================================================================
+# 
+# This script is made with the contributions of 
+# 
+
+#===== global variables
+
+real global_dt 0.001
+
+#===== Atom definition =====
+
+unique atom a_H1
+a_H1 type 1
+a_H1 position -.815 0 0
+
+
+unique atom a_H2
+a_H2 type 1
+a_H2 position .815 0 0
+
+
+unique atom a_O
+a_O type 0
+a_O position 0 .5794 0
+
+
+unique atom a_Na
+a_Na type 2
+a_Na position 0 0 0
+
+unique atom_group g_Na
+
+unique atom a_Cl
+a_Cl type 3
+a_Cl position 0 0 0
+
+unique atom_group g_Cl
+
+#===== Molecule definition =====
+
+unique molecule m_water
+
+m_water add_atom a_H1  #0
+m_water add_atom a_H2  #1
+m_water add_atom a_O   #2
+
+m_water position 0 0 0
+
+m_water atomic_bond 0 1 0 1.63
+m_water atomic_bond 1 2 0 1.0
+m_water atomic_bond 2 0 0 1.0
+
+#===== Molecule_group definition =====
+
+unique molecule_group mg
+
+#===== Domain
+
+domain box dom
+dom xmin -60 xmax 60 # note the moving geometry in x direction
+dom ymin -21 ymax 21
+dom zmin -5 zmax 5
+dom boundary_condition 1 1 1
+ 
+dom generate
+
+#===== Grid definition for water =====
+
+unique grid_1d gx
+unique grid_1d gy
+unique grid_1d gz
+
+# compact distribution
+# gx min -38 max 38 segment 26
+# gy min -21 max 21 segment 15
+# gz min -5 max 5 segment 3
+
+# non-compact definition
+gx min -38 max 38 segment 15
+gy min -21 max 21 segment 7
+gz min -5 max 5 segment 3
+
+
+
+gx generate
+gy generate
+gz generate
+
+#===== Shape definition =====
+
+shape polyhedron s_full 
+s_full vtk_file_name "data/geo_1.vtk"
+s_full thickness 1.0
+s_full correct_normals
+s_full an_inside_point 0 0 -4
+s_full point_is_inside_method 2
+s_full generate
+
+#===== Shape definition =====
+
+shape polyhedron s_full_shell
+s_full_shell vtk_file_name "data/geo_1_shell.vtk"
+s_full_shell thickness 1.0
+s_full_shell correct_normals
+s_full_shell an_inside_point 0 0 -4
+s_full_shell point_is_inside_method 2
+#s_full_shell output vectors
+s_full_shell generate
+
+
+#===== Shape definition =====
+
+shape mixed s_m
+s_m inside s_full
+
+#==== Distribution ===== Water
+
+unique distribution d
+d molecule_group mg
+d molecule m_water
+d grid_1d_x gx 
+d grid_1d_y gy 
+d grid_1d_z gz
+d boundary_shape s_m
+d add_radius 1 1.0
+d distribute_grid_3d
+
+
+#=====  time_function_3d
+
+unique time_function_3d tf_pos
+tf_pos set_formula_x "10*sin(t)"
+tf_pos set_formula_y "0"
+tf_pos set_formula_z "0"
+#tf_pos export_file_name "tf_pos.txt"
+
+  
+#========== Atom_data
+
+atom_data basic adata
+adata ghost_cutoff 9.5
+adata cutoff_extra 0.0
+adata k_b 1.0
+adata set_domain dom
+adata add_type_mass   0 15.999   # oxygen
+adata add_type_charge 0 -0.8476  # oxygen
+adata add_type_radius 0 1.4146  # oxygen 
+
+adata add_type_mass   1 1.0      # hydrogen
+adata add_type_charge 1 0.4238   # hydrogen
+adata add_type_radius 1 0.0836   # hydrogen
+
+adata add_molecule_group mg
+adata add_random_velocity
+
+#===== Neighborlist
+
+neighborlist cell_list  neigh_cell
+neigh_cell set_atom_data adata
+neigh_cell cutoff 9.5
+neigh_cell set_domain dom
+neigh_cell make_neighlist
+neigh_cell cutoff_neighlist 9.5
+
+#===== force_field
+
+force_field lj f_lj 
+
+f_lj cutoff 9.0 # 
+
+
+f_lj epsilon_atom 0 .650   # oxygen
+f_lj epsilon_atom 1 0     # hydrogen
+f_lj epsilon_atom 2 .544     # Na
+f_lj epsilon_atom 3 .418      # Cl
+
+f_lj sigma_atom 0 3.166  # oxygen
+f_lj sigma_atom 1 0   # hydrogen
+f_lj sigma_atom 2 2.35     # Na
+f_lj sigma_atom 3 4.40      # Cl
+
+
+#f_lj set_neighborlist neigh_verlet
+f_lj set_neighborlist neigh_cell
+
+f_lj set_atom_data adata
+f_lj set_domain dom
+
+
+
+#===== force_field
+
+force_field geometry_lj f_gelj 
+
+f_gelj add_shape s_full_shell
+
+f_gelj epsilon_atom 0 .650   # oxygen
+f_gelj epsilon_atom 1 0      # hydrogen
+f_gelj epsilon_atom 2 .544   # Na
+f_gelj epsilon_atom 3 .418   # Cl
+
+f_gelj sigma_atom 0 3.166  # oxygen
+f_gelj sigma_atom 1 0      # hydrogen
+f_gelj sigma_atom 2 2.35   # Na
+f_gelj sigma_atom 3 4.40   # Cl
+
+f_gelj epsilon_wall 0 1.0
+f_gelj sigma_wall   0 0.674  # carbon sigma = 3.37 A
+
+f_gelj wca
+f_gelj set_atom_data adata
+f_gelj set_position_offset tf_pos
+
+#==== Constraint
+
+constraint shake c_shake 
+c_shake dt global_dt
+c_shake set_atom_data adata
+c_shake set_domain dom
+#c_mshake error_tolerance 0.01
+
+#==== Constraint
+
+constraint  nve c_nve
+c_nve kbt 2.494387628 # 300K / 120.27
+c_nve set_atom_data adata
+
+#====== writer 
+
+writer atom_data w1
+w1 set_atom_data adata
+w1 set_domain dom
+w1 xyz_step 500
+w1 energy_step 500
+#w1 output_velocity
+w1 temperature_step 500
+
+#=====  simulator
+
+
+md_simulator basic sim 
+
+sim integrator_type leap_frog
+
+sim set_atom_data adata
+
+sim add_time_function_3d tf_pos
+
+sim add_force_field f_lj  
+sim add_force_field f_gelj
+sim add_neighborlist neigh_cell
+
+sim add_writer w1
+ 
+sim add_constraint c_shake     
+
+sim add_constraint c_nve      
+
+sim initial_step 0
+sim final_step 1000000
+sim dt global_dt
+sim run
+
+#exit
+
+
+
