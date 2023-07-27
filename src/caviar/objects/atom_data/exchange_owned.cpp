@@ -121,8 +121,7 @@ bool Atom_data::exchange_owned()
     }
   }
 #elif defined(CAVIAR_WITH_MPI)
-  //MPI_Barrier(mpi_comm);
-
+  // MPI_Barrier(mpi_comm);
 
   auto &vel = owned.velocity;
   auto &acc = owned.acceleration;
@@ -140,7 +139,6 @@ bool Atom_data::exchange_owned()
 
   const auto me = domain->me;
 
-
   const auto &all = domain->all;
 
   std::vector<int> send_id[3][3][3];    // global id of the atom: owned.id
@@ -151,12 +149,18 @@ bool Atom_data::exchange_owned()
   int send_num[3][3][3]; // num of owned to be send to the domain all[i][j][k]
   int recv_num[3][3][3]; // num of owned to be recieved from domain all[i][j][k]
 
-
-  FOR_IJK_LOOP_START
-  send_num[i][j][k] = 0;
-  recv_num[i][j][k] = 0;
-  FOR_IJK_LOOP_END
-
+  int send_mpi_tag[3][3][3]; // since there might be two messages from the same domain to another but from different angles,
+  int recv_mpi_tag[3][3][3]; // , this tag helps to distinguish messages form each other.
+  {
+    int m = 0;
+    FOR_IJK_LOOP_START
+    send_num[i][j][k] = 0;
+    recv_num[i][j][k] = 0;
+    send_mpi_tag[i][j][k] = m;
+    recv_mpi_tag[i][j][k] = 26-m;
+    m++;
+    FOR_IJK_LOOP_END
+  }
 
   for (unsigned i = 0; i < num_local_atoms; ++i)
   {
@@ -196,16 +200,12 @@ bool Atom_data::exchange_owned()
       z_val *= bc.z; // //
 
     if (x_val == 0 && y_val == 0 && z_val == 0)
-    {
       continue;
-    }
-    else
-    {
-      send_id[x_val + 1][y_val + 1][z_val + 1].emplace_back(id[i]);
-      send_index[x_val + 1][y_val + 1][z_val + 1].emplace_back(i);
-      send_index_all.emplace_back(i);
-      send_num[x_val + 1][y_val + 1][z_val + 1]++;
-    }
+
+    send_id[x_val + 1][y_val + 1][z_val + 1].emplace_back(id[i]);
+    send_index[x_val + 1][y_val + 1][z_val + 1].emplace_back(i);
+    send_index_all.emplace_back(i);
+    send_num[x_val + 1][y_val + 1][z_val + 1]++;
   }
 
   // ================================================
@@ -228,19 +228,17 @@ bool Atom_data::exchange_owned()
 
   std::vector<double> send_data[3][3][3], recv_data[3][3][3];
 
+  int total_num_coef;
+  if (msd_process)
+    total_num_coef = 14;
+  else
+    total_num_coef = 11;
   // ================================================
   // resize send_data to the correct value to increase filling performance
   // ================================================
 
   FOR_IJK_LOOP_START
-  int N_tot;
-  if (msd_process)
-    N_tot = 14 * send_num[i][j][k];
-  else
-    N_tot = 11 * send_num[i][j][k];
-
-  send_data[i][j][k].resize(N_tot, 0);
-
+  send_data[i][j][k].resize(total_num_coef * send_num[i][j][k], 0);
   FOR_IJK_LOOP_END
 
   // ================================================
@@ -287,49 +285,32 @@ bool Atom_data::exchange_owned()
   // send num of owned
   // ================================================
 
-  //MPI_Barrier(mpi_comm);
 
   FOR_IJK_LOOP_START
   if (me == all[i][j][k])
     continue;
 
-  MPI_Send(&send_num[i][j][k], 1, MPI_INT, all[i][j][k], 0, mpi_comm); // TAG 0
+  MPI_Send(&send_num[i][j][k], 1, MPI_INT, all[i][j][k], send_mpi_tag[i][j][k], mpi_comm); // TAG 0
 
   FOR_IJK_LOOP_END
 
-  //MPI_Barrier(mpi_comm);
 
   FOR_IJK_LOOP_START
   if (me == all[i][j][k])
     continue;
 
-  MPI_Recv(&recv_num[i][j][k], 1, MPI_INT, all[i][j][k], 0, mpi_comm, MPI_STATUS_IGNORE); // TAG 0
+  MPI_Recv(&recv_num[i][j][k], 1, MPI_INT, all[i][j][k], recv_mpi_tag[i][j][k], mpi_comm, MPI_STATUS_IGNORE); // TAG 0
 
   FOR_IJK_LOOP_END
 
-
-  // ================================================
-
-  // MPI_Barrier(mpi_comm);
 
   // ================================================
   // resize recv_data to the correct value to increase filling performance
   // ================================================
 
   FOR_IJK_LOOP_START
-  int N_tot;
-  if (msd_process)
-    N_tot = 14 * recv_num[i][j][k];
-  else
-    N_tot = 11 * recv_num[i][j][k];
-
-  if (N_tot == 0)
-    continue; //recv_data[i][j][k].resize(1, 0);
-  else
-    recv_data[i][j][k].resize(N_tot, 0);
-
+  recv_data[i][j][k].resize(total_num_coef * recv_num[i][j][k], 0);
   FOR_IJK_LOOP_END
-
 
   // ================================================
   // SEND OWNED DATA
@@ -339,38 +320,22 @@ bool Atom_data::exchange_owned()
   if (me == all[i][j][k])
     continue;
 
-  int N_tot;
-  if (msd_process)
-    N_tot = 14 * send_num[i][j][k];
-  else
-    N_tot = 11 * send_num[i][j][k];
-
-  MPI_Send(send_data[i][j][k].data(), N_tot, MPI_DOUBLE, all[i][j][k], 1, mpi_comm); // TAG 1
+  MPI_Send(send_data[i][j][k].data(), total_num_coef * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], mpi_comm); // TAG 1
 
   FOR_IJK_LOOP_END
-
-  MPI_Barrier(mpi_comm);
 
   FOR_IJK_LOOP_START
   if (me == all[i][j][k])
     continue;
 
-  int N_tot;
-  if (msd_process)
-    N_tot = 14 * recv_num[i][j][k];
-  else
-    N_tot = 11 * recv_num[i][j][k];
-
-  MPI_Recv(recv_data[i][j][k].data(), N_tot, MPI_DOUBLE, all[i][j][k], 1, mpi_comm, MPI_STATUS_IGNORE); // TAG 1
+  MPI_Recv(recv_data[i][j][k].data(), total_num_coef * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], mpi_comm, MPI_STATUS_IGNORE); // TAG 1
 
   FOR_IJK_LOOP_END
 
-  // MPI_Barrier(mpi_comm);
 
   // ================================================
   // FILL the atom_data.owned with depacketing recv_data
   // ================================================
-
 
   FOR_IJK_LOOP_START
 
@@ -422,7 +387,6 @@ bool Atom_data::exchange_owned()
       msd[m].z = recv_data[i][j][k][(11 * N) + (3 * c) + 2];
     }
 
-
     // ================================================
     // Applying periodic boundary condition for particles comming from other domains
     // ================================================
@@ -449,7 +413,6 @@ bool Atom_data::exchange_owned()
 
   FOR_IJK_LOOP_END
 
-
   // ================================================
   // Applying periodic boundary condition for particles comming from the current domain itself
   // ================================================
@@ -467,7 +430,6 @@ bool Atom_data::exchange_owned()
   }
   FOR_IJK_LOOP_END
 
-
   // ================================================
   // Deleting the particles which are send to another domains
   // ================================================
@@ -477,7 +439,7 @@ bool Atom_data::exchange_owned()
     remove_atom(send_index_all);
     make_neighlist = true;
   }
-  // MPI_Barrier(mpi_comm);
+  //MPI_Barrier(mpi_comm);
 
 #else
 

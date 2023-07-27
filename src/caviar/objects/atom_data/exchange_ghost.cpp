@@ -22,6 +22,19 @@
 
 CAVIAR_NAMESPACE_OPEN
 
+#define FOR_IJK_LOOP_START         \
+  for (auto i = 0; i < 3; ++i)     \
+  {                                \
+    for (auto j = 0; j < 3; ++j)   \
+    {                              \
+      for (auto k = 0; k < 3; ++k) \
+      {
+
+#define FOR_IJK_LOOP_END \
+  }                      \
+  }                      \
+  }
+
 void Atom_data::exchange_ghost()
 {
 
@@ -152,49 +165,42 @@ void Atom_data::exchange_ghost()
         if (x_val != 0)
         {
           g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y, pos[i].z);
-          // g_vel.emplace_back (vel[i].x, vel[i].y, vel[i].z);
           g_id.emplace_back(id[i]);
           g_type.emplace_back(type[i]);
         }
         if (y_val != 0)
         {
           g_pos.emplace_back(pos[i].x, pos[i].y - y_val * y_width, pos[i].z);
-          // g_vel.emplace_back (vel[i].x, vel[i].y, vel[i].z);
           g_id.emplace_back(id[i]);
           g_type.emplace_back(type[i]);
         }
         if (z_val != 0)
         {
           g_pos.emplace_back(pos[i].x, pos[i].y, pos[i].z - z_val * z_width);
-          // g_vel.emplace_back (vel[i].x, vel[i].y, vel[i].z);
           g_id.emplace_back(id[i]);
           g_type.emplace_back(type[i]);
         }
         if (x_val != 0 && y_val != 0)
         {
           g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y - y_val * y_width, pos[i].z);
-          // g_vel.emplace_back (vel[i].x, vel[i].y, vel[i].z);
           g_id.emplace_back(id[i]);
           g_type.emplace_back(type[i]);
         }
         if (x_val != 0 && z_val != 0)
         {
           g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y, pos[i].z - z_val * z_width);
-          // g_vel.emplace_back (vel[i].x, vel[i].y, vel[i].z);
           g_id.emplace_back(id[i]);
           g_type.emplace_back(type[i]);
         }
         if (y_val != 0 && z_val != 0)
         {
           g_pos.emplace_back(pos[i].x, pos[i].y - y_val * y_width, pos[i].z - z_val * z_width);
-          // g_vel.emplace_back (vel[i].x, vel[i].y, vel[i].z);
           g_id.emplace_back(id[i]);
           g_type.emplace_back(type[i]);
         }
         if (x_val != 0 && y_val != 0 && z_val != 0)
         {
           g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y - y_val * y_width, pos[i].z - z_val * z_width);
-          // g_vel.emplace_back (vel[i].x, vel[i].y, vel[i].z);
           g_id.emplace_back(id[i]);
           g_type.emplace_back(type[i]);
         }
@@ -202,6 +208,7 @@ void Atom_data::exchange_ghost()
     }
   }
 #elif defined(CAVIAR_WITH_MPI)
+
   const auto grid_index_x = domain->grid_index_x;
   const auto grid_index_y = domain->grid_index_y;
   const auto grid_index_z = domain->grid_index_z;
@@ -214,23 +221,27 @@ void Atom_data::exchange_ghost()
   const auto me = domain->me;
   const auto &all = domain->all;
 
-//std::cout << "ghost s " << me << std::endl;
+  // std::cout << "ghost s " << me << std::endl;
 
-  std::vector<int> g_send_id[3][3][3], g_recv_id[3][3][3], g_send_index[3][3][3];
+  std::vector<int> send_id[3][3][3];    // global id of the atom: owned.id
+  std::vector<int> recv_id[3][3][3];    // global id of the atom: owned.id
+  std::vector<int> send_index[3][3][3]; // the index of std::vector<> of the owned
 
-  int g_recv_n[3][3][3]; // num of ghosts to be recieved from domain [i][j][k]
+  int send_num[3][3][3]; // num of owned to be send to the domain all[i][j][k]
+  int recv_num[3][3][3]; // num of owned to be recieved from domain all[i][j][k]
 
-  for (auto i = 0; i < 3; ++i)
+  int send_mpi_tag[3][3][3]; // since there might be two messages from the same domain to another but from different angles,
+  int recv_mpi_tag[3][3][3]; // , this tag helps to distinguish messages form each other.
   {
-    for (auto j = 0; j < 3; ++j)
-    {
-      for (auto k = 0; k < 3; ++k)
-      {
-        g_recv_n[i][j][k] = 0;
-      }
-    }
+    int m = 0;
+    FOR_IJK_LOOP_START
+    send_num[i][j][k] = 0;
+    recv_num[i][j][k] = 0;
+    send_mpi_tag[i][j][k] = m;
+    recv_mpi_tag[i][j][k] = m;
+    m++;
+    FOR_IJK_LOOP_END
   }
-
   for (unsigned i = 0; i < num_local_atoms; ++i)
   {
     const auto xlc = pos[i].x < x_llow;
@@ -240,27 +251,21 @@ void Atom_data::exchange_ghost()
     const auto zlc = pos[i].z < z_llow;
     const auto zuc = pos[i].z > z_lupp;
 
-    int x_val, y_val, z_val;
+    int x_val = 0, y_val = 0, z_val = 0;
     if (xlc)
       x_val = -1;
     else if (xuc)
       x_val = +1;
-    else
-      x_val = 0;
 
     if (ylc)
       y_val = -1;
     else if (yuc)
       y_val = +1;
-    else
-      y_val = 0;
 
     if (zlc)
       z_val = -1;
     else if (zuc)
       z_val = +1;
-    else
-      z_val = 0;
 
     if (grid_index_x == 0)
       x_val *= bc.x; // periodic or non-periodic boundary condition
@@ -275,209 +280,258 @@ void Atom_data::exchange_ghost()
     if (grid_index_z == nprocs_z - 1)
       z_val *= bc.z; // //
 
+    if (x_val == 0 && y_val == 0 && z_val == 0)
+      continue;
+
     if (x_val != 0)
     {
-      g_send_id[x_val + 1][1][1].emplace_back(id[i]);
-      g_send_index[x_val + 1][1][1].emplace_back(i);
+      send_id[x_val + 1][1][1].emplace_back(id[i]);
+      send_index[x_val + 1][1][1].emplace_back(i);
+      send_num[x_val + 1][1][1]++;
     }
     if (y_val != 0)
     {
-      g_send_id[1][y_val + 1][1].emplace_back(id[i]);
-      g_send_index[1][y_val + 1][1].emplace_back(i);
+      send_id[1][y_val + 1][1].emplace_back(id[i]);
+      send_index[1][y_val + 1][1].emplace_back(i);
+      send_num[1][y_val + 1][1]++;
     }
     if (z_val != 0)
     {
-      g_send_id[1][1][z_val + 1].emplace_back(id[i]);
-      g_send_index[1][1][z_val + 1].emplace_back(i);
+      send_id[1][1][z_val + 1].emplace_back(id[i]);
+      send_index[1][1][z_val + 1].emplace_back(i);
+      send_num[1][1][z_val + 1]++;
     }
     if (x_val != 0 && y_val != 0)
     {
-      g_send_id[x_val + 1][y_val + 1][1].emplace_back(id[i]);
-      g_send_index[x_val + 1][y_val + 1][1].emplace_back(i);
+      send_id[x_val + 1][y_val + 1][1].emplace_back(id[i]);
+      send_index[x_val + 1][y_val + 1][1].emplace_back(i);
+      send_num[x_val + 1][y_val + 1][1]++;
     }
     if (x_val != 0 && z_val != 0)
     {
-      g_send_id[x_val + 1][1][z_val + 1].emplace_back(id[i]);
-      g_send_index[x_val + 1][1][z_val + 1].emplace_back(i);
+      send_id[x_val + 1][1][z_val + 1].emplace_back(id[i]);
+      send_index[x_val + 1][1][z_val + 1].emplace_back(i);
+      send_num[x_val + 1][1][z_val + 1]++;
     }
     if (y_val != 0 && z_val != 0)
     {
-      g_send_id[1][y_val + 1][z_val + 1].emplace_back(id[i]);
-      g_send_index[1][y_val + 1][z_val + 1].emplace_back(i);
+      send_id[1][y_val + 1][z_val + 1].emplace_back(id[i]);
+      send_index[1][y_val + 1][z_val + 1].emplace_back(i);
+      send_num[1][y_val + 1][z_val + 1]++;
     }
     if (x_val != 0 && y_val != 0 && z_val != 0)
     {
-      g_send_id[x_val + 1][y_val + 1][z_val + 1].emplace_back(id[i]);
-      g_send_index[x_val + 1][y_val + 1][z_val + 1].emplace_back(i);
+      send_id[x_val + 1][y_val + 1][z_val + 1].emplace_back(id[i]);
+      send_index[x_val + 1][y_val + 1][z_val + 1].emplace_back(i);
+      send_num[x_val + 1][y_val + 1][z_val + 1]++;
     }
   }
 
-  MPI_Barrier(mpi_comm); // undefined behavior if removed
-  // ===============================send num of ghosts
-  for (auto i = 0; i < 3; ++i)
-  {
-    for (auto j = 0; j < 3; ++j)
-    {
-      for (auto k = 0; k < 3; ++k)
-      {
-        if (me != all[i][j][k])
-        {
-          int num_s = g_send_id[i][j][k].size();
-          MPI_Send(&num_s, 1, MPI_INT, all[i][j][k], 0, mpi_comm);
-          MPI_Recv(&g_recv_n[i][j][k], 1, MPI_INT, all[i][j][k], 0, mpi_comm, MPI_STATUS_IGNORE);
-        }
-      }
-    }
-  }
-  //MPI_Barrier(mpi_comm);
-  // ===============================send id of ghosts
-  for (auto i = 0; i < 3; ++i)
-  {
-    for (auto j = 0; j < 3; ++j)
-    {
-      for (auto k = 0; k < 3; ++k)
-      {
-        if (me != all[i][j][k])
-        {
-          int num_s = g_send_id[i][j][k].size();
-          if (num_s > 0)
-          {
-            MPI_Send(g_send_id[i][j][k].data(), num_s, MPI_INT, all[i][j][k], 1, mpi_comm);
-          }
-          unsigned num_r = g_recv_n[i][j][k];
-          if (num_r > 0)
-          {
-            std::vector<int> tmp_r(num_r,0);
-            MPI_Recv(tmp_r.data(), num_r, MPI_INT, all[i][j][k], 1, mpi_comm, MPI_STATUS_IGNORE);
-            for (unsigned m = 0; m < num_r; ++m)
-              g_recv_id[i][j][k].emplace_back(tmp_r[m]);
-          }
-        }
-      }
-    }
-  }
-  //MPI_Barrier(mpi_comm);
-  // ==============================send type of  ghosts
-  for (auto i = 0; i < 3; ++i)
-  {
-    for (auto j = 0; j < 3; ++j)
-    {
-      for (auto k = 0; k < 3; ++k)
-      {
-        if (me != all[i][j][k])
-        {
-          for (auto m : g_send_index[i][j][k])
-          {
-            MPI_Send(&type[m], 1, MPI_INT, all[i][j][k], id[m], mpi_comm);
-          }
-          for (auto m : g_recv_id[i][j][k])
-          {
-            int tmp;
-            MPI_Recv(&tmp, 1, MPI_INT, all[i][j][k], m, mpi_comm, MPI_STATUS_IGNORE);
-            g_type.emplace_back(tmp);
-            g_id.emplace_back(m);
-            ghost_rank.emplace_back(all[i][j][k]);
-          }
-        }
-      }
-    }
-  }
-  //MPI_Barrier(mpi_comm);
-  // ==============================send position of ghosts
-  for (auto i = 0; i < 3; ++i)
-  {
-    for (auto j = 0; j < 3; ++j)
-    {
-      for (auto k = 0; k < 3; ++k)
-      {
-        if (me != all[i][j][k])
-        {
-          for (auto m : g_send_index[i][j][k])
-          {
-            Vector<double> p_tmp{pos[m].x, pos[m].y, pos[m].z};
-            MPI_Send(&p_tmp.x, 3, MPI_DOUBLE, all[i][j][k], id[m], mpi_comm);
-          }
-          for (auto m : g_recv_id[i][j][k])
-          {
-            Vector<double> p_tmp;
-            MPI_Recv(&p_tmp, 3, MPI_DOUBLE, all[i][j][k], m, mpi_comm, MPI_STATUS_IGNORE);
-            if (i == 0)
-              while (p_tmp.x < x_llow)
-                p_tmp.x += x_width;
-            if (j == 0)
-              while (p_tmp.y < y_llow)
-                p_tmp.y += y_width;
-            if (k == 0)
-              while (p_tmp.z < z_llow)
-                p_tmp.z += z_width;
-            if (i == 2)
-              while (p_tmp.x > x_lupp)
-                p_tmp.x -= x_width;
-            if (j == 2)
-              while (p_tmp.y > y_lupp)
-                p_tmp.y -= y_width;
-            if (k == 2)
-              while (p_tmp.z > z_lupp)
-                p_tmp.z -= z_width;
-            g_pos.emplace_back(p_tmp.x, p_tmp.y, p_tmp.z);
-          }
-        }
-      }
-    }
-  }
-  //MPI_Barrier(mpi_comm);
-  // ==============================send velocity of ghosts
+  // ================================================
+  // making the send_data
+  // ================================================
+
+  // o_send_data:  contains all the data of the atoms that is transfered to another MPI process
+  // All of the data are going to be casted as 'double' type
+  // N: the number of atoms that are going to be send to another process
+  //
+  // The packet is as follows with N=4 particles example
+  // N x owned.id               [0     : N-1  ]  0,1,2,3
+  // N x owned.type             [N     : 2N-1 ]  4,5,6,7
+  // N x owned.position         [2N    : 5N-1 ] (8,9,10),(11,12,13),(14,15,16),(17,18,19)
+  // if (make_ghost_velocity):
+  // N x owned.velocity         [5N    : 8N-1 ]
+  // BOND ? ANGLE? DIHEDRAL ?
+
+  std::vector<double> send_data[3][3][3], recv_data[3][3][3];
+
+  int total_num_coef;
   if (make_ghost_velocity)
-  {
-    for (auto i = 0; i < 3; ++i)
-    {
-      for (auto j = 0; j < 3; ++j)
-      {
-        for (auto k = 0; k < 3; ++k)
-        {
-          if (me != all[i][j][k])
-          {
-            for (auto m : g_send_index[i][j][k])
-            {
-              Vector<double> p_tmp{vel[m].x, vel[m].y, vel[m].z};
-              MPI_Send(&p_tmp.x, 3, MPI_DOUBLE, all[i][j][k], id[m], mpi_comm);
-            }
-            for (auto m : g_recv_id[i][j][k])
-            {
-              Vector<double> p_tmp;
-              MPI_Recv(&p_tmp, 3, MPI_DOUBLE, all[i][j][k], m, mpi_comm, MPI_STATUS_IGNORE);
-              g_vel.emplace_back(p_tmp.x, p_tmp.y, p_tmp.z);
-            }
-          }
-        }
-      }
-    }
-    //MPI_Barrier(mpi_comm);
-  }
-  //===========================SAME DOMAIN GHOSTS
-  for (auto i = 0; i < 3; ++i)
-  {
-    for (auto j = 0; j < 3; ++j)
-    {
-      for (auto k = 0; k < 3; ++k)
-      {
-        if (me == all[i][j][k])
-        {
-          auto x_val = i - 1, y_val = j - 1, z_val = k - 1;
-          for (auto m : g_send_index[i][j][k])
-          {
-            g_vel.emplace_back(vel[m].x, vel[m].y, vel[m].z);
-            g_pos.emplace_back(pos[m].x - x_val * x_width, pos[m].y - y_val * y_width, pos[m].z - z_val * z_width);
-            g_id.emplace_back(id[m]);
-            g_type.emplace_back(type[m]);
-            ghost_rank.emplace_back(me);
-          }
-        }
-      }
-    }
-  }
- // std::cout << "ghost e " << me << std::endl;
+    total_num_coef = 8;
+  else
+    total_num_coef = 5;
 
+  // ================================================
+  // resize send_data to the correct value to increase filling performance
+  // ================================================
+
+  FOR_IJK_LOOP_START
+  send_data[i][j][k].resize(total_num_coef * send_num[i][j][k], 0);
+  FOR_IJK_LOOP_END
+
+  // ================================================
+  //  FILL the send_data packets
+  // ================================================
+
+  FOR_IJK_LOOP_START
+  if (me == all[i][j][k])
+    continue;
+
+  int c = 0;
+  auto N = send_num[i][j][k];
+  for (auto m : send_index[i][j][k])
+  {
+    send_data[i][j][k][c] = id[m];
+
+    send_data[i][j][k][N + c] = type[m];
+
+    send_data[i][j][k][(2 * N) + (3 * c) + 0] = pos[m].x;
+    send_data[i][j][k][(2 * N) + (3 * c) + 1] = pos[m].y;
+    send_data[i][j][k][(2 * N) + (3 * c) + 2] = pos[m].z;
+
+    if (make_ghost_velocity)
+    {
+      send_data[i][j][k][(5 * N) + (3 * c) + 0] = vel[m].x;
+      send_data[i][j][k][(5 * N) + (3 * c) + 1] = vel[m].y;
+      send_data[i][j][k][(5 * N) + (3 * c) + 2] = vel[m].z;
+    }
+    c++;
+  }
+
+  FOR_IJK_LOOP_END
+
+  // ================================================
+  // send num of ghosts
+  // ================================================
+
+  FOR_IJK_LOOP_START
+  if (me == all[i][j][k])
+    continue;
+
+  MPI_Send(&send_num[i][j][k], 1, MPI_INT, all[i][j][k], send_mpi_tag[i][j][k], mpi_comm); // TAG 0
+
+  FOR_IJK_LOOP_END
+
+  FOR_IJK_LOOP_START
+  if (me == all[i][j][k])
+    continue;
+
+  MPI_Recv(&recv_num[i][j][k], 1, MPI_INT, all[i][j][k], recv_mpi_tag[i][j][k], mpi_comm, MPI_STATUS_IGNORE); // TAG 0
+
+  FOR_IJK_LOOP_END
+
+  // ================================================
+  // resize recv_data to the correct value to increase filling performance
+  // ================================================
+
+  FOR_IJK_LOOP_START
+  recv_data[i][j][k].resize(total_num_coef * recv_num[i][j][k], 0);
+  FOR_IJK_LOOP_END
+
+  // ================================================
+  // SEND OWNED DATA
+  // ================================================
+
+  FOR_IJK_LOOP_START
+  if (me == all[i][j][k])
+    continue;
+
+  MPI_Send(send_data[i][j][k].data(), total_num_coef * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], mpi_comm); // TAG 1
+
+  FOR_IJK_LOOP_END
+
+  FOR_IJK_LOOP_START
+  if (me == all[i][j][k])
+    continue;
+
+  MPI_Recv(recv_data[i][j][k].data(), total_num_coef * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], mpi_comm, MPI_STATUS_IGNORE); // TAG 1
+
+  FOR_IJK_LOOP_END
+
+  // ================================================
+  // FILL the atom_data.owned with depacketing recv_data
+  // ================================================
+
+  FOR_IJK_LOOP_START
+
+  if (me == all[i][j][k])
+    continue;
+
+  auto N = recv_num[i][j][k];
+
+  if (N == 0)
+    continue;
+
+  auto old_size = 0;//g_id.size();
+  auto new_size = old_size + N;
+  g_id.resize(new_size);
+  g_type.resize(new_size);
+  g_pos.resize(new_size);
+  if (make_ghost_velocity)
+    g_vel.resize(new_size);
+
+  ghost_rank.resize(new_size);
+
+
+  for (int c = 0; c < N; ++c)
+  {
+
+    int m = old_size + c;
+
+    ghost_rank[m] = all[i][j][k];
+
+    g_id[m] = recv_data[i][j][k][c];
+
+    g_type[m] = recv_data[i][j][k][N + c];
+
+    g_pos[m].x = recv_data[i][j][k][(2 * N) + (3 * c) + 0];
+    g_pos[m].y = recv_data[i][j][k][(2 * N) + (3 * c) + 1];
+    g_pos[m].z = recv_data[i][j][k][(2 * N) + (3 * c) + 2];
+
+    if (make_ghost_velocity)
+    {
+      g_vel[m].x = recv_data[i][j][k][(5 * N) + (3 * c) + 0];
+      g_vel[m].y = recv_data[i][j][k][(5 * N) + (3 * c) + 1];
+      g_vel[m].z = recv_data[i][j][k][(5 * N) + (3 * c) + 2];
+    }
+
+    // ================================================
+    // Applying periodic boundary condition for particles comming from other domains
+    // ================================================
+
+    if (i == 0)
+      while (g_pos[m].x < x_llow)
+        g_pos[m].x += x_width;
+    if (j == 0)
+      while (g_pos[m].y < y_llow)
+        g_pos[m].y += y_width;
+    if (k == 0)
+      while (g_pos[m].z < z_llow)
+        g_pos[m].z += z_width;
+    if (i == 2)
+      while (g_pos[m].x > x_lupp)
+        g_pos[m].x -= x_width;
+    if (j == 2)
+      while (g_pos[m].y > y_lupp)
+        g_pos[m].y -= y_width;
+    if (k == 2)
+      while (g_pos[m].z > z_lupp)
+        g_pos[m].z -= z_width;
+
+        
+  }
+
+  FOR_IJK_LOOP_END
+
+  // ================================================
+  // Applying periodic boundary condition for ghosts comming from the current domain itself
+  // ================================================
+
+  FOR_IJK_LOOP_START
+  if (me == all[i][j][k])
+  {
+    auto x_val = i - 1, y_val = j - 1, z_val = k - 1;
+    for (auto m : send_index[i][j][k])
+    {
+      g_vel.emplace_back(vel[m].x, vel[m].y, vel[m].z);
+      g_pos.emplace_back(pos[m].x - x_val * x_width, pos[m].y - y_val * y_width, pos[m].z - z_val * z_width);
+      g_id.emplace_back(id[m]);
+      g_type.emplace_back(type[m]);
+      ghost_rank.emplace_back(me);
+    }
+  }
+  FOR_IJK_LOOP_END
+//MPI_Barrier(mpi_comm);
 #else
 
   for (unsigned int i = 0; i < num_local_atoms; ++i)
@@ -574,49 +628,42 @@ void Atom_data::exchange_ghost()
       if (x_val != 0)
       {
         g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y, pos[i].z);
-        // g_vel.emplace_back (vel[i].x, vel[i].y, vel[i].z);
         g_id.emplace_back(id[i]);
         g_type.emplace_back(type[i]);
       }
       if (y_val != 0)
       {
         g_pos.emplace_back(pos[i].x, pos[i].y - y_val * y_width, pos[i].z);
-        // g_vel.emplace_back (vel[i].x, vel[i].y, vel[i].z);
         g_id.emplace_back(id[i]);
         g_type.emplace_back(type[i]);
       }
       if (z_val != 0)
       {
         g_pos.emplace_back(pos[i].x, pos[i].y, pos[i].z - z_val * z_width);
-        // g_vel.emplace_back (vel[i].x, vel[i].y, vel[i].z);
         g_id.emplace_back(id[i]);
         g_type.emplace_back(type[i]);
       }
       if (x_val != 0 && y_val != 0)
       {
         g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y - y_val * y_width, pos[i].z);
-        // g_vel.emplace_back (vel[i].x, vel[i].y, vel[i].z);
         g_id.emplace_back(id[i]);
         g_type.emplace_back(type[i]);
       }
       if (x_val != 0 && z_val != 0)
       {
         g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y, pos[i].z - z_val * z_width);
-        // g_vel.emplace_back (vel[i].x, vel[i].y, vel[i].z);
         g_id.emplace_back(id[i]);
         g_type.emplace_back(type[i]);
       }
       if (y_val != 0 && z_val != 0)
       {
         g_pos.emplace_back(pos[i].x, pos[i].y - y_val * y_width, pos[i].z - z_val * z_width);
-        // g_vel.emplace_back (vel[i].x, vel[i].y, vel[i].z);
         g_id.emplace_back(id[i]);
         g_type.emplace_back(type[i]);
       }
       if (x_val != 0 && y_val != 0 && z_val != 0)
       {
         g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y - y_val * y_width, pos[i].z - z_val * z_width);
-        // g_vel.emplace_back (vel[i].x, vel[i].y, vel[i].z);
         g_id.emplace_back(id[i]);
         g_type.emplace_back(type[i]);
       }
