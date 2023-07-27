@@ -61,12 +61,14 @@ bool Atom_data::exchange_owned()
         while (pos[i].x < x_llow)
         {
           pos[i].x += x_width;
-          owned.msd_domain_cross[i].x -= 1;
+          if (msd_process)
+            owned.msd_domain_cross[i].x -= 1;
         }
         while (pos[i].x > x_lupp)
         {
           pos[i].x -= x_width;
-          owned.msd_domain_cross[i].x += 1;
+          if (msd_process)
+            owned.msd_domain_cross[i].x += 1;
         }
       }
       if (bc.y == 1)
@@ -74,12 +76,16 @@ bool Atom_data::exchange_owned()
         while (pos[i].y < y_llow)
         {
           pos[i].y += y_width;
-          owned.msd_domain_cross[i].y -= 1;
+          if (msd_process)
+
+            owned.msd_domain_cross[i].y -= 1;
         }
         while (pos[i].y > y_lupp)
         {
           pos[i].y -= y_width;
-          owned.msd_domain_cross[i].y += 1;
+          if (msd_process)
+
+            owned.msd_domain_cross[i].y += 1;
         }
       }
       if (bc.z == 1)
@@ -87,12 +93,16 @@ bool Atom_data::exchange_owned()
         while (pos[i].z < z_llow)
         {
           pos[i].z += z_width;
-          owned.msd_domain_cross[i].z -= 1;
+          if (msd_process)
+
+            owned.msd_domain_cross[i].z -= 1;
         }
         while (pos[i].z > z_lupp)
         {
           pos[i].z -= z_width;
-          owned.msd_domain_cross[i].z += 1;
+          if (msd_process)
+
+            owned.msd_domain_cross[i].z += 1;
         }
       }
     }
@@ -115,12 +125,11 @@ bool Atom_data::exchange_owned()
 
   const auto me = domain->me;
 
-//std::cout << "owned s " << me << std::endl;
+  // std::cout << "owned s " << me << std::endl;
 
   const auto &all = domain->all;
 
   std::vector<int> o_send_id[3][3][3], o_recv_id[3][3][3], o_send_index[3][3][3];
-
 
   int o_recv_n[3][3][3]; // num of owned to be recieved from domain [i][j][k]
 
@@ -134,7 +143,6 @@ bool Atom_data::exchange_owned()
       }
     }
   }
-
 
   for (unsigned i = 0; i < num_local_atoms; ++i)
   {
@@ -181,12 +189,9 @@ bool Atom_data::exchange_owned()
     {
       o_send_id[x_val + 1][y_val + 1][z_val + 1].emplace_back(id[i]);
       o_send_index[x_val + 1][y_val + 1][z_val + 1].emplace_back(i);
-
-
     }
   }
 
-                        
   MPI_Barrier(mpi_comm);
 
   // ===============================send num of owned
@@ -207,7 +212,7 @@ bool Atom_data::exchange_owned()
     }
   }
 
-  //MPI_Barrier(mpi_comm);
+  // MPI_Barrier(mpi_comm);
 
   // ===============================send id of owned
   for (auto i = 0; i < 3; ++i)
@@ -219,17 +224,16 @@ bool Atom_data::exchange_owned()
         if (me != all[i][j][k])
         {
           int num_s = o_send_id[i][j][k].size();
-          unsigned num_r = o_recv_n[i][j][k];          
+          unsigned num_r = o_recv_n[i][j][k];
 
           if (num_s > 0)
           {
             MPI_Send(o_send_id[i][j][k].data(), num_s, MPI_INT, all[i][j][k], 1, mpi_comm);
           }
 
-
           if (num_r > 0)
           {
-            std::vector<int> tmp_r(num_r,0);
+            std::vector<int> tmp_r(num_r, 0);
             MPI_Recv(tmp_r.data(), num_r, MPI_INT, all[i][j][k], 1, mpi_comm, MPI_STATUS_IGNORE);
             for (unsigned m = 0; m < num_r; ++m)
               o_recv_id[i][j][k].push_back(tmp_r[m]);
@@ -239,8 +243,8 @@ bool Atom_data::exchange_owned()
     }
   }
 
-  //MPI_Barrier(mpi_comm);
-  // ==============================send type of owned
+  // MPI_Barrier(mpi_comm);
+  //  ==============================send type of owned
   for (auto i = 0; i < 3; ++i)
   {
     for (auto j = 0; j < 3; ++j)
@@ -265,8 +269,8 @@ bool Atom_data::exchange_owned()
     }
   }
 
-  //MPI_Barrier(mpi_comm);
-  // ==============================send position of owned
+  // MPI_Barrier(mpi_comm);
+  //  ==============================send position of owned
   for (auto i = 0; i < 3; ++i)
   {
     for (auto j = 0; j < 3; ++j)
@@ -310,8 +314,8 @@ bool Atom_data::exchange_owned()
     }
   }
 
-  //MPI_Barrier(mpi_comm);
-  // ==============================send velocity of owned
+  // MPI_Barrier(mpi_comm);
+  //  ==============================send velocity of owned
   for (auto i = 0; i < 3; ++i)
   {
     for (auto j = 0; j < 3; ++j)
@@ -336,8 +340,8 @@ bool Atom_data::exchange_owned()
     }
   }
 
-  //MPI_Barrier(mpi_comm);
-  // ==============================send acceleration of owned
+  // MPI_Barrier(mpi_comm);
+  //  ==============================send acceleration of owned
   for (auto i = 0; i < 3; ++i)
   {
     for (auto j = 0; j < 3; ++j)
@@ -362,7 +366,7 @@ bool Atom_data::exchange_owned()
     }
   }
 
-  //MPI_Barrier(mpi_comm);
+  // MPI_Barrier(mpi_comm);
 
   // ==============================send msd of owned
   if (msd_process)
@@ -423,7 +427,7 @@ bool Atom_data::exchange_owned()
     }
   }
 
-  //MPI_Barrier(mpi_comm);
+  // MPI_Barrier(mpi_comm);
 
   // ================================================ delete moved atoms
   if (o_send_index_lin.size() > 0)
@@ -431,9 +435,7 @@ bool Atom_data::exchange_owned()
     remove_atom(o_send_index_lin);
     make_neighlist = true;
   }
-//std::cout << "owned e " << me << std::endl;
-
-  
+  // std::cout << "owned e " << me << std::endl;
 
 #else
 
@@ -447,12 +449,16 @@ bool Atom_data::exchange_owned()
       while (pos[i].x < x_llow)
       {
         pos[i].x += x_width;
-        owned.msd_domain_cross[i].x -= 1;
+        if (msd_process)
+
+          owned.msd_domain_cross[i].x -= 1;
       }
       while (pos[i].x > x_lupp)
       {
         pos[i].x -= x_width;
-        owned.msd_domain_cross[i].x += 1;
+        if (msd_process)
+
+          owned.msd_domain_cross[i].x += 1;
       }
     }
     if (bc.y == 1)
@@ -460,12 +466,16 @@ bool Atom_data::exchange_owned()
       while (pos[i].y < y_llow)
       {
         pos[i].y += y_width;
-        owned.msd_domain_cross[i].y -= 1;
+        if (msd_process)
+
+          owned.msd_domain_cross[i].y -= 1;
       }
       while (pos[i].y > y_lupp)
       {
         pos[i].y -= y_width;
-        owned.msd_domain_cross[i].y += 1;
+        if (msd_process)
+
+          owned.msd_domain_cross[i].y += 1;
       }
     }
     if (bc.z == 1)
@@ -473,12 +483,16 @@ bool Atom_data::exchange_owned()
       while (pos[i].z < z_llow)
       {
         pos[i].z += z_width;
-        owned.msd_domain_cross[i].z -= 1;
+        if (msd_process)
+
+          owned.msd_domain_cross[i].z -= 1;
       }
       while (pos[i].z > z_lupp)
       {
         pos[i].z -= z_width;
-        owned.msd_domain_cross[i].z += 1;
+        if (msd_process)
+
+          owned.msd_domain_cross[i].z += 1;
       }
     }
   }
