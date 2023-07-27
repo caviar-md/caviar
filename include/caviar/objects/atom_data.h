@@ -18,9 +18,7 @@
 #define CAVIAR_OBJECTS_ATOMDATA_H
 
 #include "caviar/utility/objects_common_headers.h"
-#include "caviar/objects/atom_data/utility/bond.h"
-#include "caviar/objects/atom_data/utility/angle.h"
-#include "caviar/objects/atom_data/utility/proper_dihedral.h"
+#include "caviar/objects/atom_data/utility/atom_struct.h"
 
 CAVIAR_NAMESPACE_OPEN
 
@@ -318,124 +316,17 @@ public:
    */
   virtual int read_next_xyz_frame(bool set_frame, bool read_velocity);
 
+ 
   /**
-   * Here we define an unnamed interpreter and make two of it. It can have a name
-   * but since it is used only once here, its name won't be of any use. Also
-   * a good name would be 'atom_data' which is used before!.
+   * 'owned' atoms are the one that matter in integrators in the domain. 
    */
-  struct
-  {
-    /**
-     * 'id' is a global and unique number assigned to an atom.
-     */
-    std::vector<GlobalID_t> id;
+  atom_data::Atom_struct owned;
 
-    /**
-     * A tag to be done on the atoms.
-     */
-    std::vector<AtomType_t> tag;
-
-    /**
-     * Atom type decides the charge, mass and any other property shared between
-     * a defined type (for example, Elements).
-     */
-    std::vector<AtomType_t> type;
-
-    /**
-     * 'mass' of an atom defined by the type. The mass may be used in
-     * center-of-mass calculations and other functions. Do not depercate it.
-     */
-    std::vector<Real_t> mass;
-
-    /**
-     * simply the inverse value of 'mass' of an atom defined by the type.
-     * since mass inverse is used in acceleration calculations.
-     *
-     */
-    std::vector<Real_t> mass_inv;
-
-    /**
-     * 'charge' of an atom defined by the type.
-     */
-    std::vector<Real_t> charge;
-
-    /**
-     * 'radius' of an atom defined by the type. The user and the developers are
-     * free to use this variable (for now!).
-     */
-    std::vector<Real_t> radius;
-
-    /**
-     * Different by atom_id. Can be changed in simulation (it is needed to be sent-recv. by MPI)
-     */
-    std::vector<Real_t> charge_atom;
-
-    /**
-     * Different by atom_id. Can be changed in simulation (it is needed to be sent-recv. by MPI)
-     */
-    std::vector<Real_t> mass_atom;
-
-    /**
-     * Atom kinematic properties in the current time-step.
-     */
-    std::vector<Vector<Real_t>> position, velocity, acceleration;
-
-    /**
-     * This vectors are used in some integrator schemes and constraint methods.
-     * They can be defined in their related objects, but they may be needed in
-     * more than one objects at once (for example, constraint::M_shake and
-     * integrator::Leap_frog). This makes it the reason to define it here.
-     * This function may be needed to have MPI_send-recv. process in these case.
-     * look up to it.
-     */
-    std::vector<Vector<Real_t>> position_old, velocity_old, acceleration_old;
-
-    /**
-     * this vector is meaningful when there's one domain. We can calculate MSD
-     * using this. It collects number of periodic domain cross for each particle.
-     */
-    std::vector<Vector<int>> msd_domain_cross;
-
-    /**
-     * this vector contain a molecule index for all the atoms. if it's '-1' the
-     * atom is not of any molecule. This matters in the MPI process. All of the
-     * atoms of a molecule should be existed in one process.
-     */
-    std::vector<int> molecule_index; //
-
-    /**
-     * number of total molecules.
-     */
-    int num_molecules;
-
-    /**
-     * The first std::vector, is the molecule index. the inner data contain bonds.
-     */
-    std::vector<std::vector<atom_data::Bond>> atomic_bond_vector;
-
-    /**
-     * Number of atomic bonds each atom have. It is used to limit
-     * the bond creations.
-     */
-    std::vector<int> atomic_bond_count;
-
-    /**
-     * The first index, meaning
-     * the first std::vector, is the molecule index. the inner data contain angles.
-     */
-    std::vector<std::vector<atom_data::Angle>> atomic_angle_vector;
-
-    std::vector<std::vector<atom_data::Proper_dihedral>> atomic_properdihedral_vector;
-
-  }
   /**
-   * There are two types of this unnamed interpreter: owned and ghost. 'owned' atoms
-   * are the one that matter in integrators in the domain. Ghost particles are
-   * the particle near the domain boundaries which are not from the domain. Their
+   *  Ghost particles are the particle near the domain boundaries which are not from the domain. Their
    * usage is for short-range force-field calculations.
    */
-  owned,
-      ghost;
+  atom_data::Atom_struct ghost;
 
   /**
    * it turns the process of recording owned data in the releated std::vector
