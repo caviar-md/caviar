@@ -107,6 +107,10 @@ bool Atom_data::read(caviar::interpreter::Parser *parser)
       if (k_b < 0.0)
         error->all(FC_FILE_LINE_FUNC_PARSE, "k_b have to non-negative.");
     }
+    else if (string_cmp(t, "msd_process"))
+    {
+      msd_process = true;
+    }
     else if (string_cmp(t, "add_atom"))
     {
       FIND_OBJECT_BY_NAME(unique, it)
@@ -491,7 +495,8 @@ bool Atom_data::add_atom(GlobalID_t id,
   owned.id.emplace_back(id);
   owned.velocity.emplace_back(vel);
   owned.acceleration.emplace_back(0, 0, 0);
-  owned.msd_domain_cross.emplace_back(0, 0, 0);
+  if (msd_process)
+    owned.msd_domain_cross.emplace_back(0, 0, 0);
   owned.molecule_index.emplace_back(-1);
   owned.atomic_bond_count.emplace_back(0);
   ++num_local_atoms;
@@ -528,7 +533,9 @@ void Atom_data::remove_atom(const int i)
   owned.acceleration.erase(owned.acceleration.begin() + i);
   owned.type.erase(owned.type.begin() + i);
   owned.id.erase(owned.id.begin() + i);
-  owned.msd_domain_cross.erase(owned.msd_domain_cross.begin() + i);
+
+  if (msd_process)
+    owned.msd_domain_cross.erase(owned.msd_domain_cross.begin() + i);
   owned.molecule_index.erase(owned.molecule_index.begin() + i);
   owned.atomic_bond_count.erase(owned.atomic_bond_count.begin() + i);
   --num_local_atoms;
@@ -553,9 +560,11 @@ void Atom_data::remove_atom(std::vector<int> v_delete_list)
 
     owned.id.erase(owned.id.begin() + i);
 
-#ifndef CAVIAR_WITH_MPI
-    owned.msd_domain_cross.erase(owned.msd_domain_cross.begin() + i); // must be passed with mpi
-#endif
+
+    if (msd_process)
+      owned.msd_domain_cross.erase(owned.msd_domain_cross.begin() + i); // must be passed with mpi
+
+
     --num_local_atoms;
 
   }

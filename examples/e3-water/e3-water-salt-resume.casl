@@ -153,6 +153,7 @@ adata add_molecule_group mg
 adata add_molecule_group mg_nacl
 #adata add_random_velocity
 adata add_xyz_data_file file_name "o_xyz_to_resume.xyz" read_velocity replace_data
+adata msd_process
 
 #===== Neighborlist
 

@@ -231,7 +231,6 @@ w1 set_atom_data adata
 w1 set_domain dom
 w1 xyz_step 250
 #w1 energy_step 100
-w1 msd_step 500
 w1 output_velocity
 
 #=====  simulator

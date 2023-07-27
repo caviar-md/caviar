@@ -215,6 +215,7 @@ adata add_type_radius 3 1.81      #Cl
 adata add_molecule_group mg
 adata add_molecule_group mg_nacl
 adata add_random_velocity
+adata msd_process
 
 #===== Neighborlist
 

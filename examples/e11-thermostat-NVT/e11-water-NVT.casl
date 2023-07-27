@@ -118,6 +118,8 @@ adata add_type_radius 1 0.0836   # hydrogen
 adata add_molecule_group mg
 adata add_random_velocity
 
+adata msd_process
+
 #===== Neighborlist
 
 neighborlist verlet_list neigh_verlet 

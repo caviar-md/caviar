@@ -488,6 +488,11 @@ public:
   double k_b;
 
   /**
+   * Add mean square distance (MSD) calculations if needed. The default value is false for performance.
+   */
+  bool msd_process = false;
+
+  /**
    *  number of external degrees of freedom according to page 114 of
    *  Philippe H. Hunenberger, Adv. Polym. Sci. (2005) 173:105–149  ,
    *  'N_r = 0 in the presence of stochastic and frictional forces.

@@ -103,6 +103,7 @@ bool Atom_data::exchange_owned()
   auto &acc = owned.acceleration;
   auto &id = owned.id;
   auto &type = owned.type;
+  auto &msd = owned.msd_domain_cross;
 
   const auto grid_index_x = domain->grid_index_x;
   const auto grid_index_y = domain->grid_index_y;
@@ -363,6 +364,33 @@ bool Atom_data::exchange_owned()
 
   //MPI_Barrier(mpi_comm);
 
+  // ==============================send msd of owned
+  if (msd_process)
+  {
+    for (auto i = 0; i < 3; ++i)
+    {
+      for (auto j = 0; j < 3; ++j)
+      {
+        for (auto k = 0; k < 3; ++k)
+        {
+          if (me != all[i][j][k])
+          {
+            for (auto m : o_send_index[i][j][k])
+            {
+              Vector<int> p_tmp{msd[m].x, msd[m].y, msd[m].z};
+              MPI_Send(&p_tmp.x, 3, MPI_INT, all[i][j][k], id[m], mpi_comm);
+            }
+            for (auto m : o_recv_id[i][j][k])
+            {
+              Vector<int> p_tmp;
+              MPI_Recv(&p_tmp, 3, MPI_INT, all[i][j][k], m, mpi_comm, MPI_STATUS_IGNORE);
+              msd.emplace_back(p_tmp.x, p_tmp.y, p_tmp.z);
+            }
+          }
+        }
+      }
+    }
+  }
   // ================================================ self move
 
   std::vector<int> o_send_index_lin; // gather all the indexes in a one dimensional array. used in erase.

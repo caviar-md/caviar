@@ -257,7 +257,6 @@ w1 set_atom_data adata
 w1 set_domain dom
 w1 xyz_step 200
 w1 energy_step 200
-#w1 msd_step 200
 
 #=====  simulator
 
