@@ -23,6 +23,19 @@
 
 CAVIAR_NAMESPACE_OPEN
 
+#define FOR_IJK_LOOP_START         \
+  for (auto i = 0; i < 3; ++i)     \
+  {                                \
+    for (auto j = 0; j < 3; ++j)   \
+    {                              \
+      for (auto k = 0; k < 3; ++k) \
+      {
+
+#define FOR_IJK_LOOP_END \
+  }                      \
+  }                      \
+  }
+
 bool Atom_data::exchange_owned()
 {
   if (domain == nullptr)
@@ -108,6 +121,8 @@ bool Atom_data::exchange_owned()
     }
   }
 #elif defined(CAVIAR_WITH_MPI)
+  //MPI_Barrier(mpi_comm);
+
 
   auto &vel = owned.velocity;
   auto &acc = owned.acceleration;
@@ -125,24 +140,23 @@ bool Atom_data::exchange_owned()
 
   const auto me = domain->me;
 
-  // std::cout << "owned s " << me << std::endl;
 
   const auto &all = domain->all;
 
-  std::vector<int> o_send_id[3][3][3], o_recv_id[3][3][3], o_send_index[3][3][3];
+  std::vector<int> send_id[3][3][3];    // global id of the atom: owned.id
+  std::vector<int> recv_id[3][3][3];    // global id of the atom: owned.id
+  std::vector<int> send_index[3][3][3]; // the index of std::vector<> of the owned
+  std::vector<int> send_index_all;      // the index of std::vector<> of the owned, in a 1D vector
 
-  int o_recv_n[3][3][3]; // num of owned to be recieved from domain [i][j][k]
+  int send_num[3][3][3]; // num of owned to be send to the domain all[i][j][k]
+  int recv_num[3][3][3]; // num of owned to be recieved from domain all[i][j][k]
 
-  for (auto i = 0; i < 3; ++i)
-  {
-    for (auto j = 0; j < 3; ++j)
-    {
-      for (auto k = 0; k < 3; ++k)
-      {
-        o_recv_n[i][j][k] = 0;
-      }
-    }
-  }
+
+  FOR_IJK_LOOP_START
+  send_num[i][j][k] = 0;
+  recv_num[i][j][k] = 0;
+  FOR_IJK_LOOP_END
+
 
   for (unsigned i = 0; i < num_local_atoms; ++i)
   {
@@ -187,255 +201,283 @@ bool Atom_data::exchange_owned()
     }
     else
     {
-      o_send_id[x_val + 1][y_val + 1][z_val + 1].emplace_back(id[i]);
-      o_send_index[x_val + 1][y_val + 1][z_val + 1].emplace_back(i);
+      send_id[x_val + 1][y_val + 1][z_val + 1].emplace_back(id[i]);
+      send_index[x_val + 1][y_val + 1][z_val + 1].emplace_back(i);
+      send_index_all.emplace_back(i);
+      send_num[x_val + 1][y_val + 1][z_val + 1]++;
     }
   }
+
+  // ================================================
+  // making the send_data
+  // ================================================
+
+  // o_send_data:  contains all the data of the atoms that is transfered to another MPI process
+  // All of the data are going to be casted as 'double' type
+  // N: the number of atoms that are going to be send to another process
+  //
+  // The packet is as follows with N=4 particles example
+  // N x owned.id               [0     : N-1  ]  0,1,2,3
+  // N x owned.type             [N     : 2N-1 ]  4,5,6,7
+  // N x owned.position         [2N    : 5N-1 ] (8,9,10),(11,12,13),(14,15,16),(17,18,19)
+  // N x owned.velocity         [5N    : 8N-1 ]
+  // N x owned.acceleration     [8N    : 11N-1]
+  // (if msd_process==true):
+  // N x owned.msd_domain_cross [11N   : 14N-1 ]
+  // BOND ? ANGLE? DIHEDRAL ?
+
+  std::vector<double> send_data[3][3][3], recv_data[3][3][3];
+
+  // ================================================
+  // resize send_data to the correct value to increase filling performance
+  // ================================================
+
+  FOR_IJK_LOOP_START
+  int N_tot;
+  if (msd_process)
+    N_tot = 14 * send_num[i][j][k];
+  else
+    N_tot = 11 * send_num[i][j][k];
+
+  send_data[i][j][k].resize(N_tot, 0);
+
+  FOR_IJK_LOOP_END
+
+  // ================================================
+  //  FILL the send_data packets
+  // ================================================
+
+  FOR_IJK_LOOP_START
+  if (me == all[i][j][k])
+    continue;
+
+  int c = 0;
+  auto N = send_num[i][j][k];
+  for (auto m : send_index[i][j][k])
+  {
+    send_data[i][j][k][c] = id[m];
+
+    send_data[i][j][k][N + c] = type[m];
+
+    send_data[i][j][k][(2 * N) + (3 * c) + 0] = pos[m].x;
+    send_data[i][j][k][(2 * N) + (3 * c) + 1] = pos[m].y;
+    send_data[i][j][k][(2 * N) + (3 * c) + 2] = pos[m].z;
+
+    send_data[i][j][k][(5 * N) + (3 * c) + 0] = vel[m].x;
+    send_data[i][j][k][(5 * N) + (3 * c) + 1] = vel[m].y;
+    send_data[i][j][k][(5 * N) + (3 * c) + 2] = vel[m].z;
+
+    send_data[i][j][k][(8 * N) + (3 * c) + 0] = acc[m].x;
+    send_data[i][j][k][(8 * N) + (3 * c) + 1] = acc[m].y;
+    send_data[i][j][k][(8 * N) + (3 * c) + 2] = acc[m].z;
+
+    if (msd_process)
+    {
+      send_data[i][j][k][(11 * N) + (3 * c) + 0] = msd[m].x;
+      send_data[i][j][k][(11 * N) + (3 * c) + 1] = msd[m].y;
+      send_data[i][j][k][(11 * N) + (3 * c) + 2] = msd[m].z;
+    }
+
+    c++;
+  }
+
+  FOR_IJK_LOOP_END
+
+  // ================================================
+  // send num of owned
+  // ================================================
+
+  //MPI_Barrier(mpi_comm);
+
+  FOR_IJK_LOOP_START
+  if (me == all[i][j][k])
+    continue;
+
+  MPI_Send(&send_num[i][j][k], 1, MPI_INT, all[i][j][k], 0, mpi_comm); // TAG 0
+
+  FOR_IJK_LOOP_END
+
+  //MPI_Barrier(mpi_comm);
+
+  FOR_IJK_LOOP_START
+  if (me == all[i][j][k])
+    continue;
+
+  MPI_Recv(&recv_num[i][j][k], 1, MPI_INT, all[i][j][k], 0, mpi_comm, MPI_STATUS_IGNORE); // TAG 0
+
+  FOR_IJK_LOOP_END
+
+
+  // ================================================
+
+  // MPI_Barrier(mpi_comm);
+
+  // ================================================
+  // resize recv_data to the correct value to increase filling performance
+  // ================================================
+
+  FOR_IJK_LOOP_START
+  int N_tot;
+  if (msd_process)
+    N_tot = 14 * recv_num[i][j][k];
+  else
+    N_tot = 11 * recv_num[i][j][k];
+
+  if (N_tot == 0)
+    continue; //recv_data[i][j][k].resize(1, 0);
+  else
+    recv_data[i][j][k].resize(N_tot, 0);
+
+  FOR_IJK_LOOP_END
+
+
+  // ================================================
+  // SEND OWNED DATA
+  // ================================================
+
+  FOR_IJK_LOOP_START
+  if (me == all[i][j][k])
+    continue;
+
+  int N_tot;
+  if (msd_process)
+    N_tot = 14 * send_num[i][j][k];
+  else
+    N_tot = 11 * send_num[i][j][k];
+
+  MPI_Send(send_data[i][j][k].data(), N_tot, MPI_DOUBLE, all[i][j][k], 1, mpi_comm); // TAG 1
+
+  FOR_IJK_LOOP_END
 
   MPI_Barrier(mpi_comm);
 
-  // ===============================send num of owned
+  FOR_IJK_LOOP_START
+  if (me == all[i][j][k])
+    continue;
 
-  for (auto i = 0; i < 3; ++i)
-  {
-    for (auto j = 0; j < 3; ++j)
-    {
-      for (auto k = 0; k < 3; ++k)
-      {
-        if (me != all[i][j][k])
-        {
-          int num_s = o_send_id[i][j][k].size();
-          MPI_Send(&num_s, 1, MPI_INT, all[i][j][k], 0, mpi_comm);
-          MPI_Recv(&o_recv_n[i][j][k], 1, MPI_INT, all[i][j][k], 0, mpi_comm, MPI_STATUS_IGNORE);
-        }
-      }
-    }
-  }
-
-  // MPI_Barrier(mpi_comm);
-
-  // ===============================send id of owned
-  for (auto i = 0; i < 3; ++i)
-  {
-    for (auto j = 0; j < 3; ++j)
-    {
-      for (auto k = 0; k < 3; ++k)
-      {
-        if (me != all[i][j][k])
-        {
-          int num_s = o_send_id[i][j][k].size();
-          unsigned num_r = o_recv_n[i][j][k];
-
-          if (num_s > 0)
-          {
-            MPI_Send(o_send_id[i][j][k].data(), num_s, MPI_INT, all[i][j][k], 1, mpi_comm);
-          }
-
-          if (num_r > 0)
-          {
-            std::vector<int> tmp_r(num_r, 0);
-            MPI_Recv(tmp_r.data(), num_r, MPI_INT, all[i][j][k], 1, mpi_comm, MPI_STATUS_IGNORE);
-            for (unsigned m = 0; m < num_r; ++m)
-              o_recv_id[i][j][k].push_back(tmp_r[m]);
-          }
-        }
-      }
-    }
-  }
-
-  // MPI_Barrier(mpi_comm);
-  //  ==============================send type of owned
-  for (auto i = 0; i < 3; ++i)
-  {
-    for (auto j = 0; j < 3; ++j)
-    {
-      for (auto k = 0; k < 3; ++k)
-      {
-        if (me != all[i][j][k])
-        {
-          for (auto m : o_send_index[i][j][k])
-          {
-            MPI_Send(&type[m], 1, MPI_INT, all[i][j][k], id[m], mpi_comm);
-          }
-          for (auto m : o_recv_id[i][j][k])
-          {
-            int tmp;
-            MPI_Recv(&tmp, 1, MPI_INT, all[i][j][k], m, mpi_comm, MPI_STATUS_IGNORE);
-            type.emplace_back(tmp);
-            id.emplace_back(m);
-          }
-        }
-      }
-    }
-  }
-
-  // MPI_Barrier(mpi_comm);
-  //  ==============================send position of owned
-  for (auto i = 0; i < 3; ++i)
-  {
-    for (auto j = 0; j < 3; ++j)
-    {
-      for (auto k = 0; k < 3; ++k)
-      {
-        if (me != all[i][j][k])
-        {
-          for (auto m : o_send_index[i][j][k])
-          {
-            Vector<double> p_tmp{pos[m].x, pos[m].y, pos[m].z};
-            MPI_Send(&p_tmp.x, 3, MPI_DOUBLE, all[i][j][k], id[m], mpi_comm);
-          }
-          for (auto m : o_recv_id[i][j][k])
-          {
-            Vector<double> p_tmp;
-            MPI_Recv(&p_tmp, 3, MPI_DOUBLE, all[i][j][k], m, mpi_comm, MPI_STATUS_IGNORE);
-            if (i == 0)
-              while (p_tmp.x < x_llow)
-                p_tmp.x += x_width;
-            if (j == 0)
-              while (p_tmp.y < y_llow)
-                p_tmp.y += y_width;
-            if (k == 0)
-              while (p_tmp.z < z_llow)
-                p_tmp.z += z_width;
-            if (i == 2)
-              while (p_tmp.x > x_lupp)
-                p_tmp.x -= x_width;
-            if (j == 2)
-              while (p_tmp.y > y_lupp)
-                p_tmp.y -= y_width;
-            if (k == 2)
-              while (p_tmp.z > z_lupp)
-                p_tmp.z -= z_width;
-            pos.emplace_back(p_tmp.x, p_tmp.y, p_tmp.z);
-            ++num_local_atoms;
-          }
-        }
-      }
-    }
-  }
-
-  // MPI_Barrier(mpi_comm);
-  //  ==============================send velocity of owned
-  for (auto i = 0; i < 3; ++i)
-  {
-    for (auto j = 0; j < 3; ++j)
-    {
-      for (auto k = 0; k < 3; ++k)
-      {
-        if (me != all[i][j][k])
-        {
-          for (auto m : o_send_index[i][j][k])
-          {
-            Vector<double> p_tmp{vel[m].x, vel[m].y, vel[m].z};
-            MPI_Send(&p_tmp.x, 3, MPI_DOUBLE, all[i][j][k], id[m], mpi_comm);
-          }
-          for (auto m : o_recv_id[i][j][k])
-          {
-            Vector<double> p_tmp;
-            MPI_Recv(&p_tmp, 3, MPI_DOUBLE, all[i][j][k], m, mpi_comm, MPI_STATUS_IGNORE);
-            vel.emplace_back(p_tmp.x, p_tmp.y, p_tmp.z);
-          }
-        }
-      }
-    }
-  }
-
-  // MPI_Barrier(mpi_comm);
-  //  ==============================send acceleration of owned
-  for (auto i = 0; i < 3; ++i)
-  {
-    for (auto j = 0; j < 3; ++j)
-    {
-      for (auto k = 0; k < 3; ++k)
-      {
-        if (me != all[i][j][k])
-        {
-          for (auto m : o_send_index[i][j][k])
-          {
-            Vector<double> p_tmp{acc[m].x, acc[m].y, acc[m].z};
-            MPI_Send(&p_tmp.x, 3, MPI_DOUBLE, all[i][j][k], id[m], mpi_comm);
-          }
-          for (auto m : o_recv_id[i][j][k])
-          {
-            Vector<double> p_tmp;
-            MPI_Recv(&p_tmp, 3, MPI_DOUBLE, all[i][j][k], m, mpi_comm, MPI_STATUS_IGNORE);
-            acc.emplace_back(p_tmp.x, p_tmp.y, p_tmp.z);
-          }
-        }
-      }
-    }
-  }
-
-  // MPI_Barrier(mpi_comm);
-
-  // ==============================send msd of owned
+  int N_tot;
   if (msd_process)
-  {
-    for (auto i = 0; i < 3; ++i)
-    {
-      for (auto j = 0; j < 3; ++j)
-      {
-        for (auto k = 0; k < 3; ++k)
-        {
-          if (me != all[i][j][k])
-          {
-            for (auto m : o_send_index[i][j][k])
-            {
-              Vector<int> p_tmp{msd[m].x, msd[m].y, msd[m].z};
-              MPI_Send(&p_tmp.x, 3, MPI_INT, all[i][j][k], id[m], mpi_comm);
-            }
-            for (auto m : o_recv_id[i][j][k])
-            {
-              Vector<int> p_tmp;
-              MPI_Recv(&p_tmp, 3, MPI_INT, all[i][j][k], m, mpi_comm, MPI_STATUS_IGNORE);
-              msd.emplace_back(p_tmp.x, p_tmp.y, p_tmp.z);
-            }
-          }
-        }
-      }
-    }
-  }
-  // ================================================ self move
+    N_tot = 14 * recv_num[i][j][k];
+  else
+    N_tot = 11 * recv_num[i][j][k];
 
-  std::vector<int> o_send_index_lin; // gather all the indexes in a one dimensional array. used in erase.
+  MPI_Recv(recv_data[i][j][k].data(), N_tot, MPI_DOUBLE, all[i][j][k], 1, mpi_comm, MPI_STATUS_IGNORE); // TAG 1
 
-  for (auto i = 0; i < 3; ++i)
-  {
-    for (auto j = 0; j < 3; ++j)
-    {
-      for (auto k = 0; k < 3; ++k)
-      {
-        //        if (i==1&&j==1&&k==1) continue;
-        if (me == all[i][j][k])
-        {
-          auto ii = i - 1, jj = j - 1, kk = k - 1;
-          for (auto m : o_send_index[i][j][k])
-          {
-            pos[m].x -= ii * x_width;
-            pos[m].y -= jj * y_width;
-            pos[m].z -= kk * z_width;
-          }
-        }
-        else
-        {
-          for (auto m : o_send_index[i][j][k])
-          {
-            o_send_index_lin.emplace_back(m);
-          }
-        }
-      }
-    }
-  }
+  FOR_IJK_LOOP_END
 
   // MPI_Barrier(mpi_comm);
 
-  // ================================================ delete moved atoms
-  if (o_send_index_lin.size() > 0)
+  // ================================================
+  // FILL the atom_data.owned with depacketing recv_data
+  // ================================================
+
+
+  FOR_IJK_LOOP_START
+
+  if (me == all[i][j][k])
+    continue;
+
+  auto N = recv_num[i][j][k];
+
+  if (N == 0)
+    continue;
+
+  auto old_size = id.size();
+  auto new_size = old_size + N;
+  id.resize(new_size);
+  type.resize(new_size);
+  pos.resize(new_size);
+  vel.resize(new_size);
+  acc.resize(new_size);
+  if (msd_process)
+    msd.resize(new_size);
+
+  num_local_atoms += N;
+
+  for (int c = 0; c < N; ++c)
   {
-    remove_atom(o_send_index_lin);
+
+    int m = old_size + c;
+
+    id[m] = recv_data[i][j][k][c];
+
+    type[m] = recv_data[i][j][k][N + c];
+
+    pos[m].x = recv_data[i][j][k][(2 * N) + (3 * c) + 0];
+    pos[m].y = recv_data[i][j][k][(2 * N) + (3 * c) + 1];
+    pos[m].z = recv_data[i][j][k][(2 * N) + (3 * c) + 2];
+
+    vel[m].x = recv_data[i][j][k][(5 * N) + (3 * c) + 0];
+    vel[m].y = recv_data[i][j][k][(5 * N) + (3 * c) + 1];
+    vel[m].z = recv_data[i][j][k][(5 * N) + (3 * c) + 2];
+
+    acc[m].x = recv_data[i][j][k][(8 * N) + (3 * c) + 0];
+    acc[m].y = recv_data[i][j][k][(8 * N) + (3 * c) + 1];
+    acc[m].z = recv_data[i][j][k][(8 * N) + (3 * c) + 2];
+
+    if (msd_process)
+    {
+      msd[m].x = recv_data[i][j][k][(11 * N) + (3 * c) + 0];
+      msd[m].y = recv_data[i][j][k][(11 * N) + (3 * c) + 1];
+      msd[m].z = recv_data[i][j][k][(11 * N) + (3 * c) + 2];
+    }
+
+
+    // ================================================
+    // Applying periodic boundary condition for particles comming from other domains
+    // ================================================
+
+    if (i == 0)
+      while (pos[m].x < x_llow)
+        pos[m].x += x_width;
+    if (j == 0)
+      while (pos[m].y < y_llow)
+        pos[m].y += y_width;
+    if (k == 0)
+      while (pos[m].z < z_llow)
+        pos[m].z += z_width;
+    if (i == 2)
+      while (pos[m].x > x_lupp)
+        pos[m].x -= x_width;
+    if (j == 2)
+      while (pos[m].y > y_lupp)
+        pos[m].y -= y_width;
+    if (k == 2)
+      while (pos[m].z > z_lupp)
+        pos[m].z -= z_width;
+  }
+
+  FOR_IJK_LOOP_END
+
+
+  // ================================================
+  // Applying periodic boundary condition for particles comming from the current domain itself
+  // ================================================
+
+  FOR_IJK_LOOP_START
+  if (me == all[i][j][k])
+  {
+    auto ii = i - 1, jj = j - 1, kk = k - 1;
+    for (auto m : send_index[i][j][k])
+    {
+      pos[m].x -= ii * x_width;
+      pos[m].y -= jj * y_width;
+      pos[m].z -= kk * z_width;
+    }
+  }
+  FOR_IJK_LOOP_END
+
+
+  // ================================================
+  // Deleting the particles which are send to another domains
+  // ================================================
+
+  if (send_index_all.size() > 0)
+  {
+    remove_atom(send_index_all);
     make_neighlist = true;
   }
-  // std::cout << "owned e " << me << std::endl;
+  // MPI_Barrier(mpi_comm);
 
 #else
 
