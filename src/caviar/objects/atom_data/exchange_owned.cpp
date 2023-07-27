@@ -98,6 +98,7 @@ bool Atom_data::exchange_owned()
     }
   }
 #elif defined(CAVIAR_WITH_MPI)
+
   auto &vel = owned.velocity;
   auto &acc = owned.acceleration;
   auto &id = owned.id;
@@ -113,25 +114,12 @@ bool Atom_data::exchange_owned()
 
   const auto me = domain->me;
 
+//std::cout << "owned s " << me << std::endl;
+
   const auto &all = domain->all;
 
-  std::vector<std::vector<std::vector<std::vector<int>>>> o_send_id, o_recv_id, o_send_index;
+  std::vector<int> o_send_id[3][3][3], o_recv_id[3][3][3], o_send_index[3][3][3];
 
-  o_send_id.resize(3);
-  o_recv_id.resize(3);
-  o_send_index.resize(3);
-  for (auto i = 0; i < 3; ++i)
-  {
-    o_send_id[i].resize(3);
-    o_recv_id[i].resize(3);
-    o_send_index[i].resize(3);
-    for (auto j = 0; j < 3; ++j)
-    {
-      o_send_id[i][j].resize(3);
-      o_recv_id[i][j].resize(3);
-      o_send_index[i][j].resize(3);
-    }
-  }
 
   int o_recv_n[3][3][3]; // num of owned to be recieved from domain [i][j][k]
 
@@ -145,6 +133,7 @@ bool Atom_data::exchange_owned()
       }
     }
   }
+
 
   for (unsigned i = 0; i < num_local_atoms; ++i)
   {
@@ -191,9 +180,12 @@ bool Atom_data::exchange_owned()
     {
       o_send_id[x_val + 1][y_val + 1][z_val + 1].emplace_back(id[i]);
       o_send_index[x_val + 1][y_val + 1][z_val + 1].emplace_back(i);
+
+
     }
   }
 
+                        
   MPI_Barrier(mpi_comm);
 
   // ===============================send num of owned
@@ -214,7 +206,7 @@ bool Atom_data::exchange_owned()
     }
   }
 
-  MPI_Barrier(mpi_comm);
+  //MPI_Barrier(mpi_comm);
 
   // ===============================send id of owned
   for (auto i = 0; i < 3; ++i)
@@ -226,25 +218,27 @@ bool Atom_data::exchange_owned()
         if (me != all[i][j][k])
         {
           int num_s = o_send_id[i][j][k].size();
+          unsigned num_r = o_recv_n[i][j][k];          
+
           if (num_s > 0)
           {
             MPI_Send(o_send_id[i][j][k].data(), num_s, MPI_INT, all[i][j][k], 1, mpi_comm);
           }
-          unsigned num_r = o_recv_n[i][j][k];
+
+
           if (num_r > 0)
           {
-            int *tmp_r = new int[num_r]; // TODO maybe change it to a static vector
-            MPI_Recv(&tmp_r, num_r, MPI_INT, all[i][j][k], 1, mpi_comm, MPI_STATUS_IGNORE);
+            std::vector<int> tmp_r(num_r,0);
+            MPI_Recv(tmp_r.data(), num_r, MPI_INT, all[i][j][k], 1, mpi_comm, MPI_STATUS_IGNORE);
             for (unsigned m = 0; m < num_r; ++m)
               o_recv_id[i][j][k].push_back(tmp_r[m]);
-            delete[] tmp_r;
           }
         }
       }
     }
   }
 
-  MPI_Barrier(mpi_comm);
+  //MPI_Barrier(mpi_comm);
   // ==============================send type of owned
   for (auto i = 0; i < 3; ++i)
   {
@@ -270,7 +264,7 @@ bool Atom_data::exchange_owned()
     }
   }
 
-  MPI_Barrier(mpi_comm);
+  //MPI_Barrier(mpi_comm);
   // ==============================send position of owned
   for (auto i = 0; i < 3; ++i)
   {
@@ -314,7 +308,8 @@ bool Atom_data::exchange_owned()
       }
     }
   }
-  MPI_Barrier(mpi_comm);
+
+  //MPI_Barrier(mpi_comm);
   // ==============================send velocity of owned
   for (auto i = 0; i < 3; ++i)
   {
@@ -339,7 +334,8 @@ bool Atom_data::exchange_owned()
       }
     }
   }
-  MPI_Barrier(mpi_comm);
+
+  //MPI_Barrier(mpi_comm);
   // ==============================send acceleration of owned
   for (auto i = 0; i < 3; ++i)
   {
@@ -364,7 +360,8 @@ bool Atom_data::exchange_owned()
       }
     }
   }
-  MPI_Barrier(mpi_comm);
+
+  //MPI_Barrier(mpi_comm);
 
   // ================================================ self move
 
@@ -397,7 +394,8 @@ bool Atom_data::exchange_owned()
       }
     }
   }
-  MPI_Barrier(mpi_comm);
+
+  //MPI_Barrier(mpi_comm);
 
   // ================================================ delete moved atoms
   if (o_send_index_lin.size() > 0)
@@ -405,6 +403,9 @@ bool Atom_data::exchange_owned()
     remove_atom(o_send_index_lin);
     make_neighlist = true;
   }
+//std::cout << "owned e " << me << std::endl;
+
+  
 
 #else
 

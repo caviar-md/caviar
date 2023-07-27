@@ -214,23 +214,9 @@ void Atom_data::exchange_ghost()
   const auto me = domain->me;
   const auto &all = domain->all;
 
-  std::vector<std::vector<std::vector<std::vector<int>>>> g_send_id, g_recv_id, g_send_index;
+//std::cout << "ghost s " << me << std::endl;
 
-  g_send_id.resize(3);
-  g_recv_id.resize(3);
-  g_send_index.resize(3);
-  for (auto i = 0; i < 3; ++i)
-  {
-    g_send_id[i].resize(3);
-    g_recv_id[i].resize(3);
-    g_send_index[i].resize(3);
-    for (auto j = 0; j < 3; ++j)
-    {
-      g_send_id[i][j].resize(3);
-      g_recv_id[i][j].resize(3);
-      g_send_index[i][j].resize(3);
-    }
-  }
+  std::vector<int> g_send_id[3][3][3], g_recv_id[3][3][3], g_send_index[3][3][3];
 
   int g_recv_n[3][3][3]; // num of ghosts to be recieved from domain [i][j][k]
 
@@ -325,7 +311,8 @@ void Atom_data::exchange_ghost()
       g_send_index[x_val + 1][y_val + 1][z_val + 1].emplace_back(i);
     }
   }
-  MPI_Barrier(mpi_comm);
+
+  MPI_Barrier(mpi_comm); // undefined behavior if removed
   // ===============================send num of ghosts
   for (auto i = 0; i < 3; ++i)
   {
@@ -342,7 +329,7 @@ void Atom_data::exchange_ghost()
       }
     }
   }
-  MPI_Barrier(mpi_comm);
+  //MPI_Barrier(mpi_comm);
   // ===============================send id of ghosts
   for (auto i = 0; i < 3; ++i)
   {
@@ -360,17 +347,16 @@ void Atom_data::exchange_ghost()
           unsigned num_r = g_recv_n[i][j][k];
           if (num_r > 0)
           {
-            int *tmp_r = new int[num_r];
-            MPI_Recv(tmp_r, num_r, MPI_INT, all[i][j][k], 1, mpi_comm, MPI_STATUS_IGNORE);
+            std::vector<int> tmp_r(num_r,0);
+            MPI_Recv(tmp_r.data(), num_r, MPI_INT, all[i][j][k], 1, mpi_comm, MPI_STATUS_IGNORE);
             for (unsigned m = 0; m < num_r; ++m)
               g_recv_id[i][j][k].emplace_back(tmp_r[m]);
-            delete[] tmp_r;
           }
         }
       }
     }
   }
-  MPI_Barrier(mpi_comm);
+  //MPI_Barrier(mpi_comm);
   // ==============================send type of  ghosts
   for (auto i = 0; i < 3; ++i)
   {
@@ -396,7 +382,7 @@ void Atom_data::exchange_ghost()
       }
     }
   }
-  MPI_Barrier(mpi_comm);
+  //MPI_Barrier(mpi_comm);
   // ==============================send position of ghosts
   for (auto i = 0; i < 3; ++i)
   {
@@ -439,7 +425,7 @@ void Atom_data::exchange_ghost()
       }
     }
   }
-  MPI_Barrier(mpi_comm);
+  //MPI_Barrier(mpi_comm);
   // ==============================send velocity of ghosts
   if (make_ghost_velocity)
   {
@@ -466,7 +452,7 @@ void Atom_data::exchange_ghost()
         }
       }
     }
-    MPI_Barrier(mpi_comm);
+    //MPI_Barrier(mpi_comm);
   }
   //===========================SAME DOMAIN GHOSTS
   for (auto i = 0; i < 3; ++i)
@@ -490,6 +476,8 @@ void Atom_data::exchange_ghost()
       }
     }
   }
+ // std::cout << "ghost e " << me << std::endl;
+
 #else
 
   for (unsigned int i = 0; i < num_local_atoms; ++i)

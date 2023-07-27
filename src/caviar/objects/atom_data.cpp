@@ -538,15 +538,26 @@ void Atom_data::remove_atom(std::vector<int> v_delete_list)
 {
   // sort them from greatest to lowest to maintain lower index
   std::sort(v_delete_list.begin(), v_delete_list.end(), std::greater<int>());
+
   for (auto i : v_delete_list)
   {
+
+
     owned.position.erase(owned.position.begin() + i);
+
     owned.velocity.erase(owned.velocity.begin() + i);
+
     owned.acceleration.erase(owned.acceleration.begin() + i);
+
     owned.type.erase(owned.type.begin() + i);
+
     owned.id.erase(owned.id.begin() + i);
-    owned.msd_domain_cross.erase(owned.msd_domain_cross.begin() + i);
+
+#ifndef CAVIAR_WITH_MPI
+    owned.msd_domain_cross.erase(owned.msd_domain_cross.begin() + i); // must be passed with mpi
+#endif
     --num_local_atoms;
+
   }
 }
 
