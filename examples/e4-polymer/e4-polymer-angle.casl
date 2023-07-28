@@ -276,13 +276,15 @@ w1 energy_step 200
 
 md_simulator basic sim 
 
+sim set_atom_data adata
+
+
 #sim integrator_type velocity_verlet
 sim integrator_type velocity_verlet_langevin
 sim temperature 1.0
 sim kb 1.0
 sim friction 1.0
 
-sim set_atom_data adata
 
 #sim add_force_field f_lj
 #sim add_force_field f_el

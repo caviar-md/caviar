@@ -125,8 +125,9 @@ w1 xyz_step 200
 #=====  simulator
 
 md_simulator basic sim
-sim integrator_type velocity_verlet
 sim set_atom_data adata
+
+sim integrator_type velocity_verlet
 sim add_force_field f_lj
 #sim add_neighborlist neigh_verlet
 sim add_neighborlist neigh_cell

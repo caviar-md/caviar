@@ -231,10 +231,12 @@ w1 temperature_step 100
 md_simulator basic sim 
 sim dt global_dt
 
+sim set_atom_data adata
+
+
 #sim integrator_type velocity_verlet
 sim integrator_type leap_frog
 
-sim set_atom_data adata
 
 sim add_force_field f_lj
 sim add_force_field f_elsh 
