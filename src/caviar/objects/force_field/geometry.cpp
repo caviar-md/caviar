@@ -124,17 +124,17 @@ namespace force_field
     if (velocity_offset != nullptr)
       v_o = velocity_offset->current_value;
 
-    const auto &pos = atom_data->owned.position;
-    const auto &vel = atom_data->owned.velocity;
-    auto &acc = atom_data->owned.acceleration;
-    auto a_radius = atom_data->owned.radius;
+    const auto &pos = atom_data->atom_struct_owned.position;
+    const auto &vel = atom_data->atom_struct_owned.velocity;
+    auto &acc = atom_data->atom_struct_owned.acceleration;
+    auto a_radius = atom_data->atom_type_params.radius;
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
 #endif
     for (unsigned int i = 0; i < pos.size(); ++i)
     {
-      const auto type_i = atom_data->owned.type[i];
-      const auto mass_inv_i = atom_data->owned.mass_inv[type_i];
+      const auto type_i = atom_data->atom_struct_owned.type[i];
+      const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
       // const auto r = radius [ type_i ];
       const auto r = a_radius[type_i];
       // Vector <Real_t> contact_vector {0,0,0};

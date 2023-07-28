@@ -30,7 +30,7 @@ namespace force_field
     if (!initialized)
       initialize();
     // /* // XXX scheme using potential formula.
-    const auto &pos = atom_data->owned.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
     double energy_r = 0;
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for reduction(+ \
@@ -38,8 +38,8 @@ namespace force_field
 #endif
     for (unsigned int j = 0; j < pos.size(); ++j)
     {
-      const auto type_j = atom_data->owned.type[j];
-      const auto charge_j = atom_data->owned.charge[type_j];
+      const auto type_j = atom_data->atom_struct_owned.type[j];
+      const auto charge_j = atom_data->atom_type_params.charge[type_j];
       //    energy_r += charge_j * potential(j); //
       energy_r += charge_j * potential(pos[j]); //
     }

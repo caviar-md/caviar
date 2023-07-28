@@ -154,16 +154,16 @@ namespace force_field
     initialize();
 
     /* XXX working scheme but of order N^2
-      const auto &pos = atom_data -> owned.position;
+      const auto &pos = atom_data -> atom_struct_owned.position;
       for (unsigned int i=0;i<pos.size();++i) {
-      const auto type_i = atom_data -> owned.type [i] ;
-      const auto charge_i = atom_data -> owned.charge [ type_i ];
-      const auto mass_inv_i = atom_data -> owned.mass_inv [ type_i ];
+      const auto type_i = atom_data -> atom_struct_owned.type [i] ;
+      const auto charge_i = atom_data -> atom_type_params.charge [ type_i ];
+      const auto mass_inv_i = atom_data -> atom_type_params.mass_inv [ type_i ];
       Vector<double> sum_j {0,0,0};
       for (unsigned int j=0;j<pos.size();++j) {
 
-        const auto type_j = atom_data -> owned.type [j] ;
-        const auto charge_j = atom_data -> owned.charge [ type_j ];
+        const auto type_j = atom_data -> atom_struct_owned.type [j] ;
+        const auto charge_j = atom_data -> atom_type_params.charge [ type_j ];
         const auto r_ij = pos[i] - pos[j];
         Vector<double> sum_k {0,0,0};
         for (int k = 0; k<n_k_vectors; ++k) {
@@ -172,13 +172,13 @@ namespace force_field
         sum_j += charge_j * sum_k;
       }
       const auto force =  k_electrostatic * charge_i * l_xyz_inv * sum_j;
-      atom_data -> owned.acceleration[i] += force * mass_inv_i;
+      atom_data -> atom_struct_owned.acceleration[i] += force * mass_inv_i;
       }
     */
 
     // XXX Working scheme of the order N. Best one.
     ///*
-    const auto &pos = atom_data->owned.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
     static std::complex<double> ii(0.0, 1.0);
 
     for (int k = 0; k < n_k_vectors; ++k)
@@ -190,9 +190,9 @@ namespace force_field
 #endif
       for (unsigned int i = 0; i < pos.size(); ++i)
       {
-        const auto type_i = atom_data->owned.type[i];
-        const auto charge_i = atom_data->owned.charge[type_i];
-        const auto mass_inv_i = atom_data->owned.mass_inv[type_i];
+        const auto type_i = atom_data->atom_struct_owned.type[i];
+        const auto charge_i = atom_data->atom_type_params.charge[type_i];
+        const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
 
         const double sum_j = std::imag(sum_j_c * std::exp(ii * (k_vector[k] * pos[i])));
         const auto sum_k = FC_4PI * field_k_coef[k] * k_vector[k] * sum_j;
@@ -204,20 +204,20 @@ namespace force_field
           force += charge_i * dipole_field_vector;
         }
 
-        atom_data->owned.acceleration[i] += force * mass_inv_i;
+        atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
       }
     }
     //*/
 
     // XXX Working scheme of the order N.
     /*
-      const auto &pos = atom_data -> owned.position;
+      const auto &pos = atom_data -> atom_struct_owned.position;
       static std::complex<double> ii(0.0, 1.0);
 
       for (unsigned int i=0;i<pos.size();++i) {
-        const auto type_i = atom_data -> owned.type [i] ;
-        const auto charge_i = atom_data -> owned.charge [ type_i ];
-        const auto mass_inv_i = atom_data -> owned.mass_inv [ type_i ];
+        const auto type_i = atom_data -> atom_struct_owned.type [i] ;
+        const auto charge_i = atom_data -> atom_type_params.charge [ type_i ];
+        const auto mass_inv_i = atom_data -> atom_type_params.mass_inv [ type_i ];
 
         std::complex<double> sum_kx (0.0, 0.0);
         std::complex<double> sum_ky (0.0, 0.0);
@@ -242,7 +242,7 @@ namespace force_field
         const auto sum = FC_4PI *  sv ;
 
         const auto force =  k_electrostatic * charge_i * l_xyz_inv * sum;
-        atom_data -> owned.acceleration[i] += force * mass_inv_i;
+        atom_data -> atom_struct_owned.acceleration[i] += force * mass_inv_i;
 
       }
 
@@ -250,18 +250,18 @@ namespace force_field
 
     // XXX Scheme using field functions.
     /*
-     const auto &pos = atom_data -> owned.position;
+     const auto &pos = atom_data -> atom_struct_owned.position;
      const unsigned pos_size = pos.size();
 
      for (unsigned i = 0; i < pos_size; ++i) {
-       const auto pos_i = atom_data->owned.position [i];
-       const auto type_i = atom_data -> owned.type [ i ];
-       const auto charge_i = atom_data -> owned.charge [ type_i ];
-       const auto mass_inv_i = atom_data -> owned.mass_inv [ type_i ];
+       const auto pos_i = atom_data->atom_struct_owned.position [i];
+       const auto type_i = atom_data -> atom_struct_owned.type [ i ];
+       const auto charge_i = atom_data -> atom_type_params.charge [ type_i ];
+       const auto mass_inv_i = atom_data -> atom_type_params.mass_inv [ type_i ];
 
        const auto force = charge_i * field (pos_i);  // working
    //    const auto force = charge_i * field (i);  // working
-       atom_data -> owned.acceleration[i] += force * mass_inv_i;
+       atom_data -> atom_struct_owned.acceleration[i] += force * mass_inv_i;
 
      }
 

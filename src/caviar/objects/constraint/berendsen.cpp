@@ -89,7 +89,7 @@ namespace constraint
 
     auto t = atom_data->temperature();
 
-    auto &vel = atom_data->owned.velocity;
+    auto &vel = atom_data->atom_struct_owned.velocity;
 
     double lambda = std::sqrt(1.0 + (dt / coupling) * ((temperature / t) - 1.0));
 

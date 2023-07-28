@@ -19,6 +19,10 @@
 
 #include "caviar/utility/objects_common_headers.h"
 #include "caviar/objects/atom_data/utility/atom_struct.h"
+#include "caviar/objects/atom_data/utility/atom_type_params.h"
+#include "caviar/objects/atom_data/utility/molecule_struct.h"
+#include "caviar/objects/atom_data/utility/molecule_type_params.h"
+
 
 CAVIAR_NAMESPACE_OPEN
 
@@ -253,14 +257,14 @@ public:
   virtual void add_random_velocity();
 
   /**
-   * find and exchange owned atoms between domain or do periodic exchange
+   * find and exchange owned atoms between domain or do periodic exchange.
    */
-  virtual bool exchange_owned();
+  virtual bool exchange_owned(long step = -1);
 
   /**
    * find and exchange ghost atoms between domains or do periodic ghost
    */
-  virtual void exchange_ghost();
+  virtual void exchange_ghost(long step = -1);
 
   /**
    * does as it says
@@ -320,13 +324,23 @@ public:
   /**
    * 'owned' atoms are the one that matter in integrators in the domain. 
    */
-  atom_data::Atom_struct owned;
+  atom_data::Atom_struct atom_struct_owned;
 
   /**
    *  Ghost particles are the particle near the domain boundaries which are not from the domain. Their
    * usage is for short-range force-field calculations.
    */
-  atom_data::Atom_struct ghost;
+  atom_data::Atom_struct atom_struct_ghost;
+
+  /**
+   * Atom type physical parameters. 
+   */
+  atom_data::Atom_type_params atom_type_params;
+
+  /**
+   * 'owned' atoms are the one that matter in integrators in the domain. 
+   */
+  atom_data::Molecule_struct molecule_struct_owned;
 
   /**
    * it turns the process of recording owned data in the releated std::vector
@@ -345,6 +359,11 @@ public:
   LocalID_t num_local_atoms, num_local_atoms_est;
   GlobalID_t num_total_atoms;
   AtomType_t num_atom_types;
+
+  /**
+   * number of total molecules.
+   */
+  int num_molecules;
 
   std::vector<int> ghost_rank; // the rank of the domain in which the owned counterpart exists
 

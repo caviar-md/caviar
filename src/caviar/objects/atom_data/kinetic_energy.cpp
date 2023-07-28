@@ -37,9 +37,9 @@ double Atom_data::kinetic_energy()
     case 0:
     {
 
-      for (unsigned int i = 0; i < owned.position.size(); ++i)
+      for (unsigned int i = 0; i < atom_struct_owned.position.size(); ++i)
       {
-        e_owned += owned.mass[owned.type[i]] * (owned.velocity[i] * owned.velocity[i]);
+        e_owned += atom_type_params.mass[atom_struct_owned.type[i]] * (atom_struct_owned.velocity[i] * atom_struct_owned.velocity[i]);
       }
     }
     break;
@@ -49,10 +49,10 @@ double Atom_data::kinetic_energy()
     case (3):
     {
       auto v_cm = owned_velocity_cm();
-      for (unsigned int i = 0; i < owned.position.size(); ++i)
+      for (unsigned int i = 0; i < atom_struct_owned.position.size(); ++i)
       {
-        auto v_i = owned.velocity[i] - v_cm;
-        e_owned += owned.mass[owned.type[i]] * (v_i * v_i);
+        auto v_i = atom_struct_owned.velocity[i] - v_cm;
+        e_owned += atom_type_params.mass[atom_struct_owned.type[i]] * (v_i * v_i);
       }
     }
     break;
@@ -81,11 +81,11 @@ double Atom_data::kinetic_energy()
 
       if (correct_result)
       {
-        for (unsigned int i = 0; i < owned.position.size(); ++i)
+        for (unsigned int i = 0; i < atom_struct_owned.position.size(); ++i)
         {
 
-          auto v_i = owned.velocity[i] - v_cm - (cross_product(I_i_L, owned.position[i] - p_cm));
-          e_owned += owned.mass[owned.type[i]] * (v_i * v_i);
+          auto v_i = atom_struct_owned.velocity[i] - v_cm - (cross_product(I_i_L, atom_struct_owned.position[i] - p_cm));
+          e_owned += atom_type_params.mass[atom_struct_owned.type[i]] * (v_i * v_i);
         }
       }
       else
@@ -98,10 +98,10 @@ double Atom_data::kinetic_energy()
   }
   else
   { // TODO: mix this block into ' switch (get_n_r_df())' cases
-    for (unsigned int i = 0; i < owned.position.size(); ++i)
+    for (unsigned int i = 0; i < atom_struct_owned.position.size(); ++i)
     {
-      auto fixed_vel = owned.velocity[i] + velocity_offset->current_value;
-      e_owned += owned.mass[owned.type[i]] * (fixed_vel * fixed_vel);
+      auto fixed_vel = atom_struct_owned.velocity[i] + velocity_offset->current_value;
+      e_owned += atom_type_params.mass[atom_struct_owned.type[i]] * (fixed_vel * fixed_vel);
     }
   }
   e_owned *= 0.5;
@@ -129,11 +129,11 @@ double Atom_data::kinetic_energy(const int t)
     {
     case 0:
     {
-      for (unsigned int i = 0; i < owned.position.size(); ++i)
+      for (unsigned int i = 0; i < atom_struct_owned.position.size(); ++i)
       {
-        if (t != static_cast<int>(owned.type[i]))
+        if (t != static_cast<int>(atom_struct_owned.type[i]))
           continue; // KINETIC ENERGY OF A TYPE
-        e_owned += owned.mass[owned.type[i]] * (owned.velocity[i] * owned.velocity[i]);
+        e_owned += atom_type_params.mass[atom_struct_owned.type[i]] * (atom_struct_owned.velocity[i] * atom_struct_owned.velocity[i]);
       }
     }
     break;
@@ -143,12 +143,12 @@ double Atom_data::kinetic_energy(const int t)
     case (3):
     {
       auto v_cm = owned_velocity_cm();
-      for (unsigned int i = 0; i < owned.position.size(); ++i)
+      for (unsigned int i = 0; i < atom_struct_owned.position.size(); ++i)
       {
-        if (t != static_cast<int>(owned.type[i]))
+        if (t != static_cast<int>(atom_struct_owned.type[i]))
           continue; // KINETIC ENERGY OF A TYPE
-        auto v_i = owned.velocity[i] - v_cm;
-        e_owned += owned.mass[owned.type[i]] * (v_i * v_i);
+        auto v_i = atom_struct_owned.velocity[i] - v_cm;
+        e_owned += atom_type_params.mass[atom_struct_owned.type[i]] * (v_i * v_i);
       }
     }
     break;
@@ -177,13 +177,13 @@ double Atom_data::kinetic_energy(const int t)
 
       if (correct_result)
       {
-        for (unsigned int i = 0; i < owned.position.size(); ++i)
+        for (unsigned int i = 0; i < atom_struct_owned.position.size(); ++i)
         {
-          if (t != static_cast<int>(owned.type[i]))
+          if (t != static_cast<int>(atom_struct_owned.type[i]))
             continue; // KINETIC ENERGY OF A TYPE
 
-          auto v_i = owned.velocity[i] - v_cm - (cross_product(I_i_L, owned.position[i] - p_cm));
-          e_owned += owned.mass[owned.type[i]] * (v_i * v_i);
+          auto v_i = atom_struct_owned.velocity[i] - v_cm - (cross_product(I_i_L, atom_struct_owned.position[i] - p_cm));
+          e_owned += atom_type_params.mass[atom_struct_owned.type[i]] * (v_i * v_i);
         }
       }
       else
@@ -196,12 +196,12 @@ double Atom_data::kinetic_energy(const int t)
   }
   else
   { // TODO: mix this block into ' switch (get_n_r_df())' cases
-    for (unsigned int i = 0; i < owned.position.size(); ++i)
+    for (unsigned int i = 0; i < atom_struct_owned.position.size(); ++i)
     {
-      if (t != static_cast<int>(owned.type[i]))
+      if (t != static_cast<int>(atom_struct_owned.type[i]))
         continue; // KINETIC ENERGY OF A TYPE
-      auto fixed_vel = owned.velocity[i] + velocity_offset->current_value;
-      e_owned += owned.mass[owned.type[i]] * (fixed_vel * fixed_vel);
+      auto fixed_vel = atom_struct_owned.velocity[i] + velocity_offset->current_value;
+      e_owned += atom_type_params.mass[atom_struct_owned.type[i]] * (fixed_vel * fixed_vel);
     }
   }
 

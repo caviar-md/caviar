@@ -86,10 +86,10 @@ namespace constraint
   {
     FC_OBJECT_VERIFY_SETTINGS
 
-    auto &vel = atom_data->owned.velocity;
-    auto &pos = atom_data->owned.position;
-    auto &pos_old = atom_data->owned.position_old;
-    auto &atomic_bond_vector = atom_data->owned.atomic_bond_vector;
+    auto &vel = atom_data->atom_struct_owned.velocity;
+    auto &pos = atom_data->atom_struct_owned.position;
+    auto &pos_old = atom_data->atom_struct_owned.position_old;
+    auto &atomic_bond_vector = atom_data->molecule_struct_owned.atomic_bond_vector;
 
     for (unsigned int i = 0; i < atomic_bond_vector.size(); i++)
     {
@@ -111,8 +111,8 @@ namespace constraint
 
           auto d = atomic_bond_vector[i][j].length;
 
-          auto mass_inv_k1 = atom_data->owned.mass_inv[atom_data->owned.type[k1]];
-          auto mass_inv_k2 = atom_data->owned.mass_inv[atom_data->owned.type[k2]];
+          auto mass_inv_k1 = atom_data->atom_type_params.mass_inv[atom_data->atom_struct_owned.type[k1]];
+          auto mass_inv_k2 = atom_data->atom_type_params.mass_inv[atom_data->atom_struct_owned.type[k2]];
 
           auto dr = domain->fix_distance(pos[k1] - pos[k2]);
 

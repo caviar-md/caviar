@@ -118,8 +118,8 @@ namespace writer
       {
         // output_acceleration = true;
         std::ofstream ofs("o_acc");
-        const auto &pos = atom_data->owned.position;
-        const auto &acc = atom_data->owned.acceleration;
+        const auto &pos = atom_data->atom_struct_owned.position;
+        const auto &acc = atom_data->atom_struct_owned.acceleration;
         for (unsigned int i = 0; i < pos.size(); ++i)
         {
           ofs << i << " " << acc[i].x << "\t" << acc[i].y << "\t" << acc[i].z << "\n";

@@ -120,7 +120,7 @@ bool Atom_data::add_xyz_data_file(caviar::interpreter::Parser *parser)
 
   if (replace_data)
   {
-    if (num_atoms != (int)owned.position.size())
+    if (num_atoms != (int)atom_struct_owned.position.size())
       error->all(FC_FILE_LINE_FUNC, "XYZ file is not compatible: Different number of existing atoms in atomdata and xyz file atoms.");
   }
 
@@ -146,10 +146,10 @@ bool Atom_data::add_xyz_data_file(caviar::interpreter::Parser *parser)
 
     if (replace_data)
     {
-      if (type != (int)owned.type[i])
+      if (type != (int)atom_struct_owned.type[i])
         error->all(FC_FILE_LINE_FUNC, "XYZ file is not compatible: Different atom type order exists.");
-      owned.position[i] = pos;
-      owned.velocity[i] = vel;
+      atom_struct_owned.position[i] = pos;
+      atom_struct_owned.velocity[i] = vel;
     }
     else
     {

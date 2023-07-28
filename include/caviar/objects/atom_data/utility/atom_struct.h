@@ -18,18 +18,16 @@
 #define CAVIAR_OBJECTS_ATOMDATA_UTILITY_ATOMSTRUCT_H
 
 #include "caviar/utility/objects_common_headers.h"
-#include "caviar/objects/atom_data/utility/bond.h"
-#include "caviar/objects/atom_data/utility/angle.h"
-#include "caviar/objects/atom_data/utility/proper_dihedral.h"
+//#include "caviar/objects/atom_data/utility/bond.h"
+//#include "caviar/objects/atom_data/utility/angle.h"
+//#include "caviar/objects/atom_data/utility/proper_dihedral.h"
 
 CAVIAR_NAMESPACE_OPEN
 
 namespace atom_data
 {
  /**
-   * It contains all the physical data of atoms and molecules
-   * but since it is used only once here, its name won't be of any use. Also
-   * a good name would be 'atom_data' which is used before!.
+   * It contains all the physical data of atoms.
    */
   struct Atom_struct  
   {
@@ -48,30 +46,6 @@ namespace atom_data
      * a defined type (for example, Elements).
      */
     std::vector<AtomType_t> type;
-
-    /**
-     * 'mass' of an atom defined by the type. The mass may be used in
-     * center-of-mass calculations and other functions. Do not depercate it.
-     */
-    std::vector<Real_t> mass;
-
-    /**
-     * simply the inverse value of 'mass' of an atom defined by the type.
-     * since mass inverse is used in acceleration calculations.
-     *
-     */
-    std::vector<Real_t> mass_inv;
-
-    /**
-     * 'charge' of an atom defined by the type.
-     */
-    std::vector<Real_t> charge;
-
-    /**
-     * 'radius' of an atom defined by the type. The user and the developers are
-     * free to use this variable (for now!).
-     */
-    std::vector<Real_t> radius;
 
     /**
      * Different by atom_id. Can be changed in simulation (it is needed to be sent-recv. by MPI)
@@ -112,28 +86,11 @@ namespace atom_data
     std::vector<int> molecule_index; //
 
     /**
-     * number of total molecules.
-     */
-    int num_molecules;
-
-    /**
-     * The first std::vector, is the molecule index. the inner data contain bonds.
-     */
-    std::vector<std::vector<atom_data::Bond>> atomic_bond_vector;
-
-    /**
      * Number of atomic bonds each atom have. It is used to limit
      * the bond creations.
      */
     std::vector<int> atomic_bond_count;
 
-    /**
-     * The first index, meaning
-     * the first std::vector, is the molecule index. the inner data contain angles.
-     */
-    std::vector<std::vector<atom_data::Angle>> atomic_angle_vector;
-
-    std::vector<std::vector<atom_data::Proper_dihedral>> atomic_properdihedral_vector;
 
   };
 }

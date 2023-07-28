@@ -35,13 +35,13 @@ CAVIAR_NAMESPACE_OPEN
   }                      \
   }
 
-void Atom_data::exchange_ghost()
+void Atom_data::exchange_ghost(long step)
 {
 
-  ghost.position.clear();
-  ghost.velocity.clear();
-  ghost.id.clear();
-  ghost.type.clear();
+  atom_struct_ghost.position.clear();
+  atom_struct_ghost.velocity.clear();
+  atom_struct_ghost.id.clear();
+  atom_struct_ghost.type.clear();
   ghost_rank.clear();
 
   const auto bc = domain->boundary_condition;
@@ -57,15 +57,15 @@ void Atom_data::exchange_ghost()
   const auto y_width = domain->upper_local.y - domain->lower_local.y;
   const auto z_width = domain->upper_local.z - domain->lower_local.z;
 
-  auto &pos = owned.position;
-  auto &vel = owned.velocity;
-  auto &id = owned.id;
-  auto &type = owned.type;
+  auto &pos = atom_struct_owned.position;
+  auto &vel = atom_struct_owned.velocity;
+  auto &id = atom_struct_owned.id;
+  auto &type = atom_struct_owned.type;
 
-  auto &g_pos = ghost.position;
-  auto &g_vel = ghost.velocity;
-  auto &g_id = ghost.id;
-  auto &g_type = ghost.type;
+  auto &g_pos = atom_struct_ghost.position;
+  auto &g_vel = atom_struct_ghost.velocity;
+  auto &g_id = atom_struct_ghost.id;
+  auto &g_type = atom_struct_ghost.type;
 
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
   const auto me = domain->me;
@@ -223,8 +223,8 @@ void Atom_data::exchange_ghost()
 
   // std::cout << "ghost s " << me << std::endl;
 
-  std::vector<int> send_id[3][3][3];    // global id of the atom: owned.id
-  std::vector<int> recv_id[3][3][3];    // global id of the atom: owned.id
+  std::vector<int> send_id[3][3][3];    // global id of the atom: atom_struct_owned.id
+  std::vector<int> recv_id[3][3][3];    // global id of the atom: atom_struct_owned.id
   std::vector<int> send_index[3][3][3]; // the index of std::vector<> of the owned
 
   int send_num[3][3][3]; // num of owned to be send to the domain all[i][j][k]
@@ -336,11 +336,11 @@ void Atom_data::exchange_ghost()
   // N: the number of atoms that are going to be send to another process
   //
   // The packet is as follows with N=4 particles example
-  // N x owned.id               [0     : N-1  ]  0,1,2,3
-  // N x owned.type             [N     : 2N-1 ]  4,5,6,7
-  // N x owned.position         [2N    : 5N-1 ] (8,9,10),(11,12,13),(14,15,16),(17,18,19)
+  // N x atom_struct_owned.id               [0     : N-1  ]  0,1,2,3
+  // N x atom_struct_owned.type             [N     : 2N-1 ]  4,5,6,7
+  // N x atom_struct_owned.position         [2N    : 5N-1 ] (8,9,10),(11,12,13),(14,15,16),(17,18,19)
   // if (make_ghost_velocity):
-  // N x owned.velocity         [5N    : 8N-1 ]
+  // N x atom_struct_owned.velocity         [5N    : 8N-1 ]
   // BOND ? ANGLE? DIHEDRAL ?
 
   std::vector<double> send_data[3][3][3], recv_data[3][3][3];

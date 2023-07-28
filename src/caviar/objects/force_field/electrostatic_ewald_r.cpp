@@ -91,7 +91,7 @@ namespace force_field
 
     // XXX Working scheme (neighlist) with both 'cell_list' and 'verlet_list'
     ///*
-    const auto &pos = atom_data->owned.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
     const unsigned pos_size = pos.size();
     const auto alpha_sq = alpha * alpha;
 
@@ -101,10 +101,10 @@ namespace force_field
 #endif
     for (unsigned i = 0; i < pos_size; ++i)
     {
-      const auto pos_i = atom_data->owned.position[i];
-      const auto type_i = atom_data->owned.type[i];
-      const auto charge_i = atom_data->owned.charge[type_i];
-      const auto mass_inv_i = atom_data->owned.mass_inv[type_i];
+      const auto pos_i = atom_data->atom_struct_owned.position[i];
+      const auto type_i = atom_data->atom_struct_owned.type[i];
+      const auto charge_i = atom_data->atom_type_params.charge[type_i];
+      const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
       for (auto j : nlist[i])
       {
         bool is_ghost = j >= pos_size;
@@ -113,17 +113,17 @@ namespace force_field
         if (is_ghost)
         {
           j -= pos_size;
-          pos_j = atom_data->ghost.position[j];
-          type_j = atom_data->ghost.type[j];
+          pos_j = atom_data->atom_struct_ghost.position[j];
+          type_j = atom_data->atom_struct_ghost.type[j];
         }
         else
         {
-          pos_j = atom_data->owned.position[j];
-          type_j = atom_data->owned.type[j];
+          pos_j = atom_data->atom_struct_owned.position[j];
+          type_j = atom_data->atom_struct_owned.type[j];
         }
 
-        const auto charge_j = atom_data->owned.charge[type_j];
-        const auto mass_inv_j = atom_data->owned.mass_inv[type_j];
+        const auto charge_j = atom_data->atom_type_params.charge[type_j];
+        const auto mass_inv_j = atom_data->atom_type_params.mass_inv[type_j];
         const auto r_ij = pos_i - pos_j;
 
         if (r_ij.x == 0 && r_ij.y == 0 && r_ij.z == 0)
@@ -140,18 +140,18 @@ namespace force_field
 
         const auto force = k_electrostatic * charge_i * charge_j * sum_r;
 
-        atom_data->owned.acceleration[i] += force * mass_inv_i;
+        atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
         if (!is_ghost)
         {
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp atomic
-          atom_data->owned.acceleration[j].x -= force.x * mass_inv_j;
+          atom_data->atom_struct_owned.acceleration[j].x -= force.x * mass_inv_j;
 #pragma omp atomic
-          atom_data->owned.acceleration[j].y -= force.y * mass_inv_j;
+          atom_data->atom_struct_owned.acceleration[j].y -= force.y * mass_inv_j;
 #pragma omp atomic
-          atom_data->owned.acceleration[j].z -= force.z * mass_inv_j;
+          atom_data->atom_struct_owned.acceleration[j].z -= force.z * mass_inv_j;
 #else
-          atom_data->owned.acceleration[j] -= force * mass_inv_j;
+          atom_data->atom_struct_owned.acceleration[j] -= force * mass_inv_j;
 #endif
         }
       }
@@ -160,7 +160,7 @@ namespace force_field
 
     // XXX Working scheme (binlist) of  'cell_list'
     /*
-      const auto &pos = atom_data -> owned.position;
+      const auto &pos = atom_data -> atom_struct_owned.position;
       const unsigned pos_size = pos.size();
       const auto alpha_sq = alpha*alpha;
 
@@ -169,10 +169,10 @@ namespace force_field
 
 
       for (unsigned i = 0; i < pos_size; ++i) {
-        const auto pos_i = atom_data->owned.position [i];
-        const auto type_i = atom_data -> owned.type [ i ];
-        const auto charge_i = atom_data -> owned.charge [ type_i ];
-        const auto mass_inv_i = atom_data -> owned.mass_inv [ type_i ];
+        const auto pos_i = atom_data->atom_struct_owned.position [i];
+        const auto type_i = atom_data -> atom_struct_owned.type [ i ];
+        const auto charge_i = atom_data -> atom_type_params.charge [ type_i ];
+        const auto mass_inv_i = atom_data -> atom_type_params.mass_inv [ type_i ];
 
         const auto nb_i = neighborlist -> neigh_bin_index (pos_i);
         for (unsigned nb_j = 0; nb_j < nb[nb_i].size(); ++nb_j) {
@@ -191,16 +191,16 @@ namespace force_field
           Real_t type_j;
           if (is_ghost) {
             j -= pos_size;
-            pos_j = atom_data->ghost.position [j];
-            type_j = atom_data->ghost.type [j];
+            pos_j = atom_data->atom_struct_ghost.position [j];
+            type_j = atom_data->atom_struct_ghost.type [j];
           } else {
-            pos_j = atom_data->owned.position [j];
-            type_j = atom_data->owned.type [j];
+            pos_j = atom_data->atom_struct_owned.position [j];
+            type_j = atom_data->atom_struct_owned.type [j];
 
           }
 
-          const auto charge_j = atom_data -> owned.charge [ type_j ];
-          const auto mass_inv_j = atom_data -> owned.mass_inv [ type_j ];
+          const auto charge_j = atom_data -> atom_type_params.charge [ type_j ];
+          const auto mass_inv_j = atom_data -> atom_type_params.mass_inv [ type_j ];
           const auto r_ij = pos_i - pos_j;
 
           if (r_ij.x==0 && r_ij.y==0 && r_ij.z==0) continue;
@@ -217,9 +217,9 @@ namespace force_field
 
           const auto force =  k_electrostatic * charge_i * charge_j *sum_r;
 
-          atom_data -> owned.acceleration[i] += force * mass_inv_i;
+          atom_data -> atom_struct_owned.acceleration[i] += force * mass_inv_i;
           if (!is_ghost)
-            atom_data -> owned.acceleration[j] -= force * mass_inv_j;
+            atom_data -> atom_struct_owned.acceleration[j] -= force * mass_inv_j;
 
         }
         }
@@ -228,18 +228,18 @@ namespace force_field
 
     // XXX Working Scheme using field functions. Only 'binlist' field works.
     /*
-     const auto &pos = atom_data -> owned.position;
+     const auto &pos = atom_data -> atom_struct_owned.position;
      const unsigned pos_size = pos.size();
 
      for (unsigned i = 0; i < pos_size; ++i) {
-       const auto pos_i = atom_data->owned.position [i];
-       const auto type_i = atom_data -> owned.type [ i ];
-       const auto charge_i = atom_data -> owned.charge [ type_i ];
-       const auto mass_inv_i = atom_data -> owned.mass_inv [ type_i ];
+       const auto pos_i = atom_data->atom_struct_owned.position [i];
+       const auto type_i = atom_data -> atom_struct_owned.type [ i ];
+       const auto charge_i = atom_data -> atom_type_params.charge [ type_i ];
+       const auto mass_inv_i = atom_data -> atom_type_params.mass_inv [ type_i ];
 
        const auto force = charge_i * field (pos_i); // Working (binlist)
    //    const auto force = charge_i * field (i); // XXX (neighlist) won't work
-       atom_data -> owned.acceleration[i] += force * mass_inv_i;
+       atom_data -> atom_struct_owned.acceleration[i] += force * mass_inv_i;
 
      }
 

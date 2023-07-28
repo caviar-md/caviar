@@ -51,11 +51,11 @@ namespace force_field
       double sum_k = 0;
 
       static std::complex<double> ii(0.0, 1.0);
-      const auto &pos = atom_data -> owned.position;
+      const auto &pos = atom_data -> atom_struct_owned.position;
 
       for (unsigned int j=0;j<pos.size();++j) {
-        const auto type_j = atom_data -> owned.type [j] ;
-        const auto charge_j = atom_data -> owned.charge [ type_j ];
+        const auto type_j = atom_data -> atom_struct_owned.type [j] ;
+        const auto charge_j = atom_data -> atom_type_params.charge [ type_j ];
         const auto r_ij = r - pos[j];
         std::complex<double> rho (0,0);
         for (int k = 0; k < n_k_vectors; ++k) {
@@ -77,7 +77,7 @@ namespace force_field
       double sum_k = 0;
 
       static std::complex<double> ii(0.0, 1.0);
-      const auto &pos = atom_data -> owned.position;
+      const auto &pos = atom_data -> atom_struct_owned.position;
 
       for (int k = 0; k < n_k_vectors; ++k) {
         const auto k_vector_k = k_vector[k];
@@ -86,8 +86,8 @@ namespace force_field
         std::complex<double> rho (0,0);
 
         for (unsigned int j=0;j<pos.size();++j) {
-          const auto type_j = atom_data -> owned.type [j] ;
-          const auto charge_j = atom_data -> owned.charge [ type_j ];
+          const auto type_j = atom_data -> atom_struct_owned.type [j] ;
+          const auto charge_j = atom_data -> atom_type_params.charge [ type_j ];
 
           rho +=  charge_j * std::exp(ii*(k_vector_k*pos[j]));
 
@@ -131,7 +131,7 @@ namespace force_field
 
   double Electrostatic_ewald_k::k_space_potential(const int i)
   {
-    return k_space_potential(atom_data->owned.position[i]);
+    return k_space_potential(atom_data->atom_struct_owned.position[i]);
   }
 
   double Electrostatic_ewald_k::dipole_potential(const Vector<double> &r)

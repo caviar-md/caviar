@@ -34,16 +34,16 @@ void Atom_data::synch_owned_data(int)
 
   int root_rank = 0;
 
-  int pos_size = owned.position.size();
+  int pos_size = atom_struct_owned.position.size();
   int root_pos_size = pos_size;
 
-  int type_size = owned.type.size();
+  int type_size = atom_struct_owned.type.size();
   int root_type_size = type_size;
 
-  int mass_size = owned.mass.size();
+  int mass_size = atom_type_params.mass.size();
   int root_mass_size = mass_size;
 
-  int charge_size = owned.charge.size();
+  int charge_size = atom_type_params.charge.size();
   int root_charge_size = charge_size;
 
   MPI_Bcast(&root_pos_size, 1, MPI::INT, 0, mpi_comm);
@@ -63,36 +63,36 @@ void Atom_data::synch_owned_data(int)
 
     if (pos_size != root_pos_size)
     {
-      owned.position.resize(root_pos_size, caviar::Vector<double>{0, 0, 0});
-      owned.velocity.resize(root_pos_size, caviar::Vector<double>{0, 0, 0});
-      owned.acceleration.resize(root_pos_size, caviar::Vector<double>{0, 0, 0});
+      atom_struct_owned.position.resize(root_pos_size, caviar::Vector<double>{0, 0, 0});
+      atom_struct_owned.velocity.resize(root_pos_size, caviar::Vector<double>{0, 0, 0});
+      atom_struct_owned.acceleration.resize(root_pos_size, caviar::Vector<double>{0, 0, 0});
     }
 
     if (type_size != root_type_size)
     {
-      owned.type.resize(root_type_size, 0);
+      atom_struct_owned.type.resize(root_type_size, 0);
     }
 
     if (mass_size != root_mass_size)
     {
-      owned.mass.resize(root_mass_size, 1.0);
+      atom_type_params.mass.resize(root_mass_size, 1.0);
     }
 
     if (charge_size != root_charge_size)
     {
-      owned.charge.resize(root_charge_size, 0.0);
+      atom_type_params.charge.resize(root_charge_size, 0.0);
     }
   }
 
-  MPI_Bcast(&owned.position[0], root_pos_size, mpi_fc_vector_type, 0, mpi_comm);
+  MPI_Bcast(&atom_struct_owned.position[0], root_pos_size, mpi_fc_vector_type, 0, mpi_comm);
 
   if (synch_owned_data_bcast_details)
   {
-    MPI_Bcast(&owned.type[0], root_type_size, MPI::INT, 0, mpi_comm);
+    MPI_Bcast(&atom_struct_owned.type[0], root_type_size, MPI::INT, 0, mpi_comm);
 
-    MPI_Bcast(&owned.mass[0], root_mass_size, MPI::DOUBLE, 0, mpi_comm);
+    MPI_Bcast(&atom_type_params.mass[0], root_mass_size, MPI::DOUBLE, 0, mpi_comm);
 
-    MPI_Bcast(&owned.charge[0], root_charge_size, MPI::DOUBLE, 0, mpi_comm);
+    MPI_Bcast(&atom_type_params.charge[0], root_charge_size, MPI::DOUBLE, 0, mpi_comm);
   }
 
   synch_owned_data_bcast_details = false;

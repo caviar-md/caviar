@@ -29,7 +29,7 @@ namespace force_field
   {
 
     Vector<double> field_sum{0, 0, 0};
-    const auto &pos = atom_data->owned.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for reduction(+ \
                                    : field_sum)
@@ -37,8 +37,8 @@ namespace force_field
     for (unsigned int j = 0; j < pos.size(); ++j)
     {
 
-      const auto type_j = atom_data->owned.type[j];
-      const auto charge_j = atom_data->owned.charge[type_j];
+      const auto type_j = atom_data->atom_struct_owned.type[j];
+      const auto charge_j = atom_data->atom_type_params.charge[type_j];
       const auto dr = r - pos[j];
       const auto dr_sq = dr * dr;
       if (dr_sq == 0.0)
@@ -52,7 +52,7 @@ namespace force_field
   Vector<double> Electrostatic::field(const int i)
   {
     Vector<double> field_sum{0, 0, 0};
-    const auto &pos = atom_data->owned.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for reduction(+ \
                                    : field_sum)
@@ -61,8 +61,8 @@ namespace force_field
     {
       if (i == static_cast<int>(j))
         continue;
-      const auto type_j = atom_data->owned.type[j];
-      const auto charge_j = atom_data->owned.charge[type_j];
+      const auto type_j = atom_data->atom_struct_owned.type[j];
+      const auto charge_j = atom_data->atom_type_params.charge[type_j];
       const auto dr = pos[i] - pos[j];
       const auto dr_sq = dr * dr;
       const auto dr_norm = std::sqrt(dr_sq);

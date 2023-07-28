@@ -85,10 +85,10 @@ namespace constraint
 
     FC_OBJECT_VERIFY_SETTINGS
 
-    auto &pos = atom_data->owned.position;
-    auto &pos_old = atom_data->owned.position_old;
+    auto &pos = atom_data->atom_struct_owned.position;
+    auto &pos_old = atom_data->atom_struct_owned.position_old;
 
-    auto &atomic_bond_vector = atom_data->owned.atomic_bond_vector;
+    auto &atomic_bond_vector = atom_data->molecule_struct_owned.atomic_bond_vector;
 
     for (unsigned int i = 0; i < atomic_bond_vector.size(); i++)
     {
@@ -113,8 +113,8 @@ namespace constraint
 
           auto d = atomic_bond_vector[i][j].length;
 
-          auto mass_inv_k1 = atom_data->owned.mass_inv[atom_data->owned.type[k1]];
-          auto mass_inv_k2 = atom_data->owned.mass_inv[atom_data->owned.type[k2]];
+          auto mass_inv_k1 = atom_data->atom_type_params.mass_inv[atom_data->atom_struct_owned.type[k1]];
+          auto mass_inv_k2 = atom_data->atom_type_params.mass_inv[atom_data->atom_struct_owned.type[k2]];
 
           auto dr = domain->fix_distance(pos[k1] - pos[k2]);
 
@@ -153,8 +153,8 @@ namespace constraint
         {
           int k1 = atomic_bond_vector[i][j].index_1, k2 = atomic_bond_vector[i][j].index_2;
 
-          double mass_inv_k1 = atom_data->owned.mass_inv[atom_data->owned.type[k1]];
-          double mass_inv_k2 = atom_data->owned.mass_inv[atom_data->owned.type[k2]];
+          double mass_inv_k1 = atom_data->atom_type_params.mass_inv[atom_data->atom_struct_owned.type[k1]];
+          double mass_inv_k2 = atom_data->atom_type_params.mass_inv[atom_data->atom_struct_owned.type[k2]];
 
           auto dr_old = domain->fix_distance(pos_old[k1] - pos_old[k2]);
 
@@ -191,10 +191,10 @@ namespace constraint
     // velocity_fix part
     // this fix has to be done only on the M-Shake molecules. If not, the normal
     // leap-frog step has to be enough.
-    auto &vel = atom_data->owned.velocity;
-    auto &pos = atom_data->owned.position;
-    auto &pos_old = atom_data->owned.position_old;
-    auto &atomic_bond_vector = atom_data->owned.atomic_bond_vector;
+    auto &vel = atom_data->atom_struct_owned.velocity;
+    auto &pos = atom_data->atom_struct_owned.position;
+    auto &pos_old = atom_data->atom_struct_owned.position_old;
+    auto &atomic_bond_vector = atom_data->molecule_struct_owned.atomic_bond_vector;
     for (unsigned int i = 0; i < atomic_bond_vector.size(); i++)
     {
       for (unsigned int j = 0; j < atomic_bond_vector[i].size(); j++)

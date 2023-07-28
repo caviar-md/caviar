@@ -185,7 +185,7 @@ namespace force_field
     }
 
     unsigned atom_data_type_max = 0;
-    for (auto &&t : atom_data->owned.type)
+    for (auto &&t : atom_data->atom_struct_owned.type)
     {
       if (atom_data_type_max < t)
         atom_data_type_max = t;
@@ -268,16 +268,16 @@ namespace force_field
     if (position_offset != nullptr)
       p_o = position_offset->current_value;
 
-    const auto &pos = atom_data->owned.position;
-    auto &acc = atom_data->owned.acceleration;
+    const auto &pos = atom_data->atom_struct_owned.position;
+    auto &acc = atom_data->atom_struct_owned.acceleration;
 
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
 #endif
     for (unsigned int i = 0; i < pos.size(); ++i)
     {
-      const auto type_i = atom_data->owned.type[i];
-      const auto mass_inv_i = atom_data->owned.mass_inv[type_i];
+      const auto type_i = atom_data->atom_struct_owned.type[i];
+      const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
 
       for (unsigned int j = 0; j < shape.size(); ++j)
       {

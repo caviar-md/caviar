@@ -111,7 +111,7 @@ namespace force_field
     if (!initialized)
       initialize();
 
-    const auto &pos = atom_data->owned.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
 
     const auto &nlist = neighborlist->neighlist;
 #ifdef CAVIAR_WITH_OPENMP
@@ -119,9 +119,9 @@ namespace force_field
 #endif
     for (unsigned int i = 0; i < nlist.size(); ++i)
     {
-      const auto type_i = atom_data->owned.type[i];
-      const auto mass_inv_i = atom_data->owned.mass_inv[type_i];
-      const auto charge_i = atom_data->owned.charge[type_i];
+      const auto type_i = atom_data->atom_struct_owned.type[i];
+      const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
+      const auto charge_i = atom_data->atom_type_params.charge[type_i];
 
       for (auto j : nlist[i])
       {
@@ -131,16 +131,16 @@ namespace force_field
         if (is_ghost)
         {
           j -= nlist.size();
-          pos_j = atom_data->ghost.position[j];
-          type_j = atom_data->ghost.type[j];
+          pos_j = atom_data->atom_struct_ghost.position[j];
+          type_j = atom_data->atom_struct_ghost.type[j];
         }
         else
         {
-          pos_j = atom_data->owned.position[j];
-          type_j = atom_data->owned.type[j];
+          pos_j = atom_data->atom_struct_owned.position[j];
+          type_j = atom_data->atom_struct_owned.type[j];
         }
-        charge_j = atom_data->owned.charge[type_j];
-        mass_inv_j = atom_data->owned.mass_inv[type_j];
+        charge_j = atom_data->atom_type_params.charge[type_j];
+        mass_inv_j = atom_data->atom_type_params.mass_inv[type_j];
 
         const auto dr = pos_j - pos[i];
 
@@ -150,25 +150,25 @@ namespace force_field
         const auto dr_norm = std::sqrt(dr_sq);
         const auto force = k_electrostatic * charge_i * charge_j * dr / (dr_sq * dr_norm);
         const auto force_shifted = force * (1.0 - std::pow(dr_norm / cutoff, beta + 1));
-        atom_data->owned.acceleration[i] -= force_shifted * mass_inv_i;
+        atom_data->atom_struct_owned.acceleration[i] -= force_shifted * mass_inv_i;
 
         if (!is_ghost)
         {
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp atomic
-          atom_data->owned.acceleration[j].x -= force_shifted.x * mass_inv_j;
+          atom_data->atom_struct_owned.acceleration[j].x -= force_shifted.x * mass_inv_j;
 #pragma omp atomic
-          atom_data->owned.acceleration[j].y -= force_shifted.y * mass_inv_j;
+          atom_data->atom_struct_owned.acceleration[j].y -= force_shifted.y * mass_inv_j;
 #pragma omp atomic
-          atom_data->owned.acceleration[j].z -= force_shifted.z * mass_inv_j;
+          atom_data->atom_struct_owned.acceleration[j].z -= force_shifted.z * mass_inv_j;
 #else
-          atom_data->owned.acceleration[j] -= force_shifted * mass_inv_j;
+          atom_data->atom_struct_owned.acceleration[j] -= force_shifted * mass_inv_j;
 #endif
         }
       }
 
       const auto force = external_field * charge_i;
-      atom_data->owned.acceleration[i] += force * mass_inv_i;
+      atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
     }
   }
 

@@ -164,7 +164,7 @@ namespace constraint
       lambda = std::sqrt(dof * kb * temperature * 0.5 / energy_now);
     }
 
-    auto &vel = atom_data->owned.velocity;
+    auto &vel = atom_data->atom_struct_owned.velocity;
 
     for (auto &&v : vel)
       v *= lambda;

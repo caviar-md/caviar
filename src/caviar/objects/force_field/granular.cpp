@@ -107,12 +107,12 @@ namespace force_field
   {
     FC_OBJECT_VERIFY_SETTINGS
 
-    // const auto &g_pos = atom_data -> ghost.position;
-    // const auto &g_vel = atom_data -> ghost.velocity;
-    // const auto &g_type = atom_data -> ghost.type;
-    // const auto &g_id = atom_data -> ghost.id;
+    // const auto &g_pos = atom_data -> atom_struct_ghost.position;
+    // const auto &g_vel = atom_data -> atom_struct_ghost.velocity;
+    // const auto &g_type = atom_data -> atom_struct_ghost.type;
+    // const auto &g_id = atom_data -> atom_struct_ghost.id;
 
-    auto a_radius = atom_data->owned.radius;
+    auto a_radius = atom_data->atom_type_params.radius;
 
     auto cutoff_sq = cutoff * cutoff;
     const auto &nlist = neighborlist->neighlist;
@@ -121,19 +121,19 @@ namespace force_field
 #endif
     for (unsigned i = 0; i < nlist.size(); ++i)
     {
-      const auto &pos_i = atom_data->owned.position[i];
-      const auto &vel_i = atom_data->owned.velocity[i];
-      const auto type_i = atom_data->owned.type[i];
-      const auto mass_inv_i = atom_data->owned.mass_inv[type_i];
+      const auto &pos_i = atom_data->atom_struct_owned.position[i];
+      const auto &vel_i = atom_data->atom_struct_owned.velocity[i];
+      const auto type_i = atom_data->atom_struct_owned.type[i];
+      const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
       const auto ela_i = elastic_coef[type_i];
       const auto dis_i = dissip_coef[type_i];
       const auto rad_i = a_radius[type_i];
 
       if (mass_inv_i > 0)
-        atom_data->owned.acceleration[i] += gravity;
+        atom_data->atom_struct_owned.acceleration[i] += gravity;
       for (auto j : nlist[i])
       {
-        // std::cout << "s: " << atom_data -> owned.acceleration .size() << "\n";
+        // std::cout << "s: " << atom_data -> atom_struct_owned.acceleration .size() << "\n";
         // std::cout << "i: " << i << "\n";
         // std::cout << "j: " << j << std::endl;
         // std::cout << nlist[i].size()  << " " ;
@@ -144,17 +144,17 @@ namespace force_field
         {
           j -= nlist.size();
           // std::cout << "jg: " << j << std::endl;
-          pos_j = atom_data->ghost.position[j];
-          vel_j = atom_data->ghost.velocity[j];
-          type_j = atom_data->ghost.type[j];
+          pos_j = atom_data->atom_struct_ghost.position[j];
+          vel_j = atom_data->atom_struct_ghost.velocity[j];
+          type_j = atom_data->atom_struct_ghost.type[j];
         }
         else
         {
-          pos_j = atom_data->owned.position[j];
-          vel_j = atom_data->owned.velocity[j];
-          type_j = atom_data->owned.type[j];
+          pos_j = atom_data->atom_struct_owned.position[j];
+          vel_j = atom_data->atom_struct_owned.velocity[j];
+          type_j = atom_data->atom_struct_owned.type[j];
         }
-        mass_inv_j = atom_data->owned.mass_inv[type_j];
+        mass_inv_j = atom_data->atom_type_params.mass_inv[type_j];
 
         const auto dr = pos_j - pos_i;
 
@@ -198,7 +198,7 @@ namespace force_field
           auto force = -fn * e;
 
           if (mass_inv_i > 0)
-            atom_data->owned.acceleration[i] += force * mass_inv_i;
+            atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
 
           if (!is_ghost)
           {
@@ -206,16 +206,16 @@ namespace force_field
             {
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp atomic
-              atom_data->owned.acceleration[j].x -= force.x * mass_inv_j;
+              atom_data->atom_struct_owned.acceleration[j].x -= force.x * mass_inv_j;
 #pragma omp atomic
-              atom_data->owned.acceleration[j].y -= force.y * mass_inv_j;
+              atom_data->atom_struct_owned.acceleration[j].y -= force.y * mass_inv_j;
 #pragma omp atomic
-              atom_data->owned.acceleration[j].z -= force.z * mass_inv_j;
+              atom_data->atom_struct_owned.acceleration[j].z -= force.z * mass_inv_j;
 #else
-              atom_data->owned.acceleration[j] -= force * mass_inv_j;
+              atom_data->atom_struct_owned.acceleration[j] -= force * mass_inv_j;
 #endif
 
-              // atom_data -> owned.acceleration [j] -= force * mass_inv_j;
+              // atom_data -> atom_struct_owned.acceleration [j] -= force * mass_inv_j;
             }
           }
         }

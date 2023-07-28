@@ -34,9 +34,9 @@ namespace force_field
 
     // XXX working scheme of order N. Makes the energy of the order N^2;
     //
-    const auto &pos = atom_data->owned.position;
-    const auto &type = atom_data->owned.type;
-    const auto &charge = atom_data->owned.charge;
+    const auto &pos = atom_data->atom_struct_owned.position;
+    const auto &type = atom_data->atom_struct_owned.type;
+    const auto &charge = atom_data->atom_type_params.charge;
     const auto pos_size = pos.size();
 
     // XXX no OpenMP parallel yet (due to boolean flag)
@@ -84,7 +84,7 @@ namespace force_field
 
   double Electrostatic_ewald_slab_correction::potential(const int i)
   {
-    return potential(atom_data->owned.position[i]);
+    return potential(atom_data->atom_struct_owned.position[i]);
   }
 
   double Electrostatic_ewald_slab_correction::dipole_potential(const Vector<double> &r)

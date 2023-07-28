@@ -640,7 +640,7 @@ namespace force_field
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
 
     /* // DATA check
-    auto &pos = atom_data->owned.position;
+    auto &pos = atom_data->atom_struct_owned.position;
     caviar::Vector<double> pm{0,0,0};
     for (unsigned int i=0;i<pos.size();++i) {
       pm += pos[i];
@@ -650,7 +650,7 @@ namespace force_field
     */
 
     auto mpi_fc_vector_type = comm->mpi_fc_vector_type;
-    auto &pos = atom_data->owned.position;
+    auto &pos = atom_data->atom_struct_owned.position;
     auto pos_size = pos.size();
 
     static std::vector<int> pos_in_mesh(pos_size, 0);
@@ -679,14 +679,14 @@ namespace force_field
         }
         pos_in_mesh[i] = true;
 
-        const auto type_i = atom_data->owned.type[i];
-        const auto mass_inv_i = atom_data->owned.mass_inv[type_i];
-        const auto charge_i = atom_data->owned.charge[type_i];
+        const auto type_i = atom_data->atom_struct_owned.type[i];
+        const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
+        const auto charge_i = atom_data->atom_type_params.charge[type_i];
 
         auto frc = field * charge_i;
         auto force = caviar::Vector<double>{frc[0], frc[1], frc[2]};
 
-        atom_data->owned.acceleration[i] += force * mass_inv_i;
+        atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
       }
     }
     else
@@ -716,9 +716,9 @@ namespace force_field
         }
         pos_in_mesh[i] = true;
 
-        const auto type_i = atom_data->owned.type[i];
-        const auto mass_inv_i = atom_data->owned.mass_inv[type_i];
-        const auto charge_i = atom_data->owned.charge[type_i];
+        const auto type_i = atom_data->atom_struct_owned.type[i];
+        const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
+        const auto charge_i = atom_data->atom_type_params.charge[type_i];
 
         auto frc = field * charge_i;
         auto force = caviar::Vector<double>{frc[0], frc[1], frc[2]};
@@ -744,7 +744,7 @@ namespace force_field
         {
           if (pos_in_mesh[j] == true)
           {
-            atom_data->owned.acceleration[j] += acc_found[j];
+            atom_data->atom_struct_owned.acceleration[j] += acc_found[j];
           }
         }
       }

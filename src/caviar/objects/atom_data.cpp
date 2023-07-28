@@ -54,7 +54,7 @@ Atom_data::Atom_data(CAVIAR *fptr) : Pointers{fptr},
   k_b = -1.0;
   n_r_df = -1;
 
-  owned.num_molecules = 0;
+  num_molecules = 0;
 }
 
 Atom_data::~Atom_data()
@@ -161,11 +161,11 @@ bool Atom_data::read(caviar::interpreter::Parser *parser)
       double r = 0;
       GET_OR_CHOOSE_A_INT(ind, "", "")
       GET_OR_CHOOSE_A_REAL(r, "", "")
-      if (static_cast<int>(owned.radius.size()) < ind + 1)
+      if (static_cast<int>(atom_type_params.radius.size()) < ind + 1)
       {
-        owned.radius.resize(ind + 1);
+        atom_type_params.radius.resize(ind + 1);
       }
-      owned.radius[ind] = r;
+      atom_type_params.radius[ind] = r;
       if (r < 0)
         output->warning("you have entered a negative value for atom radius.");
     }
@@ -177,11 +177,11 @@ bool Atom_data::read(caviar::interpreter::Parser *parser)
       double c = 0;
       GET_OR_CHOOSE_A_INT(ind, "", "")
       GET_OR_CHOOSE_A_REAL(c, "", "")
-      if (static_cast<int>(owned.charge.size()) < ind + 1)
+      if (static_cast<int>(atom_type_params.charge.size()) < ind + 1)
       {
-        owned.charge.resize(ind + 1);
+        atom_type_params.charge.resize(ind + 1);
       }
-      owned.charge[ind] = c;
+      atom_type_params.charge[ind] = c;
     }
     else if (string_cmp(t, "add_type_mass"))
     {
@@ -192,16 +192,16 @@ bool Atom_data::read(caviar::interpreter::Parser *parser)
       double m = 0;
       GET_OR_CHOOSE_A_INT(ind, "", "")
       GET_OR_CHOOSE_A_REAL(m, "", "")
-      if (static_cast<int>(owned.mass.size()) < ind + 1)
+      if (static_cast<int>(atom_type_params.mass.size()) < ind + 1)
       {
-        owned.mass.resize(ind + 1);
-        owned.mass_inv.resize(ind + 1);
+        atom_type_params.mass.resize(ind + 1);
+        atom_type_params.mass_inv.resize(ind + 1);
       }
-      owned.mass[ind] = m;
+      atom_type_params.mass[ind] = m;
       if (m == 0.0)
-        owned.mass_inv[ind] = 0.0;
+        atom_type_params.mass_inv[ind] = 0.0;
       else
-        owned.mass_inv[ind] = 1.0 / m;
+        atom_type_params.mass_inv[ind] = 1.0 / m;
       if (m < 0)
         output->warning("you have entered a negative value for atom mass.");
     }
@@ -227,7 +227,7 @@ bool Atom_data::read(caviar::interpreter::Parser *parser)
       auto x = parser->get_real();
       auto y = parser->get_real();
       auto z = parser->get_real();
-      owned.position[ind] = Vector<Real_t>{x, y, z};
+      atom_struct_owned.position[ind] = Vector<Real_t>{x, y, z};
     }
     else if (string_cmp(t, "set_owned_velocity"))
     {
@@ -235,7 +235,7 @@ bool Atom_data::read(caviar::interpreter::Parser *parser)
       auto x = parser->get_real();
       auto y = parser->get_real();
       auto z = parser->get_real();
-      owned.velocity[ind] = Vector<Real_t>{x, y, z};
+      atom_struct_owned.velocity[ind] = Vector<Real_t>{x, y, z};
     }
     else if (string_cmp(t, "set_owned_acceleration"))
     {
@@ -243,7 +243,7 @@ bool Atom_data::read(caviar::interpreter::Parser *parser)
       auto x = parser->get_real();
       auto y = parser->get_real();
       auto z = parser->get_real();
-      owned.acceleration[ind] = Vector<Real_t>{x, y, z};
+      atom_struct_owned.acceleration[ind] = Vector<Real_t>{x, y, z};
     }
     else if (string_cmp(t, "add_random_velocity"))
     {
@@ -269,7 +269,7 @@ bool Atom_data::read(caviar::interpreter::Parser *parser)
 
 void Atom_data::reset_owned_acceleration()
 {
-  for (auto &&i : owned.acceleration)
+  for (auto &&i : atom_struct_owned.acceleration)
   {
     i.x = 0.0;
     i.y = 0.0;
@@ -313,18 +313,18 @@ int Atom_data::get_n_r_df()
 
 int Atom_data::degree_of_freedoms()
 {
-  auto df = 3 * owned.position.size();
+  auto df = 3 * atom_struct_owned.position.size();
 
   auto sum_of_bonds = 0;
-  for (auto &&i : owned.atomic_bond_vector)
+  for (auto &&i : molecule_struct_owned.atomic_bond_vector)
     sum_of_bonds += i.size();
 
   auto sum_of_angles = 0;
-  for (auto &&i : owned.atomic_angle_vector)
+  for (auto &&i : molecule_struct_owned.atomic_angle_vector)
     sum_of_angles += i.size();
 
   auto sum_of_dihedrals = 0;
-  for (auto &&i : owned.atomic_properdihedral_vector)
+  for (auto &&i : molecule_struct_owned.atomic_properdihedral_vector)
     sum_of_dihedrals += i.size();
 
   return df - sum_of_bonds - sum_of_angles - sum_of_dihedrals - get_n_r_df();
@@ -334,17 +334,16 @@ Vector<Real_t> Atom_data::owned_position_cm()
 {
   Vector<Real_t> p_cm{0.0, 0.0, 0.0};
   double mass_sum = 0.0;
-  auto p_size = owned.position.size(); // MPI check
+  auto p_size = atom_struct_owned.position.size(); // MPI check
 #ifdef CAVIAR_WITH_OPENMP
-#pragma omp parallel for reduction(+ \
-                                   : p_cm, mass_sum)
+#pragma omp parallel for reduction(+ : p_cm, mass_sum)
 #endif
   for (unsigned int i = 0; i < p_size; ++i)
   {
-    auto type_i = owned.type[i];
-    auto mass_i = owned.mass[type_i];
+    auto type_i = atom_struct_owned.type[i];
+    auto mass_i = atom_type_params.mass[type_i];
     mass_sum += mass_i;
-    p_cm += owned.position[i] * mass_i;
+    p_cm += atom_struct_owned.position[i] * mass_i;
   }
   p_cm = p_cm / mass_sum;
   return p_cm;
@@ -354,17 +353,16 @@ Vector<Real_t> Atom_data::owned_velocity_cm()
 {
   Vector<Real_t> v_cm{0.0, 0.0, 0.0};
   double mass_sum = 0.0;
-  auto p_size = owned.velocity.size(); // MPI check
+  auto p_size = atom_struct_owned.velocity.size(); // MPI check
 #ifdef CAVIAR_WITH_OPENMP
-#pragma omp parallel for reduction(+ \
-                                   : v_cm, mass_sum)
+#pragma omp parallel for reduction(+ : v_cm, mass_sum)
 #endif
   for (unsigned int i = 0; i < p_size; ++i)
   {
-    auto type_i = owned.type[i];
-    auto mass_i = owned.mass[type_i];
+    auto type_i = atom_struct_owned.type[i];
+    auto mass_i = atom_type_params.mass[type_i];
     mass_sum += mass_i;
-    v_cm += owned.velocity[i] * mass_i;
+    v_cm += atom_struct_owned.velocity[i] * mass_i;
   }
   v_cm = v_cm / mass_sum;
   return v_cm;
@@ -375,17 +373,16 @@ Vector<double> Atom_data::owned_angular_momentum_cm(const Vector<double> &p_cm)
 
   Vector<double> L_cm{0.0, 0.0, 0.0};
 
-  auto p_size = owned.position.size(); // MPI check
+  auto p_size = atom_struct_owned.position.size(); // MPI check
 #ifdef CAVIAR_WITH_OPENMP
-#pragma omp parallel for reduction(+ \
-                                   : L_cm)
+#pragma omp parallel for reduction(+ : L_cm)
 #endif
   for (unsigned int i = 0; i < p_size; ++i)
   {
-    auto type_i = owned.type[i];
-    auto mass_i = owned.mass[type_i];
+    auto type_i = atom_struct_owned.type[i];
+    auto mass_i = atom_type_params.mass[type_i];
 
-    L_cm += mass_i * cross_product(owned.position[i] - p_cm, owned.velocity[i]);
+    L_cm += mass_i * cross_product(atom_struct_owned.position[i] - p_cm, atom_struct_owned.velocity[i]);
   }
 
   return L_cm;
@@ -396,16 +393,15 @@ std::vector<std::vector<double>> Atom_data::owned_inertia_tensor_cm(const Vector
 
   std::vector<std::vector<double>> I_cm(3, std::vector<double>(3, 0.0));
 
-  auto p_size = owned.position.size(); // MPI check
+  auto p_size = atom_struct_owned.position.size(); // MPI check
 #ifdef CAVIAR_WITH_OPENMP
-#pragma omp parallel for reduction(+ \
-                                   : it_cm)
+#pragma omp parallel for reduction(+ : it_cm)
 #endif
   for (unsigned int i = 0; i < p_size; ++i)
   {
-    auto type_i = owned.type[i];
-    auto mass_i = owned.mass[type_i];
-    auto p = owned.position[i] - p_cm; // relative position
+    auto type_i = atom_struct_owned.type[i];
+    auto mass_i = atom_type_params.mass[type_i];
+    auto p = atom_struct_owned.position[i] - p_cm; // relative position
     I_cm[0][0] += mass_i * (p.y * p.y + p.z * p.z);
     I_cm[1][1] += mass_i * (p.x * p.x + p.z * p.z);
     I_cm[2][2] += mass_i * (p.x * p.x + p.y * p.y);
@@ -425,11 +421,11 @@ std::vector<std::vector<double>> Atom_data::owned_inertia_tensor_cm(const Vector
 void Atom_data::record_owned_old_data()
 {
   if (record_owned_position_old)
-    owned.position_old = owned.position;
+    atom_struct_owned.position_old = atom_struct_owned.position;
   if (record_owned_velocity_old)
-    owned.velocity_old = owned.velocity;
+    atom_struct_owned.velocity_old = atom_struct_owned.velocity;
   if (record_owned_acceleration_old)
-    owned.acceleration_old = owned.acceleration;
+    atom_struct_owned.acceleration_old = atom_struct_owned.acceleration;
 }
 
 unsigned int Atom_data::get_global_id()
@@ -438,7 +434,7 @@ unsigned int Atom_data::get_global_id()
   MPI_Barrier(mpi_comm); // does it have to be here??
   MPI_Allreduce(&num_local_atoms, &num_total_atoms, 1, MPI_UNSIGNED, MPI_SUM, mpi_comm);
 #else
-  num_total_atoms = owned.position.size();
+  num_total_atoms = atom_struct_owned.position.size();
 #endif
   return num_total_atoms;
 }
@@ -451,11 +447,11 @@ void Atom_data::set_num_total_atoms(GlobalID_t n)
 
 void Atom_data::reserve_owned_vectors()
 {
-  owned.id.reserve(num_local_atoms_est);
-  owned.charge.reserve(num_local_atoms_est);
-  owned.position.reserve(num_local_atoms_est);
-  owned.velocity.reserve(num_local_atoms_est);
-  owned.acceleration.reserve(num_local_atoms_est);
+  atom_struct_owned.id.reserve(num_local_atoms_est);
+  atom_type_params.charge.reserve(num_local_atoms_est);
+  atom_struct_owned.position.reserve(num_local_atoms_est);
+  atom_struct_owned.velocity.reserve(num_local_atoms_est);
+  atom_struct_owned.acceleration.reserve(num_local_atoms_est);
 }
 
 bool Atom_data::position_inside_local_domain(const Vector<double> &pos)
@@ -483,91 +479,71 @@ bool Atom_data::position_inside_local_domain(const Vector<double> &pos)
   return false;
 }
 
-// TODO: note that any new vector addition to this function should be deleted in 'remove_atom()' functions.
+// Any new vector addition to this function should be deleted in 'remove_atom()' functions.
 bool Atom_data::add_atom(GlobalID_t id,
                          AtomType_t type,
                          const Vector<Real_t> &pos,
                          const Vector<Real_t> &vel)
 {
-
-  owned.type.emplace_back(type);
-  owned.position.emplace_back(pos);
-  owned.id.emplace_back(id);
-  owned.velocity.emplace_back(vel);
-  owned.acceleration.emplace_back(0, 0, 0);
+  atom_struct_owned.id.emplace_back(id);
+  atom_struct_owned.type.emplace_back(type);
+  atom_struct_owned.position.emplace_back(pos);  
+  atom_struct_owned.velocity.emplace_back(vel);
+  atom_struct_owned.acceleration.emplace_back(0, 0, 0);
   if (msd_process)
-    owned.msd_domain_cross.emplace_back(0, 0, 0);
-  owned.molecule_index.emplace_back(-1);
-  owned.atomic_bond_count.emplace_back(0);
+    atom_struct_owned.msd_domain_cross.emplace_back(0, 0, 0);
+  atom_struct_owned.molecule_index.emplace_back(-1);
+  atom_struct_owned.atomic_bond_count.emplace_back(0);
   ++num_local_atoms;
   return true;
 }
 
 bool Atom_data::add_masses(unsigned int type, Real_t m)
 {
-  if (type + 1 > owned.mass.size())
+  if (type + 1 > atom_type_params.mass.size())
   {
-    owned.mass.resize(type + 1);
-    owned.mass_inv.resize(type + 1);
+    atom_type_params.mass.resize(type + 1);
+    atom_type_params.mass_inv.resize(type + 1);
   }
-  owned.mass[type] = m;
+  atom_type_params.mass[type] = m;
   if (m == 0.0)
-    owned.mass_inv[type] = 0.0;
+    atom_type_params.mass_inv[type] = 0.0;
   else
-    owned.mass_inv[type] = 1.0 / m;
+    atom_type_params.mass_inv[type] = 1.0 / m;
   return true; // WARNING
 }
 
 bool Atom_data::add_charges(unsigned int type, Real_t c)
 {
-  if (type + 1 > owned.charge.size())
-    owned.charge.resize(type + 1);
-  owned.charge[type] = c;
+  if (type + 1 > atom_type_params.charge.size())
+    atom_type_params.charge.resize(type + 1);
+  atom_type_params.charge[type] = c;
   return true; // WARNING
 }
 
 void Atom_data::remove_atom(const int i)
 {
-  owned.position.erase(owned.position.begin() + i);
-  owned.velocity.erase(owned.velocity.begin() + i);
-  owned.acceleration.erase(owned.acceleration.begin() + i);
-  owned.type.erase(owned.type.begin() + i);
-  owned.id.erase(owned.id.begin() + i);
+  atom_struct_owned.position.erase(atom_struct_owned.position.begin() + i);
+  atom_struct_owned.velocity.erase(atom_struct_owned.velocity.begin() + i);
+  atom_struct_owned.acceleration.erase(atom_struct_owned.acceleration.begin() + i);
+  atom_struct_owned.type.erase(atom_struct_owned.type.begin() + i);
+  atom_struct_owned.id.erase(atom_struct_owned.id.begin() + i);
 
   if (msd_process)
-    owned.msd_domain_cross.erase(owned.msd_domain_cross.begin() + i);
-  owned.molecule_index.erase(owned.molecule_index.begin() + i);
-  owned.atomic_bond_count.erase(owned.atomic_bond_count.begin() + i);
+    atom_struct_owned.msd_domain_cross.erase(atom_struct_owned.msd_domain_cross.begin() + i);
+
+  atom_struct_owned.molecule_index.erase(atom_struct_owned.molecule_index.begin() + i);
+  atom_struct_owned.atomic_bond_count.erase(atom_struct_owned.atomic_bond_count.begin() + i);
   --num_local_atoms;
 }
 
 void Atom_data::remove_atom(std::vector<int> v_delete_list)
 {
-  // sort them from greatest to lowest to maintain lower index
+  // sort them from greatest to lowest to maintain lower index after removing
   std::sort(v_delete_list.begin(), v_delete_list.end(), std::greater<int>());
 
   for (auto i : v_delete_list)
-  {
-
-
-    owned.position.erase(owned.position.begin() + i);
-
-    owned.velocity.erase(owned.velocity.begin() + i);
-
-    owned.acceleration.erase(owned.acceleration.begin() + i);
-
-    owned.type.erase(owned.type.begin() + i);
-
-    owned.id.erase(owned.id.begin() + i);
-
-
-    if (msd_process)
-      owned.msd_domain_cross.erase(owned.msd_domain_cross.begin() + i); // must be passed with mpi
-
-
-    --num_local_atoms;
-
-  }
+    remove_atom(i);
 }
 
 void Atom_data::add_random_velocity()
@@ -576,7 +552,7 @@ void Atom_data::add_random_velocity()
   // setting random velocity to all the particles
   std::mt19937 mt(1);
   std::uniform_real_distribution<double> dist(-1.0, 1.0);
-  for (auto &&v : owned.velocity)
+  for (auto &&v : atom_struct_owned.velocity)
   {
     v.x = dist(mt);
     v.y = dist(mt);
@@ -585,11 +561,11 @@ void Atom_data::add_random_velocity()
 
   // removing any center of mass velocity
   auto v_cm = owned_velocity_cm();
-  auto psize = owned.velocity.size();
+  auto psize = atom_struct_owned.velocity.size();
   for (unsigned int i = 0; i < psize; ++i)
   {
-    if (owned.mass[owned.type[i]] != 0.0)
-      owned.velocity[i] -= v_cm;
+    if (atom_type_params.mass[atom_struct_owned.type[i]] != 0.0)
+      atom_struct_owned.velocity[i] -= v_cm;
   }
 }
 
@@ -646,15 +622,15 @@ int Atom_data::read_next_xyz_frame(bool set_frame, bool read_velocity)
 
     if (set_frame)
     {
-      owned.position[j].x = x;
-      owned.position[j].y = y;
-      owned.position[j].z = z;
+      atom_struct_owned.position[j].x = x;
+      atom_struct_owned.position[j].y = y;
+      atom_struct_owned.position[j].z = z;
 
       if (read_velocity)
       {
-        owned.velocity[j].x = vx;
-        owned.velocity[j].y = vy;
-        owned.velocity[j].z = vz;
+        atom_struct_owned.velocity[j].x = vx;
+        atom_struct_owned.velocity[j].y = vy;
+        atom_struct_owned.velocity[j].z = vz;
       }
     }
   }

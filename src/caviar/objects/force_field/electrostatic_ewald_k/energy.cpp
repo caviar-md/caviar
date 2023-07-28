@@ -30,7 +30,7 @@ namespace force_field
 
   double Electrostatic_ewald_k::self_energy()
   {
-    const auto &pos = atom_data->owned.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
     double sum_j{0};
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for reduction(+ \
@@ -38,8 +38,8 @@ namespace force_field
 #endif
     for (unsigned int j = 0; j < pos.size(); ++j)
     {
-      const auto type_j = atom_data->owned.type[j];
-      const auto charge_j = atom_data->owned.charge[type_j];
+      const auto type_j = atom_data->atom_struct_owned.type[j];
+      const auto charge_j = atom_data->atom_type_params.charge[type_j];
       sum_j += charge_j * charge_j; //
     }
     return -FC_PIS_INV * alpha * sum_j * k_electrostatic;
@@ -58,7 +58,7 @@ namespace force_field
   {
     // Working Scheme using energy formula. Of order 'N'
     /*
-      const auto &pos = atom_data -> owned.position;
+      const auto &pos = atom_data -> atom_struct_owned.position;
       const std::complex<double> ii(0.0, 1.0);
       double sum_k = 0.0;
 
@@ -66,8 +66,8 @@ namespace force_field
 
         std::complex<double> rho (0,0);
         for (unsigned int j=0;j<pos.size();++j) {
-          const auto type_j = atom_data -> owned.type [j] ;
-          const auto charge_j = atom_data -> owned.charge [ type_j ];
+          const auto type_j = atom_data -> atom_struct_owned.type [j] ;
+          const auto charge_j = atom_data -> atom_type_params.charge [ type_j ];
 
           rho += charge_j * std::exp(-ii*(k_vector[i]*pos[j]));
         }
@@ -81,7 +81,7 @@ namespace force_field
     // XXX Working scheme using potential function. Order depends on the order
     // of the potential. It can be changing from N^2 to N..
     ///*
-    const auto &pos = atom_data->owned.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
     double energy_k = 0;
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for reduction(+ \
@@ -89,8 +89,8 @@ namespace force_field
 #endif
     for (unsigned int j = 0; j < pos.size(); ++j)
     {
-      const auto type_j = atom_data->owned.type[j];
-      const auto charge_j = atom_data->owned.charge[type_j];
+      const auto type_j = atom_data->atom_struct_owned.type[j];
+      const auto charge_j = atom_data->atom_type_params.charge[type_j];
       energy_k += charge_j * k_space_potential(pos[j]); // working
                                                         //    energy_k += charge_j * k_space_potential(j); // working
     }

@@ -36,7 +36,7 @@ CAVIAR_NAMESPACE_OPEN
   }                      \
   }
 
-bool Atom_data::exchange_owned()
+bool Atom_data::exchange_owned(long step)
 {
   if (domain == nullptr)
     error->all("Atom_data::exchange_owned: domain = nullptr");
@@ -61,7 +61,7 @@ bool Atom_data::exchange_owned()
   const auto y_width = domain->upper_local.y - domain->lower_local.y;
   const auto z_width = domain->upper_local.z - domain->lower_local.z;
 
-  auto &pos = owned.position;
+  auto &pos = atom_struct_owned.position;
 
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
   const auto me = domain->me;
@@ -75,13 +75,13 @@ bool Atom_data::exchange_owned()
         {
           pos[i].x += x_width;
           if (msd_process)
-            owned.msd_domain_cross[i].x -= 1;
+            atom_struct_owned.msd_domain_cross[i].x -= 1;
         }
         while (pos[i].x > x_lupp)
         {
           pos[i].x -= x_width;
           if (msd_process)
-            owned.msd_domain_cross[i].x += 1;
+            atom_struct_owned.msd_domain_cross[i].x += 1;
         }
       }
       if (bc.y == 1)
@@ -91,14 +91,14 @@ bool Atom_data::exchange_owned()
           pos[i].y += y_width;
           if (msd_process)
 
-            owned.msd_domain_cross[i].y -= 1;
+            atom_struct_owned.msd_domain_cross[i].y -= 1;
         }
         while (pos[i].y > y_lupp)
         {
           pos[i].y -= y_width;
           if (msd_process)
 
-            owned.msd_domain_cross[i].y += 1;
+            atom_struct_owned.msd_domain_cross[i].y += 1;
         }
       }
       if (bc.z == 1)
@@ -108,14 +108,14 @@ bool Atom_data::exchange_owned()
           pos[i].z += z_width;
           if (msd_process)
 
-            owned.msd_domain_cross[i].z -= 1;
+            atom_struct_owned.msd_domain_cross[i].z -= 1;
         }
         while (pos[i].z > z_lupp)
         {
           pos[i].z -= z_width;
           if (msd_process)
 
-            owned.msd_domain_cross[i].z += 1;
+            atom_struct_owned.msd_domain_cross[i].z += 1;
         }
       }
     }
@@ -123,11 +123,13 @@ bool Atom_data::exchange_owned()
 #elif defined(CAVIAR_WITH_MPI)
   // MPI_Barrier(mpi_comm);
 
-  auto &vel = owned.velocity;
-  auto &acc = owned.acceleration;
-  auto &id = owned.id;
-  auto &type = owned.type;
-  auto &msd = owned.msd_domain_cross;
+
+
+  auto &vel = atom_struct_owned.velocity;
+  auto &acc = atom_struct_owned.acceleration;
+  auto &id = atom_struct_owned.id;
+  auto &type = atom_struct_owned.type;
+  auto &msd = atom_struct_owned.msd_domain_cross;
 
   const auto grid_index_x = domain->grid_index_x;
   const auto grid_index_y = domain->grid_index_y;
@@ -139,10 +141,20 @@ bool Atom_data::exchange_owned()
 
   const auto me = domain->me;
 
+  {
+    MPI_Barrier(mpi_comm);
+    int local_pos_size = pos.size();
+    int global_pos_size = 0;
+    MPI_Allreduce(&local_pos_size,
+                  &global_pos_size,
+                  1, MPI::DOUBLE, MPI_SUM, MPI::COMM_WORLD);
+      // std::cout << step << " : me : " << me << " A local:" << local_pos_size << " global:" << global_pos_size << std::endl;
+  }
+
   const auto &all = domain->all;
 
-  std::vector<int> send_id[3][3][3];    // global id of the atom: owned.id
-  std::vector<int> recv_id[3][3][3];    // global id of the atom: owned.id
+  std::vector<int> send_id[3][3][3];    // global id of the atom: atom_struct_owned.id
+  std::vector<int> recv_id[3][3][3];    // global id of the atom: atom_struct_owned.id
   std::vector<int> send_index[3][3][3]; // the index of std::vector<> of the owned
   std::vector<int> send_index_all;      // the index of std::vector<> of the owned, in a 1D vector
 
@@ -157,7 +169,7 @@ bool Atom_data::exchange_owned()
     send_num[i][j][k] = 0;
     recv_num[i][j][k] = 0;
     send_mpi_tag[i][j][k] = m;
-    recv_mpi_tag[i][j][k] = 26-m;
+    recv_mpi_tag[i][j][k] = 26 - m;
     m++;
     FOR_IJK_LOOP_END
   }
@@ -186,18 +198,19 @@ bool Atom_data::exchange_owned()
     if (zuc)
       z_val = +1;
 
+    // periodic or non-periodic boundary condition
     if (grid_index_x == 0)
-      x_val *= bc.x; // periodic or non-periodic boundary condition
+      x_val *= bc.x;
     if (grid_index_x == nprocs_x - 1)
-      x_val *= bc.x; // //
+      x_val *= bc.x;
     if (grid_index_y == 0)
-      y_val *= bc.y; // //
+      y_val *= bc.y;
     if (grid_index_y == nprocs_y - 1)
-      y_val *= bc.y; // //
+      y_val *= bc.y;
     if (grid_index_z == 0)
-      z_val *= bc.z; // //
+      z_val *= bc.z;
     if (grid_index_z == nprocs_z - 1)
-      z_val *= bc.z; // //
+      z_val *= bc.z;
 
     if (x_val == 0 && y_val == 0 && z_val == 0)
       continue;
@@ -208,6 +221,8 @@ bool Atom_data::exchange_owned()
     send_num[x_val + 1][y_val + 1][z_val + 1]++;
   }
 
+      // std::cout << step << " : me : " << me << " X 1" << std::endl;
+
   // ================================================
   // making the send_data
   // ================================================
@@ -217,22 +232,29 @@ bool Atom_data::exchange_owned()
   // N: the number of atoms that are going to be send to another process
   //
   // The packet is as follows with N=4 particles example
-  // N x owned.id               [0     : N-1  ]  0,1,2,3
-  // N x owned.type             [N     : 2N-1 ]  4,5,6,7
-  // N x owned.position         [2N    : 5N-1 ] (8,9,10),(11,12,13),(14,15,16),(17,18,19)
-  // N x owned.velocity         [5N    : 8N-1 ]
-  // N x owned.acceleration     [8N    : 11N-1]
-  // (if msd_process==true):
-  // N x owned.msd_domain_cross [11N   : 14N-1 ]
+  // N x atom_struct_owned.id               [0     : N-1  ]  0,1,2,3
+  // N x atom_struct_owned.type             [N     : 2N-1 ]  4,5,6,7
+  // N x atom_struct_owned.position         [2N    : 5N-1 ] (8,9,10),(11,12,13),(14,15,16),(17,18,19)
+  // N x atom_struct_owned.velocity         [5N    : 8N-1 ]
+  // N x atom_struct_owned.acceleration     [8N    : 11N-1]
+  // (if msd_process==true):step
+  // N x atom_struct_owned.msd_domain_cross [11N   : 14N-1 ]
   // BOND ? ANGLE? DIHEDRAL ?
 
   std::vector<double> send_data[3][3][3], recv_data[3][3][3];
 
-  int total_num_coef;
+  int total_num_coef = 11;
   if (msd_process)
-    total_num_coef = 14;
-  else
-    total_num_coef = 11;
+    total_num_coef += 3;  
+  // if (record_owned_position_old)
+  //     total_num_coef += 3;
+  // if (record_owned_velocity_old)
+  //     total_num_coef += 3;
+  // if (record_owned_acceleration_old)
+  //     total_num_coef += 3;   
+
+          // std::cout << step << " : me : " << me << " X 2" << std::endl;
+
   // ================================================
   // resize send_data to the correct value to increase filling performance
   // ================================================
@@ -240,6 +262,8 @@ bool Atom_data::exchange_owned()
   FOR_IJK_LOOP_START
   send_data[i][j][k].resize(total_num_coef * send_num[i][j][k], 0);
   FOR_IJK_LOOP_END
+
+          // std::cout << step << " : me : " << me << " X 3" << std::endl;
 
   // ================================================
   //  FILL the send_data packets
@@ -281,10 +305,11 @@ bool Atom_data::exchange_owned()
 
   FOR_IJK_LOOP_END
 
+          // std::cout << step << " : me : " << me << " X 4" << std::endl;
+
   // ================================================
   // send num of owned
   // ================================================
-
 
   FOR_IJK_LOOP_START
   if (me == all[i][j][k])
@@ -293,6 +318,9 @@ bool Atom_data::exchange_owned()
   MPI_Send(&send_num[i][j][k], 1, MPI_INT, all[i][j][k], send_mpi_tag[i][j][k], mpi_comm); // TAG 0
 
   FOR_IJK_LOOP_END
+
+
+          // std::cout << step << " : me : " << me << " X 5" << std::endl;
 
 
   FOR_IJK_LOOP_START
@@ -304,6 +332,8 @@ bool Atom_data::exchange_owned()
   FOR_IJK_LOOP_END
 
 
+          // std::cout << step << " : me : " << me << " X 6" << std::endl;
+
   // ================================================
   // resize recv_data to the correct value to increase filling performance
   // ================================================
@@ -311,6 +341,9 @@ bool Atom_data::exchange_owned()
   FOR_IJK_LOOP_START
   recv_data[i][j][k].resize(total_num_coef * recv_num[i][j][k], 0);
   FOR_IJK_LOOP_END
+
+
+          // std::cout << step << " : me : " << me << " X 7" << std::endl;
 
   // ================================================
   // SEND OWNED DATA
@@ -324,6 +357,9 @@ bool Atom_data::exchange_owned()
 
   FOR_IJK_LOOP_END
 
+          // std::cout << step << " : me : " << me << " X 8" << std::endl;
+
+
   FOR_IJK_LOOP_START
   if (me == all[i][j][k])
     continue;
@@ -331,6 +367,8 @@ bool Atom_data::exchange_owned()
   MPI_Recv(recv_data[i][j][k].data(), total_num_coef * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], mpi_comm, MPI_STATUS_IGNORE); // TAG 1
 
   FOR_IJK_LOOP_END
+
+          // std::cout << step << " : me : " << me << " X 9" << std::endl;
 
 
   // ================================================
@@ -413,6 +451,8 @@ bool Atom_data::exchange_owned()
 
   FOR_IJK_LOOP_END
 
+          // std::cout << step << " : me : " << me << " X 10" << std::endl;
+
   // ================================================
   // Applying periodic boundary condition for particles comming from the current domain itself
   // ================================================
@@ -430,6 +470,8 @@ bool Atom_data::exchange_owned()
   }
   FOR_IJK_LOOP_END
 
+          // std::cout << step << " : me : " << me << " X 11 : send_index_all.size()" << send_index_all.size() << std::endl;
+
   // ================================================
   // Deleting the particles which are send to another domains
   // ================================================
@@ -439,8 +481,18 @@ bool Atom_data::exchange_owned()
     remove_atom(send_index_all);
     make_neighlist = true;
   }
-  //MPI_Barrier(mpi_comm);
+          // std::cout << step << " : me : " << me << " X 12" << std::endl;
 
+  {
+    MPI_Barrier(mpi_comm);
+    long local_pos_size = pos.size();
+    long global_pos_size = 0;
+    MPI_Allreduce(&local_pos_size,
+                  &global_pos_size,
+                  1, MPI::LONG, MPI_SUM, MPI::COMM_WORLD);
+    
+      // std::cout << step << " : me : " << me << " B local:" << local_pos_size << " global:" << global_pos_size << std::endl;
+  }
 #else
 
 #ifdef CAVIAR_WITH_OPENMP
@@ -453,16 +505,16 @@ bool Atom_data::exchange_owned()
       while (pos[i].x < x_llow)
       {
         pos[i].x += x_width;
-        if (msd_process)
 
-          owned.msd_domain_cross[i].x -= 1;
+        if (msd_process)
+          atom_struct_owned.msd_domain_cross[i].x -= 1;
       }
       while (pos[i].x > x_lupp)
       {
         pos[i].x -= x_width;
-        if (msd_process)
 
-          owned.msd_domain_cross[i].x += 1;
+        if (msd_process)
+          atom_struct_owned.msd_domain_cross[i].x += 1;
       }
     }
     if (bc.y == 1)
@@ -470,16 +522,16 @@ bool Atom_data::exchange_owned()
       while (pos[i].y < y_llow)
       {
         pos[i].y += y_width;
-        if (msd_process)
 
-          owned.msd_domain_cross[i].y -= 1;
+        if (msd_process)
+          atom_struct_owned.msd_domain_cross[i].y -= 1;
       }
       while (pos[i].y > y_lupp)
       {
         pos[i].y -= y_width;
-        if (msd_process)
 
-          owned.msd_domain_cross[i].y += 1;
+        if (msd_process)
+          atom_struct_owned.msd_domain_cross[i].y += 1;
       }
     }
     if (bc.z == 1)
@@ -487,16 +539,16 @@ bool Atom_data::exchange_owned()
       while (pos[i].z < z_llow)
       {
         pos[i].z += z_width;
-        if (msd_process)
 
-          owned.msd_domain_cross[i].z -= 1;
+        if (msd_process)
+          atom_struct_owned.msd_domain_cross[i].z -= 1;
       }
       while (pos[i].z > z_lupp)
       {
         pos[i].z -= z_width;
-        if (msd_process)
 
-          owned.msd_domain_cross[i].z += 1;
+        if (msd_process)
+          atom_struct_owned.msd_domain_cross[i].z += 1;
       }
     }
   }

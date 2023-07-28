@@ -82,7 +82,7 @@ namespace force_field
   {
     FC_OBJECT_VERIFY_SETTINGS
 
-    const auto &pos = atom_data->owned.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
 
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
@@ -91,21 +91,21 @@ namespace force_field
     {
       for (unsigned int i = 0; i < pos.size(); ++i)
       {
-        // const auto type_i = atom_data -> owned.type [i] ;
-        // const auto mass_i = atom_data -> owned.mass [ type_i ];
+        // const auto type_i = atom_data -> atom_struct_owned.type [i] ;
+        // const auto mass_i = atom_data -> atom_type_params.mass [ type_i ];
 
         // const auto force = amplitude * direction * mass_i;
-        // atom_data -> owned.acceleration [i] += force / mass_i;
+        // atom_data -> atom_struct_owned.acceleration [i] += force / mass_i;
 
         const auto a = amplitude * direction;
-        atom_data->owned.acceleration[i] += a;
+        atom_data->atom_struct_owned.acceleration[i] += a;
       }
     }
     else
     {
       for (unsigned int i = 0; i < pos.size(); ++i)
       {
-        atom_data->owned.acceleration[i] += non_inertia_reference_frame_acc->current_value;
+        atom_data->atom_struct_owned.acceleration[i] += non_inertia_reference_frame_acc->current_value;
       }
     }
   }

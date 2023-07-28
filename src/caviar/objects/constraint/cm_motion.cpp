@@ -81,7 +81,7 @@ namespace constraint
   void Cm_motion::fix_velocity()
   {
     auto v_cm = atom_data->owned_velocity_cm();
-    for (auto &&v : atom_data->owned.velocity)
+    for (auto &&v : atom_data->atom_struct_owned.velocity)
     {
       v -= v_cm;
     }

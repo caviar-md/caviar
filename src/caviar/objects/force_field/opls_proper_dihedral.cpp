@@ -104,11 +104,11 @@ namespace force_field
   {
     FC_OBJECT_VERIFY_SETTINGS
 
-    auto &pos = atom_data->owned.position;
-    auto &type = atom_data->owned.type;
-    auto &mass_inv = atom_data->owned.mass_inv;
+    auto &pos = atom_data->atom_struct_owned.position;
+    auto &type = atom_data->atom_struct_owned.type;
+    auto &mass_inv = atom_data->atom_type_params.mass_inv;
 
-    auto &atomic_properdihedral_vector = atom_data->owned.atomic_properdihedral_vector;
+    auto &atomic_properdihedral_vector = atom_data->molecule_struct_owned.atomic_properdihedral_vector;
 
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
@@ -171,34 +171,34 @@ namespace force_field
         {
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp atomic
-          atom_data->owned.acceleration[k1].x += force_1.x * mass_inv[type[k1]];
+          atom_data->atom_struct_owned.acceleration[k1].x += force_1.x * mass_inv[type[k1]];
 #pragma omp atomic
-          atom_data->owned.acceleration[k1].y += force_1.y * mass_inv[type[k1]];
+          atom_data->atom_struct_owned.acceleration[k1].y += force_1.y * mass_inv[type[k1]];
 #pragma omp atomic
-          atom_data->owned.acceleration[k1].z += force_1.z * mass_inv[type[k1]];
+          atom_data->atom_struct_owned.acceleration[k1].z += force_1.z * mass_inv[type[k1]];
 #pragma omp atomic
-          atom_data->owned.acceleration[k4].x += force_4.x * mass_inv[type[k4]];
+          atom_data->atom_struct_owned.acceleration[k4].x += force_4.x * mass_inv[type[k4]];
 #pragma omp atomic
-          atom_data->owned.acceleration[k4].y += force_4.y * mass_inv[type[k4]];
+          atom_data->atom_struct_owned.acceleration[k4].y += force_4.y * mass_inv[type[k4]];
 #pragma omp atomic
-          atom_data->owned.acceleration[k4].z += force_4.z * mass_inv[type[k4]];
+          atom_data->atom_struct_owned.acceleration[k4].z += force_4.z * mass_inv[type[k4]];
 #pragma omp atomic
-          atom_data->owned.acceleration[k3].x += force_3.x * mass_inv[type[k3]];
+          atom_data->atom_struct_owned.acceleration[k3].x += force_3.x * mass_inv[type[k3]];
 #pragma omp atomic
-          atom_data->owned.acceleration[k3].y += force_3.y * mass_inv[type[k3]];
+          atom_data->atom_struct_owned.acceleration[k3].y += force_3.y * mass_inv[type[k3]];
 #pragma omp atomic
-          atom_data->owned.acceleration[k3].z += force_3.z * mass_inv[type[k3]];
+          atom_data->atom_struct_owned.acceleration[k3].z += force_3.z * mass_inv[type[k3]];
 #pragma omp atomic
-          atom_data->owned.acceleration[k2].x -= (force_1.x + force_3.x + force_4.x) * mass_inv[type[k2]];
+          atom_data->atom_struct_owned.acceleration[k2].x -= (force_1.x + force_3.x + force_4.x) * mass_inv[type[k2]];
 #pragma omp atomic
-          atom_data->owned.acceleration[k2].y -= (force_1.y + force_3.y + force_4.y) * mass_inv[type[k2]];
+          atom_data->atom_struct_owned.acceleration[k2].y -= (force_1.y + force_3.y + force_4.y) * mass_inv[type[k2]];
 #pragma omp atomic
-          atom_data->owned.acceleration[k2].z -= (force_1.z + force_3.z + force_4.z) * mass_inv[type[k2]];
+          atom_data->atom_struct_owned.acceleration[k2].z -= (force_1.z + force_3.z + force_4.z) * mass_inv[type[k2]];
 #else
-          atom_data->owned.acceleration[k1] += force_1 * mass_inv[type[k1]];
-          atom_data->owned.acceleration[k4] += force_4 * mass_inv[type[k4]];
-          atom_data->owned.acceleration[k3] += force_3 * mass_inv[type[k3]];
-          atom_data->owned.acceleration[k2] -= (force_1 + force_3 + force_4) * mass_inv[type[k2]];
+          atom_data->atom_struct_owned.acceleration[k1] += force_1 * mass_inv[type[k1]];
+          atom_data->atom_struct_owned.acceleration[k4] += force_4 * mass_inv[type[k4]];
+          atom_data->atom_struct_owned.acceleration[k3] += force_3 * mass_inv[type[k3]];
+          atom_data->atom_struct_owned.acceleration[k2] -= (force_1 + force_3 + force_4) * mass_inv[type[k2]];
 #endif
         }
       }

@@ -121,10 +121,10 @@ namespace force_field
 #endif
     for (unsigned int i = 0; i < nlist.size(); ++i)
     {
-      const auto &pos_i = atom_data->owned.position[i];
-      const auto &vel_i = atom_data->owned.velocity[i];
-      const auto type_i = atom_data->owned.type[i];
-      const auto mass_inv_i = atom_data->owned.mass_inv[type_i];
+      const auto &pos_i = atom_data->atom_struct_owned.position[i];
+      const auto &vel_i = atom_data->atom_struct_owned.velocity[i];
+      const auto type_i = atom_data->atom_struct_owned.type[i];
+      const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
       for (auto j : nlist[i])
       {
         bool is_ghost = j >= nlist.size();
@@ -133,17 +133,17 @@ namespace force_field
         if (is_ghost)
         {
           j -= nlist.size();
-          pos_j = atom_data->ghost.position[j];
-          vel_j = atom_data->ghost.velocity[j];
-          type_j = atom_data->ghost.type[j];
+          pos_j = atom_data->atom_struct_ghost.position[j];
+          vel_j = atom_data->atom_struct_ghost.velocity[j];
+          type_j = atom_data->atom_struct_ghost.type[j];
         }
         else
         {
-          pos_j = atom_data->owned.position[j];
-          vel_j = atom_data->owned.velocity[j];
-          type_j = atom_data->owned.type[j];
+          pos_j = atom_data->atom_struct_owned.position[j];
+          vel_j = atom_data->atom_struct_owned.velocity[j];
+          type_j = atom_data->atom_struct_owned.type[j];
         }
-        mass_inv_j = atom_data->owned.mass_inv[type_j];
+        mass_inv_j = atom_data->atom_type_params.mass_inv[type_j];
         auto dr = pos_j - pos_i;
         auto dv = vel_j - vel_i;
         auto r_sq = dr * dr;
@@ -160,18 +160,18 @@ namespace force_field
         auto force_dissip = -dissip_coef_ij * w_r * w_r * (dr_norm * dv);
         auto force_rand = sigma * w_r * alpha * dt_sq_inv;
         auto force = -(force_conserv + force_dissip + 0.0 * force_rand) * dr_norm;
-        atom_data->owned.acceleration[i] += force * mass_inv_i;
+        atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
         if (!is_ghost)
         {
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp atomic
-          atom_data->owned.acceleration[j].x -= force.x * mass_inv_j;
+          atom_data->atom_struct_owned.acceleration[j].x -= force.x * mass_inv_j;
 #pragma omp atomic
-          atom_data->owned.acceleration[j].y -= force.y * mass_inv_j;
+          atom_data->atom_struct_owned.acceleration[j].y -= force.y * mass_inv_j;
 #pragma omp atomic
-          atom_data->owned.acceleration[j].z -= force.z * mass_inv_j;
+          atom_data->atom_struct_owned.acceleration[j].z -= force.z * mass_inv_j;
 #else
-          atom_data->owned.acceleration[j] -= force * mass_inv_j;
+          atom_data->atom_struct_owned.acceleration[j] -= force * mass_inv_j;
 #endif
         }
       }

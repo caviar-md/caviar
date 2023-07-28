@@ -82,12 +82,12 @@ namespace force_field
   void Electrostatic_ewald_slab_correction::calculate_dipole_sum()
   {
 
-    const auto &pos = atom_data->owned.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
     auto ds = Vector<double>{0, 0, 0};
     for (unsigned int j = 0; j < pos.size(); ++j)
     {
-      const auto type_j = atom_data->owned.type[j];
-      const auto charge_j = atom_data->owned.charge[type_j];
+      const auto type_j = atom_data->atom_struct_owned.type[j];
+      const auto charge_j = atom_data->atom_type_params.charge[type_j];
       ds += charge_j * pos[j];
     }
     const auto dfv = -dipole_sum * dipole_coef; // minus due to {-grad E}
@@ -196,9 +196,9 @@ namespace force_field
       for (auto && i :chi_p) for (auto && j :i) for (auto && k :j) for (auto && l :k) l = 0.0;
     */
 
-    const auto &pos = atom_data->owned.position;
-    const auto &type = atom_data->owned.type;
-    const auto &charge = atom_data->owned.charge;
+    const auto &pos = atom_data->atom_struct_owned.position;
+    const auto &type = atom_data->atom_struct_owned.type;
+    const auto &charge = atom_data->atom_type_params.charge;
     const auto pos_size = pos.size();
 
     // XXX No openMP Parallel due to array reduction and boolean flag

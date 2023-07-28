@@ -341,7 +341,7 @@ void Md_simulator::initialize()
 
 void Md_simulator::re_calculate_acc()
 {
-  // Here there's 'r(t)' stored in 'atom_data->owned.position'
+  // Here there's 'r(t)' stored in 'atom_data->atom_struct_owned.position'
   // First calculate 'a(t)' by using 'r(t)'
   bool make_list = boundary_condition();
 
@@ -478,9 +478,9 @@ bool Md_simulator::boundary_condition()
 
   // the result only in MPI case can
   // become true, due to exchanging a particle between domains
-  result = atom_data->exchange_owned();
+  result = atom_data->exchange_owned(current_step);
 
-  atom_data->exchange_ghost();
+  atom_data->exchange_ghost(current_step);
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
 
 #elif defined(CAVIAR_WITH_MPI)
@@ -515,9 +515,9 @@ void Md_simulator::setup()
   for (auto &&n : neighborlist)
     n->init();
 
-  atom_data->exchange_owned(); // isn't neccesary
+  atom_data->exchange_owned(current_step); // isn't neccesary
 
-  atom_data->exchange_ghost();
+  atom_data->exchange_ghost(current_step);
 
   for (auto &&n : neighborlist)
     n->build_neighlist();
@@ -538,11 +538,11 @@ void Md_simulator::cleanup()
 void Md_simulator::integrate_velocity_verlet()
 {
 
-  auto &pos = atom_data->owned.position;
-  auto &vel = atom_data->owned.velocity;
-  auto &acc = atom_data->owned.acceleration;
-  auto &acc_old = atom_data->owned.acceleration_old; // velocity verlet
-  // auto &pos_old = atom_data -> owned.position_old; //verlet - also shake and m_shake uses this
+  auto &pos = atom_data->atom_struct_owned.position;
+  auto &vel = atom_data->atom_struct_owned.velocity;
+  auto &acc = atom_data->atom_struct_owned.acceleration;
+  auto &acc_old = atom_data->atom_struct_owned.acceleration_old; // velocity verlet
+  // auto &pos_old = atom_data -> atom_struct_owned.position_old; //verlet - also shake and m_shake uses this
   // const auto two_dt_inv = 1.0/(2.0*dt);//verlet
   //-------------------------------
   //-------------------------------
@@ -596,11 +596,11 @@ void Md_simulator::integrate_velocity_verlet()
 
 void Md_simulator::integrate_velocity_verlet_langevin()
 {
-  auto &pos = atom_data->owned.position;
-  auto &vel = atom_data->owned.velocity;
-  auto &acc = atom_data->owned.acceleration;
-  // auto &acc_old = atom_data -> owned.acceleration_old; //velocity verlet
-  // auto &pos_old = atom_data -> owned.position_old; //verlet - also shake and m_shake uses this
+  auto &pos = atom_data->atom_struct_owned.position;
+  auto &vel = atom_data->atom_struct_owned.velocity;
+  auto &acc = atom_data->atom_struct_owned.acceleration;
+  // auto &acc_old = atom_data -> atom_struct_owned.acceleration_old; //velocity verlet
+  // auto &pos_old = atom_data -> atom_struct_owned.position_old; //verlet - also shake and m_shake uses this
   // const auto two_dt_inv = 1.0/(2.0*dt);//verlet
 
   auto &L = langevin_param;
@@ -670,11 +670,11 @@ void Md_simulator::integrate_velocity_verlet_langevin()
 
 void Md_simulator::integrate_leap_frog()
 {
-  auto &pos = atom_data->owned.position;
-  auto &vel = atom_data->owned.velocity;
-  auto &acc = atom_data->owned.acceleration;
-  // auto &acc_old = atom_data -> owned.acceleration_old; //velocity verlet
-  // auto &pos_old = atom_data -> owned.position_old; //verlet - also shake and m_shake uses this
+  auto &pos = atom_data->atom_struct_owned.position;
+  auto &vel = atom_data->atom_struct_owned.velocity;
+  auto &acc = atom_data->atom_struct_owned.acceleration;
+  // auto &acc_old = atom_data -> atom_struct_owned.acceleration_old; //velocity verlet
+  // auto &pos_old = atom_data -> atom_struct_owned.position_old; //verlet - also shake and m_shake uses this
   // const auto two_dt_inv = 1.0/(2.0*dt);//verlet
 
   //-------------------------------

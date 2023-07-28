@@ -32,14 +32,14 @@ namespace force_field
 
     double potential_sum = 0;
 
-    // const auto &pos = atom_data -> owned.position;
+    // const auto &pos = atom_data -> atom_struct_owned.position;
 
     // particle-particle interaction part. If uncommented, it affects energy function.
     /*
     for (unsigned int j=0;j<pos.size();++j) {
 
-      const auto type_j = atom_data -> owned.type [j] ;
-      const auto charge_j = atom_data -> owned.charge [ type_j ];
+      const auto type_j = atom_data -> atom_struct_owned.type [j] ;
+      const auto charge_j = atom_data -> atom_type_params.charge [ type_j ];
       const auto dr = r - pos[j];
       const auto dr_sq = dr*dr;
       if (dr_sq == 0.0) continue;
@@ -72,14 +72,14 @@ namespace force_field
 
     double potential_sum = 0;
 
-    const auto &pos = atom_data->owned.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
 
     // particle-particle interaction part. If uncommented, it affects energy function.
     /*
     for (unsigned int j=0;j<pos.size();++j) {
       if (i==static_cast<int>(j)) continue;
-      const auto type_j = atom_data -> owned.type [j] ;
-      const auto charge_j = atom_data -> owned.charge [ type_j ];
+      const auto type_j = atom_data -> atom_struct_owned.type [j] ;
+      const auto charge_j = atom_data -> atom_type_params.charge [ type_j ];
       const auto dr = pos[i] - pos[j];
       const auto dr_sq = dr*dr;
 

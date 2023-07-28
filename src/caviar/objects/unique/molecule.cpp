@@ -231,7 +231,7 @@ namespace unique
   }
 
   /*
-  void Molecule::correct_heritage () {
+  void Molecule::correct_herie () {
     for (unsigned int i = 0; i < atoms.size(); ++i) {
       atoms[i].upper_level_molecule = this;
       atoms[i].part_of_a_molecule = true;

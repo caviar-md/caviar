@@ -83,36 +83,36 @@ namespace force_field
   {
     FC_OBJECT_VERIFY_SETTINGS
 
-    const auto &pos = atom_data->owned.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
     {
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
 #endif
       for (unsigned int i = 0; i < pos.size(); ++i)
       {
-        const auto type_i = atom_data->owned.type[i];
-        const auto mass_inv_i = atom_data->owned.mass_inv[type_i];
+        const auto type_i = atom_data->atom_struct_owned.type[i];
+        const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
 
         for (unsigned int j = i + 1; j < pos.size(); ++j)
         {
 
-          const auto type_j = atom_data->owned.type[j];
-          const auto mass_inv_j = atom_data->owned.mass_inv[type_j];
+          const auto type_j = atom_data->atom_struct_owned.type[j];
+          const auto mass_inv_j = atom_data->atom_type_params.mass_inv[type_j];
           const auto dr = pos[j] - pos[i];
           const auto dr_sq = dr * dr;
           const auto dr_norm = std::sqrt(dr_sq);
           const auto force = k_gravity * mass_inv_i * mass_inv_j * dr / (dr_sq * dr_norm);
 
-          atom_data->owned.acceleration[i] += force * mass_inv_i;
+          atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp atomic
-          atom_data->owned.acceleration[j].x -= force.x * mass_inv_j;
+          atom_data->atom_struct_owned.acceleration[j].x -= force.x * mass_inv_j;
 #pragma omp atomic
-          atom_data->owned.acceleration[j].y -= force.y * mass_inv_j;
+          atom_data->atom_struct_owned.acceleration[j].y -= force.y * mass_inv_j;
 #pragma omp atomic
-          atom_data->owned.acceleration[j].z -= force.z * mass_inv_j;
+          atom_data->atom_struct_owned.acceleration[j].z -= force.z * mass_inv_j;
 #else
-          atom_data->owned.acceleration[j] -= force * mass_inv_j;
+          atom_data->atom_struct_owned.acceleration[j] -= force * mass_inv_j;
 #endif
         }
       }

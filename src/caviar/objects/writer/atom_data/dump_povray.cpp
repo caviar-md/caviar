@@ -33,9 +33,9 @@ namespace writer
       unsigned nprocs = comm->nprocs;
       const int me = comm->me;
 
-      const auto &pos = owned.position;
-      const auto &id  = owned.id;
-      const auto &type = owned.type;
+      const auto &pos = atom_struct_owned.position;
+      const auto &id  = atom_struct_owned.id;
+      const auto &type = atom_struct_owned.type;
 
       std::vector<std::vector<int>> all_id;
       std::vector<Vector<double>> all_pos;
@@ -50,15 +50,15 @@ namespace writer
       if (nprocs > 1) {
 
 
-        for (auto j=0;j<atom_data->ghost.id.size(); ++j)
-          if (atom_data->ghost.id[j] == 26)
+        for (auto j=0;j<atom_data->atom_struct_ghost.id.size(); ++j)
+          if (atom_data->atom_struct_ghost.id[j] == 26)
             std::cout<<"me:" << me << "\tt:" << i <<std::endl;
 
         for (auto j=0;j<pos.size(); ++j)
           if (id[j] == 26)
-            std::cout<<"me:" << me << " p:" << atom_data->owned.acceleration[j] << "\tt:" << i << "\ttyp:" << type[j] <<std::endl;
-        std::cout<<"me:" << me << " g:" << atom_data->ghost.position.size() << std::endl;
-        std::cout<<"me:" << me << " " << pos.size() << id.size() << type.size() << atom_data->owned.acceleration.size() << atom_data -> owned.velocity.size() <<std::endl;
+            std::cout<<"me:" << me << " p:" << atom_data->atom_struct_owned.acceleration[j] << "\tt:" << i << "\ttyp:" << type[j] <<std::endl;
+        std::cout<<"me:" << me << " g:" << atom_data->atom_struct_ghost.position.size() << std::endl;
+        std::cout<<"me:" << me << " " << pos.size() << id.size() << type.size() << atom_data->atom_struct_owned.acceleration.size() << atom_data -> atom_struct_owned.velocity.size() <<std::endl;
 
         if (me != 0) { //==================================// nla send
           MPI_Send (&nla, 1, MPI::UNSIGNED, 0, 0, mpi_comm);
@@ -181,8 +181,8 @@ namespace writer
       ofs_povray.open (char_povray);
 
 
-      const auto &all_pos = atom_data -> owned.position;
-      //const auto &all_type = atom_data ->owned.type;
+      const auto &all_pos = atom_data -> atom_struct_owned.position;
+      //const auto &all_type = atom_data ->atom_struct_owned.type;
       unsigned int nta = atom_data -> num_total_atoms;
       ofs_povray << "\nunion {\n";
       for (unsigned int i = 0; i<nta; ++i) {

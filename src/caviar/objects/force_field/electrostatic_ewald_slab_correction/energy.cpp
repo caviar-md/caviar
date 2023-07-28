@@ -88,9 +88,9 @@ namespace force_field
     // XXX working Scheme of Order N^2
     /*
 
-     const auto &pos = atom_data->owned.position;
-     const auto &type = atom_data->owned.type;
-     const auto &charge = atom_data->owned.charge;
+     const auto &pos = atom_data->atom_struct_owned.position;
+     const auto &type = atom_data->atom_struct_owned.type;
+     const auto &charge = atom_data->atom_type_params.charge;
      const auto pos_size = pos.size();
      for (unsigned int i = 0; i < pos_size; ++i) {
      for (unsigned int j = 0; j < pos_size; ++j) {
@@ -130,9 +130,9 @@ namespace force_field
     // XXX working Scheme using potential function
     /*
 
-     const auto &pos = atom_data->owned.position;
-     const auto &type = atom_data->owned.type;
-     const auto &charge = atom_data->owned.charge;
+     const auto &pos = atom_data->atom_struct_owned.position;
+     const auto &type = atom_data->atom_struct_owned.type;
+     const auto &charge = atom_data->atom_type_params.charge;
      const auto pos_size = pos.size();
      for (int i = 0; i < pos_size; ++i) {
        const auto charge_i = charge[ type [i] ];

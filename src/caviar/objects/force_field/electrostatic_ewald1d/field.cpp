@@ -47,7 +47,7 @@ namespace force_field
 
     Vector<double> field{0, 0, 0};
 
-    const auto &pos = atom_data->owned.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
     const unsigned pos_size = pos.size();
 
     const auto pos_i = r;
@@ -75,16 +75,16 @@ namespace force_field
         if (is_ghost)
         {
           j -= pos_size;
-          pos_j = atom_data->ghost.position[j];
-          type_j = atom_data->ghost.type[j];
+          pos_j = atom_data->atom_struct_ghost.position[j];
+          type_j = atom_data->atom_struct_ghost.type[j];
         }
         else
         {
-          pos_j = atom_data->owned.position[j];
-          type_j = atom_data->owned.type[j];
+          pos_j = atom_data->atom_struct_owned.position[j];
+          type_j = atom_data->atom_struct_owned.type[j];
         }
 
-        const auto charge_j = atom_data->owned.charge[type_j];
+        const auto charge_j = atom_data->atom_type_params.charge[type_j];
 
         const auto r_ij = pos_i - pos_j;
 
@@ -111,12 +111,12 @@ namespace force_field
 
     error->all("not implemented. needs fixs for neighlist or maybe impossible.");
 
-    const auto &pos = atom_data->owned.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
     const unsigned pos_size = pos.size();
 
     const auto &nlist = neighborlist->neighlist;
 
-    const auto pos_i = atom_data->owned.position[i];
+    const auto pos_i = atom_data->atom_struct_owned.position[i];
     const auto sigma_sq = sigma * sigma;
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for reduction(+ \
@@ -134,16 +134,16 @@ namespace force_field
       {
         coef = 1.0; // ewald:'coef=1' for ghost in 'neighlist'. Not for binlist.
         j -= pos_size;
-        pos_j = atom_data->ghost.position[j];
-        type_j = atom_data->ghost.type[j];
+        pos_j = atom_data->atom_struct_ghost.position[j];
+        type_j = atom_data->atom_struct_ghost.type[j];
       }
       else
       {
-        pos_j = atom_data->owned.position[j];
-        type_j = atom_data->owned.type[j];
+        pos_j = atom_data->atom_struct_owned.position[j];
+        type_j = atom_data->atom_struct_owned.type[j];
       }
 
-      const auto charge_j = atom_data->owned.charge[type_j];
+      const auto charge_j = atom_data->atom_type_params.charge[type_j];
 
       const auto r_ij = pos_i - pos_j;
 
@@ -167,7 +167,7 @@ namespace force_field
   {
     Vector<double> field{0, 0, 0};
 
-    const auto &pos = atom_data->owned.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
     const auto lattice_vec_size = lattice_vec.size();
     const auto sigma_sq = sigma * sigma;
 #ifdef CAVIAR_WITH_OPENMP
@@ -176,8 +176,8 @@ namespace force_field
 #endif
     for (unsigned int j = 0; j < pos.size(); ++j)
     {
-      const auto type_j = atom_data->owned.type[j];
-      const auto charge_j = atom_data->owned.charge[type_j];
+      const auto type_j = atom_data->atom_struct_owned.type[j];
+      const auto charge_j = atom_data->atom_type_params.charge[type_j];
 
       Vector<double> sum{0, 0, 0};
       for (unsigned int k = 0; k < lattice_vec_size; ++k)
@@ -199,7 +199,7 @@ namespace force_field
   {
     Vector<double> field{0, 0, 0};
 
-    const auto &pos = atom_data->owned.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
     const auto lattice_vec_size = lattice_vec.size();
     const auto sigma_sq = sigma * sigma;
 #ifdef CAVIAR_WITH_OPENMP
@@ -208,8 +208,8 @@ namespace force_field
 #endif
     for (unsigned int j = 0; j < pos.size(); ++j)
     {
-      const auto type_j = atom_data->owned.type[j];
-      const auto charge_j = atom_data->owned.charge[type_j];
+      const auto type_j = atom_data->atom_struct_owned.type[j];
+      const auto charge_j = atom_data->atom_type_params.charge[type_j];
 
       Vector<double> sum{0, 0, 0};
       for (unsigned int k = 0; k < lattice_vec_size; ++k)

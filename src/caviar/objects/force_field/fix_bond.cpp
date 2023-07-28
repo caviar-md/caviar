@@ -125,15 +125,15 @@ namespace force_field
   void Fix_bond::create_atomic_bond()
   {
 
-    auto &pos = atom_data->owned.position;
-    auto &bond_count = atom_data->owned.atomic_bond_count;
+    auto &pos = atom_data->atom_struct_owned.position;
+    auto &bond_count = atom_data->atom_struct_owned.atomic_bond_count;
 
     for (unsigned int i = 0; i < pos.size(); ++i)
     {
       for (unsigned int j = i + 1; j < pos.size(); ++j)
       {
 
-        if ((int)atom_data->owned.type[i] == type_i && (int)atom_data->owned.type[j] == type_j)
+        if ((int)atom_data->atom_struct_owned.type[i] == type_i && (int)atom_data->atom_struct_owned.type[j] == type_j)
         {
           ;
           const auto dr = pos[j] - pos[i];

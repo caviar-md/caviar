@@ -140,7 +140,7 @@ namespace force_field
 
     // XXX Scheme using field functions. Of the order of the field implementation.
     // /*
-    const auto &pos = atom_data->owned.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
     const unsigned pos_size = pos.size();
 
 #ifdef CAVIAR_WITH_OPENMP
@@ -148,14 +148,14 @@ namespace force_field
 #endif
     for (unsigned i = 0; i < pos_size; ++i)
     {
-      const auto pos_i = atom_data->owned.position[i];
-      const auto type_i = atom_data->owned.type[i];
-      const auto charge_i = atom_data->owned.charge[type_i];
-      const auto mass_inv_i = atom_data->owned.mass_inv[type_i];
+      const auto pos_i = atom_data->atom_struct_owned.position[i];
+      const auto type_i = atom_data->atom_struct_owned.type[i];
+      const auto charge_i = atom_data->atom_type_params.charge[type_i];
+      const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
 
       const auto force = charge_i * field(pos_i); //
                                                   //    const auto force = charge_i * field (i);  //
-      atom_data->owned.acceleration[i] += force * mass_inv_i;
+      atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
     }
 
     // */

@@ -32,13 +32,13 @@ namespace writer
     // #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
 
 #if defined(CAVIAR_WITH_MPI)
-    MPI_Barrier(mpi_comm);
 
-    const auto &pos = atom_data->owned.position;
-    // const auto &vel = atom_data -> owned.velocity;
-    // const auto &acc = atom_data -> owned.acceleration;
-    const auto &id = atom_data->owned.id;
-    const auto &type = atom_data->owned.type;
+
+    const auto &pos = atom_data->atom_struct_owned.position;
+    // const auto &vel = atom_data -> atom_struct_owned.velocity;
+    // const auto &acc = atom_data -> atom_struct_owned.acceleration;
+    const auto &id = atom_data->atom_struct_owned.id;
+    const auto &type = atom_data->atom_struct_owned.type;
 
     std::vector<std::vector<int>> all_id;
     std::vector<Vector<double>> all_pos;
@@ -51,7 +51,7 @@ namespace writer
     const auto nta = atom_data->num_total_atoms;
     const unsigned nprocs = comm->nprocs;
     unsigned *nla_list = new unsigned[nprocs];
-
+  //std::cout << pos.size() << std::endl;
     if (nprocs > 1)
     {
 
@@ -68,7 +68,7 @@ namespace writer
         }
       } //-----------------------------------------------//
 
-      MPI_Barrier(mpi_comm);
+
 
       if (my_mpi_rank != 0)
       {                                                          //==================================// id send
@@ -93,7 +93,7 @@ namespace writer
         }
       } //-----------------------------------------------//
 
-      MPI_Barrier(mpi_comm);
+
 
       if (my_mpi_rank != 0)
       { //==================================// pos send
@@ -124,7 +124,7 @@ namespace writer
         }
       } //-----------------------------------------------//
 
-      MPI_Barrier(mpi_comm);
+
 
       if (my_mpi_rank != 0)
       { //==================================// type send
@@ -153,7 +153,7 @@ namespace writer
         }
       } //-----------------------------------------------//
 
-      MPI_Barrier(mpi_comm);
+
     }
     else
     { //==================================// one_processor MPI counterpart.
@@ -168,7 +168,7 @@ namespace writer
 
     } //-----------------------------------------------//
 
-    MPI_Barrier(mpi_comm);
+
 
     Vector<double> p_o{0, 0, 0};
     if (position_offset != nullptr)
@@ -191,11 +191,11 @@ namespace writer
 
 #else
 
-    auto &all_pos = atom_data->owned.position;
-    auto &all_type = atom_data->owned.type;
-    auto &all_vel = atom_data->owned.velocity;
-    auto &all_acc = atom_data->owned.acceleration;
-    auto nta = atom_data->owned.position.size();
+    auto &all_pos = atom_data->atom_struct_owned.position;
+    auto &all_type = atom_data->atom_struct_owned.type;
+    auto &all_vel = atom_data->atom_struct_owned.velocity;
+    auto &all_acc = atom_data->atom_struct_owned.acceleration;
+    auto nta = atom_data->atom_struct_owned.position.size();
 
     ofs_xyz << nta << "\nAtom\n";
 

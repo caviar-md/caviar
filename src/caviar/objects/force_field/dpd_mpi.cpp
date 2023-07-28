@@ -137,9 +137,9 @@ namespace force_field
 #endif
 
     std::map<GlobalID_t, GlobalID_t> id_to_index;
-    for (unsigned i = 0; i < atom_data->owned.id.size(); ++i)
+    for (unsigned i = 0; i < atom_data->atom_struct_owned.id.size(); ++i)
     {                                          // this doesn't need to be reconstructed in every step
-      id_to_index[atom_data->owned.id[i]] = i; // only after send_owned() happened it is needed to be cleared.
+      id_to_index[atom_data->atom_struct_owned.id[i]] = i; // only after send_owned() happened it is needed to be cleared.
     }
 
     auto cutoff_sq = cutoff * cutoff;
@@ -147,11 +147,11 @@ namespace force_field
     const auto &nlist = neighborlist->neighlist;
     for (unsigned int i = 0; i < nlist.size(); ++i)
     {
-      const auto &pos_i = atom_data->owned.position[i];
-      const auto &vel_i = atom_data->owned.velocity[i];
-      const auto type_i = atom_data->owned.type[i];
-      const auto mass_inv_i = atom_data->owned.mass_inv[type_i];
-      const auto id_i = atom_data->owned.id[i];
+      const auto &pos_i = atom_data->atom_struct_owned.position[i];
+      const auto &vel_i = atom_data->atom_struct_owned.velocity[i];
+      const auto type_i = atom_data->atom_struct_owned.type[i];
+      const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
+      const auto id_i = atom_data->atom_struct_owned.id[i];
       for (auto j : nlist[i])
       {
         bool is_ghost = j >= nlist.size();
@@ -161,22 +161,22 @@ namespace force_field
         if (is_ghost)
         {
           j -= nlist.size();
-          id_j = atom_data->ghost.id[j];
+          id_j = atom_data->atom_struct_ghost.id[j];
           if (id_i > id_j)
           {
             continue; // there's another continue below which can make problems if we do a "++g_num_recv;" here
           }
-          pos_j = atom_data->ghost.position[j];
-          vel_j = atom_data->ghost.velocity[j];
-          type_j = atom_data->ghost.type[j];
+          pos_j = atom_data->atom_struct_ghost.position[j];
+          vel_j = atom_data->atom_struct_ghost.velocity[j];
+          type_j = atom_data->atom_struct_ghost.type[j];
         }
         else
         {
-          pos_j = atom_data->owned.position[j];
-          vel_j = atom_data->owned.velocity[j];
-          type_j = atom_data->owned.type[j];
+          pos_j = atom_data->atom_struct_owned.position[j];
+          vel_j = atom_data->atom_struct_owned.velocity[j];
+          type_j = atom_data->atom_struct_owned.type[j];
         }
-        mass_inv_j = atom_data->owned.mass_inv[type_j];
+        mass_inv_j = atom_data->atom_type_params.mass_inv[type_j];
         auto dr = pos_j - pos_i;
         auto dv = vel_j - vel_i;
         auto r_sq = dr * dr;
@@ -194,9 +194,9 @@ namespace force_field
         auto force_rand = sigma * w_r * alpha * dt_sq_inv;
         auto force = (force_conserv + force_dissip + force_rand) * dr_norm;
 
-        atom_data->owned.acceleration[i] += force * mass_inv_i;
+        atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
         if (!is_ghost)
-          atom_data->owned.acceleration[j] -= force * mass_inv_j;
+          atom_data->atom_struct_owned.acceleration[j] -= force * mass_inv_j;
         else
         {
 #ifdef CAVIAR_WITH_MPI
@@ -248,20 +248,20 @@ namespace force_field
       for (auto j = 0; j < g_num_recv[i]; ++j)
       {
         int k = id_to_index.at(g_recv_id[i][j]);
-        atom_data->owned.acceleration[k] += g_recv_accel[i][j];
+        atom_data->atom_struct_owned.acceleration[k] += g_recv_accel[i][j];
       }
     }
 
     for (unsigned j = 0; j < g_send_id[0].size(); ++j)
     {
       int k = id_to_index.at(g_send_id[0][j]);
-      atom_data->owned.acceleration[k] += g_send_accel[0][j]; // note that we didn't send this part.
+      atom_data->atom_struct_owned.acceleration[k] += g_send_accel[0][j]; // note that we didn't send this part.
     }
 #else
     for (unsigned int j = 0; j < g_send_id.size(); ++j)
     {
       int k = id_to_index.at(g_send_id[j]);
-      atom_data->owned.acceleration[k] += g_send_accel[j];
+      atom_data->atom_struct_owned.acceleration[k] += g_send_accel[j];
     }
 #endif
   }

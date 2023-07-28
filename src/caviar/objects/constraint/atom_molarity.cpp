@@ -180,8 +180,8 @@ namespace constraint
     if (!settings_verified)
       verify_settings();
 
-    auto &pos = atom_data->owned.position;
-    auto &type = atom_data->owned.type;
+    auto &pos = atom_data->atom_struct_owned.position;
+    auto &type = atom_data->atom_struct_owned.type;
 
     // we record a list of atom indices that are in the area. It is used when we
     // have a maximum_limit constraint.

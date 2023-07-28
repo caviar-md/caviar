@@ -86,20 +86,20 @@ namespace force_field
   {
     FC_OBJECT_VERIFY_SETTINGS
 
-    const auto &pos = atom_data->owned.position;
-    const auto &vel = atom_data->owned.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
+    const auto &vel = atom_data->atom_struct_owned.position;
 
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
 #endif
     for (unsigned int i = 0; i < pos.size(); ++i)
     {
-      const auto type_i = atom_data->owned.type[i];
-      const auto mass_inv_i = atom_data->owned.mass_inv[type_i];
-      const auto charge_i = atom_data->owned.charge[type_i];
+      const auto type_i = atom_data->atom_struct_owned.type[i];
+      const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
+      const auto charge_i = atom_data->atom_type_params.charge[type_i];
 
       const auto a = charge_i * (amplitude_E * direction_E + amplitude_B * cross_product(vel[i], direction_B)) * mass_inv_i;
-      atom_data->owned.acceleration[i] += a;
+      atom_data->atom_struct_owned.acceleration[i] += a;
     }
   }
 

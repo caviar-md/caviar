@@ -141,7 +141,7 @@ namespace force_field
     unsigned max_size = 0;
 
     unsigned atom_data_type_max = 0;
-    for (auto &&t : atom_data->owned.type)
+    for (auto &&t : atom_data->atom_struct_owned.type)
     {
       // std::cout << "t: " << t << std::endl;
       if (atom_data_type_max < t)
@@ -313,9 +313,9 @@ namespace force_field
 #endif
     for (unsigned int i = 0; i < nlist.size(); ++i)
     {
-      const auto &pos_i = atom_data->owned.position[i];
-      const auto type_i = atom_data->owned.type[i];
-      const auto mass_inv_i = atom_data->owned.mass_inv[type_i];
+      const auto &pos_i = atom_data->atom_struct_owned.position[i];
+      const auto type_i = atom_data->atom_struct_owned.type[i];
+      const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
       for (auto j : nlist[i])
       {
         bool is_ghost = j >= nlist.size();
@@ -324,15 +324,15 @@ namespace force_field
         if (is_ghost)
         {
           j -= nlist.size();
-          pos_j = atom_data->ghost.position[j];
-          type_j = atom_data->ghost.type[j];
+          pos_j = atom_data->atom_struct_ghost.position[j];
+          type_j = atom_data->atom_struct_ghost.type[j];
         }
         else
         {
-          pos_j = atom_data->owned.position[j];
-          type_j = atom_data->owned.type[j];
+          pos_j = atom_data->atom_struct_owned.position[j];
+          type_j = atom_data->atom_struct_owned.type[j];
         }
-        mass_inv_j = atom_data->owned.mass_inv[type_j];
+        mass_inv_j = atom_data->atom_type_params.mass_inv[type_j];
 
         const auto dr = pos_j - pos_i;
 
@@ -371,19 +371,19 @@ namespace force_field
 
         auto force = 4 * eps_ij * (-12 * rho_12_inv * dr_sq_inv + 6 * rho_6_inv * dr_sq_inv + +12 * rho_c_12_inv * r_c_sq_inv - 6 * rho_c_6_inv * r_c_sq_inv) * dr;
 
-        atom_data->owned.acceleration[i] += force * mass_inv_i;
+        atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
         if (!is_ghost)
         {
 
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp atomic
-          atom_data->owned.acceleration[j].x -= force.x * mass_inv_j;
+          atom_data->atom_struct_owned.acceleration[j].x -= force.x * mass_inv_j;
 #pragma omp atomic
-          atom_data->owned.acceleration[j].y -= force.y * mass_inv_j;
+          atom_data->atom_struct_owned.acceleration[j].y -= force.y * mass_inv_j;
 #pragma omp atomic
-          atom_data->owned.acceleration[j].z -= force.z * mass_inv_j;
+          atom_data->atom_struct_owned.acceleration[j].z -= force.z * mass_inv_j;
 #else
-          atom_data->owned.acceleration[j] -= force * mass_inv_j;
+          atom_data->atom_struct_owned.acceleration[j] -= force * mass_inv_j;
 #endif
         }
       }

@@ -30,7 +30,7 @@ namespace force_field
   double Electrostatic_ewald_r::energy()
   {
     // /* // XXX working scheme using potential formula. order (neighborlist)
-    const auto &pos = atom_data->owned.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
     double energy_r = 0;
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for reduction(+ \
@@ -38,8 +38,8 @@ namespace force_field
 #endif
     for (unsigned int j = 0; j < pos.size(); ++j)
     {
-      const auto type_j = atom_data->owned.type[j];
-      const auto charge_j = atom_data->owned.charge[type_j];
+      const auto type_j = atom_data->atom_struct_owned.type[j];
+      const auto charge_j = atom_data->atom_type_params.charge[type_j];
       //    energy_r += charge_j * potential(j); // (neighlist) verlet_list and cell_list
       energy_r += charge_j * potential(pos[j]); // working (binlist) cell_list.
     }
@@ -49,15 +49,15 @@ namespace force_field
     /* // XXX working scheme with one sum on neighborlist
 
       double e = 0 ;
-      const auto &pos = atom_data -> owned.position;
+      const auto &pos = atom_data -> atom_struct_owned.position;
       const auto &nlist = neighborlist -> neighlist;
 
       const unsigned pos_size = pos.size();
 
       for (unsigned int i=0; i<nlist.size (); ++i) {
-        const auto &pos_i = atom_data -> owned.position [i];
-        const auto type_i = atom_data -> owned.type [i];
-        const auto charge_i = atom_data -> owned.charge [ type_i ];
+        const auto &pos_i = atom_data -> atom_struct_owned.position [i];
+        const auto type_i = atom_data -> atom_struct_owned.type [i];
+        const auto charge_i = atom_data -> atom_type_params.charge [ type_i ];
 
         for (auto j : nlist[i]) {
           double coef = 2.0;
@@ -68,14 +68,14 @@ namespace force_field
           if (is_ghost) {
             coef = 1.0;
             j -= pos_size;
-            pos_j = atom_data->ghost.position [j];
-            type_j = atom_data->ghost.type [j];
+            pos_j = atom_data->atom_struct_ghost.position [j];
+            type_j = atom_data->atom_struct_ghost.type [j];
           } else {
-            pos_j = atom_data->owned.position [j];
-            type_j = atom_data->owned.type [j];
+            pos_j = atom_data->atom_struct_owned.position [j];
+            type_j = atom_data->atom_struct_owned.type [j];
           }
 
-          const auto charge_j = atom_data -> owned.charge [ type_j ];
+          const auto charge_j = atom_data -> atom_type_params.charge [ type_j ];
           const auto r_ij = pos_i - pos_j;
 
           if (r_ij.x == 0 && r_ij.y == 0 && r_ij.z == 0) continue;
@@ -94,20 +94,20 @@ namespace force_field
     /* //  XXX workin scheme without neighborlist
 
       double e = 0 ;
-      const auto &pos = atom_data -> owned.position;
-      const auto &gpos = atom_data -> ghost.position;
+      const auto &pos = atom_data -> atom_struct_owned.position;
+      const auto &gpos = atom_data -> atom_struct_ghost.position;
       const unsigned pos_size = pos.size();
 
       for (unsigned int i=0; i<pos_size; ++i) {
-        const auto &pos_i = atom_data -> owned.position [i];
-        const auto type_i = atom_data -> owned.type [i];
-        const auto charge_i = atom_data -> owned.charge [ type_i ];
+        const auto &pos_i = atom_data -> atom_struct_owned.position [i];
+        const auto type_i = atom_data -> atom_struct_owned.type [i];
+        const auto charge_i = atom_data -> atom_type_params.charge [ type_i ];
 
         for (unsigned int j=0; j<pos_size; ++j) {
-          const auto pos_j = atom_data->owned.position [j];
-          const auto type_j = atom_data->owned.type [j];
+          const auto pos_j = atom_data->atom_struct_owned.position [j];
+          const auto type_j = atom_data->atom_struct_owned.type [j];
 
-          const auto charge_j = atom_data -> owned.charge [ type_j ];
+          const auto charge_j = atom_data -> atom_type_params.charge [ type_j ];
           const auto r_ij = pos_i - pos_j;
 
           if (r_ij.x == 0 && r_ij.y == 0 && r_ij.z == 0) continue;
@@ -119,10 +119,10 @@ namespace force_field
         }
 
         for (unsigned int j=0; j<gpos.size(); ++j) {
-          const auto pos_j = atom_data->ghost.position [j];
-          const auto type_j = atom_data->ghost.type [j];
+          const auto pos_j = atom_data->atom_struct_ghost.position [j];
+          const auto type_j = atom_data->atom_struct_ghost.type [j];
 
-          const auto charge_j = atom_data -> owned.charge [ type_j ];
+          const auto charge_j = atom_data -> atom_type_params.charge [ type_j ];
           const auto r_ij = pos_i - pos_j;
 
           //if (r_ij.x == 0 && r_ij.y == 0 && r_ij.z == 0) continue;
@@ -140,26 +140,26 @@ namespace force_field
 
     /* // XXX working scheme with neighborlist and two sums
       double e = 0 ;
-      const auto &pos = atom_data -> owned.position;
-      const auto &gpos = atom_data -> ghost.position;
+      const auto &pos = atom_data -> atom_struct_owned.position;
+      const auto &gpos = atom_data -> atom_struct_ghost.position;
       const unsigned pos_size = pos.size();
 
       const auto &nlist = neighborlist -> neighlist;
 
       for (unsigned int i=0; i<pos_size; ++i) {
-        const auto &pos_i = atom_data -> owned.position [i];
-        const auto type_i = atom_data -> owned.type [i];
-        const auto charge_i = atom_data -> owned.charge [ type_i ];
+        const auto &pos_i = atom_data -> atom_struct_owned.position [i];
+        const auto type_i = atom_data -> atom_struct_owned.type [i];
+        const auto charge_i = atom_data -> atom_type_params.charge [ type_i ];
 
         double se1 = 0;
 
         for (auto j : nlist[i]) {
           bool is_ghost = j >= pos_size;
           if (is_ghost) continue;
-          const auto pos_j = atom_data->owned.position [j];
-          const auto type_j = atom_data->owned.type [j];
+          const auto pos_j = atom_data->atom_struct_owned.position [j];
+          const auto type_j = atom_data->atom_struct_owned.type [j];
 
-          const auto charge_j = atom_data -> owned.charge [ type_j ];
+          const auto charge_j = atom_data -> atom_type_params.charge [ type_j ];
           const auto r_ij = pos_i - pos_j;
 
           if (r_ij.x == 0 && r_ij.y == 0 && r_ij.z == 0) continue;
@@ -176,10 +176,10 @@ namespace force_field
           bool is_ghost = j >= pos_size;
           if (!is_ghost) continue;
           j -= pos_size;
-          const auto pos_j = atom_data->ghost.position [j];
-          const auto type_j = atom_data->ghost.type [j];
+          const auto pos_j = atom_data->atom_struct_ghost.position [j];
+          const auto type_j = atom_data->atom_struct_ghost.type [j];
 
-          const auto charge_j = atom_data -> owned.charge [ type_j ];
+          const auto charge_j = atom_data -> atom_type_params.charge [ type_j ];
           const auto r_ij = pos_i - pos_j;
 
           //if (r_ij.x == 0 && r_ij.y == 0 && r_ij.z == 0) continue;

@@ -433,7 +433,7 @@ namespace force_field
 
     std::cout << "generate_ml_training_data: Check condition " << std::endl;
     // check condition
-    auto &pos = atom_data->owned.position;
+    auto &pos = atom_data->atom_struct_owned.position;
     if (pos.size() != 1)
       error->all(FC_FILE_LINE_FUNC, "Expected only one atom in atomdata for ML training data.");
 
@@ -1107,9 +1107,9 @@ namespace force_field
 
     double c = calculate_induced_charge(0, 1);
 
-    const auto &pos = atom_data->owned.position;
-    const auto type_i = atom_data->owned.type[0];
-    const auto charge_i = atom_data->owned.charge[type_i];
+    const auto &pos = atom_data->atom_struct_owned.position;
+    const auto type_i = atom_data->atom_struct_owned.type[0];
+    const auto charge_i = atom_data->atom_type_params.charge[type_i];
 
     const dealii::Point<3> r = {pos[0].x, pos[0].y, pos[0].z};
 
@@ -1803,8 +1803,8 @@ namespace force_field
     MPI_Comm_size (MPI::COMM_WORLD, &nprocs);
 
     MPI_Barrier (MPI_COMM_WORLD);
-    const auto &pos = atom_data -> owned.position;
-    const auto &type = atom_data -> owned.type;
+    const auto &pos = atom_data -> atom_struct_owned.position;
+    const auto &type = atom_data -> atom_struct_owned.type;
     int root = 0;
     while (root < nprocs) {
 
@@ -1828,7 +1828,7 @@ namespace force_field
         }
 
         for (unsigned  i=0;i<pos.size();++i) {
-          atom_data -> owned.acceleration [i] += root_acc[i];
+          atom_data -> atom_struct_owned.acceleration [i] += root_acc[i];
         }
 
       } else {
@@ -1847,20 +1847,20 @@ namespace force_field
 
 
           for (unsigned i=0;i<pos.size();++i) {
-             const auto type_i = atom_data -> owned.type [i] ;
-            const auto mass_inv_i = atom_data -> owned.mass_inv [ type_i ];
-            const auto charge_i = atom_data -> owned.charge [ type_i ];
+             const auto type_i = atom_data -> atom_struct_owned.type [i] ;
+            const auto mass_inv_i = atom_data -> atom_type_params.mass_inv [ type_i ];
+            const auto charge_i = atom_data -> atom_type_params.charge [ type_i ];
 
 
             for (unsigned j=i+1;j<root_pos.size();++j) {
                const auto type_j = root_type [j] ;
-              const auto mass_inv_j = atom_data -> owned.mass_inv [ type_j ];
-              const auto charge_j = atom_data -> owned.charge [ type_j ];
+              const auto mass_inv_j = atom_data -> atom_type_params.mass_inv [ type_j ];
+              const auto charge_j = atom_data -> atom_type_params.charge [ type_j ];
               const auto dr = root_pos[j] - pos[i];
               const auto dr_sq = dr*dr;
               const auto dr_norm = std::sqrt(dr_sq);
               const auto force = k_electrostatic * charge_i * charge_j * dr / (dr_sq*dr_norm);
-              atom_data -> owned.acceleration [i] -= force * mass_inv_i;
+              atom_data -> atom_struct_owned.acceleration [i] -= force * mass_inv_i;
               root_acc [j] += force * mass_inv_j; // no periodic boundary condition yet
             }
           }
@@ -1881,7 +1881,7 @@ namespace force_field
 
   void Plt_dealii::calculate_all_particles_mesh_force_acc()
   {
-    const auto &pos = atom_data->owned.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
     Vector<double> po{0, 0, 0};
     if (position_offset != nullptr)
       po += position_offset->current_value;
@@ -1890,9 +1890,9 @@ namespace force_field
 #endif
     for (unsigned int i = 0; i < pos.size(); ++i)
     {
-      const auto type_i = atom_data->owned.type[i];
-      const auto mass_inv_i = atom_data->owned.mass_inv[type_i];
-      const auto charge_i = atom_data->owned.charge[type_i];
+      const auto type_i = atom_data->atom_struct_owned.type[i];
+      const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
+      const auto charge_i = atom_data->atom_type_params.charge[type_i];
 
       const dealii::Point<3> r = {pos[i].x - po.x, pos[i].y - po.y, pos[i].z - po.z};
       dealii::Tensor<1, 3, double> field;
@@ -1914,7 +1914,7 @@ namespace force_field
       auto frc = field * charge_i;
       auto force = caviar::Vector<double>{frc[0], frc[1], frc[2]};
 
-      atom_data->owned.acceleration[i] += force * mass_inv_i;
+      atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
     }
   }
 

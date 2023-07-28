@@ -32,7 +32,7 @@ namespace force_field
     // XXX Working scheme using binlist
     double potential_r = 0;
 
-    const auto &pos = atom_data->owned.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
     const auto &binlist = neighborlist->binlist;
     const auto &nb = neighborlist->neigh_bin;
     const auto nb_i = neighborlist->neigh_bin_index(r);
@@ -61,16 +61,16 @@ namespace force_field
         {
 
           j -= pos_size;
-          pos_j = atom_data->ghost.position[j];
-          type_j = atom_data->ghost.type[j];
+          pos_j = atom_data->atom_struct_ghost.position[j];
+          type_j = atom_data->atom_struct_ghost.type[j];
         }
         else
         {
-          pos_j = atom_data->owned.position[j];
-          type_j = atom_data->owned.type[j];
+          pos_j = atom_data->atom_struct_owned.position[j];
+          type_j = atom_data->atom_struct_owned.type[j];
         }
 
-        const auto charge_j = atom_data->owned.charge[type_j];
+        const auto charge_j = atom_data->atom_type_params.charge[type_j];
         const auto r_ij = pos_i - pos_j;
 
         if (r_ij.x == 0 && r_ij.y == 0 && r_ij.z == 0)
@@ -91,12 +91,12 @@ namespace force_field
     error->all("not implemented. It gives a correct answer for the energy but the formula is wrong for one point");
 
     double potential_r = 0;
-    const auto &pos = atom_data->owned.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
     const auto &nlist = neighborlist->neighlist;
 
     const unsigned pos_size = pos.size();
 
-    const auto &pos_i = atom_data->owned.position[i];
+    const auto &pos_i = atom_data->atom_struct_owned.position[i];
 
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for reduction(+ \
@@ -115,16 +115,16 @@ namespace force_field
       {
         coef = 1.0; // ewald:'coef=1' for ghost in 'neighlist'. Not for binlist.
         j -= pos_size;
-        pos_j = atom_data->ghost.position[j];
-        type_j = atom_data->ghost.type[j];
+        pos_j = atom_data->atom_struct_ghost.position[j];
+        type_j = atom_data->atom_struct_ghost.type[j];
       }
       else
       {
-        pos_j = atom_data->owned.position[j];
-        type_j = atom_data->owned.type[j];
+        pos_j = atom_data->atom_struct_owned.position[j];
+        type_j = atom_data->atom_struct_owned.type[j];
       }
 
-      const auto charge_j = atom_data->owned.charge[type_j];
+      const auto charge_j = atom_data->atom_type_params.charge[type_j];
       const auto r_ij = pos_i - pos_j;
 
       if (r_ij.x == 0 && r_ij.y == 0 && r_ij.z == 0)

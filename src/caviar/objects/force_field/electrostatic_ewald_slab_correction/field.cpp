@@ -140,9 +140,9 @@ Vector<double> Electrostatic_ewald_slab_correction::field (const Vector<double> 
 
 // XXX Working Scheme of order N^2
  /*
-  const auto &type = atom_data->owned.type;
-  const auto &charge = atom_data->owned.charge;
-  const auto &pos = atom_data->owned.position;
+  const auto &type = atom_data->atom_struct_owned.type;
+  const auto &charge = atom_data->atom_type_params.charge;
+  const auto &pos = atom_data->atom_struct_owned.position;
   const auto pos_size = pos.size();  
 
   for (auto j = 0; j < pos_size; ++j) {
@@ -216,7 +216,7 @@ Vector<double> Electrostatic_ewald_slab_correction::field (const Vector<double> 
 }
 
 Vector<double> Electrostatic_ewald_slab_correction::field (int i) {
-  return field (atom_data->owned.position[i]);
+  return field (atom_data->atom_struct_owned.position[i]);
 }
 
 Vector<double> Electrostatic_ewald_slab_correction::dipole_field () {

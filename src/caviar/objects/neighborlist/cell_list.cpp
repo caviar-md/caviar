@@ -156,8 +156,8 @@ namespace neighborlist
         for (auto &&bz : by)
           bz.clear();
 
-    const auto &pos = atom_data->owned.position;
-    const auto &pos_ghost = atom_data->ghost.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
+    const auto &pos_ghost = atom_data->atom_struct_ghost.position;
     const auto pos_size = pos.size();
 
     for (unsigned int i = 0; i < pos_size; ++i)
@@ -178,7 +178,7 @@ namespace neighborlist
     build_binlist();
     if (make_neighlist)
     {
-      const auto &pos = atom_data->owned.position;
+      const auto &pos = atom_data->atom_struct_owned.position;
       const int pos_size = pos.size();
       const auto cutoff_neighlist_sq = cutoff_neighlist * cutoff_neighlist;
       const auto &nb = neigh_bin;
@@ -201,9 +201,9 @@ namespace neighborlist
             {
               auto dr = pos[i];
               if (ind_j >= pos_size) // Ghost condition
-                dr -= atom_data->ghost.position[ind_j - pos_size];
+                dr -= atom_data->atom_struct_ghost.position[ind_j - pos_size];
               else
-                dr -= atom_data->owned.position[ind_j];
+                dr -= atom_data->atom_struct_owned.position[ind_j];
               if (dr * dr < cutoff_neighlist_sq)
                 neighlist[i].emplace_back(ind_j);
             }

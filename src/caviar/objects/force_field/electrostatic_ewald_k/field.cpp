@@ -37,7 +37,7 @@ namespace force_field
   Vector<double> Electrostatic_ewald_k::k_space_field(const int i)
   {
     Vector<double> field{0, 0, 0};
-    const auto &pos = atom_data->owned.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
     static std::complex<double> ii(0.0, 1.0);
 
     std::complex<double> sum_kx(0.0, 0.0);

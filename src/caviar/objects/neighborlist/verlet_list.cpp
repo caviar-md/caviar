@@ -79,14 +79,14 @@ namespace neighborlist
     if (dt <= 0.0)
       error->all(FC_FILE_LINE_FUNC, "dt have to non-negative.");
     auto &old_pos = atom_data->last_reneighborlist_pos;
-    const auto &pos = atom_data->owned.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
     old_pos.resize(pos.size());
   }
 
   bool Verlet_list::rebuild_neighlist()
   {
     bool result = false;
-    const auto &pos = atom_data->owned.position, &old_pos = atom_data->last_reneighborlist_pos;
+    const auto &pos = atom_data->atom_struct_owned.position, &old_pos = atom_data->last_reneighborlist_pos;
     if (pos.size() != old_pos.size())
       result = true;
     else
@@ -108,7 +108,7 @@ namespace neighborlist
   void Verlet_list::build_neighlist()
   {
     double max_vel_sq = 0.0;
-    for (const auto v : atom_data->owned.velocity)
+    for (const auto v : atom_data->atom_struct_owned.velocity)
     { // Any faster scheme using <algorithm>?
       double vel_sq_temp = v * v;
       if (max_vel_sq < vel_sq_temp)
@@ -126,7 +126,7 @@ namespace neighborlist
 #endif
     cutoff_extra = cutoff_extra_coef * dt * max_vel_all;
 
-    const auto &pos = atom_data->owned.position, &pos_ghost = atom_data->ghost.position;
+    const auto &pos = atom_data->atom_struct_owned.position, &pos_ghost = atom_data->atom_struct_ghost.position;
     const auto cutoff_sq = (cutoff + cutoff_extra) * (cutoff + cutoff_extra);
     const auto pos_size = pos.size();
     neighlist.clear();

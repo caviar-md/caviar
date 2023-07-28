@@ -27,10 +27,10 @@ namespace writer
     FC_NULLPTR_CHECK(atom_data)
     std::cout << std::setprecision(10);
     std::cout << "Md_simulator::output_total_force :\n";
-    const auto &pos_size = atom_data->owned.position.size();
-    const auto &acc = atom_data->owned.acceleration;
-    const auto &type = atom_data->owned.type;
-    const auto &mass = atom_data->owned.mass;
+    const auto &pos_size = atom_data->atom_struct_owned.position.size();
+    const auto &acc = atom_data->atom_struct_owned.acceleration;
+    const auto &type = atom_data->atom_struct_owned.type;
+    const auto &mass = atom_data->atom_type_params.mass;
 
     for (unsigned i = 0; i < pos_size ; ++i)
       std::cout << i << ": " << acc[i]*mass[ type[i] ] << "\n";

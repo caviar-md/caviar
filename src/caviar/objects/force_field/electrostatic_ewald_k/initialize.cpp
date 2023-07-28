@@ -93,7 +93,7 @@ namespace force_field
 
   void Electrostatic_ewald_k::calculate_dipole_sum()
   {
-    const auto &pos = atom_data->owned.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
     dipole_sum = Vector<double>{0, 0, 0};
 #ifdef CAVIAR_WITH_OPENMP
     // #pragma omp parallel for reduction (+:dipole_sum) //weird error in gavazang compiler but no error in my laptop
@@ -101,8 +101,8 @@ namespace force_field
 #endif
     for (unsigned int j = 0; j < pos.size(); ++j)
     {
-      const auto type_j = atom_data->owned.type[j];
-      const auto charge_j = atom_data->owned.charge[type_j];
+      const auto type_j = atom_data->atom_struct_owned.type[j];
+      const auto charge_j = atom_data->atom_type_params.charge[type_j];
       dipole_sum += charge_j * pos[j];
     }
     dipole_field_vector = -dipole_sum * dipole_coef;
@@ -111,7 +111,7 @@ namespace force_field
   void Electrostatic_ewald_k::calculate_potential_k_coef_cmplx()
   {
     static std::complex<double> ii(0.0, 1.0);
-    const auto &pos = atom_data->owned.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
     const auto pos_size = pos.size();
     potential_k_coef_cmplx.resize(n_k_vectors);
 
@@ -126,8 +126,8 @@ namespace force_field
 
       for (unsigned int j = 0; j < pos_size; ++j)
       {
-        const auto type_j = atom_data->owned.type[j];
-        const auto charge_j = atom_data->owned.charge[type_j];
+        const auto type_j = atom_data->atom_struct_owned.type[j];
+        const auto charge_j = atom_data->atom_type_params.charge[type_j];
 
         rho += charge_j * std::exp(ii * (k_vector_k * pos[j]));
       }

@@ -32,8 +32,8 @@ namespace writer
   void Atom_data::dump_msd(int64_t i, double t)
   {
 
-    const auto &pos = atom_data->owned.position;
-    const auto &type = atom_data->owned.type;
+    const auto &pos = atom_data->atom_struct_owned.position;
+    const auto &type = atom_data->atom_struct_owned.type;
 
     auto pos_size = pos.size();
     if (i < msd_initial_step)
@@ -44,7 +44,7 @@ namespace writer
       for (unsigned int j = 0; j < pos_size; ++j)
       {
         msd_initial_position[j] = pos[j];
-        atom_data->owned.msd_domain_cross[j] = Vector<int>{0, 0, 0};
+        atom_data->atom_struct_owned.msd_domain_cross[j] = Vector<int>{0, 0, 0};
       }
       if (my_mpi_rank == 0)
         ofs_msd << i << " " << t << " "
@@ -68,9 +68,9 @@ namespace writer
         continue;
       auto dr = msd_initial_position[j] - pos[j];
 
-      dr.x += atom_data->owned.msd_domain_cross[j].x * domain_dx.x;
-      dr.y += atom_data->owned.msd_domain_cross[j].y * domain_dx.y;
-      dr.z += atom_data->owned.msd_domain_cross[j].z * domain_dx.z;
+      dr.x += atom_data->atom_struct_owned.msd_domain_cross[j].x * domain_dx.x;
+      dr.y += atom_data->atom_struct_owned.msd_domain_cross[j].y * domain_dx.y;
+      dr.z += atom_data->atom_struct_owned.msd_domain_cross[j].z * domain_dx.z;
 
       // domain-> periodic_distance(dr);
 

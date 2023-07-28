@@ -163,8 +163,8 @@ namespace constraint
     // We can put both of these function (step_I and step_II) into one if the Euler
     // integration is used.
 
-    auto &vel = atom_data->owned.velocity;
-    auto &acc = atom_data->owned.acceleration;
+    auto &vel = atom_data->atom_struct_owned.velocity;
+    auto &acc = atom_data->atom_struct_owned.acceleration;
     auto psize = acc.size();
     for (unsigned int i = 0; i < psize; ++i)
     {
