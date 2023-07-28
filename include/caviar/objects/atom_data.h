@@ -127,10 +127,10 @@ public:
    */
   virtual void set_num_total_atoms(GlobalID_t);
 
-  /**
-   * Initial setting of number of atom types.
-   */
-  virtual void set_num_atom_types(AtomType_t n) { num_atom_types = n; }
+  // /**
+  //  * Initial setting of number of atom types.
+  //  */
+  // virtual void set_num_atom_types(AtomType_t n) { num_atom_types = n; }
 
   /**
    * total number of system degree of freedom. For simple atomic simulations,
@@ -272,9 +272,14 @@ public:
   virtual bool position_inside_local_domain(const Vector<double> &pos);
 
   /**
-   * finds the global_id of an Atom that's going to be added.
+   * in MPI, it is the sum of local atoms.
    */
-  virtual GlobalID_t get_global_id();
+  virtual long get_num_of_atoms_local();
+
+  /**
+   * in MPI, it is the sum of local atoms.
+   */
+  virtual long get_num_of_atoms_global();
 
   /**
    * used when there are different MPI domains and all of them should know all
@@ -322,6 +327,20 @@ public:
 
  
   /**
+   *  reserving memory for atom_struct_owned to have faster atom import or atom addition
+   */
+  virtual bool atom_struct_owned_reserve(long new_size);
+
+   /**
+   *  resizing atom_struct_owned correctly. It will resize only the important params according to atom_data configuration.
+   */
+  virtual bool atom_struct_owned_resize(long new_size);
+
+   /**
+   *  resizing atom_struct_owned correctly. It will resize only the important params according to atom_data configuration.
+   */
+  virtual bool atom_struct_ghost_resize(long new_size);
+  /**
    * 'owned' atoms are the one that matter in integrators in the domain. 
    */
   atom_data::Atom_struct atom_struct_owned;
@@ -342,10 +361,7 @@ public:
    */
   atom_data::Molecule_struct molecule_struct_owned;
 
-  /**
-   * it turns the process of recording owned data in the releated std::vector
-   */
-  bool record_owned_position_old, record_owned_velocity_old, record_owned_acceleration_old;
+
 
   /**
    * since not all of the situations need ghost particles velocity, we only send
@@ -353,19 +369,22 @@ public:
    */
   bool make_ghost_velocity;
 
-  /**
-   * what these variables do are obvious. 'est' is for estimation.
-   */
-  LocalID_t num_local_atoms, num_local_atoms_est;
-  GlobalID_t num_total_atoms;
-  AtomType_t num_atom_types;
+  // /**
+  //  * what these variables do are obvious. 'est' is for estimation.
+  //  */
+  // LocalID_t num_local_atoms, num_local_atoms_est;
+  // GlobalID_t num_total_atoms;
+  // AtomType_t num_atom_types;
 
   /**
    * number of total molecules.
    */
   int num_molecules;
 
-  std::vector<int> ghost_rank; // the rank of the domain in which the owned counterpart exists
+ /*
+ * the rank of the domain in which the owned counterpart exists. Used in only a few MPI force_field schemes 
+ */ 
+  std::vector<int> ghost_MPI_rank;
 
   /**
    * i wonder if this should be here or it should be in the neighborlist class
@@ -397,10 +416,7 @@ public:
    */
   double k_b;
 
-  /**
-   * Add mean square distance (MSD) calculations if needed. The default value is false for performance.
-   */
-  bool msd_process = false;
+
 
   /**
    *  number of external degrees of freedom according to page 114 of
@@ -433,6 +449,49 @@ public:
    * usage in 'empty_of_atoms()' functions.
    */
   class neighborlist::Cell_list *cell_list;
+
+
+  void set_msd_process(bool stat)
+  {
+    msd_process = stat;
+    atom_struct_owned.msd_domain_cross.resize(get_num_of_atoms_local(),caviar::Vector<int>{0,0,0});  
+  }
+
+  void set_record_owned_position_old(bool stat)
+  {
+    record_owned_position_old = stat;
+    atom_struct_owned.position_old.resize(get_num_of_atoms_local(),caviar::Vector<double>{0,0,0});  
+  }
+
+    void set_record_owned_velocity_old(bool stat)
+  {
+    record_owned_velocity_old = stat;
+    atom_struct_owned.velocity_old.resize(get_num_of_atoms_local(),caviar::Vector<double>{0,0,0});  
+  }
+
+    void set_record_owned_acceleration_old(bool stat)
+  {
+    record_owned_acceleration_old = stat;
+    atom_struct_owned.acceleration_old.resize(get_num_of_atoms_local(),caviar::Vector<double>{0,0,0});  
+  }
+  //===========================
+  // Private Part
+  //===========================
+  private:
+  /**
+   * Add mean square distance (MSD) calculations if needed. The default value is false for performance.
+   */
+  bool msd_process = false;
+
+  /**
+   * it turns the process of recording owned data in the releated std::vector
+   */
+  bool record_owned_position_old, record_owned_velocity_old, record_owned_acceleration_old;
+
+  //===========================
+  // Public Part
+  //===========================
+  public:
 
   FC_BASE_OBJECT_COMMON_TOOLS
 };

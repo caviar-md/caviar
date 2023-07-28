@@ -48,7 +48,7 @@ namespace writer
     std::vector<int> all_type;
 
     const auto nla = pos.size(); // atom_data -> num_local_atoms;
-    const auto nta = atom_data->num_total_atoms;
+    const auto nta = atom_data->get_num_of_atoms_global();
     const unsigned nprocs = comm->nprocs;
     unsigned *nla_list = new unsigned[nprocs];
   //std::cout << pos.size() << std::endl;

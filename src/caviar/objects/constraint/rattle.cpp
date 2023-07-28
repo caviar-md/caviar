@@ -76,7 +76,7 @@ namespace constraint
   void Rattle::verify_settings()
   {
     FC_NULLPTR_CHECK(atom_data)
-    atom_data->record_owned_position_old = true;
+    atom_data->set_record_owned_position_old(true) ;
     FC_NULLPTR_CHECK(domain)
     if (dt <= 0.0)
       error->all(FC_FILE_LINE_FUNC, "dt have to be a positive number");

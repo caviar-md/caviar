@@ -42,7 +42,7 @@ void Atom_data::exchange_ghost(long step)
   atom_struct_ghost.velocity.clear();
   atom_struct_ghost.id.clear();
   atom_struct_ghost.type.clear();
-  ghost_rank.clear();
+  ghost_MPI_rank.clear();
 
   const auto bc = domain->boundary_condition;
 
@@ -69,6 +69,8 @@ void Atom_data::exchange_ghost(long step)
 
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
   const auto me = domain->me;
+  int num_local_atoms = atom_struct_owned.id.size();
+
   if (me == 0)
   {
     for (unsigned int i = 0; i < num_local_atoms; ++i)
@@ -242,6 +244,8 @@ void Atom_data::exchange_ghost(long step)
     m++;
     FOR_IJK_LOOP_END
   }
+  unsigned num_local_atoms = atom_struct_owned.id.size();
+
   for (unsigned i = 0; i < num_local_atoms; ++i)
   {
     const auto xlc = pos[i].x < x_llow;
@@ -454,13 +458,17 @@ void Atom_data::exchange_ghost(long step)
 
   auto old_size = 0;//g_id.size();
   auto new_size = old_size + N;
+
+  atom_struct_ghost_resize(new_size);
+
+
   g_id.resize(new_size);
   g_type.resize(new_size);
   g_pos.resize(new_size);
   if (make_ghost_velocity)
     g_vel.resize(new_size);
 
-  ghost_rank.resize(new_size);
+  ghost_MPI_rank.resize(new_size);
 
 
   for (int c = 0; c < N; ++c)
@@ -468,7 +476,7 @@ void Atom_data::exchange_ghost(long step)
 
     int m = old_size + c;
 
-    ghost_rank[m] = all[i][j][k];
+    ghost_MPI_rank[m] = all[i][j][k];
 
     g_id[m] = recv_data[i][j][k][c];
 
@@ -527,12 +535,13 @@ void Atom_data::exchange_ghost(long step)
       g_pos.emplace_back(pos[m].x - x_val * x_width, pos[m].y - y_val * y_width, pos[m].z - z_val * z_width);
       g_id.emplace_back(id[m]);
       g_type.emplace_back(type[m]);
-      ghost_rank.emplace_back(me);
+      ghost_MPI_rank.emplace_back(me);
     }
   }
   FOR_IJK_LOOP_END
 //MPI_Barrier(mpi_comm);
 #else
+  int num_local_atoms = atom_struct_owned.id.size();
 
   for (unsigned int i = 0; i < num_local_atoms; ++i)
   {

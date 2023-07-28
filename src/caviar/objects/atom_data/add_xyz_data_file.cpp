@@ -153,7 +153,7 @@ bool Atom_data::add_xyz_data_file(caviar::interpreter::Parser *parser)
     }
     else
     {
-      auto id = get_global_id();
+      auto id = get_num_of_atoms_global();
       add_atom(id, type, pos, vel);
     }
   }

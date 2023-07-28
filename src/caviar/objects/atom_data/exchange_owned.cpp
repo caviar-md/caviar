@@ -65,6 +65,8 @@ bool Atom_data::exchange_owned(long step)
 
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
   const auto me = domain->me;
+  int num_local_atoms = atom_struct_owned.id.size();
+
   if (me == 0)
   {
     for (unsigned int i = 0; i < num_local_atoms; ++i)
@@ -173,6 +175,7 @@ bool Atom_data::exchange_owned(long step)
     m++;
     FOR_IJK_LOOP_END
   }
+  unsigned num_local_atoms = atom_struct_owned.id.size();
 
   for (unsigned i = 0; i < num_local_atoms; ++i)
   {
@@ -387,15 +390,8 @@ bool Atom_data::exchange_owned(long step)
 
   auto old_size = id.size();
   auto new_size = old_size + N;
-  id.resize(new_size);
-  type.resize(new_size);
-  pos.resize(new_size);
-  vel.resize(new_size);
-  acc.resize(new_size);
-  if (msd_process)
-    msd.resize(new_size);
 
-  num_local_atoms += N;
+  atom_struct_owned_resize(new_size);
 
   for (int c = 0; c < N; ++c)
   {
@@ -498,6 +494,8 @@ bool Atom_data::exchange_owned(long step)
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
 #endif
+  int num_local_atoms = atom_struct_owned.id.size();
+
   for (unsigned int i = 0; i < num_local_atoms; ++i)
   {
     if (bc.x == 1)

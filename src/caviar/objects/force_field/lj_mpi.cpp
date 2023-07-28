@@ -184,7 +184,7 @@ namespace force_field
         else
         {
 #ifdef CAVIAR_WITH_MPI
-          int rti = rank_to_index[atom_data->ghost_rank[j]];
+          int rti = rank_to_index[atom_data->ghost_MPI_rank[j]];
           g_send_accel[rti].push_back(-force * mass_inv_j);
           g_send_id[rti].push_back(id_j);
           g_num_send[rti]++;

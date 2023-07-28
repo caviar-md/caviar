@@ -174,7 +174,12 @@ bool Md_simulator::read(caviar::interpreter::Parser *parser)
       if (string_cmp(ts, "leap_frog"))
         integrator_type = Integrator_t::Leap_frog;
       else if (string_cmp(ts, "velocity_verlet"))
-        integrator_type = Integrator_t::Velocity_verlet;
+        {
+          if (atom_data == nullptr)
+            error->all(FC_FILE_LINE_FUNC_PARSE, "set atom_data before this integrator");
+          atom_data-> set_record_owned_acceleration_old(true);
+          integrator_type = Integrator_t::Velocity_verlet;
+        }
       else if (string_cmp(ts, "velocity_verlet_langevin"))
         integrator_type = Integrator_t::Velocity_verlet_langevin;
       else
@@ -547,12 +552,6 @@ void Md_simulator::integrate_velocity_verlet()
   //-------------------------------
   //-------------------------------
 
-  /// XXX
-  atom_data->record_owned_acceleration_old = true;
-  if (acc_old.size() != acc.size())
-    acc_old.resize(acc.size());
-  // XXX
-
   // re_calculate_acc(); // use r(t) to calculate a(t). The forces has to be velocity independent
   //  It has been calculated in previous step
 
@@ -565,6 +564,7 @@ void Md_simulator::integrate_velocity_verlet()
   {
 
     pos[i] += vel[i] * dt + 0.5 * acc[i] * dt * dt; // r(t+dt) = r(t) + v(t)*dt + 1/2 * a(t) * dt^2
+    acc_old[i] = acc[i]; // XXX check it
   }
 
   for (auto &&c : constraint)

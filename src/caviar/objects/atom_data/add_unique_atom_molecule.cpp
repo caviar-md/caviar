@@ -32,7 +32,7 @@ CAVIAR_NAMESPACE_OPEN
 bool Atom_data::add_atom(caviar::unique::Atom &a)
 {
 
-    const auto id = get_global_id();
+    const auto id = get_num_of_atoms_global();
     const auto t = a.type;
     const auto pos = a.pos_tot();
     const auto vel = a.vel_tot();
@@ -459,7 +459,7 @@ bool Atom_data::add_molecule(caviar::unique::Molecule &m)
 
     for (unsigned int i = 0; i < pos.size(); ++i)
     {
-        const auto id = get_global_id();
+        const auto id = get_num_of_atoms_global();
         const auto index = atom_struct_owned.position.size();
         add_atom(id, types[i], pos[i], vel[i]);
         indices[i] = index;
