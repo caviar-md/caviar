@@ -36,10 +36,10 @@ namespace atom_data
      */
     std::vector<GlobalID_t> id;
 
-    /**
-     * A tag to be done on the atoms.
-     */
-    std::vector<AtomType_t> tag;
+    // /**
+    //  * A tag to be done on the atoms.
+    //  */
+    // std::vector<AtomType_t> tag;
 
     /**
      * Atom type decides the charge, mass and any other property shared between

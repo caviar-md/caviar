@@ -22,6 +22,7 @@
 #include "caviar/objects/atom_data/utility/atom_type_params.h"
 #include "caviar/objects/atom_data/utility/molecule_struct.h"
 #include "caviar/objects/atom_data/utility/molecule_type_params.h"
+#include "caviar/objects/atom_data/utility/mpi_packet_info.h"
 
 
 CAVIAR_NAMESPACE_OPEN
@@ -432,6 +433,8 @@ public:
    */
   int get_n_r_df();
 
+
+
   /**
    * stochastic and frictional forces presence. It affects n_r_df.
    * If it is not activated, the system is under vacuum boundary condition or
@@ -488,6 +491,16 @@ public:
    */
   bool record_owned_position_old, record_owned_velocity_old, record_owned_acceleration_old;
 
+  /**
+   * It stores the info about location of the owned Atom_struct data inside the MPI packets.
+   */
+  atom_data::MPI_packet_info mpi_packet_info_owned;
+
+  /**
+   * It stores the info about location of the ghost Atom_struct data inside the MPI packets.
+   */
+  atom_data::MPI_packet_info mpi_packet_info_ghost;
+  
   //===========================
   // Public Part
   //===========================

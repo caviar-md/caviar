@@ -349,23 +349,49 @@ void Atom_data::exchange_ghost(long step)
 
   std::vector<double> send_data[3][3][3], recv_data[3][3][3];
 
-  int total_num_coef;
-  if (make_ghost_velocity)
-    total_num_coef = 8;
-  else
-    total_num_coef = 5;
+  auto &mpinf = mpi_packet_info_ghost;
+
+  if (!mpinf.initialized)
+  {
+    mpinf.initialized = true;
+    mpinf.total = 0;
+
+    mpinf.id = mpinf.total;
+    mpinf.total += 1;
+
+    mpinf.type = mpinf.total;
+    mpinf.total += 1;
+
+    mpinf.pos = mpinf.total;
+    mpinf.total += 3;
+
+    if (make_ghost_velocity)
+    {
+      mpinf.vel = mpinf.total;
+      mpinf.total += 3;
+    }
+
+    std::cout << "g: mpinf.id:" << mpinf.id << std::endl;
+    std::cout << "g: mpinf.type:" << mpinf.type << std::endl;
+    std::cout << "g: mpinf.pos:" << mpinf.pos << std::endl;
+    std::cout << "g: mpinf.vel:" << mpinf.vel << std::endl;
+    std::cout << "g: mpinf.total:" << mpinf.total << std::endl;
+  }
+
 
   // ================================================
   // resize send_data to the correct value to increase filling performance
   // ================================================
+  // std::cout << step << " , ghost me:" << me << " x 1" << std::endl;
 
   FOR_IJK_LOOP_START
-  send_data[i][j][k].resize(total_num_coef * send_num[i][j][k], 0);
+  send_data[i][j][k].resize(mpinf.total * send_num[i][j][k], 0);
   FOR_IJK_LOOP_END
 
   // ================================================
   //  FILL the send_data packets
   // ================================================
+  // std::cout << step << " , ghost me:" << me << " x 2" << std::endl;
 
   FOR_IJK_LOOP_START
   if (me == all[i][j][k])
@@ -375,24 +401,25 @@ void Atom_data::exchange_ghost(long step)
   auto N = send_num[i][j][k];
   for (auto m : send_index[i][j][k])
   {
-    send_data[i][j][k][c] = id[m];
+    send_data[i][j][k][mpinf.id*N + c] = id[m];
 
-    send_data[i][j][k][N + c] = type[m];
+    send_data[i][j][k][mpinf.type*N + c] = type[m];
 
-    send_data[i][j][k][(2 * N) + (3 * c) + 0] = pos[m].x;
-    send_data[i][j][k][(2 * N) + (3 * c) + 1] = pos[m].y;
-    send_data[i][j][k][(2 * N) + (3 * c) + 2] = pos[m].z;
+    send_data[i][j][k][(mpinf.pos * N) + (3 * c) + 0] = pos[m].x;
+    send_data[i][j][k][(mpinf.pos * N) + (3 * c) + 1] = pos[m].y;
+    send_data[i][j][k][(mpinf.pos * N) + (3 * c) + 2] = pos[m].z;
 
     if (make_ghost_velocity)
     {
-      send_data[i][j][k][(5 * N) + (3 * c) + 0] = vel[m].x;
-      send_data[i][j][k][(5 * N) + (3 * c) + 1] = vel[m].y;
-      send_data[i][j][k][(5 * N) + (3 * c) + 2] = vel[m].z;
+      send_data[i][j][k][(mpinf.vel * N) + (3 * c) + 0] = vel[m].x;
+      send_data[i][j][k][(mpinf.vel * N) + (3 * c) + 1] = vel[m].y;
+      send_data[i][j][k][(mpinf.vel * N) + (3 * c) + 2] = vel[m].z;
     }
     c++;
   }
 
   FOR_IJK_LOOP_END
+  // std::cout << step << " , ghost me:" << me << " x 3" << std::endl;
 
   // ================================================
   // send num of ghosts
@@ -414,13 +441,22 @@ void Atom_data::exchange_ghost(long step)
 
   FOR_IJK_LOOP_END
 
+
+  // std::cout << step << " , ghost me:" << me << " x 4" << std::endl;
+
   // ================================================
   // resize recv_data to the correct value to increase filling performance
   // ================================================
+  // std::cout << step << " , ghost me:" << me << " x 4.1 mpinf.total:" << mpinf.total<<  std::endl;
 
   FOR_IJK_LOOP_START
-  recv_data[i][j][k].resize(total_num_coef * recv_num[i][j][k], 0);
+  std::cout << step << " , ghost me:" << me << " x 100.1 res:" << mpinf.total * recv_num[i][j][k]<< " ,size:"<< recv_data[i][j][k].size()  << "ijk:" << i <<j<<k<< std::endl;
+  //recv_data[i][j][k].resize(mpinf.total * recv_num[i][j][k], 0);
+  recv_data[i][j][k].resize(330, 0);
+  std::cout << step << " , ghost me:" << me << " x 100.2 res:" << mpinf.total * recv_num[i][j][k]<< " ,size:"<< recv_data[i][j][k].size() << std::endl;
+
   FOR_IJK_LOOP_END
+  // std::cout << step << " , ghost me:" << me << " x 5" << std::endl;
 
   // ================================================
   // SEND OWNED DATA
@@ -430,7 +466,7 @@ void Atom_data::exchange_ghost(long step)
   if (me == all[i][j][k])
     continue;
 
-  MPI_Send(send_data[i][j][k].data(), total_num_coef * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], mpi_comm); // TAG 1
+  MPI_Send(send_data[i][j][k].data(), mpinf.total * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], mpi_comm); // TAG 1
 
   FOR_IJK_LOOP_END
 
@@ -438,9 +474,10 @@ void Atom_data::exchange_ghost(long step)
   if (me == all[i][j][k])
     continue;
 
-  MPI_Recv(recv_data[i][j][k].data(), total_num_coef * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], mpi_comm, MPI_STATUS_IGNORE); // TAG 1
+  MPI_Recv(recv_data[i][j][k].data(), mpinf.total * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], mpi_comm, MPI_STATUS_IGNORE); // TAG 1
 
   FOR_IJK_LOOP_END
+  // std::cout << step << " , ghost me:" << me << " x 6" << std::endl;
 
   // ================================================
   // FILL the atom_data.owned with depacketing recv_data
@@ -456,11 +493,10 @@ void Atom_data::exchange_ghost(long step)
   if (N == 0)
     continue;
 
-  auto old_size = 0;//g_id.size();
+  auto old_size = 0; // g_id.size();
   auto new_size = old_size + N;
 
   atom_struct_ghost_resize(new_size);
-
 
   g_id.resize(new_size);
   g_type.resize(new_size);
@@ -470,7 +506,6 @@ void Atom_data::exchange_ghost(long step)
 
   ghost_MPI_rank.resize(new_size);
 
-
   for (int c = 0; c < N; ++c)
   {
 
@@ -478,19 +513,19 @@ void Atom_data::exchange_ghost(long step)
 
     ghost_MPI_rank[m] = all[i][j][k];
 
-    g_id[m] = recv_data[i][j][k][c];
+    g_id[m] = recv_data[i][j][k][mpinf.id*N + c];
 
-    g_type[m] = recv_data[i][j][k][N + c];
+    g_type[m] = recv_data[i][j][k][mpinf.type*N + c];
 
-    g_pos[m].x = recv_data[i][j][k][(2 * N) + (3 * c) + 0];
-    g_pos[m].y = recv_data[i][j][k][(2 * N) + (3 * c) + 1];
-    g_pos[m].z = recv_data[i][j][k][(2 * N) + (3 * c) + 2];
+    g_pos[m].x = recv_data[i][j][k][(mpinf.pos* N) + (3 * c) + 0];
+    g_pos[m].y = recv_data[i][j][k][(mpinf.pos* N) + (3 * c) + 1];
+    g_pos[m].z = recv_data[i][j][k][(mpinf.pos* N) + (3 * c) + 2];
 
     if (make_ghost_velocity)
     {
-      g_vel[m].x = recv_data[i][j][k][(5 * N) + (3 * c) + 0];
-      g_vel[m].y = recv_data[i][j][k][(5 * N) + (3 * c) + 1];
-      g_vel[m].z = recv_data[i][j][k][(5 * N) + (3 * c) + 2];
+      g_vel[m].x = recv_data[i][j][k][(mpinf.vel * N) + (3 * c) + 0];
+      g_vel[m].y = recv_data[i][j][k][(mpinf.vel * N) + (3 * c) + 1];
+      g_vel[m].z = recv_data[i][j][k][(mpinf.vel * N) + (3 * c) + 2];
     }
 
     // ================================================
@@ -515,11 +550,10 @@ void Atom_data::exchange_ghost(long step)
     if (k == 2)
       while (g_pos[m].z > z_lupp)
         g_pos[m].z -= z_width;
-
-        
   }
 
   FOR_IJK_LOOP_END
+  // std::cout << step << " , ghost me:" << me << " x 7" << std::endl;
 
   // ================================================
   // Applying periodic boundary condition for ghosts comming from the current domain itself
@@ -538,8 +572,10 @@ void Atom_data::exchange_ghost(long step)
       ghost_MPI_rank.emplace_back(me);
     }
   }
+  // std::cout << step << " , ghost me:" << me << " x 8" << std::endl;
+
   FOR_IJK_LOOP_END
-//MPI_Barrier(mpi_comm);
+// MPI_Barrier(mpi_comm);
 #else
   int num_local_atoms = atom_struct_owned.id.size();
 

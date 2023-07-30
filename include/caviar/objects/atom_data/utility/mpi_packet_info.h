@@ -27,15 +27,20 @@ namespace atom_data
   // constraint algorithms or soft atomic angles in spring_angle force_fields
   struct MPI_packet_info
   {
-    int id_s, id_e; 
-    int type_s,type_e; 
-    int pos_s, pos_e; 
-    int vel_s, vel_e; 
-    int acc_s, acc_e; 
-    int msd_s, msd_e; 
-    int pos_o_s, pos_o_e; 
-    int vel_o_s, vel_o_e;
-    int acc_o_s, acc_o_e;        
+    bool initialized = false;
+    int total = 0; // 
+
+    int id;
+    int type;
+    int pos;
+    int vel;
+    int acc;
+    int pos_o;
+    int vel_o;
+    int acc_o;
+    int msd;
+    int mol_ind;
+    int atomic_bc;
   } ;
 }
 CAVIAR_NAMESPACE_CLOSE
