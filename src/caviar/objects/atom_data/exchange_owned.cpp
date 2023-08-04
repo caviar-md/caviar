@@ -153,8 +153,6 @@ bool Atom_data::exchange_owned(long step)
 
   const auto &all = domain->all;
 
-  std::vector<int> send_id[3][3][3];    // global id of the atom: atom_struct_owned.id
-  std::vector<int> recv_id[3][3][3];    // global id of the atom: atom_struct_owned.id
   std::vector<int> send_index[3][3][3]; // the index of std::vector<> of the owned
   std::vector<int> send_index_all;      // the index of std::vector<> of the owned, in a 1D vector
 
@@ -175,14 +173,14 @@ bool Atom_data::exchange_owned(long step)
   }
   unsigned num_local_atoms = atom_struct_owned.id.size();
 
-  for (unsigned i = 0; i < num_local_atoms; ++i)
+  for (unsigned m = 0; m < num_local_atoms; ++m)
   {
-    const auto xlc = pos[i].x < x_llow;
-    const auto xuc = pos[i].x > x_lupp;
-    const auto ylc = pos[i].y < y_llow;
-    const auto yuc = pos[i].y > y_lupp;
-    const auto zlc = pos[i].z < z_llow;
-    const auto zuc = pos[i].z > z_lupp;
+    const auto xlc = pos[m].x < x_llow;
+    const auto xuc = pos[m].x > x_lupp;
+    const auto ylc = pos[m].y < y_llow;
+    const auto yuc = pos[m].y > y_lupp;
+    const auto zlc = pos[m].z < z_llow;
+    const auto zuc = pos[m].z > z_lupp;
 
     int x_val = 0, y_val = 0, z_val = 0;
 
@@ -215,11 +213,17 @@ bool Atom_data::exchange_owned(long step)
 
     if (x_val == 0 && y_val == 0 && z_val == 0)
       continue;
+    int i = x_val + 1;
+    int j = y_val + 1;
+    int k = z_val + 1;
 
-    send_id[x_val + 1][y_val + 1][z_val + 1].emplace_back(id[i]);
-    send_index[x_val + 1][y_val + 1][z_val + 1].emplace_back(i);
-    send_index_all.emplace_back(i);
-    send_num[x_val + 1][y_val + 1][z_val + 1]++;
+    send_index[i][j][k].emplace_back(i);
+
+    if (me != all[i][j][k])
+    {
+      send_index_all.emplace_back(i);
+      send_num[i][j][k]++;
+    }
   }
 
   // // std::cout << step << " : me : " << me << " X 1" << std::endl;
@@ -307,8 +311,6 @@ bool Atom_data::exchange_owned(long step)
     std::cout << "o: mpinf.total:" << mpinf.total << std::endl;
   }
 
-
-
   // // std::cout << step << " : me : " << me << " X 2" << std::endl;
 
   // ================================================
@@ -336,9 +338,9 @@ bool Atom_data::exchange_owned(long step)
   auto N = send_num[i][j][k];
   for (auto m : send_index[i][j][k])
   {
-    send_data[i][j][k][mpinf.id*N + c] = id[m];
+    send_data[i][j][k][mpinf.id * N + c] = id[m];
 
-    send_data[i][j][k][mpinf.type*N + c] = type[m];
+    send_data[i][j][k][mpinf.type * N + c] = type[m];
 
     send_data[i][j][k][(mpinf.pos * N) + (3 * c) + 0] = pos[m].x;
     send_data[i][j][k][(mpinf.pos * N) + (3 * c) + 1] = pos[m].y;
@@ -449,7 +451,7 @@ bool Atom_data::exchange_owned(long step)
   // std::cout << step << " , owned me:" << me << " y 6.3" << std::endl;
 
   auto old_size = id.size();
-    // std::cout << step << " , owned me:" << me << " y 6.4" << std::endl;
+  // std::cout << step << " , owned me:" << me << " y 6.4" << std::endl;
 
   auto new_size = old_size + N;
 
@@ -458,47 +460,47 @@ bool Atom_data::exchange_owned(long step)
 
   for (int c = 0; c < N; ++c)
   {
-  // std::cout << step << " , owned me:" << me << " y 6.6" << std::endl;
+    // std::cout << step << " , owned me:" << me << " y 6.6" << std::endl;
 
     int m = old_size + c;
-  // std::cout << step << " , owned me:" << me << " y 6.7" << std::endl;
+    // std::cout << step << " , owned me:" << me << " y 6.7" << std::endl;
 
-    id[m] = recv_data[i][j][k][mpinf.id*N + c];
-  // std::cout << step << " , owned me:" << me << " y 6.8" << std::endl;
+    id[m] = recv_data[i][j][k][mpinf.id * N + c];
+    // std::cout << step << " , owned me:" << me << " y 6.8" << std::endl;
 
-    type[m] = recv_data[i][j][k][mpinf.type*N + c];
-  // std::cout << step << " , owned me:" << me << " y 6.9" << std::endl;
+    type[m] = recv_data[i][j][k][mpinf.type * N + c];
+    // std::cout << step << " , owned me:" << me << " y 6.9" << std::endl;
 
     pos[m].z = recv_data[i][j][k][(mpinf.pos * N) + (3 * c) + 2];
-      // std::cout << step << " , owned me:" << me << " y 6.10" << std::endl;
+    // std::cout << step << " , owned me:" << me << " y 6.10" << std::endl;
 
     pos[m].x = recv_data[i][j][k][(mpinf.pos * N) + (3 * c) + 0];
     pos[m].y = recv_data[i][j][k][(mpinf.pos * N) + (3 * c) + 1];
-  // std::cout << step << " , owned me:" << me << " y 6.11" << std::endl;
+    // std::cout << step << " , owned me:" << me << " y 6.11" << std::endl;
 
     vel[m].x = recv_data[i][j][k][(mpinf.vel * N) + (3 * c) + 0];
     vel[m].y = recv_data[i][j][k][(mpinf.vel * N) + (3 * c) + 1];
     vel[m].z = recv_data[i][j][k][(mpinf.vel * N) + (3 * c) + 2];
-  // std::cout << step << " , owned me:" << me << " y 6.12" << std::endl;
+    // std::cout << step << " , owned me:" << me << " y 6.12" << std::endl;
 
     acc[m].x = recv_data[i][j][k][(mpinf.acc * N) + (3 * c) + 0];
     acc[m].y = recv_data[i][j][k][(mpinf.acc * N) + (3 * c) + 1];
     acc[m].z = recv_data[i][j][k][(mpinf.acc * N) + (3 * c) + 2];
-  // std::cout << step << " , owned me:" << me << " y 6.13" << std::endl;
+    // std::cout << step << " , owned me:" << me << " y 6.13" << std::endl;
 
     if (msd_process)
     {
-        // std::cout << step << " , owned me:" << me << " y 6.14" << std::endl;
+      // std::cout << step << " , owned me:" << me << " y 6.14" << std::endl;
 
       msd[m].x = recv_data[i][j][k][(mpinf.msd * N) + (3 * c) + 0];
       msd[m].y = recv_data[i][j][k][(mpinf.msd * N) + (3 * c) + 1];
       msd[m].z = recv_data[i][j][k][(mpinf.msd * N) + (3 * c) + 2];
     }
-  // std::cout << step << " , owned me:" << me << " y 6.15" << std::endl;
+    // std::cout << step << " , owned me:" << me << " y 6.15" << std::endl;
 
-    atom_struct_owned.molecule_index[m] = recv_data[i][j][k][(mpinf.mol_ind * N) + (3 * c) + 2]; 
-    atom_struct_owned.atomic_bond_count[m] = recv_data[i][j][k][(mpinf.atomic_bc * N) + (3 * c) + 2]; 
-  // std::cout << step << " , owned me:" << me << " y 7" << std::endl;
+    atom_struct_owned.molecule_index[m] = recv_data[i][j][k][(mpinf.mol_ind * N) + (3 * c) + 2];
+    atom_struct_owned.atomic_bond_count[m] = recv_data[i][j][k][(mpinf.atomic_bc * N) + (3 * c) + 2];
+    // std::cout << step << " , owned me:" << me << " y 7" << std::endl;
 
     // ================================================
     // Applying periodic boundary condition for particles comming from other domains
@@ -571,7 +573,7 @@ bool Atom_data::exchange_owned(long step)
 
     // // std::cout << step << " : me : " << me << " B local:" << local_pos_size << " global:" << global_pos_size << std::endl;
   }
-    // std::cout << step << " , owned me:" << me << " y 11" << std::endl;
+  // std::cout << step << " , owned me:" << me << " y 11" << std::endl;
 
 #else
 

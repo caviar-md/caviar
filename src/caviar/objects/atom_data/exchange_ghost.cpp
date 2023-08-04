@@ -450,10 +450,10 @@ void Atom_data::exchange_ghost(long step)
   // std::cout << step << " , ghost me:" << me << " x 4.1 mpinf.total:" << mpinf.total<<  std::endl;
 
   FOR_IJK_LOOP_START
-  std::cout << step << " , ghost me:" << me << " x 100.1 res:" << mpinf.total * recv_num[i][j][k]<< " ,size:"<< recv_data[i][j][k].size()  << "ijk:" << i <<j<<k<< std::endl;
+  //std::cout << step << " , ghost me:" << me << " x 100.1 res:" << mpinf.total * recv_num[i][j][k]<< " ,size:"<< recv_data[i][j][k].size()  << "ijk:" << i <<j<<k<< std::endl;
   //recv_data[i][j][k].resize(mpinf.total * recv_num[i][j][k], 0);
   recv_data[i][j][k].resize(330, 0);
-  std::cout << step << " , ghost me:" << me << " x 100.2 res:" << mpinf.total * recv_num[i][j][k]<< " ,size:"<< recv_data[i][j][k].size() << std::endl;
+  //std::cout << step << " , ghost me:" << me << " x 100.2 res:" << mpinf.total * recv_num[i][j][k]<< " ,size:"<< recv_data[i][j][k].size() << std::endl;
 
   FOR_IJK_LOOP_END
   // std::cout << step << " , ghost me:" << me << " x 5" << std::endl;
