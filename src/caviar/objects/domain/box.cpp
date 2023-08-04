@@ -68,6 +68,17 @@ namespace domain
       {
         std::cout << "ME: " << me << std::endl;
       }
+      else if (string_cmp(t, "info"))
+      {
+        std::cout << "MPI Rank: " << me 
+                  << " local.x [" << lower_local.x << " , " <<  upper_local.x << "]" 
+                  << " local.y [" << lower_local.y << " , " <<  upper_local.y << "]" 
+                  << " local.z [" << lower_local.z << " , " <<  upper_local.z << "]" 
+                  << " global.x [" << lower_global.x << " , " <<  upper_global.x << "]" 
+                  << " global.y [" << lower_global.y << " , " <<  upper_global.y << "]" 
+                  << " global.z [" << lower_global.z << " , " <<  upper_global.z << "]" 
+                  << std::endl;
+      }
       else if (string_cmp(t, "generate"))
       {
         generate();

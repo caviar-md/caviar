@@ -128,7 +128,7 @@ namespace writer
     bool output_id = false; //xyz
 
     bool mpi_separate_files = false;
-    bool mpi_single_file = true;
+    bool mpi_single_file = false;
 
     std::vector<caviar::Vector<double>> msd_initial_position;
 

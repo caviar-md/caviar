@@ -121,6 +121,8 @@ f_lj set_domain dom
 writer atom_data w1
 w1 set_atom_data adata
 w1 xyz_step 200
+w1 mpi_single_file
+w1 mpi_separate_files
 
 #=====  simulator
 

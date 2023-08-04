@@ -35,7 +35,7 @@ CAVIAR_NAMESPACE_OPEN
   }                      \
   }
 
-void Atom_data::exchange_ghost(long step)
+void Atom_data::exchange_ghost(long ) // timestep
 {
 
   atom_struct_ghost.position.clear();
@@ -223,7 +223,6 @@ void Atom_data::exchange_ghost(long step)
   const auto me = domain->me;
   const auto &all = domain->all;
 
-  // std::cout << "ghost s " << me << std::endl;
 
   std::vector<int> send_id[3][3][3];    // global id of the atom: atom_struct_owned.id
   std::vector<int> recv_id[3][3][3];    // global id of the atom: atom_struct_owned.id
@@ -371,27 +370,21 @@ void Atom_data::exchange_ghost(long step)
       mpinf.total += 3;
     }
 
-    // std::cout << "g: mpinf.id:" << mpinf.id << std::endl;
-    // std::cout << "g: mpinf.type:" << mpinf.type << std::endl;
-    // std::cout << "g: mpinf.pos:" << mpinf.pos << std::endl;
-    // std::cout << "g: mpinf.vel:" << mpinf.vel << std::endl;
-    // std::cout << "g: mpinf.total:" << mpinf.total << std::endl;
-  }
 
+  }
 
   // ================================================
   // resize send_data to the correct value to increase filling performance
   // ================================================
-  // std::cout << step << " , ghost me:" << me << " x 1" << std::endl;
 
   FOR_IJK_LOOP_START
-  send_data[i][j][k].resize(mpinf.total * send_num[i][j][k], 0);
+  if (send_num[i][j][k] > 0)
+    send_data[i][j][k].resize(mpinf.total * send_num[i][j][k], 0);
   FOR_IJK_LOOP_END
 
   // ================================================
   //  FILL the send_data packets
   // ================================================
-  // std::cout << step << " , ghost me:" << me << " x 2" << std::endl;
 
   FOR_IJK_LOOP_START
   if (me == all[i][j][k])
@@ -399,11 +392,13 @@ void Atom_data::exchange_ghost(long step)
 
   int c = 0;
   auto N = send_num[i][j][k];
+  if (N == 0)
+    continue;
   for (auto m : send_index[i][j][k])
   {
-    send_data[i][j][k][mpinf.id*N + c] = id[m];
+    send_data[i][j][k][mpinf.id * N + c] = id[m];
 
-    send_data[i][j][k][mpinf.type*N + c] = type[m];
+    send_data[i][j][k][mpinf.type * N + c] = type[m];
 
     send_data[i][j][k][(mpinf.pos * N) + (3 * c) + 0] = pos[m].x;
     send_data[i][j][k][(mpinf.pos * N) + (3 * c) + 1] = pos[m].y;
@@ -419,7 +414,6 @@ void Atom_data::exchange_ghost(long step)
   }
 
   FOR_IJK_LOOP_END
-  // std::cout << step << " , ghost me:" << me << " x 3" << std::endl;
 
   // ================================================
   // send num of ghosts
@@ -442,21 +436,18 @@ void Atom_data::exchange_ghost(long step)
   FOR_IJK_LOOP_END
 
 
-  // std::cout << step << " , ghost me:" << me << " x 4" << std::endl;
-
   // ================================================
   // resize recv_data to the correct value to increase filling performance
   // ================================================
-  // std::cout << step << " , ghost me:" << me << " x 4.1 mpinf.total:" << mpinf.total<<  std::endl;
 
   FOR_IJK_LOOP_START
-  //std::cout << step << " , ghost me:" << me << " x 100.1 res:" << mpinf.total * recv_num[i][j][k]<< " ,size:"<< recv_data[i][j][k].size()  << "ijk:" << i <<j<<k<< std::endl;
-  //recv_data[i][j][k].resize(mpinf.total * recv_num[i][j][k], 0);
-  recv_data[i][j][k].resize(330, 0);
-  //std::cout << step << " , ghost me:" << me << " x 100.2 res:" << mpinf.total * recv_num[i][j][k]<< " ,size:"<< recv_data[i][j][k].size() << std::endl;
+  if (recv_num[i][j][k] > 0)
+  {
+    recv_data[i][j][k].resize(mpinf.total * recv_num[i][j][k], 0);
+  }
+
 
   FOR_IJK_LOOP_END
-  // std::cout << step << " , ghost me:" << me << " x 5" << std::endl;
 
   // ================================================
   // SEND OWNED DATA
@@ -465,19 +456,28 @@ void Atom_data::exchange_ghost(long step)
   FOR_IJK_LOOP_START
   if (me == all[i][j][k])
     continue;
+  if (send_num[i][j][k] > 0)
+  {
 
-  MPI_Send(send_data[i][j][k].data(), mpinf.total * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], mpi_comm); // TAG 1
-
+    MPI_Send(send_data[i][j][k].data(), mpinf.total * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], mpi_comm); // TAG 1
+  }
   FOR_IJK_LOOP_END
 
   FOR_IJK_LOOP_START
   if (me == all[i][j][k])
     continue;
 
-  MPI_Recv(recv_data[i][j][k].data(), mpinf.total * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], mpi_comm, MPI_STATUS_IGNORE); // TAG 1
+  if (recv_num[i][j][k] > 0)
+  {
 
+
+
+    MPI_Recv(recv_data[i][j][k].data(), mpinf.total * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], mpi_comm, MPI_STATUS_IGNORE); // TAG 1
+
+
+
+  }
   FOR_IJK_LOOP_END
-  // std::cout << step << " , ghost me:" << me << " x 6" << std::endl;
 
   // ================================================
   // FILL the atom_data.owned with depacketing recv_data
@@ -493,9 +493,10 @@ void Atom_data::exchange_ghost(long step)
   if (N == 0)
     continue;
 
-  auto old_size = 0; // g_id.size();
+  auto old_size = g_pos.size(); // g_id.size();
   auto new_size = old_size + N;
-
+  if (N == 0)
+    continue;
   atom_struct_ghost_resize(new_size);
 
   g_id.resize(new_size);
@@ -513,13 +514,13 @@ void Atom_data::exchange_ghost(long step)
 
     ghost_MPI_rank[m] = all[i][j][k];
 
-    g_id[m] = recv_data[i][j][k][mpinf.id*N + c];
+    g_id[m] = recv_data[i][j][k][mpinf.id * N + c];
 
-    g_type[m] = recv_data[i][j][k][mpinf.type*N + c];
+    g_type[m] = recv_data[i][j][k][mpinf.type * N + c];
 
-    g_pos[m].x = recv_data[i][j][k][(mpinf.pos* N) + (3 * c) + 0];
-    g_pos[m].y = recv_data[i][j][k][(mpinf.pos* N) + (3 * c) + 1];
-    g_pos[m].z = recv_data[i][j][k][(mpinf.pos* N) + (3 * c) + 2];
+    g_pos[m].x = recv_data[i][j][k][(mpinf.pos * N) + (3 * c) + 0];
+    g_pos[m].y = recv_data[i][j][k][(mpinf.pos * N) + (3 * c) + 1];
+    g_pos[m].z = recv_data[i][j][k][(mpinf.pos * N) + (3 * c) + 2];
 
     if (make_ghost_velocity)
     {
@@ -553,7 +554,6 @@ void Atom_data::exchange_ghost(long step)
   }
 
   FOR_IJK_LOOP_END
-  // std::cout << step << " , ghost me:" << me << " x 7" << std::endl;
 
   // ================================================
   // Applying periodic boundary condition for ghosts comming from the current domain itself
@@ -572,10 +572,13 @@ void Atom_data::exchange_ghost(long step)
       ghost_MPI_rank.emplace_back(me);
     }
   }
-  // std::cout << step << " , ghost me:" << me << " x 8" << std::endl;
+
 
   FOR_IJK_LOOP_END
+
+
 // MPI_Barrier(mpi_comm);
+
 #else
   int num_local_atoms = atom_struct_owned.id.size();
 

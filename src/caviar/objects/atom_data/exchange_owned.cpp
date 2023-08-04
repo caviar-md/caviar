@@ -36,7 +36,7 @@ CAVIAR_NAMESPACE_OPEN
   }                      \
   }
 
-bool Atom_data::exchange_owned(long step)
+bool Atom_data::exchange_owned(long ) // timestep
 {
   if (domain == nullptr)
     error->all("Atom_data::exchange_owned: domain = nullptr");
@@ -148,7 +148,6 @@ bool Atom_data::exchange_owned(long step)
     MPI_Allreduce(&local_pos_size,
                   &global_pos_size,
                   1, MPI::DOUBLE, MPI_SUM, MPI::COMM_WORLD);
-    // // std::cout << step << " : me : " << me << " A local:" << local_pos_size << " global:" << global_pos_size << std::endl;
   }
 
   const auto &all = domain->all;
@@ -217,16 +216,15 @@ bool Atom_data::exchange_owned(long step)
     int j = y_val + 1;
     int k = z_val + 1;
 
-    send_index[i][j][k].emplace_back(i);
+    send_index[i][j][k].emplace_back(m);
 
     if (me != all[i][j][k])
     {
-      send_index_all.emplace_back(i);
+      send_index_all.emplace_back(m);
       send_num[i][j][k]++;
     }
   }
 
-  // // std::cout << step << " : me : " << me << " X 1" << std::endl;
 
   // ================================================
   // making the send_data
@@ -297,34 +295,20 @@ bool Atom_data::exchange_owned(long step)
     mpinf.atomic_bc = mpinf.total;
     mpinf.total += 1;
 
-    // std::cout << "o: mpinf.id:" << mpinf.id << std::endl;
-    // std::cout << "o: mpinf.type:" << mpinf.type << std::endl;
-    // std::cout << "o: mpinf.pos:" << mpinf.pos << std::endl;
-    // std::cout << "o: mpinf.vel:" << mpinf.vel << std::endl;
-    // std::cout << "o: mpinf.acc:" << mpinf.acc << std::endl;
-    // std::cout << "o: mpinf.pos_o:" << mpinf.pos_o << std::endl;
-    // std::cout << "o: mpinf.vel_o:" << mpinf.vel_o << std::endl;
-    // std::cout << "o: mpinf.acc_o:" << mpinf.acc_o << std::endl;
-    // std::cout << "o: mpinf.msd:" << mpinf.msd << std::endl;
-    // std::cout << "o: mpinf.mol_ind:" << mpinf.mol_ind << std::endl;
-    // std::cout << "o: mpinf.atomic_bc:" << mpinf.atomic_bc << std::endl;
-    // std::cout << "o: mpinf.total:" << mpinf.total << std::endl;
+
   }
 
-  // // std::cout << step << " : me : " << me << " X 2" << std::endl;
 
   // ================================================
   // resize send_data to the correct value to increase filling performance
   // ================================================
-  // std::cout << step << " , owned me:" << me << " y 1" << std::endl;
 
   FOR_IJK_LOOP_START
-  send_data[i][j][k].resize(mpinf.total * send_num[i][j][k], 0);
+  if (send_num[i][j][k] > 0)
+    send_data[i][j][k].resize(mpinf.total * send_num[i][j][k], 0);
   FOR_IJK_LOOP_END
 
-  // // std::cout << step << " : me : " << me << " X 3" << std::endl;
 
-  // std::cout << step << " , owned me:" << me << " y 2" << std::endl;
 
   // ================================================
   //  FILL the send_data packets
@@ -336,6 +320,7 @@ bool Atom_data::exchange_owned(long step)
 
   int c = 0;
   auto N = send_num[i][j][k];
+  if (N == 0) continue;
   for (auto m : send_index[i][j][k])
   {
     send_data[i][j][k][mpinf.id * N + c] = id[m];
@@ -369,8 +354,6 @@ bool Atom_data::exchange_owned(long step)
 
   FOR_IJK_LOOP_END
 
-  // // std::cout << step << " : me : " << me << " X 4" << std::endl;
-  // std::cout << step << " , owned me:" << me << " y 3" << std::endl;
 
   // ================================================
   // send num of owned
@@ -384,7 +367,6 @@ bool Atom_data::exchange_owned(long step)
 
   FOR_IJK_LOOP_END
 
-  // // std::cout << step << " : me : " << me << " X 5" << std::endl;
 
   FOR_IJK_LOOP_START
   if (me == all[i][j][k])
@@ -394,19 +376,16 @@ bool Atom_data::exchange_owned(long step)
 
   FOR_IJK_LOOP_END
 
-  // // std::cout << step << " : me : " << me << " X 6" << std::endl;
-  // std::cout << step << " , owned me:" << me << " y 4" << std::endl;
 
   // ================================================
   // resize recv_data to the correct value to increase filling performance
   // ================================================
 
   FOR_IJK_LOOP_START
-  recv_data[i][j][k].resize(mpinf.total * recv_num[i][j][k], 0);
+  if (recv_num[i][j][k] > 0)
+    recv_data[i][j][k].resize(mpinf.total * recv_num[i][j][k], 0);
   FOR_IJK_LOOP_END
 
-  // // std::cout << step << " : me : " << me << " X 7" << std::endl;
-  // std::cout << step << " , owned me:" << me << " y 5" << std::endl;
 
   // ================================================
   // SEND OWNED DATA
@@ -415,23 +394,21 @@ bool Atom_data::exchange_owned(long step)
   FOR_IJK_LOOP_START
   if (me == all[i][j][k])
     continue;
-
-  MPI_Send(send_data[i][j][k].data(), mpinf.total * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], mpi_comm); // TAG 1
+  if (send_num[i][j][k] > 0)
+    MPI_Send(send_data[i][j][k].data(), mpinf.total * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], mpi_comm); // TAG 1
 
   FOR_IJK_LOOP_END
 
-  // // std::cout << step << " : me : " << me << " X 8" << std::endl;
 
   FOR_IJK_LOOP_START
   if (me == all[i][j][k])
     continue;
 
-  MPI_Recv(recv_data[i][j][k].data(), mpinf.total * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], mpi_comm, MPI_STATUS_IGNORE); // TAG 1
+  if (recv_num[i][j][k] > 0)
+    MPI_Recv(recv_data[i][j][k].data(), mpinf.total * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], mpi_comm, MPI_STATUS_IGNORE); // TAG 1
 
   FOR_IJK_LOOP_END
 
-  // // std::cout << step << " : me : " << me << " X 9" << std::endl;
-  // std::cout << step << " , owned me:" << me << " y 6" << std::endl;
 
   // ================================================
   // FILL the atom_data.owned with depacketing recv_data
@@ -441,65 +418,50 @@ bool Atom_data::exchange_owned(long step)
 
   if (me == all[i][j][k])
     continue;
-  // std::cout << step << " , owned me:" << me << " y 6.1" << std::endl;
 
   auto N = recv_num[i][j][k];
-  // std::cout << step << " , owned me:" << me << " y 6.2" << std::endl;
 
   if (N == 0)
     continue;
-  // std::cout << step << " , owned me:" << me << " y 6.3" << std::endl;
 
   auto old_size = id.size();
-  // std::cout << step << " , owned me:" << me << " y 6.4" << std::endl;
 
   auto new_size = old_size + N;
 
   atom_struct_owned_resize(new_size);
-  // std::cout << step << " , owned me:" << me << " y 6.5" << std::endl;
 
   for (int c = 0; c < N; ++c)
   {
-    // std::cout << step << " , owned me:" << me << " y 6.6" << std::endl;
 
     int m = old_size + c;
-    // std::cout << step << " , owned me:" << me << " y 6.7" << std::endl;
 
     id[m] = recv_data[i][j][k][mpinf.id * N + c];
-    // std::cout << step << " , owned me:" << me << " y 6.8" << std::endl;
 
     type[m] = recv_data[i][j][k][mpinf.type * N + c];
-    // std::cout << step << " , owned me:" << me << " y 6.9" << std::endl;
 
     pos[m].x = recv_data[i][j][k][(mpinf.pos * N) + (3 * c) + 0];
     pos[m].y = recv_data[i][j][k][(mpinf.pos * N) + (3 * c) + 1];
     pos[m].z = recv_data[i][j][k][(mpinf.pos * N) + (3 * c) + 2];
 
-    // std::cout << step << " , owned me:" << me << " y 6.11" << std::endl;
 
     vel[m].x = recv_data[i][j][k][(mpinf.vel * N) + (3 * c) + 0];
     vel[m].y = recv_data[i][j][k][(mpinf.vel * N) + (3 * c) + 1];
     vel[m].z = recv_data[i][j][k][(mpinf.vel * N) + (3 * c) + 2];
-    // std::cout << step << " , owned me:" << me << " y 6.12" << std::endl;
 
     acc[m].x = recv_data[i][j][k][(mpinf.acc * N) + (3 * c) + 0];
     acc[m].y = recv_data[i][j][k][(mpinf.acc * N) + (3 * c) + 1];
     acc[m].z = recv_data[i][j][k][(mpinf.acc * N) + (3 * c) + 2];
-    // std::cout << step << " , owned me:" << me << " y 6.13" << std::endl;
 
     if (msd_process)
     {
-      // std::cout << step << " , owned me:" << me << " y 6.14" << std::endl;
 
       msd[m].x = recv_data[i][j][k][(mpinf.msd * N) + (3 * c) + 0];
       msd[m].y = recv_data[i][j][k][(mpinf.msd * N) + (3 * c) + 1];
       msd[m].z = recv_data[i][j][k][(mpinf.msd * N) + (3 * c) + 2];
     }
-    // std::cout << step << " , owned me:" << me << " y 6.15" << std::endl;
 
     atom_struct_owned.molecule_index[m] = recv_data[i][j][k][(mpinf.mol_ind * N) + (3 * c) + 2];
     atom_struct_owned.atomic_bond_count[m] = recv_data[i][j][k][(mpinf.atomic_bc * N) + (3 * c) + 2];
-    // std::cout << step << " , owned me:" << me << " y 7" << std::endl;
 
     // ================================================
     // Applying periodic boundary condition for particles comming from other domains
@@ -527,8 +489,6 @@ bool Atom_data::exchange_owned(long step)
 
   FOR_IJK_LOOP_END
 
-  // // std::cout << step << " : me : " << me << " X 10" << std::endl;
-  // std::cout << step << " , owned me:" << me << " y 8" << std::endl;
 
   // ================================================
   // Applying periodic boundary condition for particles comming from the current domain itself
@@ -547,9 +507,6 @@ bool Atom_data::exchange_owned(long step)
   }
   FOR_IJK_LOOP_END
 
-  // // std::cout << step << " : me : " << me << " X 11 : send_index_all.size()" << send_index_all.size() << std::endl;
-  // std::cout << step << " , owned me:" << me << " y 9" << std::endl;
-
   // ================================================
   // Deleting the particles which are send to another domains
   // ================================================
@@ -559,8 +516,6 @@ bool Atom_data::exchange_owned(long step)
     remove_atom(send_index_all);
     make_neighlist = true;
   }
-  // // std::cout << step << " : me : " << me << " X 12" << std::endl;
-  // std::cout << step << " , owned me:" << me << " y 10" << std::endl;
 
   {
     MPI_Barrier(mpi_comm);
@@ -570,9 +525,7 @@ bool Atom_data::exchange_owned(long step)
                   &global_pos_size,
                   1, MPI::LONG, MPI_SUM, MPI::COMM_WORLD);
 
-    // // std::cout << step << " : me : " << me << " B local:" << local_pos_size << " global:" << global_pos_size << std::endl;
   }
-  // std::cout << step << " , owned me:" << me << " y 11" << std::endl;
 
 #else
 
