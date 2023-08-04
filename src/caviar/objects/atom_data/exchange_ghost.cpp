@@ -371,11 +371,11 @@ void Atom_data::exchange_ghost(long step)
       mpinf.total += 3;
     }
 
-    std::cout << "g: mpinf.id:" << mpinf.id << std::endl;
-    std::cout << "g: mpinf.type:" << mpinf.type << std::endl;
-    std::cout << "g: mpinf.pos:" << mpinf.pos << std::endl;
-    std::cout << "g: mpinf.vel:" << mpinf.vel << std::endl;
-    std::cout << "g: mpinf.total:" << mpinf.total << std::endl;
+    // std::cout << "g: mpinf.id:" << mpinf.id << std::endl;
+    // std::cout << "g: mpinf.type:" << mpinf.type << std::endl;
+    // std::cout << "g: mpinf.pos:" << mpinf.pos << std::endl;
+    // std::cout << "g: mpinf.vel:" << mpinf.vel << std::endl;
+    // std::cout << "g: mpinf.total:" << mpinf.total << std::endl;
   }
 
 

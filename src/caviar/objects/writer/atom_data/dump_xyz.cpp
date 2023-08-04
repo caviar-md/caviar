@@ -26,224 +26,35 @@ CAVIAR_NAMESPACE_OPEN
 namespace writer
 {
 
+  //================================================
+  //                                              ||
+  //================================================
   void Atom_data::dump_xyz(int64_t i)
   {
-
-    // #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
-
-#if defined(CAVIAR_WITH_MPI)
-
-
-    const auto &pos = atom_data->atom_struct_owned.position;
-    // const auto &vel = atom_data -> atom_struct_owned.velocity;
-    // const auto &acc = atom_data -> atom_struct_owned.acceleration;
-    const auto &id = atom_data->atom_struct_owned.id;
-    const auto &type = atom_data->atom_struct_owned.type;
-
-    std::vector<std::vector<int>> all_id;
-    std::vector<Vector<double>> all_pos;
-    // std::vector<Vector<double>> all_vel;
-    // std::vector<Vector<double>> all_acc;
-
-    std::vector<int> all_type;
-
-    const auto nla = pos.size(); // atom_data -> num_local_atoms;
-    const auto nta = atom_data->get_num_of_atoms_global();
-    const unsigned nprocs = comm->nprocs;
-    unsigned *nla_list = new unsigned[nprocs];
-  //std::cout << pos.size() << std::endl;
-    if (nprocs > 1)
-    {
-
-      if (my_mpi_rank != 0)
-      { //==================================// nla send
-        MPI_Send(&nla, 1, MPI::UNSIGNED, 0, 0, mpi_comm);
-      }
-      else
-      {
-        nla_list[0] = nla;
-        for (unsigned i = 1; i < nprocs; ++i)
-        {
-          MPI_Recv(nla_list + i, 1, MPI::UNSIGNED, i, 0, mpi_comm, MPI_STATUS_IGNORE);
-        }
-      } //-----------------------------------------------//
-
-
-
-      if (my_mpi_rank != 0)
-      {                                                          //==================================// id send
-        MPI_Send(id.data(), nla, MPI::UNSIGNED, 0, 0, mpi_comm); // CHANGE id to INT before send it //
-      }
-      else
-      {
-
-        all_id.resize(nprocs);
-
-        for (unsigned int i = 0; i < nla; ++i)
-        { // local copy
-          all_id[0].push_back(id[i]);
-        }
-        for (unsigned int i = 1; i < nprocs; ++i)
-        {
-          unsigned *tmp = new unsigned[nla_list[i]];
-          MPI_Recv(tmp, nla_list[i], MPI::UNSIGNED, i, 0, mpi_comm, MPI_STATUS_IGNORE); // XXX tmp or &tmp
-          for (unsigned int j = 0; j < nla_list[i]; ++j)
-            all_id[i].push_back(tmp[j]);
-          delete[] tmp;
-        }
-      } //-----------------------------------------------//
-
-
-
-      if (my_mpi_rank != 0)
-      { //==================================// pos send
-        for (unsigned i = 0; i < pos.size(); ++i)
-        {
-          Vector<double> p_tmp{pos[i].x, pos[i].y, pos[i].z};
-          MPI_Send(&p_tmp.x, 3, MPI_DOUBLE, 0, id[i], mpi_comm);
-        }
-      }
-      else
-      {
-        all_pos.reserve(nta);
-        for (unsigned i = 0; i < nla; ++i)
-        {
-          Vector<double> p_tmp;
-          p_tmp = pos[i];
-          all_pos.push_back(p_tmp);
-        }
-
-        for (unsigned i = 1; i < nprocs; ++i)
-        {
-          for (auto j : all_id[i])
-          {
-            Vector<double> p_tmp;
-            MPI_Recv(&p_tmp, 3, MPI_DOUBLE, i, j, mpi_comm, MPI_STATUS_IGNORE);
-            all_pos.push_back(p_tmp);
-          }
-        }
-      } //-----------------------------------------------//
-
-
-
-      if (my_mpi_rank != 0)
-      { //==================================// type send
-        for (unsigned int i = 0; i < pos.size(); ++i)
-        {
-          MPI_Send(&type[i], 1, MPI_INT, 0, id[i], mpi_comm);
-        }
-      }
-      else
-      {
-        all_type.reserve(nta);
-        for (unsigned int i = 0; i < nla; ++i)
-        {
-          int tmp = type[i];
-          all_type.push_back(tmp);
-        }
-
-        for (unsigned int i = 1; i < nprocs; ++i)
-        {
-          for (auto j : all_id[i])
-          {
-            int tmp;
-            MPI_Recv(&tmp, 1, MPI_INT, i, j, mpi_comm, MPI_STATUS_IGNORE);
-            all_type.push_back(tmp);
-          }
-        }
-      } //-----------------------------------------------//
-
-
-    }
-    else
-    { //==================================// one_processor MPI counterpart.
-      // this part can be written in a more concise way.
-      all_id.resize(nprocs);
-      for (unsigned int i = 0; i < nla; ++i)
-      {
-        all_id[0].push_back(id[i]);
-        all_pos.push_back(pos[i]);
-        all_type.push_back(type[i]);
-      }
-
-    } //-----------------------------------------------//
-
-
-
-    Vector<double> p_o{0, 0, 0};
-    if (position_offset != nullptr)
-      p_o = position_offset->current_value;
+#if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
 
     if (my_mpi_rank == 0)
     {
-
-      ofs_xyz << all_type.size() << "\nAtom\n";
-
-      for (unsigned int i = 0; i < all_type.size(); ++i)
-      {
-        ofs_xyz << all_type[i] << " " << all_pos[i].x + p_o.x << " " << all_pos[i].y + p_o.y << " " << all_pos[i].z + p_o.z << "\n";
-      }
-
-      ofs_xyz << std::flush;
+      dump_xyz_serial(i);
     }
+#elif defined(CAVIAR_WITH_MPI)
 
-    delete[] nla_list;
-
-#else
-
-    auto &all_pos = atom_data->atom_struct_owned.position;
-    auto &all_type = atom_data->atom_struct_owned.type;
-    auto &all_vel = atom_data->atom_struct_owned.velocity;
-    auto &all_acc = atom_data->atom_struct_owned.acceleration;
-    auto nta = atom_data->atom_struct_owned.position.size();
-
-    ofs_xyz << nta << "\nAtom\n";
-
-    // if (my_mpi_rank==0) {
-
-    Vector<double> p_o{0, 0, 0};
-    if (position_offset != nullptr)
-      p_o = position_offset->current_value;
-
-    if (output_velocity && output_acceleration)
+    if (comm->nprocs > 1)
     {
-      for (unsigned int i = 0; i < nta; ++i)
-      {
-        ofs_xyz << all_type[i] << " " << all_pos[i].x + p_o.x << " " << all_pos[i].y + p_o.y << " " << all_pos[i].z + p_o.z;
-        ofs_xyz << " " << all_vel[i].x << " " << all_vel[i].y << " " << all_vel[i].z;
-        ofs_xyz << " " << all_acc[i].x << " " << all_acc[i].y << " " << all_acc[i].z;
-        ofs_xyz << "\n";
-      }
-    }
-    else if (output_velocity)
-    {
-      for (unsigned int i = 0; i < nta; ++i)
-      {
-        ofs_xyz << all_type[i] << " " << all_pos[i].x + p_o.x << " " << all_pos[i].y + p_o.y << " " << all_pos[i].z + p_o.z;
-        ofs_xyz << " " << all_vel[i].x << " " << all_vel[i].y << " " << all_vel[i].z;
-        ofs_xyz << "\n";
-      }
-    }
-    else if (output_acceleration)
-    {
-      for (unsigned int i = 0; i < nta; ++i)
-      {
-        ofs_xyz << all_type[i] << " " << all_pos[i].x + p_o.x << " " << all_pos[i].y + p_o.y << " " << all_pos[i].z + p_o.z;
-        ofs_xyz << " " << all_acc[i].x << " " << all_acc[i].y << " " << all_acc[i].z;
-        ofs_xyz << "\n";
-      }
+      if (mpi_single_file)
+        dump_xyz_mpi(i);
+      if (mpi_separate_files)
+        dump_xyz_serial(i, my_mpi_rank);
     }
     else
     {
-      for (unsigned int i = 0; i < nta; ++i)
-      {
-        ofs_xyz << all_type[i] << " " << all_pos[i].x + p_o.x << " " << all_pos[i].y + p_o.y << " " << all_pos[i].z + p_o.z;
-        ofs_xyz << "\n";
-      }
+      dump_xyz_serial(i);
     }
 
-    ofs_xyz << std::flush;
-    //}
+#else
+
+    dump_xyz_serial(i);
+
 #endif
 
     double wallTimeXyzDump2 = get_wall_time();
@@ -253,6 +64,461 @@ namespace writer
                     +" . Elapsed time since previous xyz dump: " + std::to_string(dtstart);
     output->info(s, 2);
     wallTimeXyzDump1 = wallTimeXyzDump2;
+  }
+
+  //================================================
+  //                                              ||
+  //================================================
+  void Atom_data::dump_xyz_ghost(int64_t i)
+  {
+#if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
+
+    if (my_mpi_rank == 0)
+    {
+      dump_xyz_ghost_serial(i);
+    }
+#elif defined(CAVIAR_WITH_MPI)
+
+    if (comm->nprocs > 1)
+    {
+      if (mpi_single_file)
+        dump_xyz_ghost_mpi(i);
+      if (mpi_separate_files)
+        dump_xyz_ghost_serial(i, my_mpi_rank);
+    }
+    else
+    {
+      dump_xyz_ghost_serial(i);
+    }
+
+#else
+
+    dump_xyz_ghost_serial(i);
+
+#endif
+  }
+
+  void Atom_data::dump_xyz_mpi(int64_t )
+  {
+#if defined(CAVIAR_WITH_MPI)
+
+    const auto &pos = atom_data->atom_struct_owned.position;
+    const auto &vel = atom_data->atom_struct_owned.velocity;
+    const auto &acc = atom_data->atom_struct_owned.acceleration;
+    const auto &id = atom_data->atom_struct_owned.id;
+    const auto &type = atom_data->atom_struct_owned.type;
+
+    unsigned int send_num = pos.size(); // num_local_atoms;
+    const unsigned nprocs = comm->nprocs;
+    unsigned int num_total_atoms = pos.size();
+
+    std::vector<unsigned int> recv_num(nprocs, 0);
+
+    //==================================// num_local_atoms send
+    if (my_mpi_rank != 0)
+      MPI_Send(&send_num, 1, MPI::UNSIGNED, 0, 0, mpi_comm);
+
+    if (my_mpi_rank == 0)
+    {
+      for (unsigned i = 1; i < nprocs; ++i)
+        MPI_Recv(&recv_num[i], 1, MPI::UNSIGNED, i, 0, mpi_comm, MPI_STATUS_IGNORE);
+
+      for (unsigned int i = 1; i < nprocs; ++i)
+        num_total_atoms += recv_num[i];
+    }
+
+    auto &mpinf = mpi_packet_info_owned;
+
+    if (!mpinf.initialized)
+    {
+      mpinf.initialized = true;
+      mpinf.total = 0;
+
+      mpinf.id = mpinf.total;
+      mpinf.total += 1;
+
+      mpinf.type = mpinf.total;
+      mpinf.total += 1;
+
+      mpinf.pos = mpinf.total;
+      mpinf.total += 3;
+
+      if (output_velocity)
+      {
+        mpinf.vel = mpinf.total;
+        mpinf.total += 3;
+      }
+      if (output_acceleration)
+      {
+        mpinf.acc = mpinf.total;
+        mpinf.total += 3;
+      }
+    }
+    std::vector<double> send_data;              // rank != 0
+    std::vector<std::vector<double>> recv_data; // rank 0
+
+    if (my_mpi_rank != 0)
+      send_data.resize(mpinf.total * send_num, 0);
+
+    if (my_mpi_rank == 0)
+    {
+      for (unsigned i = 1; i < nprocs; ++i)
+        recv_data[i].resize(recv_num[i], 0);
+    }
+
+    if (my_mpi_rank != 0)
+    {
+      auto N = send_num;
+
+      for (unsigned int i = 0; i < send_num; ++i)
+      {
+        send_data[mpinf.id * N + i] = id[i];
+
+        send_data[mpinf.type * N + i] = type[i];
+
+        send_data[(mpinf.pos * N) + (3 * i) + 0] = pos[i].x;
+        send_data[(mpinf.pos * N) + (3 * i) + 1] = pos[i].y;
+        send_data[(mpinf.pos * N) + (3 * i) + 2] = pos[i].z;
+
+        if (output_velocity)
+        {
+          send_data[(mpinf.vel * N) + (3 * i) + 0] = vel[i].x;
+          send_data[(mpinf.vel * N) + (3 * i) + 1] = vel[i].y;
+          send_data[(mpinf.vel * N) + (3 * i) + 2] = vel[i].z;
+        }
+
+        if (output_acceleration)
+        {
+          send_data[(mpinf.acc * N) + (3 * i) + 0] = acc[i].x;
+          send_data[(mpinf.acc * N) + (3 * i) + 1] = acc[i].y;
+          send_data[(mpinf.acc * N) + (3 * i) + 2] = acc[i].z;
+        }
+      }
+    }
+    //-----------------------------------------------//
+
+    if (my_mpi_rank != 0)
+      MPI_Send(send_data.data(), mpinf.total * send_num, MPI_DOUBLE, 0, 0, mpi_comm); // TAG 1
+
+    if (my_mpi_rank == 0)
+      for (unsigned i = 1; i < nprocs; ++i)
+        MPI_Recv(recv_data[i].data(), mpinf.total * recv_num[i], MPI_DOUBLE, i, 0, mpi_comm, MPI_STATUS_IGNORE); // TAG 1
+
+    //-----------------------------------------------//
+
+    if (my_mpi_rank != 0)
+      return;
+
+    Vector<double> p_o{0, 0, 0};
+
+    if (position_offset != nullptr)
+      p_o = position_offset->current_value;
+
+    ofs_xyz << num_total_atoms << "\nAtom\n";
+
+    for (unsigned int i = 0; i < send_num; ++i)
+    {
+      ofs_xyz << type[i] << " " << pos[i].x + p_o.x << " " << pos[i].y + p_o.y << " " << pos[i].z + p_o.z;
+      if (output_velocity)
+        ofs_xyz << " " << vel[i].x << " " << vel[i].y << " " << vel[i].z;
+      if (output_acceleration)
+        ofs_xyz << " " << acc[i].x << " " << acc[i].y << " " << acc[i].z;
+      ofs_xyz << "\n";
+    }
+
+    for (unsigned i = 1; i < nprocs; ++i)
+    {
+      int N = recv_num[i];
+      for (unsigned int j = 0; j < recv_num[i]; ++j)
+      {
+
+        // id_j = recv_data[i][mpinf.id * N + j];
+
+        auto type_j = recv_data[i][mpinf.type * N + j];
+
+        auto pos_x = recv_data[i][(mpinf.pos * N) + (3 * j) + 0];
+        auto pos_y = recv_data[i][(mpinf.pos * N) + (3 * j) + 1];
+        auto pos_z = recv_data[i][(mpinf.pos * N) + (3 * j) + 2];
+        ofs_xyz << type_j << " " << pos_x + p_o.x << " " << pos_y + p_o.y << " " << pos_z + p_o.z;
+
+        if (output_velocity)
+        {
+          auto vel_x = recv_data[i][(mpinf.vel * N) + (3 * j) + 0];
+          auto vel_y = recv_data[i][(mpinf.vel * N) + (3 * j) + 1];
+          auto vel_z = recv_data[i][(mpinf.vel * N) + (3 * j) + 2];
+          ofs_xyz << " " << vel_x << " " << vel_y << " " << vel_z;
+        }
+
+        if (output_acceleration)
+        {
+          auto acc_x = recv_data[i][(mpinf.acc * N) + (3 * j) + 0];
+          auto acc_y = recv_data[i][(mpinf.acc * N) + (3 * j) + 1];
+          auto acc_z = recv_data[i][(mpinf.acc * N) + (3 * j) + 2];
+          ofs_xyz << " " << acc_x << " " << acc_y << " " << acc_z;
+        }
+        ofs_xyz << "\n";
+      }
+    }
+
+    ofs_xyz << std::flush;
+
+#endif
+  }
+
+  //================================================
+  //                                              ||
+  //================================================
+
+
+   void Atom_data::dump_xyz_ghost_mpi(int64_t )
+  {
+#if defined(CAVIAR_WITH_MPI)
+
+    const auto &pos = atom_data->atom_struct_ghost.position;
+    const auto &vel = atom_data->atom_struct_ghost.velocity;
+    const auto &acc = atom_data->atom_struct_ghost.acceleration;
+    const auto &id = atom_data->atom_struct_ghost.id;
+    const auto &type = atom_data->atom_struct_ghost.type;
+
+    unsigned int send_num = pos.size(); // num_local_atoms;
+    const unsigned nprocs = comm->nprocs;
+    unsigned int num_total_atoms = pos.size();
+
+    std::vector<unsigned int> recv_num(nprocs, 0);
+
+    //==================================// num_local_atoms send
+    if (my_mpi_rank != 0)
+      MPI_Send(&send_num, 1, MPI::UNSIGNED, 0, 0, mpi_comm);
+
+    if (my_mpi_rank == 0)
+    {
+      for (unsigned i = 1; i < nprocs; ++i)
+        MPI_Recv(&recv_num[i], 1, MPI::UNSIGNED, i, 0, mpi_comm, MPI_STATUS_IGNORE);
+
+      for (unsigned int i = 1; i < nprocs; ++i)
+        num_total_atoms += recv_num[i];
+    }
+
+    auto &mpinf = mpi_packet_info_ghost;
+
+    if (!mpinf.initialized)
+    {
+      mpinf.initialized = true;
+      mpinf.total = 0;
+
+      mpinf.id = mpinf.total;
+      mpinf.total += 1;
+
+      mpinf.type = mpinf.total;
+      mpinf.total += 1;
+
+      mpinf.pos = mpinf.total;
+      mpinf.total += 3;
+
+      if (output_velocity)
+      {
+        mpinf.vel = mpinf.total;
+        mpinf.total += 3;
+      }
+      if (output_acceleration)
+      {
+        mpinf.acc = mpinf.total;
+        mpinf.total += 3;
+      }
+    }
+    std::vector<double> send_data;              // rank != 0
+    std::vector<std::vector<double>> recv_data; // rank 0
+
+    if (my_mpi_rank != 0)
+      send_data.resize(mpinf.total * send_num,0);
+
+    if (my_mpi_rank == 0)
+    {
+      for (unsigned i = 1; i < nprocs; ++i)
+        recv_data[i].resize(recv_num[i], 0);
+    }
+
+    if (my_mpi_rank != 0)
+    {
+      auto N = send_num;
+
+      for (unsigned int i = 0; i < send_num; ++i)
+      {
+        send_data[mpinf.id * N + i] = id[i];
+
+        send_data[mpinf.type * N + i] = type[i];
+
+        send_data[(mpinf.pos * N) + (3 * i) + 0] = pos[i].x;
+        send_data[(mpinf.pos * N) + (3 * i) + 1] = pos[i].y;
+        send_data[(mpinf.pos * N) + (3 * i) + 2] = pos[i].z;
+
+        if (output_velocity)
+        {
+          send_data[(mpinf.vel * N) + (3 * i) + 0] = vel[i].x;
+          send_data[(mpinf.vel * N) + (3 * i) + 1] = vel[i].y;
+          send_data[(mpinf.vel * N) + (3 * i) + 2] = vel[i].z;
+        }
+
+        if (output_acceleration)
+        {
+          send_data[(mpinf.acc * N) + (3 * i) + 0] = acc[i].x;
+          send_data[(mpinf.acc * N) + (3 * i) + 1] = acc[i].y;
+          send_data[(mpinf.acc * N) + (3 * i) + 2] = acc[i].z;
+        }
+      }
+    }
+    //-----------------------------------------------//
+
+    if (my_mpi_rank != 0)
+      MPI_Send(send_data.data(), mpinf.total * send_num, MPI_DOUBLE, 0, 0, mpi_comm); // TAG 1
+
+    if (my_mpi_rank == 0)
+      for (unsigned i = 1; i < nprocs; ++i)
+        MPI_Recv(recv_data[i].data(), mpinf.total * recv_num[i], MPI_DOUBLE, i, 0, mpi_comm, MPI_STATUS_IGNORE); // TAG 1
+
+    //-----------------------------------------------//
+
+    if (my_mpi_rank != 0)
+      return;
+
+    Vector<double> p_o{0, 0, 0};
+
+    if (position_offset != nullptr)
+      p_o = position_offset->current_value;
+
+    ofs_xyz << num_total_atoms << "\nAtom\n";
+
+    for (unsigned int i = 0; i < send_num; ++i)
+    {
+      ofs_xyz << type[i] << " " << pos[i].x + p_o.x << " " << pos[i].y + p_o.y << " " << pos[i].z + p_o.z;
+      if (output_velocity)
+        ofs_xyz << " " << vel[i].x << " " << vel[i].y << " " << vel[i].z;
+      if (output_acceleration)
+        ofs_xyz << " " << acc[i].x << " " << acc[i].y << " " << acc[i].z;
+      ofs_xyz << "\n";
+    }
+
+    for (unsigned i = 1; i < nprocs; ++i)
+    {
+      int N = recv_num[i];
+      for (unsigned int j = 0; j < recv_num[i]; ++j)
+      {
+
+        // id_j = recv_data[i][mpinf.id * N + j];
+
+        auto type_j = recv_data[i][mpinf.type * N + j];
+
+        auto pos_x = recv_data[i][(mpinf.pos * N) + (3 * j) + 0];
+        auto pos_y = recv_data[i][(mpinf.pos * N) + (3 * j) + 1];
+        auto pos_z = recv_data[i][(mpinf.pos * N) + (3 * j) + 2];
+        ofs_xyz_ghost << type_j << " " << pos_x + p_o.x << " " << pos_y + p_o.y << " " << pos_z + p_o.z;
+
+        if (output_velocity)
+        {
+          auto vel_x = recv_data[i][(mpinf.vel * N) + (3 * j) + 0];
+          auto vel_y = recv_data[i][(mpinf.vel * N) + (3 * j) + 1];
+          auto vel_z = recv_data[i][(mpinf.vel * N) + (3 * j) + 2];
+          ofs_xyz_ghost << " " << vel_x << " " << vel_y << " " << vel_z;
+        }
+
+        if (output_acceleration)
+        {
+          auto acc_x = recv_data[i][(mpinf.acc * N) + (3 * j) + 0];
+          auto acc_y = recv_data[i][(mpinf.acc * N) + (3 * j) + 1];
+          auto acc_z = recv_data[i][(mpinf.acc * N) + (3 * j) + 2];
+          ofs_xyz_ghost << " " << acc_x << " " << acc_y << " " << acc_z;
+        }
+        ofs_xyz_ghost << "\n";
+      }
+    }
+
+    ofs_xyz_ghost << std::flush;
+
+#endif
+  }
+
+  //================================================
+  //                                              ||
+  //================================================
+  void Atom_data::dump_xyz_serial(int64_t , int my_mpi_rank)
+  {
+    auto &pos = atom_data->atom_struct_owned.position;
+    auto &type = atom_data->atom_struct_owned.type;
+    auto &vel = atom_data->atom_struct_owned.velocity;
+    auto &acc = atom_data->atom_struct_owned.acceleration;
+    auto nta = atom_data->atom_struct_owned.position.size();
+
+    ofs_xyz << nta << "\nAtom\n";
+
+    Vector<double> p_o{0, 0, 0};
+    if (position_offset != nullptr)
+      p_o = position_offset->current_value;
+
+    if (my_mpi_rank == -1)
+    {
+      for (unsigned int i = 0; i < nta; ++i)
+      {
+        ofs_xyz << type[i] << " " << pos[i].x + p_o.x << " " << pos[i].y + p_o.y << " " << pos[i].z + p_o.z;
+        if (output_velocity)
+          ofs_xyz << " " << vel[i].x << " " << vel[i].y << " " << vel[i].z;
+        if (output_acceleration)
+          ofs_xyz << " " << acc[i].x << " " << acc[i].y << " " << acc[i].z;
+        ofs_xyz << "\n";
+      }
+
+      ofs_xyz << std::flush;
+    }
+    else
+    {
+      for (unsigned int i = 0; i < nta; ++i)
+      {
+        ofs_xyz_mpi << type[i] << " " << pos[i].x + p_o.x << " " << pos[i].y + p_o.y << " " << pos[i].z + p_o.z;
+        if (output_velocity)
+          ofs_xyz_mpi << " " << vel[i].x << " " << vel[i].y << " " << vel[i].z;
+        if (output_acceleration)
+          ofs_xyz_mpi << " " << acc[i].x << " " << acc[i].y << " " << acc[i].z;
+        ofs_xyz_mpi << "\n";
+      }
+
+      ofs_xyz_mpi << std::flush;
+    }
+  }
+
+  //================================================
+  //                                              ||
+  //================================================
+  void Atom_data::dump_xyz_ghost_serial(int64_t , int my_mpi_rank)
+  {
+    auto &pos = atom_data->atom_struct_ghost.position;
+    auto &type = atom_data->atom_struct_ghost.type;
+    auto nta = atom_data->atom_struct_ghost.position.size();
+
+    ofs_xyz_ghost << nta << "\nAtom\n";
+
+    Vector<double> p_o{0, 0, 0};
+    if (position_offset != nullptr)
+      p_o = position_offset->current_value;
+
+    if (my_mpi_rank == -1)
+    {
+      for (unsigned int i = 0; i < nta; ++i)
+      {
+        ofs_xyz_ghost << type[i] << " " << pos[i].x + p_o.x << " " << pos[i].y + p_o.y << " " << pos[i].z + p_o.z;
+        ofs_xyz_ghost << "\n";
+      }
+
+      ofs_xyz_ghost << std::flush;
+    }
+    else
+    {
+      for (unsigned int i = 0; i < nta; ++i)
+      {
+        ofs_xyz_ghost_mpi << type[i] << " " << pos[i].x + p_o.x << " " << pos[i].y + p_o.y << " " << pos[i].z + p_o.z;
+        ofs_xyz_ghost_mpi << "\n";
+      }
+
+      ofs_xyz_ghost_mpi << std::flush;
+    }
   }
 
 } // writer

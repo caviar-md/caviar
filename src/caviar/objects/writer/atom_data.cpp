@@ -28,15 +28,9 @@ CAVIAR_NAMESPACE_OPEN
 namespace writer
 {
 
-  Atom_data::Atom_data(CAVIAR *fptr) : Writer{fptr},
-                                       atom_data{nullptr}, domain{nullptr},
-                                       energy_step{100}, temperature_step{100}, xyz_step{1000}, povray_step{10000}, msd_step{1000},
-                                       output_energy{false}, output_temperature{false}, output_xyz{false}, output_povray{false},
-                                       output_msd{false},
-                                       output_velocity{false}, output_acceleration{false}
+  Atom_data::Atom_data(CAVIAR *fptr) : Writer{fptr}
   {
     FC_OBJECT_INITIALIZE_INFO
-    msd_initial_step = 0;
     wallTimeXyzDump1 = get_wall_time();
   }
 
@@ -44,12 +38,25 @@ namespace writer
   {
     if (ofs_xyz.is_open())
       ofs_xyz.close();
+
+    if (ofs_xyz_ghost.is_open())
+      ofs_xyz_ghost.close();
+
+    if (ofs_xyz_mpi.is_open())
+      ofs_xyz_mpi.close();
+
+    if (ofs_xyz_ghost_mpi.is_open())
+      ofs_xyz_ghost_mpi.close();      
+
     if (ofs_energy.is_open())
       ofs_energy.close();
+
     if (ofs_temperature.is_open())
       ofs_temperature.close();
+
     if (ofs_povray.is_open())
       ofs_povray.close();
+
     if (ofs_msd.is_open())
       ofs_msd.close();
   }
@@ -72,10 +79,24 @@ namespace writer
         FIND_OBJECT_BY_NAME(domain, it)
         domain = object_container->domain[it->second.index];
       }
+      else if (string_cmp(t, "mpi_separate_files"))
+      {
+        mpi_separate_files = true;
+      }
+      else if (string_cmp(t, "mpi_single_file"))
+      {
+        mpi_single_file = true;
+      }
+      else if (string_cmp(t, "xyz_ghost_step"))
+      {
+        GET_OR_CHOOSE_A_INT(xyz_ghost_step, "", "")
+        output_xyz_ghost = true;
+      }
       else if (string_cmp(t, "xyz_step"))
       {
         GET_OR_CHOOSE_A_INT(xyz_step, "", "")
         output_xyz = true;
+        xyz_ghost_step = xyz_step;
       }
       else if (string_cmp(t, "povray_step"))
       {
@@ -102,6 +123,30 @@ namespace writer
         GET_OR_CHOOSE_A_INT(msd_initial_step, "", "")
         output_msd = true;
       }
+      else if (string_cmp(t, "file_name_xyz"))
+      {
+        file_name_xyz = parser->get_val_token().string_value;
+      }
+      else if (string_cmp(t, "file_name_xyz_ghost"))
+      {
+        file_name_xyz_ghost = parser->get_val_token().string_value;
+      }
+      else if (string_cmp(t, "file_name_energy"))
+      {
+        file_name_energy = parser->get_val_token().string_value;
+      }
+      else if (string_cmp(t, "file_name_temperature"))
+      {
+        file_name_temperature = parser->get_val_token().string_value;
+      }
+      else if (string_cmp(t, "file_name_povray"))
+      {
+        file_name_povray = parser->get_val_token().string_value;
+      }
+      else if (string_cmp(t, "file_name_msd"))
+      {
+        file_name_msd = parser->get_val_token().string_value;
+      }
       else if (string_cmp(t, "open_files"))
       {
         open_files();
@@ -109,6 +154,10 @@ namespace writer
       else if (string_cmp(t, "close_files"))
       {
         close_files();
+      }
+      else if (string_cmp(t, "output_id"))
+      {
+        output_id = true;
       }
       else if (string_cmp(t, "output_velocity"))
       {
@@ -172,70 +221,92 @@ namespace writer
     {
       if (output_xyz)
         if (!ofs_xyz.is_open())
-          ofs_xyz.open("o_xyz.xyz");
+          ofs_xyz.open((file_name_xyz + ".xyz").c_str());
+
+      if (output_xyz_ghost)
+        if (!ofs_xyz_ghost.is_open())
+          ofs_xyz_ghost.open((file_name_xyz_ghost + ".xyz").c_str());
 
       if (output_povray)
         if (!ofs_povray.is_open())
-          ofs_povray.open("o_pov.pov");
+          ofs_povray.open((file_name_povray + ".pov").c_str());
 
       if (output_energy)
         if (!ofs_energy.is_open())
-          ofs_energy.open("o_energy.txt");
+          ofs_energy.open((file_name_energy + ".txt").c_str());
 
       if (output_temperature)
         if (!ofs_temperature.is_open())
-          ofs_temperature.open("o_temperature.txt");
+          ofs_temperature.open((file_name_temperature + ".txt").c_str());
 
       if (output_msd)
         if (!ofs_msd.is_open())
-          ofs_msd.open("o_msd.txt");
+          ofs_msd.open((file_name_msd + ".txt").c_str());
     }
 #elif defined(CAVIAR_WITH_MPI)
-    if (my_mpi_rank == 0)
+    if (mpi_separate_files)
     {
       if (output_xyz)
-        if (!ofs_xyz.is_open())
-          ofs_xyz.open("o_xyz.xyz");
+        if (!ofs_xyz_mpi.is_open())
+          ofs_xyz_mpi.open((file_name_xyz +"_mpi" +std::to_string(my_mpi_rank) + ".xyz").c_str());
 
+      if (output_xyz_ghost)
+        if (!ofs_xyz_ghost_mpi.is_open())
+          ofs_xyz_ghost_mpi.open((file_name_xyz_ghost +"_mpi"+ std::to_string(my_mpi_rank) + ".xyz").c_str());
+    }
+    if (my_mpi_rank == 0)
+    {
+      if (mpi_single_file)
+      {
+        if (output_xyz)
+          if (!ofs_xyz.is_open())
+            ofs_xyz.open((file_name_xyz + ".xyz").c_str());
+
+        if (output_xyz_ghost)
+          if (!ofs_xyz_ghost.is_open())
+            ofs_xyz_ghost.open((file_name_xyz_ghost + ".xyz").c_str());
+      }
       if (output_povray)
         if (!ofs_povray.is_open())
-          ofs_povray.open("o_pov.pov");
+          ofs_povray.open((file_name_povray + ".pov").c_str());
 
       if (output_energy)
         if (!ofs_energy.is_open())
-          ofs_energy.open("o_energy.txt");
+          ofs_energy.open((file_name_energy + ".txt").c_str());
 
       if (output_temperature)
         if (!ofs_temperature.is_open())
-          ofs_temperature.open("o_temperature.txt");
+          ofs_temperature.open((file_name_temperature + ".txt").c_str());
 
       if (output_msd)
         if (!ofs_msd.is_open())
-          ofs_msd.open("o_msd.txt");
+          ofs_msd.open((file_name_msd + ".txt").c_str());
     } //*/
 #else
 
     if (output_xyz)
       if (!ofs_xyz.is_open())
-      {
-        ofs_xyz.open("o_xyz.xyz");
-      }
+        ofs_xyz.open((file_name_xyz + ".xyz").c_str());
+
+    if (output_xyz_ghost)
+      if (!ofs_xyz_ghost.is_open())
+        ofs_xyz_ghost.open((file_name_xyz_ghost + ".xyz").c_str());
 
     if (output_povray)
       if (!ofs_povray.is_open())
-        ofs_povray.open("o_pov.pov");
+        ofs_povray.open((file_name_povray + ".pov").c_str());
 
     if (output_energy)
       if (!ofs_energy.is_open())
-        ofs_energy.open("o_energy.txt");
+        ofs_energy.open((file_name_energy + ".txt").c_str());
 
     if (output_temperature)
       if (!ofs_temperature.is_open())
-        ofs_temperature.open("o_temperature.txt");
+        ofs_temperature.open((file_name_temperature + ".txt").c_str());
 
     if (output_msd)
       if (!ofs_msd.is_open())
-        ofs_msd.open("o_msd.txt");
+        ofs_msd.open((file_name_msd + ".txt").c_str());
 #endif
   }
 
@@ -255,6 +326,10 @@ namespace writer
     if (output_xyz)
       if (i % xyz_step == 0)
         dump_xyz(i);
+
+    if (output_xyz_ghost)
+      if (i % xyz_ghost_step == 0)
+        dump_xyz_ghost(i);
 
     if (output_energy)
       if (i % energy_step == 0)

@@ -297,18 +297,18 @@ bool Atom_data::exchange_owned(long step)
     mpinf.atomic_bc = mpinf.total;
     mpinf.total += 1;
 
-    std::cout << "o: mpinf.id:" << mpinf.id << std::endl;
-    std::cout << "o: mpinf.type:" << mpinf.type << std::endl;
-    std::cout << "o: mpinf.pos:" << mpinf.pos << std::endl;
-    std::cout << "o: mpinf.vel:" << mpinf.vel << std::endl;
-    std::cout << "o: mpinf.acc:" << mpinf.acc << std::endl;
-    std::cout << "o: mpinf.pos_o:" << mpinf.pos_o << std::endl;
-    std::cout << "o: mpinf.vel_o:" << mpinf.vel_o << std::endl;
-    std::cout << "o: mpinf.acc_o:" << mpinf.acc_o << std::endl;
-    std::cout << "o: mpinf.msd:" << mpinf.msd << std::endl;
-    std::cout << "o: mpinf.mol_ind:" << mpinf.mol_ind << std::endl;
-    std::cout << "o: mpinf.atomic_bc:" << mpinf.atomic_bc << std::endl;
-    std::cout << "o: mpinf.total:" << mpinf.total << std::endl;
+    // std::cout << "o: mpinf.id:" << mpinf.id << std::endl;
+    // std::cout << "o: mpinf.type:" << mpinf.type << std::endl;
+    // std::cout << "o: mpinf.pos:" << mpinf.pos << std::endl;
+    // std::cout << "o: mpinf.vel:" << mpinf.vel << std::endl;
+    // std::cout << "o: mpinf.acc:" << mpinf.acc << std::endl;
+    // std::cout << "o: mpinf.pos_o:" << mpinf.pos_o << std::endl;
+    // std::cout << "o: mpinf.vel_o:" << mpinf.vel_o << std::endl;
+    // std::cout << "o: mpinf.acc_o:" << mpinf.acc_o << std::endl;
+    // std::cout << "o: mpinf.msd:" << mpinf.msd << std::endl;
+    // std::cout << "o: mpinf.mol_ind:" << mpinf.mol_ind << std::endl;
+    // std::cout << "o: mpinf.atomic_bc:" << mpinf.atomic_bc << std::endl;
+    // std::cout << "o: mpinf.total:" << mpinf.total << std::endl;
   }
 
   // // std::cout << step << " : me : " << me << " X 2" << std::endl;
@@ -471,11 +471,10 @@ bool Atom_data::exchange_owned(long step)
     type[m] = recv_data[i][j][k][mpinf.type * N + c];
     // std::cout << step << " , owned me:" << me << " y 6.9" << std::endl;
 
-    pos[m].z = recv_data[i][j][k][(mpinf.pos * N) + (3 * c) + 2];
-    // std::cout << step << " , owned me:" << me << " y 6.10" << std::endl;
-
     pos[m].x = recv_data[i][j][k][(mpinf.pos * N) + (3 * c) + 0];
     pos[m].y = recv_data[i][j][k][(mpinf.pos * N) + (3 * c) + 1];
+    pos[m].z = recv_data[i][j][k][(mpinf.pos * N) + (3 * c) + 2];
+
     // std::cout << step << " , owned me:" << me << " y 6.11" << std::endl;
 
     vel[m].x = recv_data[i][j][k][(mpinf.vel * N) + (3 * c) + 0];
