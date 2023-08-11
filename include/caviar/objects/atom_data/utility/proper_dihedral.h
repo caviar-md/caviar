@@ -25,7 +25,7 @@ namespace atom_data
   // constraint algorithms or soft atomic proper dihedral in harmonic_proper_dihedral force_fields
   struct Proper_dihedral
   {
-    int index_1, index_2, index_3, index_4;
+    int id_1, id_2, id_3, id_4;
     int type; // used in soft atomic proper dihedral in force_fields
   };
 }

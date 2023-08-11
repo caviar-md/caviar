@@ -525,6 +525,9 @@ bool Atom_data::add_atom(GlobalID_t id,
                          const Vector<Real_t> &pos,
                          const Vector<Real_t> &vel)
 {
+  // =======================================
+  // Adding data to atom_struct_owned.
+  // =======================================
   atom_struct_owned.id.emplace_back(id);
   atom_struct_owned.type.emplace_back(type);
   atom_struct_owned.position.emplace_back(pos);  
@@ -540,6 +543,15 @@ bool Atom_data::add_atom(GlobalID_t id,
     atom_struct_owned.msd_domain_cross.emplace_back(0, 0, 0);  
   atom_struct_owned.molecule_index.emplace_back(-1);
   atom_struct_owned.atomic_bond_count.emplace_back(0);
+
+  // =======================================
+  // Adding data to atom_id_to_index.
+  // =======================================
+  int atom_id_to_index_size = atom_id_to_index.size();
+  if (atom_id_to_index_size < id+1)// test case: atom_id_to_index_size = 0 and id = 0
+    atom_id_to_index.resize(id+1, -1);
+  atom_id_to_index[id] = atom_struct_owned.id.size() - 1;
+
   return true;
 }
 

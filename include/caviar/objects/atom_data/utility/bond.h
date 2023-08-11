@@ -25,7 +25,7 @@ namespace atom_data
   // constraint algorithms or soft atomic bonds in spring_bond force_fields
   struct Bond
   {
-    int index_1, index_2; // atom index
+    int id_1, id_2; // atom id
     int type;             // used in soft atomic bonds in force_fields
     double length;        // bond length // TODO this can be stored by type in Atom_data
   };

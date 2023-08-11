@@ -145,8 +145,8 @@ namespace force_field
             atom_data::Bond b;
             b.type = btype;
             b.length = blength;
-            b.index_1 = i;
-            b.index_2 = j;
+            b.id_1 = i;
+            b.id_2 = j;
 
             if (bond_count[i] < bond_limit[type_i] && bond_count[j] < bond_limit[type_j])
             {

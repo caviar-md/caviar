@@ -362,7 +362,21 @@ public:
    */
   atom_data::Molecule_struct molecule_struct_owned;
 
+  
+  /**
+   * number of total molecules.
+   */
+  int num_molecules;
 
+
+  /**
+   * index: the position of atom in std::vector.
+   * id: unique identifier of atoms between all MPI processes.
+   * In order of less MPI communications for molecules, this vector is implemented.
+   * the id is global but index is local in MPI domain.
+   * in serial mode, 'atom_id_to_index[id] = id' is possible.
+   */
+  std::vector<int> atom_id_to_index;
 
   /**
    * since not all of the situations need ghost particles velocity, we only send
@@ -377,10 +391,6 @@ public:
   // GlobalID_t num_total_atoms;
   // AtomType_t num_atom_types;
 
-  /**
-   * number of total molecules.
-   */
-  int num_molecules;
 
  /*
  * the rank of the domain in which the owned counterpart exists. Used in only a few MPI force_field schemes 

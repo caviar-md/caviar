@@ -101,7 +101,10 @@ namespace force_field
       for (unsigned int j = 0; j < atomic_bond_vector[i].size(); j++)
       {
 
-        int k1 = atomic_bond_vector[i][j].index_1, k2 = atomic_bond_vector[i][j].index_2;
+        int id_1 = atomic_bond_vector[i][j].id_1, id_2 = atomic_bond_vector[i][j].id_2;
+
+        int k1 = atom_data->atom_id_to_index[id_1], k2 = atom_data->atom_id_to_index[id_2];
+
         int btype = atomic_bond_vector[i][j].type;
         double d = atomic_bond_vector[i][j].length;
 

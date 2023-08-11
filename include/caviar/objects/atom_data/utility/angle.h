@@ -25,7 +25,7 @@ namespace atom_data
   // constraint algorithms or soft atomic angles in spring_angle force_fields
   struct Angle
   {
-    int index_1, index_2, index_3; // atom index. 'index_2' is for the middle atom.
+    int id_1, id_2, id_3; // atom id. 'id_2' is for the middle atom.
     int type;                      // used in soft atomic angles in force_fields
     double value;                  // angle value stored in radians. // TODO this can be stored by type in Atom_data
   };

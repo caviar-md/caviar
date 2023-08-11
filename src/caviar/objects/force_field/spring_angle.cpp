@@ -102,9 +102,12 @@ namespace force_field
 
                         for (unsigned int j = 0; j < atomic_angle_vector[i].size(); j++)
                         {
-                                int k1 = atomic_angle_vector[i][j].index_1;
-                                int k2 = atomic_angle_vector[i][j].index_2;
-                                int k3 = atomic_angle_vector[i][j].index_3;
+                                int id_1 = atomic_angle_vector[i][j].id_1;
+                                int id_2 = atomic_angle_vector[i][j].id_2;
+                                int id_3 = atomic_angle_vector[i][j].id_3;
+
+                                int k1 = atom_data->atom_id_to_index[id_1], k2 = atom_data->atom_id_to_index[id_2], k3 = atom_data->atom_id_to_index[id_3];
+
                                 int atype = atomic_angle_vector[i][j].type;
                                 double angle_value = atomic_angle_vector[i][j].value;
 

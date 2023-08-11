@@ -73,42 +73,42 @@ namespace unique
       else if (string_cmp(ts, "add_atomic_bond") || string_cmp(ts, "atomic_bond"))
       {
         atom_data::Bond b;
-        GET_OR_CHOOSE_A_INT(b.index_1, "", "")
-        GET_OR_CHOOSE_A_INT(b.index_2, "", "")
+        GET_OR_CHOOSE_A_INT(b.id_1, "", "")
+        GET_OR_CHOOSE_A_INT(b.id_2, "", "")
         GET_OR_CHOOSE_A_INT(b.type, "", "")
         GET_OR_CHOOSE_A_REAL(b.length, "", "")
 
         atomic_bond.push_back(b);
 
-        if (b.index_1 == b.index_2)
+        if (b.id_1 == b.id_2)
           error->all(FC_FILE_LINE_FUNC_PARSE, "bond indices cannot be similar.");
 
         bool index_1_exist = false;
         bool index_2_exist = false;
         for (unsigned int i = 0; i < atomic_bond_index.size(); ++i)
         {
-          if (atomic_bond_index[i] == b.index_1)
+          if (atomic_bond_index[i] == b.id_1)
             index_1_exist = true;
-          if (atomic_bond_index[i] == b.index_2)
+          if (atomic_bond_index[i] == b.id_2)
             index_2_exist = true;
         }
         if (!index_1_exist)
-          atomic_bond_index.push_back(b.index_1);
+          atomic_bond_index.push_back(b.id_1);
         if (!index_2_exist)
-          atomic_bond_index.push_back(b.index_2);
+          atomic_bond_index.push_back(b.id_2);
       }
       else if (string_cmp(ts, "add_atomic_angle") || string_cmp(ts, "atomic_angle"))
       {
         atom_data::Angle b;
-        GET_OR_CHOOSE_A_INT(b.index_1, "", "")
-        GET_OR_CHOOSE_A_INT(b.index_2, "", "")
-        GET_OR_CHOOSE_A_INT(b.index_3, "", "")
+        GET_OR_CHOOSE_A_INT(b.id_1, "", "")
+        GET_OR_CHOOSE_A_INT(b.id_2, "", "")
+        GET_OR_CHOOSE_A_INT(b.id_3, "", "")
         GET_OR_CHOOSE_A_INT(b.type, "", "")
         GET_OR_CHOOSE_A_REAL(b.value, "", "")
 
         atomic_angle.push_back(b);
 
-        if (b.index_1 == b.index_2 || b.index_1 == b.index_3 || b.index_2 == b.index_3)
+        if (b.id_1 == b.id_2 || b.id_1 == b.id_3 || b.id_2 == b.id_3)
           error->all(FC_FILE_LINE_FUNC_PARSE, "angle indices cannot be similar.");
 
         bool index_1_exist = false;
@@ -116,32 +116,32 @@ namespace unique
         bool index_3_exist = false;
         for (unsigned int i = 0; i < atomic_angle_index.size(); ++i)
         {
-          if (atomic_angle_index[i] == b.index_1)
+          if (atomic_angle_index[i] == b.id_1)
             index_1_exist = true;
-          if (atomic_angle_index[i] == b.index_2)
+          if (atomic_angle_index[i] == b.id_2)
             index_2_exist = true;
-          if (atomic_angle_index[i] == b.index_3)
+          if (atomic_angle_index[i] == b.id_3)
             index_3_exist = true;
         }
         if (!index_1_exist)
-          atomic_angle_index.push_back(b.index_1);
+          atomic_angle_index.push_back(b.id_1);
         if (!index_2_exist)
-          atomic_angle_index.push_back(b.index_2);
+          atomic_angle_index.push_back(b.id_2);
         if (!index_3_exist)
-          atomic_angle_index.push_back(b.index_3);
+          atomic_angle_index.push_back(b.id_3);
       }
       else if (string_cmp(ts, "add_atomic_properdihedral") || string_cmp(ts, "atomic_properdihedral"))
       {
         atom_data::Proper_dihedral b;
-        GET_OR_CHOOSE_A_INT(b.index_1, "", "")
-        GET_OR_CHOOSE_A_INT(b.index_2, "", "")
-        GET_OR_CHOOSE_A_INT(b.index_3, "", "")
-        GET_OR_CHOOSE_A_INT(b.index_4, "", "")
+        GET_OR_CHOOSE_A_INT(b.id_1, "", "")
+        GET_OR_CHOOSE_A_INT(b.id_2, "", "")
+        GET_OR_CHOOSE_A_INT(b.id_3, "", "")
+        GET_OR_CHOOSE_A_INT(b.id_4, "", "")
         GET_OR_CHOOSE_A_REAL(b.type, "", "")
 
         atomic_properdihedral.push_back(b);
 
-        if (b.index_1 == b.index_2 || b.index_1 == b.index_3 || b.index_1 == b.index_4 || b.index_2 == b.index_3 || b.index_2 == b.index_4 || b.index_3 == b.index_4)
+        if (b.id_1 == b.id_2 || b.id_1 == b.id_3 || b.id_1 == b.id_4 || b.id_2 == b.id_3 || b.id_2 == b.id_4 || b.id_3 == b.id_4)
           error->all(FC_FILE_LINE_FUNC_PARSE, "properdihedral indices cannot be similar.");
 
         bool index_1_exist = false;
@@ -150,23 +150,23 @@ namespace unique
         bool index_4_exist = false;
         for (unsigned int i = 0; i < atomic_properdihedral_index.size(); ++i)
         {
-          if (atomic_properdihedral_index[i] == b.index_1)
+          if (atomic_properdihedral_index[i] == b.id_1)
             index_1_exist = true;
-          if (atomic_properdihedral_index[i] == b.index_2)
+          if (atomic_properdihedral_index[i] == b.id_2)
             index_2_exist = true;
-          if (atomic_properdihedral_index[i] == b.index_3)
+          if (atomic_properdihedral_index[i] == b.id_3)
             index_3_exist = true;
-          if (atomic_properdihedral_index[i] == b.index_4)
+          if (atomic_properdihedral_index[i] == b.id_4)
             index_4_exist = true;
         }
         if (!index_1_exist)
-          atomic_properdihedral_index.push_back(b.index_1);
+          atomic_properdihedral_index.push_back(b.id_1);
         if (!index_2_exist)
-          atomic_properdihedral_index.push_back(b.index_2);
+          atomic_properdihedral_index.push_back(b.id_2);
         if (!index_3_exist)
-          atomic_properdihedral_index.push_back(b.index_3);
+          atomic_properdihedral_index.push_back(b.id_3);
         if (!index_4_exist)
-          atomic_properdihedral_index.push_back(b.index_4);
+          atomic_properdihedral_index.push_back(b.id_4);
       }
       else if (string_cmp(ts, "output_xyz"))
       {
