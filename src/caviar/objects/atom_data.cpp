@@ -37,8 +37,8 @@
 CAVIAR_NAMESPACE_OPEN
 
 Atom_data::Atom_data(CAVIAR *fptr) : Pointers{fptr},
-                                    //  num_local_atoms{0},
-                                    //  num_total_atoms{0}, num_atom_types{0},
+                                     //  num_local_atoms{0},
+                                     //  num_total_atoms{0}, num_atom_types{0},
                                      synch_owned_data_bcast_details{true},
                                      ghost_cutoff{0}, domain{nullptr}, cell_list{nullptr}
 {
@@ -314,16 +314,17 @@ int Atom_data::degree_of_freedoms()
   auto df = 3 * atom_struct_owned.position.size();
 
   auto sum_of_bonds = 0;
-  for (auto &&i : molecule_struct_owned.atomic_bond_vector)
-    sum_of_bonds += i.size();
-
   auto sum_of_angles = 0;
-  for (auto &&i : molecule_struct_owned.atomic_angle_vector)
-    sum_of_angles += i.size();
-
   auto sum_of_dihedrals = 0;
-  for (auto &&i : molecule_struct_owned.atomic_properdihedral_vector)
-    sum_of_dihedrals += i.size();
+
+  for (auto &&m : molecule_struct_owned)
+  {
+    sum_of_bonds += m.atomic_bond_vector.size();
+
+    sum_of_angles += m.atomic_angle_vector.size();
+
+    sum_of_dihedrals += m.atomic_properdihedral_vector.size();
+  }
 
   return df - sum_of_bonds - sum_of_angles - sum_of_dihedrals - get_n_r_df();
 }
@@ -446,9 +447,8 @@ long Atom_data::get_num_of_atoms_global()
 void Atom_data::set_num_total_atoms(GlobalID_t n)
 {
   // num_total_atoms = n;
-  // num_local_atoms_est = n * expected_imbalance_factor / comm->nprocs;    
+  // num_local_atoms_est = n * expected_imbalance_factor / comm->nprocs;
   error->all(FC_FILE_LINE_FUNC, "Why you need this function??");
-
 }
 
 void Atom_data::reserve_owned_vectors()
@@ -458,8 +458,7 @@ void Atom_data::reserve_owned_vectors()
   // atom_struct_owned.position.reserve(num_local_atoms_est);
   // atom_struct_owned.velocity.reserve(num_local_atoms_est);
   // atom_struct_owned.acceleration.reserve(num_local_atoms_est);
-    error->all(FC_FILE_LINE_FUNC, "Why you need this function??");
-
+  error->all(FC_FILE_LINE_FUNC, "Why you need this function??");
 }
 
 bool Atom_data::position_inside_local_domain(const Vector<double> &pos)
@@ -496,7 +495,6 @@ void Atom_data::remove_atom(std::vector<int> v_delete_list)
     remove_atom(i);
 }
 
-
 void Atom_data::remove_atom(const int i)
 {
 
@@ -518,7 +516,6 @@ void Atom_data::remove_atom(const int i)
   atom_struct_owned.atomic_bond_count.erase(atom_struct_owned.atomic_bond_count.begin() + i);
 }
 
-
 // Any new vector addition to this function should be deleted in 'remove_atom()' functions.
 bool Atom_data::add_atom(GlobalID_t id,
                          AtomType_t type,
@@ -530,17 +527,17 @@ bool Atom_data::add_atom(GlobalID_t id,
   // =======================================
   atom_struct_owned.id.emplace_back(id);
   atom_struct_owned.type.emplace_back(type);
-  atom_struct_owned.position.emplace_back(pos);  
+  atom_struct_owned.position.emplace_back(pos);
   atom_struct_owned.velocity.emplace_back(vel);
   atom_struct_owned.acceleration.emplace_back(0, 0, 0);
   if (record_owned_position_old)
-    atom_struct_owned.position_old.emplace_back(pos);  
+    atom_struct_owned.position_old.emplace_back(pos);
   if (record_owned_velocity_old)
     atom_struct_owned.velocity_old.emplace_back(vel);
   if (record_owned_acceleration_old)
     atom_struct_owned.acceleration_old.emplace_back(0, 0, 0);
   if (msd_process)
-    atom_struct_owned.msd_domain_cross.emplace_back(0, 0, 0);  
+    atom_struct_owned.msd_domain_cross.emplace_back(0, 0, 0);
   atom_struct_owned.molecule_index.emplace_back(-1);
   atom_struct_owned.atomic_bond_count.emplace_back(0);
 
@@ -548,31 +545,30 @@ bool Atom_data::add_atom(GlobalID_t id,
   // Adding data to atom_id_to_index.
   // =======================================
   int atom_id_to_index_size = atom_id_to_index.size();
-  if (atom_id_to_index_size < id+1)// test case: atom_id_to_index_size = 0 and id = 0
-    atom_id_to_index.resize(id+1, -1);
+  if (atom_id_to_index_size < id + 1) // test case: atom_id_to_index_size = 0 and id = 0
+    atom_id_to_index.resize(id + 1, -1);
   atom_id_to_index[id] = atom_struct_owned.id.size() - 1;
 
   return true;
 }
 
-
 bool Atom_data::atom_struct_owned_resize(long new_size)
 {
-  atom_struct_owned.id.resize(new_size,0);
-  atom_struct_owned.type.resize(new_size,0);
-  atom_struct_owned.position.resize(new_size,caviar::Vector<double>{0,0,0});  
-  atom_struct_owned.velocity.resize(new_size,caviar::Vector<double>{0,0,0});
-  atom_struct_owned.acceleration.resize(new_size,caviar::Vector<double>{0,0,0});
+  atom_struct_owned.id.resize(new_size, 0);
+  atom_struct_owned.type.resize(new_size, 0);
+  atom_struct_owned.position.resize(new_size, caviar::Vector<double>{0, 0, 0});
+  atom_struct_owned.velocity.resize(new_size, caviar::Vector<double>{0, 0, 0});
+  atom_struct_owned.acceleration.resize(new_size, caviar::Vector<double>{0, 0, 0});
   if (record_owned_position_old)
-    atom_struct_owned.position_old.resize(new_size,caviar::Vector<double>{0,0,0});  
+    atom_struct_owned.position_old.resize(new_size, caviar::Vector<double>{0, 0, 0});
   if (record_owned_velocity_old)
-    atom_struct_owned.velocity_old.resize(new_size,caviar::Vector<double>{0,0,0});
+    atom_struct_owned.velocity_old.resize(new_size, caviar::Vector<double>{0, 0, 0});
   if (record_owned_acceleration_old)
-    atom_struct_owned.acceleration_old.resize(new_size,caviar::Vector<double>{0,0,0});  
+    atom_struct_owned.acceleration_old.resize(new_size, caviar::Vector<double>{0, 0, 0});
   if (msd_process)
-    atom_struct_owned.msd_domain_cross.resize(new_size,caviar::Vector<int>{0,0,0});  
-  atom_struct_owned.molecule_index.resize(new_size,0);
-  atom_struct_owned.atomic_bond_count.resize(new_size,0);
+    atom_struct_owned.msd_domain_cross.resize(new_size, caviar::Vector<int>{0, 0, 0});
+  atom_struct_owned.molecule_index.resize(new_size, 0);
+  atom_struct_owned.atomic_bond_count.resize(new_size, 0);
   return true;
 }
 
@@ -580,30 +576,29 @@ bool Atom_data::atom_struct_owned_reserve(long new_size)
 {
   atom_struct_owned.id.reserve(new_size);
   atom_struct_owned.type.reserve(new_size);
-  atom_struct_owned.position.reserve(new_size);  
+  atom_struct_owned.position.reserve(new_size);
   atom_struct_owned.velocity.reserve(new_size);
   atom_struct_owned.acceleration.reserve(new_size);
   if (record_owned_position_old)
-    atom_struct_owned.position_old.reserve(new_size);  
+    atom_struct_owned.position_old.reserve(new_size);
   if (record_owned_velocity_old)
     atom_struct_owned.velocity_old.reserve(new_size);
   if (record_owned_acceleration_old)
-    atom_struct_owned.acceleration_old.reserve(new_size);  
+    atom_struct_owned.acceleration_old.reserve(new_size);
   if (msd_process)
-    atom_struct_owned.msd_domain_cross.reserve(new_size);  
+    atom_struct_owned.msd_domain_cross.reserve(new_size);
   atom_struct_owned.molecule_index.reserve(new_size);
   atom_struct_owned.atomic_bond_count.reserve(new_size);
   return true;
 }
 
-
 bool Atom_data::atom_struct_ghost_resize(long new_size)
 {
-  atom_struct_ghost.id.resize(new_size,0);
-  atom_struct_ghost.type.resize(new_size,0);
-  atom_struct_ghost.position.resize(new_size,caviar::Vector<double>{0,0,0});  
+  atom_struct_ghost.id.resize(new_size, 0);
+  atom_struct_ghost.type.resize(new_size, 0);
+  atom_struct_ghost.position.resize(new_size, caviar::Vector<double>{0, 0, 0});
   if (make_ghost_velocity)
-    atom_struct_ghost.velocity.resize(new_size,caviar::Vector<double>{0,0,0});
+    atom_struct_ghost.velocity.resize(new_size, caviar::Vector<double>{0, 0, 0});
 
   return true;
 }
@@ -630,8 +625,6 @@ bool Atom_data::add_charges(unsigned int type, Real_t c)
   atom_type_params.charge[type] = c;
   return true; // WARNING
 }
-
-
 
 void Atom_data::add_random_velocity()
 {

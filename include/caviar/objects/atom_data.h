@@ -360,7 +360,7 @@ public:
   /**
    * 'owned' atoms are the one that matter in integrators in the domain. 
    */
-  atom_data::Molecule_struct molecule_struct_owned;
+  std::vector<atom_data::Molecule_struct> molecule_struct_owned;
 
   
   /**

@@ -88,12 +88,12 @@ namespace constraint
     auto &pos = atom_data->atom_struct_owned.position;
     auto &pos_old = atom_data->atom_struct_owned.position_old;
 
-    auto &atomic_bond_vector = atom_data->molecule_struct_owned.atomic_bond_vector;
 
-    for (unsigned int i = 0; i < atomic_bond_vector.size(); i++)
+    for (unsigned int i = 0; i < atom_data->molecule_struct_owned.size(); i++)
     {
+      auto &atomic_bond_vector = atom_data->molecule_struct_owned[i].atomic_bond_vector;
 
-      auto Nc = atomic_bond_vector[i].size();
+      auto Nc = atomic_bond_vector.size();
       if (Nc == 0)
         continue;
       std::vector<std::vector<double>> A(Nc, std::vector<double>(Nc, 0));
@@ -106,13 +106,13 @@ namespace constraint
       while (sum_err > error_tolerance)
       {
 
-        for (unsigned int j = 0; j < atomic_bond_vector[i].size(); j++)
+        for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
         {
 
-          auto id_1 = atomic_bond_vector[i][j].id_1, id_2 = atomic_bond_vector[i][j].id_2;
+          auto id_1 = atomic_bond_vector[j].id_1, id_2 = atomic_bond_vector[j].id_2;
           int k1 = atom_data->atom_id_to_index[id_1], k2 = atom_data->atom_id_to_index[id_2];
 
-          auto d = atomic_bond_vector[i][j].length;
+          auto d = atomic_bond_vector[j].length;
 
           auto mass_inv_k1 = atom_data->atom_type_params.mass_inv[atom_data->atom_struct_owned.type[k1]];
           auto mass_inv_k2 = atom_data->atom_type_params.mass_inv[atom_data->atom_struct_owned.type[k2]];
@@ -123,10 +123,10 @@ namespace constraint
 
           C[j] = (r2 - d * d) / (4 * dt * dt);
 
-          for (unsigned int jp = 0; jp < atomic_bond_vector[i].size(); jp++)
+          for (unsigned int jp = 0; jp < atomic_bond_vector.size(); jp++)
           {
 
-            auto kp1 = atomic_bond_vector[i][jp].id_1, kp2 = atomic_bond_vector[i][jp].id_2;
+            auto kp1 = atomic_bond_vector[jp].id_1, kp2 = atomic_bond_vector[jp].id_2;
 
             auto dr_old = domain->fix_distance(pos[kp1] - pos[kp2]);
 
@@ -150,9 +150,9 @@ namespace constraint
           for (unsigned int t2 = 0; t2 < Nc; t2++)
             l[t1] += M[t1][t2] * C[t2];
 
-        for (unsigned int j = 0; j < atomic_bond_vector[i].size(); j++)
+        for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
         {
-          int k1 = atomic_bond_vector[i][j].id_1, k2 = atomic_bond_vector[i][j].id_2;
+          int k1 = atomic_bond_vector[j].id_1, k2 = atomic_bond_vector[j].id_2;
 
           double mass_inv_k1 = atom_data->atom_type_params.mass_inv[atom_data->atom_struct_owned.type[k1]];
           double mass_inv_k2 = atom_data->atom_type_params.mass_inv[atom_data->atom_struct_owned.type[k2]];
@@ -168,11 +168,11 @@ namespace constraint
         }
 
         sum_err = 0.0;
-        for (unsigned int j = 0; j < atomic_bond_vector[i].size(); j++)
+        for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
         {
-          int k1 = atomic_bond_vector[i][j].id_1, k2 = atomic_bond_vector[i][j].id_2;
+          int k1 = atomic_bond_vector[j].id_1, k2 = atomic_bond_vector[j].id_2;
 
-          auto d = atomic_bond_vector[i][j].length;
+          auto d = atomic_bond_vector[j].length;
 
           auto dr = domain->fix_distance(pos[k1] - pos[k2]);
 
@@ -195,13 +195,14 @@ namespace constraint
     auto &vel = atom_data->atom_struct_owned.velocity;
     auto &pos = atom_data->atom_struct_owned.position;
     auto &pos_old = atom_data->atom_struct_owned.position_old;
-    auto &atomic_bond_vector = atom_data->molecule_struct_owned.atomic_bond_vector;
-    for (unsigned int i = 0; i < atomic_bond_vector.size(); i++)
+    for (unsigned int i = 0; i < atom_data->molecule_struct_owned.size(); i++)
     {
-      for (unsigned int j = 0; j < atomic_bond_vector[i].size(); j++)
+      auto &atomic_bond_vector = atom_data->molecule_struct_owned[i].atomic_bond_vector;
+
+      for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
       { // XXX P.II
-        auto id_1 = atomic_bond_vector[i][j].id_1;
-        auto id_2 = atomic_bond_vector[i][j].id_2;
+        auto id_1 = atomic_bond_vector[j].id_1;
+        auto id_2 = atomic_bond_vector[j].id_2;
         int k1 = atom_data->atom_id_to_index[id_1], k2 = atom_data->atom_id_to_index[id_2];
 
         vel[k1] = domain->fix_distance(pos[k1] - pos_old[k1]) / dt;

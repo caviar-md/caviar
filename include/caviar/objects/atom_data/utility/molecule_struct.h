@@ -28,33 +28,29 @@ namespace atom_data
 {
  /**
    * It contains all the physical data of atoms and molecules
-   * but since it is used only once here, its name won't be of any use. Also
-   * a good name would be 'atom_data' which is used before!.
    */
   struct Molecule_struct  
   {
     /**
-     * The first std::vector, is the molecule index. the inner data contain the id list of all of the atoms in the molecule.
+     * the id list of all of the atoms in the molecule.
      */
-    std::vector<std::vector<int>> atom_list;
+    std::vector<int> atom_list;
 
     /**
-     * The first std::vector, is the molecule index. the inner data contain bonds.
+     * the inner data contain bonds.
      */
-    std::vector<std::vector<atom_data::Bond>> atomic_bond_vector;
+    std::vector<atom_data::Bond> atomic_bond_vector;
 
 
     /**
-     * The first index, meaning
-     * the first std::vector, is the molecule index. the inner data contain angles.
+     * the inner data contain angles.
      */
-    std::vector<std::vector<atom_data::Angle>> atomic_angle_vector;
+    std::vector<atom_data::Angle> atomic_angle_vector;
 
     /**
-     * The first index, meaning
-     * the first std::vector, is the molecule index. the inner data contain Proper_dihedral.
+     * the inner data contain Proper_dihedral.
      */
-    std::vector<std::vector<atom_data::Proper_dihedral>> atomic_properdihedral_vector;
+    std::vector<atom_data::Proper_dihedral> atomic_properdihedral_vector;
 
   };
 }

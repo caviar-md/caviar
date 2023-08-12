@@ -94,12 +94,12 @@ namespace constraint
 
     auto &pos = atom_data->atom_struct_owned.position;
     auto &pos_old = atom_data->atom_struct_owned.position_old;
-    auto &atomic_bond_vector = atom_data->molecule_struct_owned.atomic_bond_vector;
 
-    for (unsigned int i = 0; i < atomic_bond_vector.size(); i++)
+    for (unsigned int i = 0; i < atom_data->molecule_struct_owned.size(); i++)
     {
+      auto &atomic_bond_vector = atom_data->molecule_struct_owned[i].atomic_bond_vector;
 
-      auto Nc = atomic_bond_vector[i].size();
+      auto Nc = atomic_bond_vector.size();
       if (Nc == 0)
         continue;
 
@@ -111,12 +111,12 @@ namespace constraint
       while (sum_err > error_tolerance)
       {
 
-        for (unsigned int j = 0; j < atomic_bond_vector[i].size(); j++)
+        for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
         {
-          int id_1 = atomic_bond_vector[i][j].id_1, id_2 = atomic_bond_vector[i][j].id_2;
+          int id_1 = atomic_bond_vector[j].id_1, id_2 = atomic_bond_vector[j].id_2;
           int k1 = atom_data->atom_id_to_index[id_1], k2 = atom_data->atom_id_to_index[id_2];
 
-          double d = atomic_bond_vector[i][j].length;
+          double d = atomic_bond_vector[j].length;
 
           double mass_inv_k1 = atom_data->atom_type_params.mass_inv[atom_data->atom_struct_owned.type[k1]];
           double mass_inv_k2 = atom_data->atom_type_params.mass_inv[atom_data->atom_struct_owned.type[k2]];
@@ -140,11 +140,11 @@ namespace constraint
         }
 
         sum_err = 0.0;
-        for (unsigned int j = 0; j < atomic_bond_vector[i].size(); j++)
+        for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
         {
-          int k1 = atomic_bond_vector[i][j].id_1, k2 = atomic_bond_vector[i][j].id_2;
+          int k1 = atomic_bond_vector[j].id_1, k2 = atomic_bond_vector[j].id_2;
 
-          auto d = atomic_bond_vector[i][j].length;
+          auto d = atomic_bond_vector[j].length;
 
           auto dr = domain->fix_distance(pos[k1] - pos[k2]);
 
@@ -167,13 +167,14 @@ namespace constraint
     auto &vel = atom_data->atom_struct_owned.velocity;
     auto &pos = atom_data->atom_struct_owned.position;
     auto &pos_old = atom_data->atom_struct_owned.position_old;
-    auto &atomic_bond_vector = atom_data->molecule_struct_owned.atomic_bond_vector;
-    for (unsigned int i = 0; i < atomic_bond_vector.size(); i++)
+    for (unsigned int i = 0; i < atom_data->molecule_struct_owned.size(); i++)
     {
-      for (unsigned int j = 0; j < atomic_bond_vector[i].size(); j++)
+      auto &atomic_bond_vector = atom_data->molecule_struct_owned[i].atomic_bond_vector;
+
+      for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
       { // XXX P.II
-        auto id_1 = atomic_bond_vector[i][j].id_1;
-        auto id_2 = atomic_bond_vector[i][j].id_2;
+        auto id_1 = atomic_bond_vector[j].id_1;
+        auto id_2 = atomic_bond_vector[j].id_2;
         int k1 = atom_data->atom_id_to_index[id_1], k2 = atom_data->atom_id_to_index[id_2];
 
         vel[k1] = domain->fix_distance(pos[k1] - pos_old[k1]) / dt;

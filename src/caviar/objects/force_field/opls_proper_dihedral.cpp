@@ -108,25 +108,27 @@ namespace force_field
     auto &type = atom_data->atom_struct_owned.type;
     auto &mass_inv = atom_data->atom_type_params.mass_inv;
 
-    auto &atomic_properdihedral_vector = atom_data->molecule_struct_owned.atomic_properdihedral_vector;
 
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
 #endif
-    for (unsigned int i = 0; i < atomic_properdihedral_vector.size(); i++)
+    for (unsigned int i = 0; i < atom_data->molecule_struct_owned.size(); i++)
     {
+    auto &atomic_properdihedral_vector = atom_data->molecule_struct_owned[i].atomic_properdihedral_vector;
 
-      for (unsigned int j = 0; j < atomic_properdihedral_vector[i].size(); j++)
+      for (unsigned int j = 0; j < atomic_properdihedral_vector.size(); j++)
       {
-        int id_1 = atomic_properdihedral_vector[i][j].id_1;
-        int id_2 = atomic_properdihedral_vector[i][j].id_2;
-        int id_3 = atomic_properdihedral_vector[i][j].id_3;
-        int id_4 = atomic_properdihedral_vector[i][j].id_4;
+        int id_1 = atomic_properdihedral_vector[j].id_1;
+        int id_2 = atomic_properdihedral_vector[j].id_2;
+        int id_3 = atomic_properdihedral_vector[j].id_3;
+        int id_4 = atomic_properdihedral_vector[j].id_4;
 
-        int k1 = atom_data->atom_id_to_index[id_1], k2 = atom_data->atom_id_to_index[id_2];
-        int k3 = atom_data->atom_id_to_index[id_3], k4 = atom_data->atom_id_to_index[id_4];
+        int k1 = atom_data->atom_id_to_index[id_1];
+        int k2 = atom_data->atom_id_to_index[id_2];
+        int k3 = atom_data->atom_id_to_index[id_3]; 
+        int k4 = atom_data->atom_id_to_index[id_4];
 
-        int dtype = atomic_properdihedral_vector[i][j].type;
+        int dtype = atomic_properdihedral_vector[j].type;
 
 #if defined(CAVIAR_WITH_MPI)
         auto p21 = pos[k1] - pos[k2];

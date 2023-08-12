@@ -117,19 +117,21 @@ namespace force_field
     auto &vel = atom_data->atom_struct_owned.velocity;
     auto &type = atom_data->atom_struct_owned.type;
     auto &mass_inv = atom_data->atom_type_params.mass_inv;
-    auto &atomic_bond_vector = atom_data->molecule_struct_owned.atomic_bond_vector;
 
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
 #endif
-    for (unsigned int i = 0; i < atomic_bond_vector.size(); i++)
+    for (unsigned int i = 0; i < atom_data->molecule_struct_owned.size(); i++)
     {
+      auto &atomic_bond_vector = atom_data->molecule_struct_owned[i].atomic_bond_vector;
 
-      for (unsigned int j = 0; j < atomic_bond_vector[i].size(); j++)
+      for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
       {
-        int id_1 = atomic_bond_vector[i][j].id_1, id_2 = atomic_bond_vector[i][j].id_2;
-        int k1 = atom_data->atom_id_to_index[id_1], k2 = atom_data->atom_id_to_index[id_2];
-        int btype = atomic_bond_vector[i][j].type;
+        int id_1 = atomic_bond_vector[j].id_1;
+        int id_2 = atomic_bond_vector[j].id_2;
+        int k1 = atom_data->atom_id_to_index[id_1];
+        int k2 = atom_data->atom_id_to_index[id_2];
+        int btype = atomic_bond_vector[j].type;
         //        double d = atomic_bond_vector[i][j].length;
         //	double c = repulsive_cutoff * repulsive_cutoff;
 
