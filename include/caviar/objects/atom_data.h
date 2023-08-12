@@ -368,6 +368,15 @@ public:
    */
   int num_molecules;
 
+  /**
+   * add_atom_id_to_molecule if it is not found.
+   */
+  void add_atom_id_to_molecule(int atom_id, int molecule_index);
+
+  /**
+   * remove_atom_id_to_molecule if it exist. if it doesn't exist, call error.
+   */
+  void remove_atom_id_from_molecule(int atom_id, int molecule_index);
 
   /**
    * index: the position of atom in std::vector.

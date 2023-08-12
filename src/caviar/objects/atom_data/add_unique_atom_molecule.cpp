@@ -80,7 +80,8 @@ void Atom_data::remove_atomic_bond(const atom_data::Bond &bond)
             if (FC_COMPARE_PAIRS(b.id_1, b.id_2, bond.id_1, bond.id_2))
             {
                 molecule_struct_owned.atomic_bond_vector[mi_1].erase(molecule_struct_owned.atomic_bond_vector[mi_1].begin() + j);
-
+                remove_atom_id_from_molecule(b.id_1, mi_1);
+                remove_atom_id_from_molecule(b.id_2, mi_1);
                 bond_found = true;
                 break;
             }
@@ -98,6 +99,9 @@ void Atom_data::remove_atomic_bond(const atom_data::Bond &bond)
                 FC_COMPARE_PAIRS(bond.id_1, bond.id_2, a.id_2, a.id_3))
             {
                 molecule_struct_owned.atomic_angle_vector[mi_1].erase(molecule_struct_owned.atomic_angle_vector[mi_1].begin() + j);
+                remove_atom_id_from_molecule(a.id_1, mi_1);
+                remove_atom_id_from_molecule(a.id_2, mi_1);
+                remove_atom_id_from_molecule(a.id_3, mi_1);
                 // break; no break! It can be shared between two angles
             }
         }
@@ -110,6 +114,10 @@ void Atom_data::remove_atomic_bond(const atom_data::Bond &bond)
                 FC_COMPARE_PAIRS(bond.id_1, bond.id_2, p.id_3, p.id_4))
             {
                 molecule_struct_owned.atomic_properdihedral_vector[mi_1].erase(molecule_struct_owned.atomic_properdihedral_vector[mi_1].begin() + j);
+                remove_atom_id_from_molecule(p.id_1, mi_1);
+                remove_atom_id_from_molecule(p.id_2, mi_1);
+                remove_atom_id_from_molecule(p.id_3, mi_1);
+                remove_atom_id_from_molecule(p.id_4, mi_1);
                 // break; no break! It can be shared between three proper dihedrals
             }
         }
@@ -153,6 +161,9 @@ void Atom_data::remove_atomic_angle(const atom_data::Angle &angle)
                  FC_COMPARE_PAIRS(angle.id_2, angle.id_3, a.id_1, a.id_2)))
             {
                 molecule_struct_owned.atomic_angle_vector[mi_1].erase(molecule_struct_owned.atomic_angle_vector[mi_1].begin() + j);
+                remove_atom_id_from_molecule(angle.id_1, mi_1);
+                remove_atom_id_from_molecule(angle.id_2, mi_1);
+                remove_atom_id_from_molecule(angle.id_3, mi_1);
                 break;
             }
         }
@@ -183,6 +194,11 @@ void Atom_data::remove_atomic_properdihedral(const atom_data::Proper_dihedral &p
                  FC_COMPARE_PAIRS(pd.id_3, pd.id_4, p.id_1, p.id_2)))
             {
                 molecule_struct_owned.atomic_properdihedral_vector[mi_1].erase(molecule_struct_owned.atomic_properdihedral_vector[mi_1].begin() + j);
+                remove_atom_id_from_molecule(pd.id_1, mi_1);
+                remove_atom_id_from_molecule(pd.id_2, mi_1);
+                remove_atom_id_from_molecule(pd.id_3, mi_1);
+                remove_atom_id_from_molecule(pd.id_4, mi_1);
+                
                 break;
             }
         }
@@ -262,8 +278,12 @@ void Atom_data::add_atomic_bond(const atom_data::Bond &bond)
                 molecule_struct_owned.atomic_bond_vector[molecule_index_lower].emplace_back(i);
                 atom_struct_owned.molecule_index[atom_id_to_index[i.id_1]] = molecule_index_lower;
                 atom_struct_owned.molecule_index[atom_id_to_index[i.id_2]] = molecule_index_lower;
+                add_atom_id_to_molecule(i.id_1, molecule_index_lower);
+                add_atom_id_to_molecule(i.id_2, molecule_index_lower);
             }
             molecule_struct_owned.atomic_bond_vector[molecule_index_higher].clear();
+            remove_atom_id_from_molecule(i.id_1, molecule_index_higher);
+            remove_atom_id_from_molecule(i.id_2, molecule_index_higher);
         }
 
         molecule_struct_owned.atomic_bond_vector[molecule_index_lower].emplace_back(bond);
@@ -283,8 +303,15 @@ void Atom_data::add_atomic_bond(const atom_data::Bond &bond)
                 atom_struct_owned.molecule_index[atom_id_to_index[i.id_1]] = molecule_index_lower;
                 atom_struct_owned.molecule_index[atom_id_to_index[i.id_2]] = molecule_index_lower;
                 atom_struct_owned.molecule_index[atom_id_to_index[i.id_3]] = molecule_index_lower;
+
+                add_atom_id_to_molecule(i.id_1, molecule_index_lower);
+                add_atom_id_to_molecule(i.id_2, molecule_index_lower);
+                add_atom_id_to_molecule(i.id_3, molecule_index_lower);
             }
             molecule_struct_owned.atomic_angle_vector[molecule_index_higher].clear();
+            remove_atom_id_from_molecule(i.id_1, molecule_index_higher);
+            remove_atom_id_from_molecule(i.id_2, molecule_index_higher);           
+            remove_atom_id_from_molecule(i.id_3, molecule_index_higher);
         }
 
         vs = molecule_struct_owned.atomic_properdihedral_vector[molecule_index_higher].size();
@@ -299,9 +326,18 @@ void Atom_data::add_atomic_bond(const atom_data::Bond &bond)
                 atom_struct_owned.molecule_index[atom_id_to_index[i.id_2]] = molecule_index_lower;
                 atom_struct_owned.molecule_index[atom_id_to_index[i.id_3]] = molecule_index_lower;
                 atom_struct_owned.molecule_index[atom_id_to_index[i.id_4]] = molecule_index_lower;
+
+                add_atom_id_to_molecule(i.id_1, molecule_index_lower);
+                add_atom_id_to_molecule(i.id_2, molecule_index_lower);
+                add_atom_id_to_molecule(i.id_3, molecule_index_lower);
+                add_atom_id_to_molecule(i.id_4, molecule_index_lower);
             }
 
             molecule_struct_owned.atomic_properdihedral_vector[molecule_index_higher].clear();
+            remove_atom_id_from_molecule(i.id_1, molecule_index_higher);
+            remove_atom_id_from_molecule(i.id_2, molecule_index_higher);
+            remove_atom_id_from_molecule(i.id_3, molecule_index_higher);
+            remove_atom_id_from_molecule(i.id_4, molecule_index_higher);
         }
     }
     else if ((molecule_index_1 == molecule_index_2) && (molecule_index_1 != -1))
@@ -320,6 +356,9 @@ void Atom_data::add_atomic_angle(const atom_data::Angle &angle)
     if ((mi_1 == mi_2) && (mi_2 == mi_3))
     {
         molecule_struct_owned.atomic_angle_vector[mi_1].emplace_back(angle);
+        add_atom_id_to_molecule(id_1, new_molecule_index);
+        add_atom_id_to_molecule(id_2, new_molecule_index);
+        add_atom_id_to_molecule(id_3, new_molecule_index);
     }
     else
     {
@@ -337,7 +376,11 @@ void Atom_data::add_atomic_properdihedral(const atom_data::Proper_dihedral &prop
 
     if ((mi_1 == mi_2) && (mi_2 == mi_3) && (mi_3 == mi_4))
     {
-        molecule_struct_owned.atomic_properdihedral_vector[mi_1].emplace_back(proper_dihedral);
+        molecule_struct_owned.atomic_properdihedral_vector[mi_1].emplace_back(proper_dihedral);      
+        add_atom_id_to_molecule(id_1, new_molecule_index);
+        add_atom_id_to_molecule(id_2, new_molecule_index);
+        add_atom_id_to_molecule(id_3, new_molecule_index);
+        add_atom_id_to_molecule(id_4, new_molecule_index);
     }
     else
     {
@@ -466,6 +509,8 @@ bool Atom_data::add_molecule(caviar::unique::Molecule &m)
         indices[i] = index;
         ids[i] = id;
         atom_struct_owned.molecule_index[index] = new_molecule_index;
+
+        add_atom_id_to_molecule(id, new_molecule_index);
     }
 
     //---------------------------
@@ -528,6 +573,27 @@ bool Atom_data::add_molecule(caviar::unique::Molecule_list &ml)
     for (auto &&a : ml.molecules)
         add_molecule(*a);
     return true;
+}
+
+
+
+void Atom_data::add_atom_id_to_molecule(int atom_id, int molecule_index)
+{
+    if ( std::find(molecule_struct_owned.atom_list[molecule_index].begin(), molecule_struct_owned.atom_list[molecule_index].end(), atom_id) != molecule_struct_owned.atom_list[molecule_index].end() )        
+    {
+        molecule_struct_owned.atom_list[molecule_index].emplace_back(atom_id);
+    }
+}
+
+
+void Atom_data::remove_atom_id_from_molecule(int atom_id, int molecule_index)
+{
+    std::vector<int>::iterator position = std::find(molecule_struct_owned.atom_list[molecule_index].begin(), molecule_struct_owned.atom_list[molecule_index].end(), atom_id);
+    if (position != molecule_struct_owned.atom_list[molecule_index].end()) // == myVector.end() means the element was not found
+        molecule_struct_owned.atom_list[molecule_index].erase(position);
+    //else
+    //    error->all(FC_FILE_LINE_FUNC, "Can't remove atomic from molecule because it does not exist in the molecule::Atom_list.");
+
 }
 
 CAVIAR_NAMESPACE_CLOSE

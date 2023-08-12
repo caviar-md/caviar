@@ -33,6 +33,10 @@ namespace atom_data
    */
   struct Molecule_struct  
   {
+    /**
+     * The first std::vector, is the molecule index. the inner data contain the id list of all of the atoms in the molecule.
+     */
+    std::vector<std::vector<int>> atom_list;
 
     /**
      * The first std::vector, is the molecule index. the inner data contain bonds.
