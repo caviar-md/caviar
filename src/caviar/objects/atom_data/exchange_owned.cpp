@@ -130,6 +130,7 @@ bool Atom_data::exchange_owned(long ) // timestep
   auto &id = atom_struct_owned.id;
   auto &type = atom_struct_owned.type;
   auto &msd = atom_struct_owned.msd_domain_cross;
+  auto &molecule_index = atom_struct_owned.molecule_index;
 
   const auto grid_index_x = domain->grid_index_x;
   const auto grid_index_y = domain->grid_index_y;
@@ -170,10 +171,17 @@ bool Atom_data::exchange_owned(long ) // timestep
     m++;
     FOR_IJK_LOOP_END
   }
+
+  // ================================================
+  // finding the atoms to be send to other domains. These atoms are not part of any molecules.
+  // ================================================
+
   unsigned num_local_atoms = atom_struct_owned.id.size();
 
   for (unsigned m = 0; m < num_local_atoms; ++m)
   {
+    if (molecule_index[m] > -1) continue; // excluding molecules
+
     const auto xlc = pos[m].x < x_llow;
     const auto xuc = pos[m].x > x_lupp;
     const auto ylc = pos[m].y < y_llow;
@@ -225,7 +233,81 @@ bool Atom_data::exchange_owned(long ) // timestep
     }
   }
 
+  // ================================================
+  // finding the molecules to be send to other domains
+  // ================================================
+  
+  unsigned num_local_molecules = molecule_struct_owned.size();
 
+  for (unsigned m = 0; m < num_local_molecules; ++m)
+  {
+
+    Vector<double> cm {0,0,0}; // center of molecule
+    int molecule_size = molecule_struct_owned[m].atom_list.size();
+    for (int n = 0; n < molecule_size; ++n)
+    {
+      int atom_id = molecule_struct_owned[m].atom_list[n];
+      cm += pos[atom_id_to_index[atom_id]];
+    }
+    cm /= molecule_size;
+    
+    const auto xlc = cm.x < x_llow;
+    const auto xuc = cm.x > x_lupp;
+    const auto ylc = cm.y < y_llow;
+    const auto yuc = cm.y > y_lupp;
+    const auto zlc = cm.z < z_llow;
+    const auto zuc = cm.z > z_lupp;
+
+    int x_val = 0, y_val = 0, z_val = 0;
+
+    if (xlc)
+      x_val = -1;
+    if (xuc)
+      x_val = +1;
+    if (ylc)
+      y_val = -1;
+    if (yuc)
+      y_val = +1;
+    if (zlc)
+      z_val = -1;
+    if (zuc)
+      z_val = +1;
+
+    // periodic or non-periodic boundary condition
+    if (grid_index_x == 0)
+      x_val *= bc.x;
+    if (grid_index_x == nprocs_x - 1)
+      x_val *= bc.x;
+    if (grid_index_y == 0)
+      y_val *= bc.y;
+    if (grid_index_y == nprocs_y - 1)
+      y_val *= bc.y;
+    if (grid_index_z == 0)
+      z_val *= bc.z;
+    if (grid_index_z == nprocs_z - 1)
+      z_val *= bc.z;
+
+    if (x_val == 0 && y_val == 0 && z_val == 0)
+      continue;
+    int i = x_val + 1;
+    int j = y_val + 1;
+    int k = z_val + 1;
+
+    for (int n = 0; n < molecule_size; ++n)
+    {
+      int atom_id = molecule_struct_owned[m].atom_list[n];
+      int ix = atom_id_to_index[atom_id];
+
+      send_index[i][j][k].emplace_back(ix);
+
+      if (me != all[i][j][k])
+      {
+        send_index_all.emplace_back(ix);
+        send_num[i][j][k]++;
+      }
+      
+    }    
+  }
   // ================================================
   // making the send_data
   // ================================================
