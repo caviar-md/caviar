@@ -156,8 +156,14 @@ bool Atom_data::exchange_owned(long ) // timestep
   std::vector<int> send_index[3][3][3]; // the index of std::vector<> of the owned
   std::vector<int> send_index_all;      // the index of std::vector<> of the owned, in a 1D vector
 
+  std::vector<int> send_index_molecule[3][3][3]; // the index of std::vector<> of the owned molecules
+  std::vector<int> send_index_molecule_send_data[3][3][3]; // the index of std::vector<> of the owned molecules
+  std::vector<int> send_index_molecule_recv_data[3][3][3]; // the index of std::vector<> of the owned molecules
+
   int send_num[3][3][3]; // num of owned to be send to the domain all[i][j][k]
-  int recv_num[3][3][3]; // num of owned to be recieved from domain all[i][j][k]
+  int send_num_molecules[3][3][3]; // num of molecules to be send to the domain all[i][j][k]
+
+  int recv_num[3][3][3]; // num of owned to be recieved from domain all[i][j][k]/ used in header
 
   int send_mpi_tag[3][3][3]; // since there might be two messages from the same domain to another but from different angles,
   int recv_mpi_tag[3][3][3]; // , this tag helps to distinguish messages form each other.
@@ -166,6 +172,7 @@ bool Atom_data::exchange_owned(long ) // timestep
     FOR_IJK_LOOP_START
     send_num[i][j][k] = 0;
     recv_num[i][j][k] = 0;
+    send_num_molecules [i][j][k]  = 0;
     send_mpi_tag[i][j][k] = m;
     recv_mpi_tag[i][j][k] = 26 - m;
     m++;
@@ -304,8 +311,54 @@ bool Atom_data::exchange_owned(long ) // timestep
       {
         send_index_all.emplace_back(ix);
         send_num[i][j][k]++;
-      }
-      
+        
+        int  atom_list_size = atom_list.size();
+        int  atomic_bond_vector_size = molecule_struct_owned[m].atomic_bond_vector.size();
+        int  atomic_angle_vector_size = molecule_struct_owned[m].atomic_angle_vector.size();
+        int  atomic_properdihedral_vector_size = molecule_struct_owned[m].atomic_properdihedral_vector.size();
+
+        int m_size = send_index_molecule_send_data[i][j][k].size();
+        int p = m_size;
+        int new_size = m_size + 4 + atom_list_size + (atomic_bond_vector_size * 4) + (atomic_angle_vector_size * 5) + (atomic_properdihedral_vector_size * 5);
+
+        send_index_molecule_send_data[i][j][k].resize(new_size);
+
+        send_index_molecule_send_data[i][j][k][p++] = atom_list_size;
+        send_index_molecule_send_data[i][j][k][p++] = atomic_bond_vector_size;
+        send_index_molecule_send_data[i][j][k][p++] = atomic_angle_vector_size;
+        send_index_molecule_send_data[i][j][k][p++] = atomic_properdihedral_vector_size;
+
+        for (int o = 0; o < atom_list_size; ++o)
+        {
+          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atom_list[o];
+        }
+
+        for (int o = 0; o < atomic_bond_vector_size; ++o)
+        {
+          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_bond_vector[o].id_1;
+          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_bond_vector[o].id_2;
+          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_bond_vector[o].type;
+          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_bond_vector[o].length;
+        }
+
+        for (int o = 0; o < atomic_angle_vector_size; ++o)
+        {
+          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_angle_vector[o].id_1;
+          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_angle_vector[o].id_2;
+          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_angle_vector[o].id_3;
+          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_angle_vector[o].type;
+          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_angle_vector[o].value;
+        }
+
+        for (int o = 0; o < atomic_properdihedral_vector_size; ++o)
+        {
+          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_properdihedral_vector[o].id_1;
+          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_properdihedral_vector[o].id_2;
+          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_properdihedral_vector[o].id_3;
+          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_properdihedral_vector[o].id_4;
+          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_properdihedral_vector[o].type;
+        }
+      }      
     }    
   }
   // ================================================
