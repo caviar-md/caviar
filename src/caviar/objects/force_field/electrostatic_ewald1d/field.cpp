@@ -212,7 +212,7 @@ namespace force_field
 #endif
     for (unsigned int j = 0; j < pos.size(); ++j)
     {
-      #ifdef CAVIAR_WITH_MPI
+#ifdef CAVIAR_WITH_MPI
       if (atom_data->atom_struct_owned.mpi_rank[j] != my_mpi_rank)
         continue;
 #endif

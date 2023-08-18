@@ -34,8 +34,7 @@ namespace force_field
 
     const auto &pos = atom_data->atom_struct_owned.position;
 #ifdef CAVIAR_WITH_OPENMP
-#pragma omp parallel for reduction(+ \
-                                   : potential_shifted_sum)
+#pragma omp parallel for reduction(+ : potential_shifted_sum)
 #endif
     for (unsigned int j = 0; j < pos.size(); ++j)
     {
@@ -65,12 +64,11 @@ namespace force_field
 
     const auto &pos = atom_data->atom_struct_owned.position;
 #ifdef CAVIAR_WITH_OPENMP
-#pragma omp parallel for reduction(+ \
-                                   : potential_shifted_sum)
+#pragma omp parallel for reduction(+ : potential_shifted_sum)
 #endif
     for (unsigned int j = 0; j < pos.size(); ++j)
     {
-      #ifdef CAVIAR_WITH_MPI
+#ifdef CAVIAR_WITH_MPI
       if (atom_data->atom_struct_owned.mpi_rank[j] != my_mpi_rank)
         continue;
 #endif

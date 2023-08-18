@@ -56,8 +56,7 @@ namespace force_field
     const auto pos_i = r;
     const auto sigma_sq = sigma * sigma;
 #ifdef CAVIAR_WITH_OPENMP
-#pragma omp parallel for reduction(+ \
-                                   : potential_value)
+#pragma omp parallel for reduction(+ : potential_value)
 #endif
     for (unsigned nb_j = 0; nb_j < nb[nb_i].size(); ++nb_j)
     {
@@ -117,8 +116,7 @@ namespace force_field
     const auto &pos_i = atom_data->atom_struct_owned.position[i];
     const auto sigma_sq = sigma * sigma;
 #ifdef CAVIAR_WITH_OPENMP
-#pragma omp parallel for reduction(+ \
-                                   : potential_value)
+#pragma omp parallel for reduction(+ : potential_value)
 #endif
     // for (auto j : nlist[i]) {
     for (unsigned int k = 0; k < nlist[i].size(); ++k)
@@ -166,12 +164,11 @@ namespace force_field
     const auto lattice_vec_size = lattice_vec.size();
     const auto sigma_sq = sigma * sigma;
 #ifdef CAVIAR_WITH_OPENMP
-#pragma omp parallel for reduction(+ \
-                                   : potential_value)
+#pragma omp parallel for reduction(+ : potential_value)
 #endif
     for (unsigned int j = 0; j < pos.size(); ++j)
     {
-      #ifdef CAVIAR_WITH_MPI
+#ifdef CAVIAR_WITH_MPI
       if (atom_data->atom_struct_owned.mpi_rank[j] != my_mpi_rank)
         continue;
 #endif
@@ -199,12 +196,11 @@ namespace force_field
     const auto lattice_vec_size = lattice_vec.size();
     const auto sigma_sq = sigma * sigma;
 #ifdef CAVIAR_WITH_OPENMP
-#pragma omp parallel for reduction(+ \
-                                   : potential_value)
+#pragma omp parallel for reduction(+ : potential_value)
 #endif
     for (unsigned int j = 0; j < pos.size(); ++j)
     {
-      #ifdef CAVIAR_WITH_MPI
+#ifdef CAVIAR_WITH_MPI
       if (atom_data->atom_struct_owned.mpi_rank[j] != my_mpi_rank)
         continue;
 #endif

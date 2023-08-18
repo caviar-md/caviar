@@ -41,12 +41,14 @@ namespace force_field
 
     // XXX no OpenMP parallel yet (due to boolean flag)
 #ifdef CAVIAR_WITH_OPENMP
-#pragma omp parallel for reduction(+ \
-                                   : sum_p)
+#pragma omp parallel for reduction(+ : sum_p)
 #endif
     for (unsigned int j = 0; j < pos_size; ++j)
     {
-
+#ifdef CAVIAR_WITH_MPI
+      if (atom_data->atom_struct_owned.mpi_rank[j] != my_mpi_rank)
+        continue;
+#endif
       const auto p = give_slab_local_coordinates(r - pos[j]);
       const double q_j = charge[type[j]];
 
