@@ -36,7 +36,7 @@ CAVIAR_NAMESPACE_OPEN
   }                      \
   }
 
-bool Atom_data::exchange_owned(long ) // timestep
+bool Atom_data::exchange_owned(long) // timestep
 {
   if (domain == nullptr)
     error->all("Atom_data::exchange_owned: domain = nullptr");
@@ -142,25 +142,16 @@ bool Atom_data::exchange_owned(long ) // timestep
 
   const auto me = domain->me;
 
-  {
-    MPI_Barrier(mpi_comm);
-    int local_pos_size = pos.size();
-    int global_pos_size = 0;
-    MPI_Allreduce(&local_pos_size,
-                  &global_pos_size,
-                  1, MPI::DOUBLE, MPI_SUM, MPI::COMM_WORLD);
-  }
-
   const auto &all = domain->all;
 
   std::vector<int> send_index[3][3][3]; // the index of std::vector<> of the owned
   std::vector<int> send_index_all;      // the index of std::vector<> of the owned, in a 1D vector
 
-  std::vector<int> send_index_molecule[3][3][3]; // the index of std::vector<> of the owned molecules
+  std::vector<int> send_index_molecule[3][3][3];           // the index of std::vector<> of the owned molecules
   std::vector<int> send_index_molecule_send_data[3][3][3]; // the index of std::vector<> of the owned molecules
   std::vector<int> send_index_molecule_recv_data[3][3][3]; // the index of std::vector<> of the owned molecules
 
-  int send_num[3][3][3]; // num of owned to be send to the domain all[i][j][k]
+  int send_num[3][3][3];           // num of owned to be send to the domain all[i][j][k]
   int send_num_molecules[3][3][3]; // num of molecules to be send to the domain all[i][j][k]
 
   int recv_num[3][3][3]; // num of owned to be recieved from domain all[i][j][k]/ used in he
@@ -172,7 +163,7 @@ bool Atom_data::exchange_owned(long ) // timestep
     FOR_IJK_LOOP_START
     send_num[i][j][k] = 0;
     recv_num[i][j][k] = 0;
-    send_num_molecules [i][j][k]  = 0;
+    send_num_molecules[i][j][k] = 0;
     send_mpi_tag[i][j][k] = m;
     recv_mpi_tag[i][j][k] = 26 - m;
     m++;
@@ -187,7 +178,8 @@ bool Atom_data::exchange_owned(long ) // timestep
 
   for (unsigned m = 0; m < num_local_atoms; ++m)
   {
-    if (molecule_index[m] > -1) continue; // excluding molecules
+    if (molecule_index[m] > -1)
+      continue; // excluding molecules
 
     const auto xlc = pos[m].x < x_llow;
     const auto xuc = pos[m].x > x_lupp;
@@ -243,13 +235,13 @@ bool Atom_data::exchange_owned(long ) // timestep
   // ================================================
   // finding the molecules to be send to other domains
   // ================================================
-  
+
   unsigned num_local_molecules = molecule_struct_owned.size();
 
   for (unsigned m = 0; m < num_local_molecules; ++m)
   {
 
-    Vector<double> cm {0,0,0}; // center of molecule
+    Vector<double> cm{0, 0, 0}; // center of molecule
     int molecule_size = molecule_struct_owned[m].atom_list.size();
     for (int n = 0; n < molecule_size; ++n)
     {
@@ -257,7 +249,7 @@ bool Atom_data::exchange_owned(long ) // timestep
       cm += pos[atom_id_to_index[atom_id]];
     }
     cm /= molecule_size;
-    
+
     const auto xlc = cm.x < x_llow;
     const auto xuc = cm.x > x_lupp;
     const auto ylc = cm.y < y_llow;
@@ -311,55 +303,61 @@ bool Atom_data::exchange_owned(long ) // timestep
       {
         send_index_all.emplace_back(ix);
         send_num[i][j][k]++;
-        
-        int  atom_list_size = atom_list.size();
-        int  atomic_bond_vector_size = molecule_struct_owned[m].atomic_bond_vector.size();
-        int  atomic_angle_vector_size = molecule_struct_owned[m].atomic_angle_vector.size();
-        int  atomic_properdihedral_vector_size = molecule_struct_owned[m].atomic_properdihedral_vector.size();
 
-        int m_size = send_index_molecule_send_data[i][j][k].size();
-        int p = m_size;
-        int new_size = m_size + 4 + atom_list_size + (atomic_bond_vector_size * 4) + (atomic_angle_vector_size * 5) + (atomic_properdihedral_vector_size * 5);
+        // ======================================
+        // Making the packet of molecule data
+        // ======================================
+        // ================================================================================================
+        // IF number of particles changes, meaning atoms are added and removed to the domains use this part
+        // ================================================================================================
+        // int  atom_list_size = atom_list.size();
+        // int  atomic_bond_vector_size = molecule_struct_owned[m].atomic_bond_vector.size();
+        // int  atomic_angle_vector_size = molecule_struct_owned[m].atomic_angle_vector.size();
+        // int  atomic_properdihedral_vector_size = molecule_struct_owned[m].atomic_properdihedral_vector.size();
 
-        send_index_molecule_send_data[i][j][k].resize(new_size);
+        // int m_size = send_index_molecule_send_data[i][j][k].size();
+        // int p = m_size;
+        // int new_size = m_size + 4 + atom_list_size + (atomic_bond_vector_size * 4) + (atomic_angle_vector_size * 5) + (atomic_properdihedral_vector_size * 5);
 
-        send_index_molecule_send_data[i][j][k][p++] = atom_list_size;
-        send_index_molecule_send_data[i][j][k][p++] = atomic_bond_vector_size;
-        send_index_molecule_send_data[i][j][k][p++] = atomic_angle_vector_size;
-        send_index_molecule_send_data[i][j][k][p++] = atomic_properdihedral_vector_size;
+        // send_index_molecule_send_data[i][j][k].resize(new_size);
 
-        for (int o = 0; o < atom_list_size; ++o)
-        {
-          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atom_list[o];
-        }
+        // send_index_molecule_send_data[i][j][k][p++] = atom_list_size;
+        // send_index_molecule_send_data[i][j][k][p++] = atomic_bond_vector_size;
+        // send_index_molecule_send_data[i][j][k][p++] = atomic_angle_vector_size;
+        // send_index_molecule_send_data[i][j][k][p++] = atomic_properdihedral_vector_size;
 
-        for (int o = 0; o < atomic_bond_vector_size; ++o)
-        {
-          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_bond_vector[o].id_1;
-          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_bond_vector[o].id_2;
-          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_bond_vector[o].type;
-          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_bond_vector[o].length;
-        }
+        // for (int o = 0; o < atom_list_size; ++o)
+        // {
+        //   send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atom_list[o];
+        // }
 
-        for (int o = 0; o < atomic_angle_vector_size; ++o)
-        {
-          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_angle_vector[o].id_1;
-          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_angle_vector[o].id_2;
-          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_angle_vector[o].id_3;
-          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_angle_vector[o].type;
-          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_angle_vector[o].value;
-        }
+        // for (int o = 0; o < atomic_bond_vector_size; ++o)
+        // {
+        //   send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_bond_vector[o].id_1;
+        //   send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_bond_vector[o].id_2;
+        //   send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_bond_vector[o].type;
+        //   send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_bond_vector[o].length;
+        // }
 
-        for (int o = 0; o < atomic_properdihedral_vector_size; ++o)
-        {
-          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_properdihedral_vector[o].id_1;
-          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_properdihedral_vector[o].id_2;
-          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_properdihedral_vector[o].id_3;
-          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_properdihedral_vector[o].id_4;
-          send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_properdihedral_vector[o].type;
-        }
-      }      
-    }    
+        // for (int o = 0; o < atomic_angle_vector_size; ++o)
+        // {
+        //   send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_angle_vector[o].id_1;
+        //   send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_angle_vector[o].id_2;
+        //   send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_angle_vector[o].id_3;
+        //   send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_angle_vector[o].type;
+        //   send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_angle_vector[o].value;
+        // }
+
+        // for (int o = 0; o < atomic_properdihedral_vector_size; ++o)
+        // {
+        //   send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_properdihedral_vector[o].id_1;
+        //   send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_properdihedral_vector[o].id_2;
+        //   send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_properdihedral_vector[o].id_3;
+        //   send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_properdihedral_vector[o].id_4;
+        //   send_index_molecule_send_data[i][j][k][p++] = molecule_struct_owned[m].atomic_properdihedral_vector[o].type;
+        // }
+      }
+    }
   }
   // ================================================
   // making the send_data
@@ -429,10 +427,7 @@ bool Atom_data::exchange_owned(long ) // timestep
 
     mpinf.atomic_bc = mpinf.total;
     mpinf.total += 1;
-
-
   }
-
 
   // ================================================
   // resize send_data to the correct value to increase filling performance
@@ -442,8 +437,6 @@ bool Atom_data::exchange_owned(long ) // timestep
   if (send_num[i][j][k] > 0)
     send_data[i][j][k].resize(mpinf.total * send_num[i][j][k], 0);
   FOR_IJK_LOOP_END
-
-
 
   // ================================================
   //  FILL the send_data packets
@@ -455,7 +448,8 @@ bool Atom_data::exchange_owned(long ) // timestep
 
   int c = 0;
   auto N = send_num[i][j][k];
-  if (N == 0) continue;
+  if (N == 0)
+    continue;
   for (auto m : send_index[i][j][k])
   {
     send_data[i][j][k][mpinf.id * N + c] = id[m];
@@ -489,7 +483,6 @@ bool Atom_data::exchange_owned(long ) // timestep
 
   FOR_IJK_LOOP_END
 
-
   // ================================================
   // send num of owned
   // ================================================
@@ -502,7 +495,6 @@ bool Atom_data::exchange_owned(long ) // timestep
 
   FOR_IJK_LOOP_END
 
-
   FOR_IJK_LOOP_START
   if (me == all[i][j][k])
     continue;
@@ -510,7 +502,6 @@ bool Atom_data::exchange_owned(long ) // timestep
   MPI_Recv(&recv_num[i][j][k], 1, MPI_INT, all[i][j][k], recv_mpi_tag[i][j][k], mpi_comm, MPI_STATUS_IGNORE); // TAG 0
 
   FOR_IJK_LOOP_END
-
 
   // ================================================
   // resize recv_data to the correct value to increase filling performance
@@ -520,7 +511,6 @@ bool Atom_data::exchange_owned(long ) // timestep
   if (recv_num[i][j][k] > 0)
     recv_data[i][j][k].resize(mpinf.total * recv_num[i][j][k], 0);
   FOR_IJK_LOOP_END
-
 
   // ================================================
   // SEND OWNED DATA
@@ -534,7 +524,6 @@ bool Atom_data::exchange_owned(long ) // timestep
 
   FOR_IJK_LOOP_END
 
-
   FOR_IJK_LOOP_START
   if (me == all[i][j][k])
     continue;
@@ -543,7 +532,6 @@ bool Atom_data::exchange_owned(long ) // timestep
     MPI_Recv(recv_data[i][j][k].data(), mpinf.total * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], mpi_comm, MPI_STATUS_IGNORE); // TAG 1
 
   FOR_IJK_LOOP_END
-
 
   // ================================================
   // FILL the atom_data.owned with depacketing recv_data
@@ -559,25 +547,32 @@ bool Atom_data::exchange_owned(long ) // timestep
   if (N == 0)
     continue;
 
-  auto old_size = id.size();
-
-  auto new_size = old_size + N;
-
-  atom_struct_owned_resize(new_size);
-
+  // ================================================================================================
+  // IF number of particles changes, meaning atoms are added and removed to the domains use this part
+  // ================================================================================================
+  // auto old_size = id.size();
+  // auto new_size = old_size + N;
+  // atom_struct_owned_resize(new_size);
+  // ================================================================================================
   for (int c = 0; c < N; ++c)
   {
 
-    int m = old_size + c;
+    // ================================================================================================
+    // IF number of particles changes, meaning atoms are added and removed to the domains use this part
+    // ================================================================================================
+    // int m = old_size + c;
+    // id[m] = recv_data[i][j][k][mpinf.id * N + c];
+    // type[m] = recv_data[i][j][k][mpinf.type * N + c];
+    // ================================================================================================
+    
+    int id_c = recv_data[i][j][k][mpinf.id * N + c];
+    int m = atom_id_to_index[id_c];
+    atom_struct_owned.mpi_rank[m] = my_mpi_rank;
 
-    id[m] = recv_data[i][j][k][mpinf.id * N + c];
-
-    type[m] = recv_data[i][j][k][mpinf.type * N + c];
 
     pos[m].x = recv_data[i][j][k][(mpinf.pos * N) + (3 * c) + 0];
     pos[m].y = recv_data[i][j][k][(mpinf.pos * N) + (3 * c) + 1];
     pos[m].z = recv_data[i][j][k][(mpinf.pos * N) + (3 * c) + 2];
-
 
     vel[m].x = recv_data[i][j][k][(mpinf.vel * N) + (3 * c) + 0];
     vel[m].y = recv_data[i][j][k][(mpinf.vel * N) + (3 * c) + 1];
@@ -624,7 +619,6 @@ bool Atom_data::exchange_owned(long ) // timestep
 
   FOR_IJK_LOOP_END
 
-
   // ================================================
   // Applying periodic boundary condition for particles comming from the current domain itself
   // ================================================
@@ -646,21 +640,31 @@ bool Atom_data::exchange_owned(long ) // timestep
   // Deleting the particles which are send to another domains
   // ================================================
 
-  if (send_index_all.size() > 0)
-  {
-    remove_atom(send_index_all);
-    make_neighlist = true;
-  }
+  // if (send_index_all.size() > 0)
+  // {
+  //   ================================================================================================
+  //   IF number of particles changes, meaning atoms are added and removed to the domains use this part
+  //   ================================================================================================
+  //   remove_atom(send_index_all);
+  //   make_neighlist = true;
+  // }
+  // instead of remove_atom(), it resets atoms' mpi_rank
+  for (int i = 0; i < send_index_all.size(); ++i)
+    atom_struct_owned.mpi_rank[i] = -1;
 
-  {
-    MPI_Barrier(mpi_comm);
-    long local_pos_size = pos.size();
-    long global_pos_size = 0;
-    MPI_Allreduce(&local_pos_size,
-                  &global_pos_size,
-                  1, MPI::LONG, MPI_SUM, MPI::COMM_WORLD);
+  // ================================================================================================
 
-  }
+  //==========================================
+  // Checking num_of_particles code snippet
+  //==========================================
+  // {
+  // MPI_Barrier(mpi_comm);
+  // long local_pos_size = pos.size();
+  // long global_pos_size = 0;
+  // MPI_Allreduce(&local_pos_size,
+  //               &global_pos_size,
+  //               1, MPI::LONG, MPI_SUM, MPI::COMM_WORLD);
+  // }
 
 #else
 
