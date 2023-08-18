@@ -181,6 +181,12 @@ bool Atom_data::exchange_owned(long) // timestep
     if (molecule_index[m] > -1)
       continue; // excluding molecules
 
+#ifdef CAVIAR_WITH_MPI
+    if (atom_data->atom_struct_owned.mpi_rank[m] != my_mpi_rank)
+      continue;
+#endif
+
+
     const auto xlc = pos[m].x < x_llow;
     const auto xuc = pos[m].x > x_lupp;
     const auto ylc = pos[m].y < y_llow;
@@ -240,6 +246,8 @@ bool Atom_data::exchange_owned(long) // timestep
 
   for (unsigned m = 0; m < num_local_molecules; ++m)
   {
+
+    if (molecule_struct_owned[m].ghost) continue;
 
     Vector<double> cm{0, 0, 0}; // center of molecule
     int molecule_size = molecule_struct_owned[m].atom_list.size();
@@ -478,6 +486,10 @@ bool Atom_data::exchange_owned(long) // timestep
     send_data[i][j][k][(mpinf.mol_ind * N) + (3 * c) + 2] = atom_struct_owned.molecule_index[m];
     send_data[i][j][k][(mpinf.atomic_bc * N) + (3 * c) + 2] = atom_struct_owned.atomic_bond_count[m];
 
+
+    int mi = atom_struct_owned.molecule_index[m];
+    if (mi  > -1) molecule_struct_owned[mi].ghost = true;
+
     c++;
   }
 
@@ -564,10 +576,11 @@ bool Atom_data::exchange_owned(long) // timestep
     // id[m] = recv_data[i][j][k][mpinf.id * N + c];
     // type[m] = recv_data[i][j][k][mpinf.type * N + c];
     // ================================================================================================
-    
+    // ELSE:
     int id_c = recv_data[i][j][k][mpinf.id * N + c];
     int m = atom_id_to_index[id_c];
     atom_struct_owned.mpi_rank[m] = my_mpi_rank;
+    // ================================================================================================
 
 
     pos[m].x = recv_data[i][j][k][(mpinf.pos * N) + (3 * c) + 0];
@@ -592,6 +605,9 @@ bool Atom_data::exchange_owned(long) // timestep
 
     atom_struct_owned.molecule_index[m] = recv_data[i][j][k][(mpinf.mol_ind * N) + (3 * c) + 2];
     atom_struct_owned.atomic_bond_count[m] = recv_data[i][j][k][(mpinf.atomic_bc * N) + (3 * c) + 2];
+
+    int mi = atom_struct_owned.molecule_index[m];
+    if (mi  > -1) molecule_struct_owned[mi].ghost = false;
 
     // ================================================
     // Applying periodic boundary condition for particles comming from other domains

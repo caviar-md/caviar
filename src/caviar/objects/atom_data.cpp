@@ -765,10 +765,16 @@ void Atom_data::set_atoms_mpi_rank()
     if (inside_domain)
     {
       atom_struct_owned.mpi_rank[i] = mpi_me;
+      int mi = atom_struct_owned.molecule_index[i];
+      if (mi > -1) 
+        molecule_struct_owned[mi].ghost = false;
     }
-    else
+    else 
     {
       atom_struct_owned.mpi_rank[i] = -1;
+      int mi = atom_struct_owned.molecule_index[i];
+      if (mi > -1) 
+        molecule_struct_owned[mi].ghost = true;
     }
   }
 }

@@ -32,6 +32,11 @@ namespace atom_data
   struct Molecule_struct  
   {
     /**
+     * Ghost molecule flag. It means the atoms do not belong to the current MPI domain
+     */
+    bool ghost = false;
+
+    /**
      * the id list of all of the atoms in the molecule.
      */
     std::vector<int> atom_list;
