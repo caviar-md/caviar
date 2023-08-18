@@ -38,6 +38,10 @@ namespace force_field
       int num_of_charged = 0;
       for (unsigned int i = 0; i < pos_size; ++i)
       {
+#ifdef CAVIAR_WITH_MPI
+      if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+        continue;
+#endif
         auto type_i = atom_data->atom_struct_owned.type[i];
         auto charge_i = atom_data->atom_type_params.charge[type_i];
         if (charge_i != 0.0)
@@ -73,6 +77,10 @@ namespace force_field
 #endif
     for (unsigned int i = 0; i < pos.size(); ++i)
     {
+      #ifdef CAVIAR_WITH_MPI
+      if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+        continue;
+#endif
       auto type_i = atom_data->atom_struct_owned.type[i];
       double charge_i = atom_data->atom_type_params.charge[type_i];
 

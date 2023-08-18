@@ -138,7 +138,7 @@ namespace force_field
 
     std::map<GlobalID_t, GlobalID_t> id_to_index;
     for (unsigned i = 0; i < atom_data->atom_struct_owned.id.size(); ++i)
-    {                                          // this doesn't need to be reconstructed in every step
+    {                                                      // this doesn't need to be reconstructed in every step
       id_to_index[atom_data->atom_struct_owned.id[i]] = i; // only after send_owned() happened it is needed to be cleared.
     }
 
@@ -147,6 +147,10 @@ namespace force_field
     const auto &nlist = neighborlist->neighlist;
     for (unsigned int i = 0; i < nlist.size(); ++i)
     {
+#ifdef CAVIAR_WITH_MPI
+      if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+        continue;
+#endif
       const auto &pos_i = atom_data->atom_struct_owned.position[i];
       const auto &vel_i = atom_data->atom_struct_owned.velocity[i];
       const auto type_i = atom_data->atom_struct_owned.type[i];

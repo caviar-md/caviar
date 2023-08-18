@@ -101,6 +101,10 @@ namespace force_field
 #endif
     for (unsigned i = 0; i < pos_size; ++i)
     {
+      #ifdef CAVIAR_WITH_MPI
+    if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+      continue;
+#endif
       const auto pos_i = atom_data->atom_struct_owned.position[i];
       const auto type_i = atom_data->atom_struct_owned.type[i];
       const auto charge_i = atom_data->atom_type_params.charge[type_i];

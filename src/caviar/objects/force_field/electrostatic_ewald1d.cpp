@@ -138,6 +138,10 @@ namespace force_field
 #endif
     for (unsigned i = 0; i < pos_size; ++i)
     {
+      #ifdef CAVIAR_WITH_MPI
+    if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+      continue;
+#endif
       const auto pos_i = atom_data->atom_struct_owned.position[i];
       const auto type_i = atom_data->atom_struct_owned.type[i];
       const auto charge_i = atom_data->atom_type_params.charge[type_i];
@@ -198,6 +202,10 @@ namespace force_field
       Vector<double> field{0, 0, 0};
       for (unsigned int j = 0; j < pos.size(); ++j)
       {
+        #ifdef CAVIAR_WITH_MPI
+    if (atom_data->atom_struct_owned.mpi_rank[j] != my_mpi_rank)
+      continue;
+#endif
         const auto type_j = atom_data->atom_struct_owned.type[j];
         const auto charge_j = atom_data->atom_type_params.charge[type_j];
 

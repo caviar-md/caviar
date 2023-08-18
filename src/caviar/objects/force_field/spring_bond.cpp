@@ -96,6 +96,11 @@ namespace force_field
 #endif
     for (unsigned int i = 0; i < atom_data->molecule_struct_owned.size(); i++)
     {
+#ifdef CAVIAR_WITH_MPI
+      if (atom_data->molecule_struct_owned[i].ghost)
+        continue;
+#endif
+
       auto &atomic_bond_vector = atom_data->molecule_struct_owned[i].atomic_bond_vector;
 
       for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)

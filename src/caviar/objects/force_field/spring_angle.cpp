@@ -92,12 +92,16 @@ namespace force_field
                 auto &type = atom_data->atom_struct_owned.type;
                 auto &mass_inv = atom_data->atom_type_params.mass_inv;
 
-
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
 #endif
                 for (unsigned int i = 0; i < atom_data->molecule_struct_owned.size(); i++)
                 {
+#ifdef CAVIAR_WITH_MPI
+                        if (atom_data->molecule_struct_owned[i].ghost)
+                                continue;
+#endif
+
                         auto &atomic_angle_vector = atom_data->molecule_struct_owned[i].atomic_angle_vector;
 
                         for (unsigned int j = 0; j < atomic_angle_vector.size(); j++)

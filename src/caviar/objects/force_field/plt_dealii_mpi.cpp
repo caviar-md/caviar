@@ -664,7 +664,10 @@ namespace force_field
 
       for (unsigned int i = 0; i < pos.size(); ++i)
       {
-
+#ifdef CAVIAR_WITH_MPI
+      if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+        continue;
+#endif
         const dealii::Point<3> r = {pos[i].x, pos[i].y, pos[i].z};
         dealii::Tensor<1, 3, double> field;
 
@@ -694,7 +697,10 @@ namespace force_field
 
       for (unsigned int i = 0; i < pos.size(); ++i)
       {
-
+#ifdef CAVIAR_WITH_MPI
+      if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+        continue;
+#endif
         const dealii::Point<3> r = {pos[i].x, pos[i].y, pos[i].z};
         dealii::Tensor<1, 3, double> field;
 

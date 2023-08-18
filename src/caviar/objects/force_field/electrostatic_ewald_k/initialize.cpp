@@ -101,6 +101,12 @@ namespace force_field
 #endif
     for (unsigned int j = 0; j < pos.size(); ++j)
     {
+
+#ifdef CAVIAR_WITH_MPI
+      if (atom_data->atom_struct_owned.mpi_rank[j] != my_mpi_rank)
+        continue;
+#endif
+
       const auto type_j = atom_data->atom_struct_owned.type[j];
       const auto charge_j = atom_data->atom_type_params.charge[type_j];
       dipole_sum += charge_j * pos[j];
@@ -126,6 +132,10 @@ namespace force_field
 
       for (unsigned int j = 0; j < pos_size; ++j)
       {
+#ifdef CAVIAR_WITH_MPI
+        if (atom_data->atom_struct_owned.mpi_rank[j] != my_mpi_rank)
+          continue;
+#endif
         const auto type_j = atom_data->atom_struct_owned.type[j];
         const auto charge_j = atom_data->atom_type_params.charge[type_j];
 

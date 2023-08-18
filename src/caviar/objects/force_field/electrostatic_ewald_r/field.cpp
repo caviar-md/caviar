@@ -56,6 +56,7 @@ namespace force_field
 
         unsigned int j = binlist[nb_ij.x][nb_ij.y][nb_ij.z][i];
 
+
         bool is_ghost = j >= pos_size;
         Vector<Real_t> pos_j;
         Real_t type_j;

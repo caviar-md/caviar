@@ -130,9 +130,16 @@ namespace force_field
 
     for (unsigned int i = 0; i < pos.size(); ++i)
     {
-      for (unsigned int j = i + 1; j < pos.size(); ++j)
+#ifdef CAVIAR_WITH_MPI
+      if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+        continue;
+#endif
+      for (unsigned int j = i + 1; j < pos.size(); ++j) // If the other particle is ghost, new bond will not be created.
       {
-
+#ifdef CAVIAR_WITH_MPI
+        if (atom_data->atom_struct_owned.mpi_rank[j] != my_mpi_rank) // If the other particle is ghost, new bond will not be created.
+          continue;
+#endif
         if ((int)atom_data->atom_struct_owned.type[i] == type_i && (int)atom_data->atom_struct_owned.type[j] == type_j)
         {
           ;

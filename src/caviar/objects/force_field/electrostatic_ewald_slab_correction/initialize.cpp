@@ -86,6 +86,10 @@ namespace force_field
     auto ds = Vector<double>{0, 0, 0};
     for (unsigned int j = 0; j < pos.size(); ++j)
     {
+#ifdef CAVIAR_WITH_MPI
+      if (atom_data->atom_struct_owned.mpi_rank[j] != my_mpi_rank)
+        continue;
+#endif
       const auto type_j = atom_data->atom_struct_owned.type[j];
       const auto charge_j = atom_data->atom_type_params.charge[type_j];
       ds += charge_j * pos[j];
@@ -204,6 +208,10 @@ namespace force_field
     // XXX No openMP Parallel due to array reduction and boolean flag
     for (unsigned int j = 0; j < pos_size; ++j)
     {
+#ifdef CAVIAR_WITH_MPI
+      if (atom_data->atom_struct_owned.mpi_rank[j] != my_mpi_rank)
+        continue;
+#endif
       const auto q = charge[type[j]];
       const auto p = give_slab_local_coordinates(pos[j]);
 
