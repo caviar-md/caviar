@@ -93,6 +93,11 @@ namespace neighborlist
     {
       for (unsigned int i = 0; i < old_pos.size(); ++i)
       {
+#ifdef CAVIAR_WITH_MPI
+        if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+          continue;
+#endif
+
         auto disp = pos[i] - old_pos[i];
         result |= (disp * disp > cutoff_extra * cutoff_extra / 4);
       }
@@ -134,8 +139,16 @@ namespace neighborlist
 
     for (unsigned int i = 0; i < pos_size; ++i)
     {
+#ifdef CAVIAR_WITH_MPI
+      if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+        continue;
+#endif
       for (unsigned int j = i + 1; j < pos_size; ++j)
       {
+#ifdef CAVIAR_WITH_MPI
+        if (atom_data->atom_struct_owned.mpi_rank[j] != my_mpi_rank)
+          continue;
+#endif
         auto dr = pos[j] - pos[i];
         if (dr * dr < cutoff_sq)
         {

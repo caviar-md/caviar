@@ -214,6 +214,8 @@ public:
   int64_t current_step, initial_step, final_step;
   bool initialized;
 
+  int my_mpi_rank = -1; // the rank of MPI domain.It will be set once in initial function
+
   Integrator_t integrator_type;
 
   void integrate_leap_frog();

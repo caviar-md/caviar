@@ -99,6 +99,22 @@ bool Atom_data::read(caviar::interpreter::Parser *parser)
       if (cutoff_extra < 0.0)
         error->all(FC_FILE_LINE_FUNC_PARSE, "neighborlist_cutoff have to non-negative.");
     }
+    else if (string_cmp(t, "mpi_optimization"))
+    {
+      auto t2 = parser->get_val_token().string_value;
+      if (t2 == "None")
+        mpiOptimization = MpiOptimization::None;
+      else if (t2 == "SingleMdDomain")
+        mpiOptimization = MpiOptimization::SingleMdDomain;
+      else if (t2 == "ShareAtoms")
+        mpiOptimization = MpiOptimization::ShareAtoms;
+      else if (t2 == "ShareMolecules")
+        mpiOptimization = MpiOptimization::ShareMolecules;
+      else if (t2 == "ShareAtomsAndMolecules")
+        mpiOptimization = MpiOptimization::ShareAtomsAndMolecules;
+      else
+        error->all(FC_FILE_LINE_FUNC_PARSE, "undefined mpi_optimization type: " + t2);
+    }
     else if (string_cmp(t, "k_b"))
     {
       GET_OR_CHOOSE_A_REAL(k_b, "", "")
@@ -466,17 +482,17 @@ bool Atom_data::position_inside_local_domain(const Vector<double> &pos)
   if (domain == nullptr)
     error->all(FC_FILE_LINE_FUNC, "domain = nullptr");
 
-#if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
-  const auto me = domain->me;
-  if (me == 0)
-  {
-    if (pos.x >= domain->lower_local.x && pos.x < domain->upper_local.x &&
-        pos.y >= domain->lower_local.y && pos.y < domain->upper_local.y &&
-        pos.z >= domain->lower_local.z && pos.z < domain->upper_local.z)
-      return true;
-  }
-  return false;
-#endif
+  // #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
+  //   const auto me = domain->me;
+  //   if (me == 0)
+  //   {
+  //     if (pos.x >= domain->lower_local.x && pos.x < domain->upper_local.x &&
+  //         pos.y >= domain->lower_local.y && pos.y < domain->upper_local.y &&
+  //         pos.z >= domain->lower_local.z && pos.z < domain->upper_local.z)
+  //       return true;
+  //   }
+  //   return false;
+  // #endif
 
   if (pos.x >= domain->lower_local.x && pos.x < domain->upper_local.x &&
       pos.y >= domain->lower_local.y && pos.y < domain->upper_local.y &&
@@ -497,9 +513,16 @@ void Atom_data::remove_atom(std::vector<int> v_delete_list)
 
 void Atom_data::remove_atom(const int i)
 {
+  // =======================================
+  // reseting  atom_id_to_index value. It's important for MPI modes and molecules
+  // =======================================
+  atom_id_to_index[atom_struct_owned.id[i]] = -1;
 
-  atom_struct_owned.type.erase(atom_struct_owned.type.begin() + i);
+  // =======================================
+
+  atom_struct_owned.mpi_rank.erase(atom_struct_owned.mpi_rank.begin() + i);
   atom_struct_owned.id.erase(atom_struct_owned.id.begin() + i);
+  atom_struct_owned.type.erase(atom_struct_owned.type.begin() + i);
   atom_struct_owned.position.erase(atom_struct_owned.position.begin() + i);
   atom_struct_owned.velocity.erase(atom_struct_owned.velocity.begin() + i);
   atom_struct_owned.acceleration.erase(atom_struct_owned.acceleration.begin() + i);
@@ -525,6 +548,7 @@ bool Atom_data::add_atom(GlobalID_t id,
   // =======================================
   // Adding data to atom_struct_owned.
   // =======================================
+  atom_struct_owned.mpi_rank.emplace_back(-1);
   atom_struct_owned.id.emplace_back(id);
   atom_struct_owned.type.emplace_back(type);
   atom_struct_owned.position.emplace_back(pos);
@@ -716,6 +740,37 @@ int Atom_data::read_next_xyz_frame(bool set_frame, bool read_velocity)
   }
 
   return 0;
+}
+
+int Atom_data::get_mpi_rank()
+{
+#if defined(CAVIAR_WITH_MPI)
+  if (domain == nullptr)
+    error->all(FC_FILE_LINE_FUNC, "domain = nullptr");
+  mpi_me = domain->me;
+#else
+  mpi_me = 0;
+#endif
+}
+
+
+void Atom_data::set_atoms_mpi_rank()
+{
+  mpi_me = get_mpi_me();
+
+  int num_atoms = atom_struct_owned.position.size();
+  for (int i = 0; i < num_atoms; ++i)
+  {
+    bool inside_domain = position_inside_local_domain(atom_struct_owned.position[i]);
+    if (inside_domain)
+    {
+      atom_struct_owned.mpi_rank[i] = mpi_me;
+    }
+    else
+    {
+      atom_struct_owned.mpi_rank[i] = -1;
+    }
+  }
 }
 
 CAVIAR_NAMESPACE_CLOSE

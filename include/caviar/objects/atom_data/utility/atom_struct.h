@@ -32,6 +32,11 @@ namespace atom_data
   struct Atom_struct  
   {
     /**
+     * MPI rank of the atom. In this case, all processes have a copy of the atom
+     */
+    std::vector<int> mpi_rank;
+
+    /**
      * 'id' is a global and unique number assigned to an atom.
      */
     std::vector<GlobalID_t> id;

@@ -67,6 +67,10 @@ public:
 
   Constraint_t constraint_type;
 
+  /**
+   * MPI rank of the classs
+  */
+  int my_mpi_rank = -1;
 public:
   FC_BASE_OBJECT_COMMON_TOOLS
 };

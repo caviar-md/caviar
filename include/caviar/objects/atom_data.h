@@ -23,6 +23,7 @@
 #include "caviar/objects/atom_data/utility/molecule_struct.h"
 #include "caviar/objects/atom_data/utility/molecule_type_params.h"
 #include "caviar/objects/atom_data/utility/mpi_packet_info.h"
+#include "caviar/objects/atom_data/utility/mpi_optimization.h"
 
 
 CAVIAR_NAMESPACE_OPEN
@@ -43,6 +44,7 @@ namespace neighborlist
   class Cell_list;
 }
 
+
 /**
  * This class is the base class for all the atom_datas.
  * Atom_data contains all of the molecular and atomic data for a MD simulation.
@@ -61,6 +63,14 @@ public:
    */
   // unique::Time_function_3d *position_offset = nullptr;
 
+
+   /* 
+   * More sharing results in less MPI overhead and probably faster MPI simulation. However, simulation will takes more RAM.
+   * For large number of processors and particles, it must be tested.
+   */
+  MpiOptimization mpiOptimization = MpiOptimization::None;
+
+
   /**
    * It represents the velocity of origin of the non_inertia Cartesian reference frame by a time function.
    * It will be used in calculation of Temperature and Kinetic energy.
@@ -72,6 +82,17 @@ public:
    * or molarity when one wants to create atoms.
    */
   virtual bool empty_of_atoms(const Vector<Real_t>, double radius);
+
+  /**
+   * MPI case: Finds the correct MPI domain of the atoms
+   */
+  void set_atoms_mpi_rank();
+
+  /**
+   * MPI case: Finds the correct MPI domain of the atoms
+   */
+  int get_mpi_rank();
+
 
   /**
    * Import an xyz file contaning atoms positions and maybe velocities
@@ -497,7 +518,7 @@ public:
     atom_struct_owned.acceleration_old.resize(get_num_of_atoms_local(),caviar::Vector<double>{0,0,0});  
   }
   //===========================
-  // Private Part
+  // Private Section
   //===========================
   private:
   /**
@@ -520,8 +541,13 @@ public:
    */
   atom_data::MPI_packet_info mpi_packet_info_ghost;
   
+  /**
+   * MPI rank of the classs
+  */
+  int my_mpi_rank = -1;
+
   //===========================
-  // Public Part
+  // Public Section
   //===========================
   public:
 

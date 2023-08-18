@@ -163,7 +163,7 @@ bool Atom_data::exchange_owned(long ) // timestep
   int send_num[3][3][3]; // num of owned to be send to the domain all[i][j][k]
   int send_num_molecules[3][3][3]; // num of molecules to be send to the domain all[i][j][k]
 
-  int recv_num[3][3][3]; // num of owned to be recieved from domain all[i][j][k]/ used in header
+  int recv_num[3][3][3]; // num of owned to be recieved from domain all[i][j][k]/ used in he
 
   int send_mpi_tag[3][3][3]; // since there might be two messages from the same domain to another but from different angles,
   int recv_mpi_tag[3][3][3]; // , this tag helps to distinguish messages form each other.

@@ -162,6 +162,10 @@ namespace neighborlist
 
     for (unsigned int i = 0; i < pos_size; ++i)
     {
+#ifdef CAVIAR_WITH_MPI
+      if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+        continue;
+#endif
       const auto ind = binlist_index(pos[i]);
       binlist[ind.x][ind.y][ind.z].emplace_back(i);
     }
@@ -187,7 +191,10 @@ namespace neighborlist
 
       for (int i = 0; i < pos_size; ++i)
       {
-
+#ifdef CAVIAR_WITH_MPI
+        if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+          continue;
+#endif
         auto nb_i = neigh_bin_index(pos[i]);
 
         for (unsigned nb_j = 0; nb_j < nb[nb_i].size(); ++nb_j)

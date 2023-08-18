@@ -31,14 +31,14 @@ CAVIAR_NAMESPACE_OPEN
 
 bool Atom_data::add_atom(caviar::unique::Atom &a)
 {
-
     const auto id = get_num_of_atoms_global();
     const auto t = a.type;
     const auto pos = a.pos_tot();
     const auto vel = a.vel_tot();
-    if (position_inside_local_domain(pos))
-        return add_atom(id, t, pos, vel);
-    return false;
+    // if (position_inside_local_domain(pos))
+    //     return add_atom(id, t, pos, vel);
+    // return false;
+    return add_atom(id, t, pos, vel);    
 }
 
 bool Atom_data::add_atom(caviar::unique::Atom_group &ag)
@@ -482,15 +482,16 @@ bool Atom_data::add_molecule(caviar::unique::Molecule &m)
     // check whether the center of mass of atoms of the molecule
     // is inside the MPI domain or not. If not, ignore the molecule
     //--------------------------------------------------------------
-    Vector<double> pos_cm(0, 0, 0);
-    for (unsigned int i = 0; i < pos.size(); ++i)
-    {
-        pos_cm += pos[i];
-    }
-    pos_cm *= 1.0 / pos.size();
+    // Vector<double> pos_cm(0, 0, 0);
+    // for (unsigned int i = 0; i < pos.size(); ++i)
+    // {
+    //     pos_cm += pos[i];
+    // }
+    // pos_cm *= 1.0 / pos.size();
 
-    if (!position_inside_local_domain(pos_cm))
-        return false;
+    
+    // if (!position_inside_local_domain(pos_cm))
+    //     return false;
 
     //----------------------------------------------------------
     // add a copy of molecule's atom into Atom data as new atoms

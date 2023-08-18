@@ -174,12 +174,12 @@ bool Md_simulator::read(caviar::interpreter::Parser *parser)
       if (string_cmp(ts, "leap_frog"))
         integrator_type = Integrator_t::Leap_frog;
       else if (string_cmp(ts, "velocity_verlet"))
-        {
-          if (atom_data == nullptr)
-            error->all(FC_FILE_LINE_FUNC_PARSE, "set atom_data before this integrator");
-          atom_data-> set_record_owned_acceleration_old(true);
-          integrator_type = Integrator_t::Velocity_verlet;
-        }
+      {
+        if (atom_data == nullptr)
+          error->all(FC_FILE_LINE_FUNC_PARSE, "set atom_data before this integrator");
+        atom_data->set_record_owned_acceleration_old(true);
+        integrator_type = Integrator_t::Velocity_verlet;
+      }
       else if (string_cmp(ts, "velocity_verlet_langevin"))
         integrator_type = Integrator_t::Velocity_verlet_langevin;
       else
@@ -294,6 +294,10 @@ void Md_simulator::initialize()
 {
 
   FC_NULLPTR_CHECK(atom_data)
+
+  atom_data->set_atoms_mpi_rank();
+
+  mpi_me = atom_data->get_mpi_me();
 
   if (dt < 0.0)
     error->all(FC_FILE_LINE_FUNC, "expected 'dt' input");
@@ -562,9 +566,13 @@ void Md_simulator::integrate_velocity_verlet()
 #endif
   for (unsigned int i = 0; i < psize; i++)
   {
+#ifdef CAVIAR_WITH_MPI
+    if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+      continue;
+#endif
 
     pos[i] += vel[i] * dt + 0.5 * acc[i] * dt * dt; // r(t+dt) = r(t) + v(t)*dt + 1/2 * a(t) * dt^2
-    acc_old[i] = acc[i]; // XXX check it
+    acc_old[i] = acc[i];                            // XXX check it
   }
 
   for (auto &&c : constraint)
@@ -580,7 +588,10 @@ void Md_simulator::integrate_velocity_verlet()
 #endif
   for (unsigned int i = 0; i < vel.size(); i++)
   {
-
+#ifdef CAVIAR_WITH_MPI
+    if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+      continue;
+#endif
     vel[i] += 0.5 * dt * (acc[i] + acc_old[i]); // v(t+dt) = v(t) + ( a(t+dt) + a(t) ) * dt / 2
   }
 
@@ -613,6 +624,10 @@ void Md_simulator::integrate_velocity_verlet_langevin()
 
   for (unsigned int i = 0; i < psize; i++)
   {
+#ifdef CAVIAR_WITH_MPI
+    if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+      continue;
+#endif
     L.eta_x[i] = L.rnd_ndist_x(L.rnd_generator_x);
     L.eta_y[i] = L.rnd_ndist_y(L.rnd_generator_y);
     L.eta_z[i] = L.rnd_ndist_z(L.rnd_generator_z);
@@ -623,7 +638,10 @@ void Md_simulator::integrate_velocity_verlet_langevin()
 #endif
   for (unsigned int i = 0; i < psize; i++)
   {
-
+#ifdef CAVIAR_WITH_MPI
+    if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+      continue;
+#endif
     const auto eta = Vector<double>{L.eta_x[i], L.eta_y[i], L.eta_z[i]};
 
     vel[i] += 0.5 * acc[i] * dt + L.b * eta;
@@ -638,6 +656,10 @@ void Md_simulator::integrate_velocity_verlet_langevin()
 #endif
   for (unsigned int i = 0; i < psize; i++)
   {
+#ifdef CAVIAR_WITH_MPI
+    if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+      continue;
+#endif
     // std::cout << "b " << pos[i] ;
     pos[i] += vel[i] * L.c;
     // std::cout << "a " << pos[i] << "\n";
@@ -656,6 +678,10 @@ void Md_simulator::integrate_velocity_verlet_langevin()
 #endif
   for (unsigned int i = 0; i < vel.size(); i++)
   {
+#ifdef CAVIAR_WITH_MPI
+    if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+      continue;
+#endif
     const auto eta = Vector<double>{L.eta_x[i], L.eta_y[i], L.eta_z[i]};
     vel[i] = L.a * vel[i] + L.b * eta + 0.5 * acc[i] * dt;
     // std::cout << "2 acc " << acc[i] << ",vel " << vel[i] << "\n";
@@ -688,6 +714,10 @@ void Md_simulator::integrate_leap_frog()
 #endif
   for (unsigned int i = 0; i < psize; i++)
   {
+#ifdef CAVIAR_WITH_MPI
+    if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+      continue;
+#endif
     vel[i] += 0.5 * dt * acc[i]; // v (t + dt/2) = v (t) + (dt/2) a (t)
     pos[i] += dt * vel[i];       // r (t + dt) = r (t) + dt * v (t + dt/2)
   }
@@ -705,6 +735,10 @@ void Md_simulator::integrate_leap_frog()
 #endif
   for (unsigned int i = 0; i < vel.size(); i++)
   {
+#ifdef CAVIAR_WITH_MPI
+    if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+      continue;
+#endif
     vel[i] += 0.5 * dt * acc[i]; // v (t + dt) = v (t + dt/2) + (dt/2) a (t + dt)
   }
 
@@ -734,7 +768,9 @@ void Md_simulator::integrate_verlet () {
   #pragma omp parallel for
 #endif
   for (unsigned int i=0; i<psize; i++) {
-
+    #ifdef CAVIAR_WITH_MPI
+    if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank) continue;
+    #endif
     pos [i] = (2.0*pos[i]) - pos_old[i]  + acc [i] * dt * dt;  // r (t + dt) = 2*r(t) − r (t − dt) + a(t) * dt^2
 
 

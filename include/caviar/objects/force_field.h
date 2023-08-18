@@ -46,7 +46,10 @@ public:
   class Atom_data *atom_data;
   class Domain *domain;
   class Neighborlist *neighborlist;
-
+  /**
+   * MPI rank of the classs
+  */
+  int my_mpi_rank = -1;
   FC_BASE_OBJECT_COMMON_TOOLS
 };
 
