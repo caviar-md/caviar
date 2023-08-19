@@ -297,7 +297,7 @@ void Md_simulator::initialize()
 
   atom_data->set_atoms_mpi_rank();
 
-  mpi_me = atom_data->get_mpi_me();
+  my_mpi_rank = atom_data->get_mpi_rank();
 
   if (dt < 0.0)
     error->all(FC_FILE_LINE_FUNC, "expected 'dt' input");

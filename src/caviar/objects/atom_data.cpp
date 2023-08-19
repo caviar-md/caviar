@@ -747,16 +747,16 @@ int Atom_data::get_mpi_rank()
 #if defined(CAVIAR_WITH_MPI)
   if (domain == nullptr)
     error->all(FC_FILE_LINE_FUNC, "domain = nullptr");
-  mpi_me = domain->me;
+  my_mpi_rank = domain->me;
 #else
-  mpi_me = 0;
+  my_mpi_rank = 0;
 #endif
 }
 
 
 void Atom_data::set_atoms_mpi_rank()
 {
-  mpi_me = get_mpi_me();
+  my_mpi_rank = get_mpi_rank();
 
   int num_atoms = atom_struct_owned.position.size();
   for (int i = 0; i < num_atoms; ++i)
@@ -764,7 +764,7 @@ void Atom_data::set_atoms_mpi_rank()
     bool inside_domain = position_inside_local_domain(atom_struct_owned.position[i]);
     if (inside_domain)
     {
-      atom_struct_owned.mpi_rank[i] = mpi_me;
+      atom_struct_owned.mpi_rank[i] = my_mpi_rank;
       int mi = atom_struct_owned.molecule_index[i];
       if (mi > -1) 
         molecule_struct_owned[mi].ghost = false;

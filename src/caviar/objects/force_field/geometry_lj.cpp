@@ -130,7 +130,7 @@ namespace force_field
   void Geometry_lj::verify_settings()
   {
     FC_NULLPTR_CHECK(atom_data)
-
+    my_mpi_rank = atom_data->get_mpi_rank();
     auto shape_size = shape.size();
     if (shape_size == 0)
     {

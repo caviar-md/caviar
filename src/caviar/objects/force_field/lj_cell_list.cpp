@@ -78,6 +78,7 @@ namespace force_field
   {
     FC_NULLPTR_CHECK(atom_data)
     FC_NULLPTR_CHECK(neighborlist)
+    my_mpi_rank = atom_data->get_mpi_rank();
   }
 
   void Lj_cell_list::calculate_acceleration()

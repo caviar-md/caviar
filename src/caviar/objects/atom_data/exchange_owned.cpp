@@ -182,7 +182,7 @@ bool Atom_data::exchange_owned(long) // timestep
       continue; // excluding molecules
 
 #ifdef CAVIAR_WITH_MPI
-    if (atom_data->atom_struct_owned.mpi_rank[m] != my_mpi_rank)
+    if (atom_struct_owned.mpi_rank[m] != my_mpi_rank)
       continue;
 #endif
 

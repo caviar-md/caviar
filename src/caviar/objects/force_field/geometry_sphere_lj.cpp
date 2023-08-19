@@ -134,7 +134,7 @@ namespace force_field
   void Geometry_sphere_lj::verify_settings()
   {
     FC_NULLPTR_CHECK(atom_data)
-
+    my_mpi_rank = atom_data->get_mpi_rank();
     auto epsilon_atom_size = epsilon_atom.size();
     auto sigma_atom_size = sigma_atom.size();
     auto atom_max_size = (epsilon_atom_size > sigma_atom_size ? epsilon_atom_size : sigma_atom_size);

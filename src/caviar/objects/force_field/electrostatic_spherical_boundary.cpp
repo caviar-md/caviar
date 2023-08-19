@@ -90,6 +90,7 @@ namespace force_field
   void Electrostatic_spherical_boundary::verify_settings()
   {
     FC_NULLPTR_CHECK(atom_data)
+    my_mpi_rank = atom_data->get_mpi_rank();
   }
 
   void Electrostatic_spherical_boundary::calculate_acceleration()

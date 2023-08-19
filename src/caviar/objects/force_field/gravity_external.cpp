@@ -76,6 +76,7 @@ namespace force_field
   void Gravity_external::verify_settings()
   {
     FC_NULLPTR_CHECK(atom_data)
+    my_mpi_rank = atom_data->get_mpi_rank();
   }
 
   void Gravity_external::calculate_acceleration()

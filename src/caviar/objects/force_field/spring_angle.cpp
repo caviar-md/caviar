@@ -80,6 +80,7 @@ namespace force_field
         {
                 FC_NULLPTR_CHECK(atom_data)
                 FC_NULLPTR_CHECK(domain)
+                my_mpi_rank = atom_data->get_mpi_rank();
         }
 
         void Spring_angle::calculate_acceleration()

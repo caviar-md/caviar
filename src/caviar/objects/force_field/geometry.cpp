@@ -106,6 +106,7 @@ namespace force_field
   void Geometry::verify_settings()
   {
     FC_NULLPTR_CHECK(atom_data)
+    my_mpi_rank = atom_data->get_mpi_rank();
 
     if ((shape.size() == 0) && (!shape_size_warning))
     {

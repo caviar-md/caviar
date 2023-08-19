@@ -95,6 +95,7 @@ namespace force_field
     FC_NULLPTR_CHECK(atom_data)
     FC_NULLPTR_CHECK(domain)
     FC_NULLPTR_CHECK(neighborlist)
+    my_mpi_rank = atom_data->get_mpi_rank();
 
     auto dd = domain->upper_local - domain->lower_local; // NO DOMAIN DECOMPOSITION
     auto bc = domain->boundary_condition;

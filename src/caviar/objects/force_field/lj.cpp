@@ -132,7 +132,7 @@ namespace force_field
     FC_NULLPTR_CHECK(atom_data)
     // FC_NULLPTR_CHECK(domain)
     FC_NULLPTR_CHECK(neighborlist)
-
+    my_mpi_rank = atom_data->get_mpi_rank();
     if (input_by_atom && input_by_array)
     {
       error->all(FC_FILE_LINE_FUNC, "(input_by_atom && input_by_array)");

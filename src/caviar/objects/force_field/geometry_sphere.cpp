@@ -110,6 +110,7 @@ namespace force_field
   void Geometry_sphere::verify_settings()
   {
     FC_NULLPTR_CHECK(atom_data)
+    my_mpi_rank = atom_data->get_mpi_rank();
   }
 
   void Geometry_sphere::calculate_acceleration()

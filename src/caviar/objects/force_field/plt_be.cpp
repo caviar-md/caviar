@@ -89,9 +89,11 @@ namespace force_field
   //==================================================
   //==================================================
 
-  void Plt_be::verify_settings(){
-      FC_NULLPTR_CHECK(atom_data)}
-
+  void Plt_be::verify_settings()
+  {
+      FC_NULLPTR_CHECK(atom_data)
+      my_mpi_rank = atom_data->get_mpi_rank();
+  }
   //==================================================
   //==================================================
   //==================================================
@@ -1281,7 +1283,7 @@ namespace force_field
       const dealii::Point<3> r = {pos[i].x, pos[i].y, pos[i].z};
       dealii::Tensor<1, 3, double> field;
       if (ignore_point_out_of_mesh) {
-        try {
+        try {size
           field = - VectorTools::point_gradient (dof_handler, solution, r);
         } catch (...) {
           continue;

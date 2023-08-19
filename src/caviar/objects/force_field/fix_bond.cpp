@@ -120,6 +120,7 @@ namespace force_field
     auto type_max = type_i > type_j ? type_i : type_j;
     if ((int)bond_limit.size() < type_max + 1)
       bond_limit.resize(type_max + 1, 0);
+    my_mpi_rank = atom_data->get_mpi_rank();
   }
 
   void Fix_bond::create_atomic_bond()

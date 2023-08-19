@@ -103,6 +103,7 @@ namespace force_field
     FC_NULLPTR_CHECK(neighborlist)
     if (cutoff < 0.0)
       error->all(FC_FILE_LINE_FUNC, "Force field cutoff have to non-negative.");
+    my_mpi_rank = atom_data->get_mpi_rank();
   }
 
   void Electrostatic_short_range::calculate_acceleration()

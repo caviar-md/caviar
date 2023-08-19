@@ -118,7 +118,7 @@ namespace force_field
   void Geometry_slab::verify_settings()
   {
     FC_NULLPTR_CHECK(atom_data)
-
+    my_mpi_rank = atom_data->get_mpi_rank();
     if (slab_direction == 0)
       error->all(FC_FILE_LINE_FUNC, "slab_direction == 0");
 

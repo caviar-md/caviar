@@ -615,6 +615,7 @@ namespace force_field
 #endif
 
     FC_NULLPTR_CHECK(atom_data)
+    my_mpi_rank = atom_data->get_mpi_rank();
   }
 
   //==================================================

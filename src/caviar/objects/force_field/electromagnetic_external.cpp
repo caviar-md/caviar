@@ -80,6 +80,7 @@ namespace force_field
   void Electromagnetic_external::verify_settings()
   {
     FC_NULLPTR_CHECK(atom_data)
+    my_mpi_rank = atom_data->get_mpi_rank();
   }
 
   void Electromagnetic_external::calculate_acceleration()
