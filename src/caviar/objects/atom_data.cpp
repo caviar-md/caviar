@@ -124,6 +124,7 @@ bool Atom_data::read(caviar::interpreter::Parser *parser)
     else if (string_cmp(t, "msd_process"))
     {
       msd_process = true;
+      atom_struct_owned.msd_domain_cross.resize(atom_struct_owned.position.size(), caviar::Vector<int>{0, 0, 0});
     }
     else if (string_cmp(t, "add_atom"))
     {
@@ -751,12 +752,13 @@ int Atom_data::get_mpi_rank()
 #else
   my_mpi_rank = 0;
 #endif
+  return my_mpi_rank;
 }
 
 
 void Atom_data::set_atoms_mpi_rank()
 {
-  my_mpi_rank = get_mpi_rank();
+  get_mpi_rank();
 
   int num_atoms = atom_struct_owned.position.size();
   for (int i = 0; i < num_atoms; ++i)
