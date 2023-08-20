@@ -73,13 +73,14 @@ namespace writer
     void dump_xyz(int64_t);         // dump positions to file in xyz format
     void dump_xyz(int64_t, double); // dump positions to file in xyz format
 
-    void dump_xyz_serial(int64_t, int my_mpi_rank = -1);         // dump positions to file in xyz format
-    void dump_xyz_mpi(int64_t);         // dump positions to file in xyz format
+    void dump_xyz_serial(int64_t, bool mpi_files = false);   // dump positions to file in xyz format.
+    void dump_xyz_mpi(int64_t);                            // dump positions to file in xyz format. Number of atoms are different in mpi domains
+    void dump_xyz_mpi_shared_atoms(int64_t);               // dump positions to file in xyz format. Number of atoms are the same in mpi domains
 
     void dump_xyz_ghost(int64_t);         // dump positions to file in xyz format
 
-    void dump_xyz_ghost_serial(int64_t, int my_mpi_rank = -1);         // dump positions to file in xyz format
-    void dump_xyz_ghost_mpi(int64_t);         // dump positions to file in xyz format
+    void dump_xyz_ghost_serial(int64_t, bool mpi_files = false);      // dump positions to file in xyz format
+    void dump_xyz_ghost_mpi(int64_t);                               // dump positions to file in xyz format. Number of atoms are different in mpi domains
 
     void dump_povray(int64_t);         // dump positions to snapshot files in povray format
     void dump_povray(int64_t, double); // dump positions to snapshot files in povray format
@@ -117,10 +118,10 @@ namespace writer
 
     std::string file_name_xyz = "o_xyz";
     std::string file_name_xyz_ghost = "o_xyz_g";
-    std::string file_name_energy = "o_energy.txt";
-    std::string file_name_temperature = "o_temperature.txt";
-    std::string file_name_povray = "o_pov.pov";
-    std::string file_name_msd = "o_msd.txt";
+    std::string file_name_energy = "o_energy";
+    std::string file_name_temperature = "o_temperature";
+    std::string file_name_povray = "o_pov";
+    std::string file_name_msd = "o_msd";
 
     // dump velocity and acceleration alongside position in xyz file
     bool output_velocity = false; //xyz

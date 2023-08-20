@@ -356,6 +356,8 @@ Vector<Real_t> Atom_data::owned_position_cm()
 #endif
   for (unsigned int i = 0; i < p_size; ++i)
   {
+    if (atom_struct_owned.mpi_rank[i] != my_mpi_rank) continue;
+
     auto type_i = atom_struct_owned.type[i];
     auto mass_i = atom_type_params.mass[type_i];
     mass_sum += mass_i;
@@ -395,6 +397,8 @@ Vector<double> Atom_data::owned_angular_momentum_cm(const Vector<double> &p_cm)
 #endif
   for (unsigned int i = 0; i < p_size; ++i)
   {
+    if (atom_struct_owned.mpi_rank[i] != my_mpi_rank) continue;
+
     auto type_i = atom_struct_owned.type[i];
     auto mass_i = atom_type_params.mass[type_i];
 
@@ -415,6 +419,8 @@ std::vector<std::vector<double>> Atom_data::owned_inertia_tensor_cm(const Vector
 #endif
   for (unsigned int i = 0; i < p_size; ++i)
   {
+    if (atom_struct_owned.mpi_rank[i] != my_mpi_rank) continue;
+
     auto type_i = atom_struct_owned.type[i];
     auto mass_i = atom_type_params.mass[type_i];
     auto p = atom_struct_owned.position[i] - p_cm; // relative position
