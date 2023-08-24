@@ -243,10 +243,16 @@ void Atom_data::exchange_ghost(long ) // timestep
     m++;
     FOR_IJK_LOOP_END
   }
-  unsigned num_local_atoms = atom_struct_owned.id.size();
 
-  for (unsigned i = 0; i < num_local_atoms; ++i)
-  {
+  unsigned pos_size = pos.size();
+
+  for (unsigned i = 0; i < pos_size; ++i)
+  {std::cout << "y 1 " << g_pos.size() << std::endl;
+#ifdef CAVIAR_WITH_MPI
+    if (atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+      continue;
+#endif
+std::cout << "y 2 " << g_pos.size() << std::endl;
     const auto xlc = pos[i].x < x_llow;
     const auto xuc = pos[i].x > x_lupp;
     const auto ylc = pos[i].y < y_llow;
@@ -285,48 +291,48 @@ void Atom_data::exchange_ghost(long ) // timestep
 
     if (x_val == 0 && y_val == 0 && z_val == 0)
       continue;
-
+std::cout << "y 3 " << g_pos.size() << std::endl;
     if (x_val != 0)
     {
       send_id[x_val + 1][1][1].emplace_back(id[i]);
       send_index[x_val + 1][1][1].emplace_back(i);
-      send_num[x_val + 1][1][1]++;
+      send_num[x_val + 1][1][1]++;std::cout << "X 1 " << g_pos.size() << std::endl;
     }
     if (y_val != 0)
     {
       send_id[1][y_val + 1][1].emplace_back(id[i]);
       send_index[1][y_val + 1][1].emplace_back(i);
-      send_num[1][y_val + 1][1]++;
+      send_num[1][y_val + 1][1]++;std::cout << "X 1 " << g_pos.size() << std::endl;
     }
     if (z_val != 0)
     {
       send_id[1][1][z_val + 1].emplace_back(id[i]);
       send_index[1][1][z_val + 1].emplace_back(i);
-      send_num[1][1][z_val + 1]++;
+      send_num[1][1][z_val + 1]++;std::cout << "X 1 " << g_pos.size() << std::endl;
     }
     if (x_val != 0 && y_val != 0)
     {
       send_id[x_val + 1][y_val + 1][1].emplace_back(id[i]);
       send_index[x_val + 1][y_val + 1][1].emplace_back(i);
-      send_num[x_val + 1][y_val + 1][1]++;
+      send_num[x_val + 1][y_val + 1][1]++;std::cout << "X 1 " << g_pos.size() << std::endl;
     }
     if (x_val != 0 && z_val != 0)
     {
       send_id[x_val + 1][1][z_val + 1].emplace_back(id[i]);
       send_index[x_val + 1][1][z_val + 1].emplace_back(i);
-      send_num[x_val + 1][1][z_val + 1]++;
+      send_num[x_val + 1][1][z_val + 1]++;std::cout << "X 1 " << g_pos.size() << std::endl;
     }
     if (y_val != 0 && z_val != 0)
     {
       send_id[1][y_val + 1][z_val + 1].emplace_back(id[i]);
       send_index[1][y_val + 1][z_val + 1].emplace_back(i);
-      send_num[1][y_val + 1][z_val + 1]++;
+      send_num[1][y_val + 1][z_val + 1]++;std::cout << "X 1 " << g_pos.size() << std::endl;
     }
     if (x_val != 0 && y_val != 0 && z_val != 0)
     {
       send_id[x_val + 1][y_val + 1][z_val + 1].emplace_back(id[i]);
       send_index[x_val + 1][y_val + 1][z_val + 1].emplace_back(i);
-      send_num[x_val + 1][y_val + 1][z_val + 1]++;
+      send_num[x_val + 1][y_val + 1][z_val + 1]++;std::cout << "X 1 " << g_pos.size() << std::endl;
     }
   }
 
@@ -469,12 +475,7 @@ void Atom_data::exchange_ghost(long ) // timestep
 
   if (recv_num[i][j][k] > 0)
   {
-
-
-
     MPI_Recv(recv_data[i][j][k].data(), mpinf.total * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], mpi_comm, MPI_STATUS_IGNORE); // TAG 1
-
-
 
   }
   FOR_IJK_LOOP_END
@@ -573,6 +574,7 @@ void Atom_data::exchange_ghost(long ) // timestep
     }
   }
 
+  //std::cout << "g_pos size " << g_pos.size() << std::endl;
 
   FOR_IJK_LOOP_END
 

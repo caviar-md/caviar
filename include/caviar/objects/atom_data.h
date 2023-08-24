@@ -279,13 +279,16 @@ public:
   virtual void add_random_velocity();
 
   /**
-   * find and exchange owned atoms between domain or do periodic exchange.
+   * find and exchange owned atoms between domain or do periodic boundary condition movement.
    */
   virtual bool exchange_owned(long step = -1);
+
+
 
   /**
    * find and exchange ghost atoms between domains or do periodic ghost
    */
+
   virtual void exchange_ghost(long step = -1);
 
   /**
@@ -546,6 +549,25 @@ public:
   */
   int my_mpi_rank = -1;
 
+    /**
+   * find and exchange owned atoms between domain or do periodic boundary condition movement.
+   * It is used in serial simulation case or in MPI when we consider all MD calculations 
+   * are in mpi_rank==0
+   */
+  virtual bool exchange_owned_single_md_domain(long step = -1);
+
+
+  /**
+   * find and exchange owned atoms between domain or do periodic boundary condition movement.
+   * Memory efficient case.
+   */
+  virtual bool exchange_owned_mpi(long step = -1);
+
+  /**
+   * find and exchange owned atoms between domain or do periodic boundary condition movement.
+   * CPU efficient case.
+   */
+  virtual bool exchange_owned_mpi_shared_atoms(long step = -1);
   //===========================
   // Public Section
   //===========================
