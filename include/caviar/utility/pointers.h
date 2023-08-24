@@ -17,13 +17,13 @@
 #ifndef CAVIAR_POINTERS_H
 #define CAVIAR_POINTERS_H
 
-#ifdef CAVIAR_WITH_MPI
-#include <mpi.h>
-#endif
 
 #include "caviar/CAVIAR.h"
 
 CAVIAR_NAMESPACE_OPEN
+
+class Caviar_MpiComm_wrapper;
+
 namespace interpreter
 {
   class Parser;
@@ -44,9 +44,6 @@ class Pointers
 {
 public:
   inline constexpr Pointers(class CAVIAR *fptr) : fptr{fptr},
-#if defined(CAVIAR_WITH_MPI)
-                                                  mpi_comm{fptr->mpi_comm},
-#endif
                                                   comm{fptr->comm},
                                                   error{fptr->error},
                                                   output{fptr->output},
@@ -68,9 +65,7 @@ protected:
   inline ~Pointers() = default; // destructor need not be virtual b/c it is public
 public:
   class CAVIAR *fptr;
-#if defined(CAVIAR_WITH_MPI)
-  MPI_Comm &mpi_comm;
-#endif
+
   class interpreter::Communicator *&comm;
   class interpreter::Error *&error;
   class interpreter::Output *&output;

@@ -32,7 +32,9 @@
 #include <iostream>
 #include <cmath>
 #include <time.h>
-
+#ifdef CAVIAR_WITH_MPI
+#include <mpi.h>
+#endif
 CAVIAR_NAMESPACE_OPEN
 
 namespace force_field

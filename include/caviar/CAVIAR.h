@@ -24,13 +24,10 @@
 #include <fstream>
 #include <map>
 
-#if defined(CAVIAR_WITH_MPI)
-#include <mpi.h>
-#endif
-
 #include "caviar/utility/common_template_functions.h"
 
 CAVIAR_NAMESPACE_OPEN
+
 namespace interpreter
 {
   class Communicator;
@@ -50,18 +47,11 @@ namespace interpreter
 class CAVIAR
 {
 public:
-#if defined(CAVIAR_WITH_MPI)
   /**
-   * Constructor in mpi mode
-   */
-  CAVIAR(int, char **, MPI_Comm);
-#else
-
-  /**
-   * Constructor in serial mode
+   * Constructor.
    */
   CAVIAR(int, char **);
-#endif
+
 
   /**
    * Destructor.
@@ -73,9 +63,7 @@ public:
    */
   void execute();
 
-#if defined(CAVIAR_WITH_MPI)
-  MPI_Comm mpi_comm;
-#endif
+
   class interpreter::Communicator *comm;
   class interpreter::Error *error;
   class interpreter::Output *output;

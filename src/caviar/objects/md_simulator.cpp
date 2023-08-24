@@ -25,7 +25,9 @@
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/utility/time_utility.h"
 #include "caviar/interpreter/communicator.h"
-
+#ifdef CAVIAR_WITH_MPI
+#include <mpi.h>
+#endif
 CAVIAR_NAMESPACE_OPEN
 
 Md_simulator::Md_simulator(CAVIAR *fptr) : Pointers{fptr},
@@ -439,7 +441,7 @@ void Md_simulator::step()
   for (auto&& f : force_field)
     f -> calculate_acceleration ();
 
-  MPI_Barrier(mpi_comm);
+  MPI_Barrier(MPI::COMM_WORLD);
 
   if (my_mpi_rank==0) {
 
@@ -493,7 +495,7 @@ bool Md_simulator::boundary_condition()
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
 
 #elif defined(CAVIAR_WITH_MPI)
-  MPI_Allreduce(MPI::IN_PLACE, &result, 1, MPI::BOOL, MPI::LOR, mpi_comm);
+  MPI_Allreduce(MPI::IN_PLACE, &result, 1, MPI::BOOL, MPI::LOR, MPI::COMM_WORLD);
 #endif
   return result;
 }

@@ -18,6 +18,13 @@
 #define CAVIAR_INTERPRETER_COMMUNICATOR_H
 
 #include "caviar/utility/pointers.h"
+// #if defined(CAVIAR_WITH_MPI)
+// #include<mpi.h>
+// #endif
+
+#if defined(CAVIAR_WITH_MPI)
+   // MPI_Datatype mpi_fc_vector_type;
+#endif
 
 CAVIAR_NAMESPACE_OPEN
 namespace interpreter
@@ -39,7 +46,7 @@ namespace interpreter
     void broadcast(std::string &);
 
 #if defined(CAVIAR_WITH_MPI)
-    MPI_Datatype mpi_fc_vector_type;
+    //MPI_Datatype mpi_fc_vector_type;
 #endif
 
     int me, nprocs; // MPI process rank and number of processes

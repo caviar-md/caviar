@@ -18,7 +18,6 @@
 #include "caviar/interpreter/communicator.h"
 #include "caviar/objects/domain.h"
 
-#include <algorithm>
 
 CAVIAR_NAMESPACE_OPEN
 

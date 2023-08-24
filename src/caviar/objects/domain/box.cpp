@@ -130,7 +130,7 @@ namespace domain
   {
 #ifdef CAVIAR_WITH_MPI
     error->all(FC_FILE_LINE_FUNC, "not implemented.");
-    return 0.0;
+    return 0.0*d;
 #else
     if (boundary_condition.x == 1)
     {
@@ -151,7 +151,7 @@ namespace domain
   {
 #ifdef CAVIAR_WITH_MPI
     error->all(FC_FILE_LINE_FUNC, "not implemented.");
-    return 0.0;
+    return 0.0*d;
 #else
     if (boundary_condition.y == 1)
     {
@@ -172,7 +172,7 @@ namespace domain
   {
 #ifdef CAVIAR_WITH_MPI
     error->all(FC_FILE_LINE_FUNC, "not implemented.");
-    return 0.0;
+    return 0.0*d;
 #else
     if (boundary_condition.z == 1)
     {

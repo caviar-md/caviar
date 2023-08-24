@@ -19,7 +19,9 @@
 #include "caviar/objects/atom_data.h"
 
 #include <cmath>
-
+#ifdef CAVIAR_WITH_MPI
+#include <mpi.h>
+#endif
 CAVIAR_NAMESPACE_OPEN
 
 namespace neighborlist
@@ -105,7 +107,7 @@ namespace neighborlist
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
 
 #elif defined(CAVIAR_WITH_MPI)
-    MPI_Allreduce(MPI::IN_PLACE, &result, 1, MPI::BOOL, MPI::LOR, mpi_comm);
+    MPI_Allreduce(MPI::IN_PLACE, &result, 1, MPI::BOOL, MPI::LOR, MPI::COMM_WORLD);
 #endif
     return result;
   }
@@ -124,7 +126,7 @@ namespace neighborlist
     double max_vel_all = std::sqrt(max_vel_sq);
 #elif defined(CAVIAR_WITH_MPI)
     double max_vel_sq_all = 0.0;
-    MPI_Allreduce(&max_vel_sq, &max_vel_sq_all, 1, MPI_DOUBLE, MPI_MAX, mpi_comm);
+    MPI_Allreduce(&max_vel_sq, &max_vel_sq_all, 1, MPI_DOUBLE, MPI_MAX, MPI::COMM_WORLD);
     double max_vel_all = std::sqrt(max_vel_sq_all);
 #else
     double max_vel_all = std::sqrt(max_vel_sq);

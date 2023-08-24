@@ -20,6 +20,9 @@
 #include "caviar/objects/domain.h"
 
 #include <algorithm>
+#ifdef CAVIAR_WITH_MPI
+#include <mpi.h>
+#endif
 
 CAVIAR_NAMESPACE_OPEN
 
@@ -70,7 +73,7 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
 
   auto &pos = atom_struct_owned.position;
 
-  // MPI_Barrier(mpi_comm);
+  // MPI_Barrier(MPI::COMM_WORLD);
 
   auto &vel = atom_struct_owned.velocity;
   auto &acc = atom_struct_owned.acceleration;
@@ -394,7 +397,7 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
   if (me == all[i][j][k])
     continue;
 
-  MPI_Send(&send_num[i][j][k], 1, MPI_INT, all[i][j][k], send_mpi_tag[i][j][k], mpi_comm); // TAG 0
+  MPI_Send(&send_num[i][j][k], 1, MPI_INT, all[i][j][k], send_mpi_tag[i][j][k], MPI::COMM_WORLD); // TAG 0
 
   FOR_IJK_LOOP_END
 
@@ -402,7 +405,7 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
   if (me == all[i][j][k])
     continue;
 
-  MPI_Recv(&recv_num[i][j][k], 1, MPI_INT, all[i][j][k], recv_mpi_tag[i][j][k], mpi_comm, MPI_STATUS_IGNORE); // TAG 0
+  MPI_Recv(&recv_num[i][j][k], 1, MPI_INT, all[i][j][k], recv_mpi_tag[i][j][k], MPI::COMM_WORLD, MPI_STATUS_IGNORE); // TAG 0
 
   FOR_IJK_LOOP_END
 
@@ -423,7 +426,7 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
   if (me == all[i][j][k])
     continue;
   if (send_num[i][j][k] > 0)
-    MPI_Send(send_data[i][j][k].data(), mpinf.total * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], mpi_comm); // TAG 1
+    MPI_Send(send_data[i][j][k].data(), mpinf.total * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], MPI::COMM_WORLD); // TAG 1
 
   FOR_IJK_LOOP_END
 
@@ -432,7 +435,7 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
     continue;
 
   if (recv_num[i][j][k] > 0)
-    MPI_Recv(recv_data[i][j][k].data(), mpinf.total * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], mpi_comm, MPI_STATUS_IGNORE); // TAG 1
+    MPI_Recv(recv_data[i][j][k].data(), mpinf.total * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], MPI::COMM_WORLD, MPI_STATUS_IGNORE); // TAG 1
 
   FOR_IJK_LOOP_END
 
@@ -540,7 +543,7 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
   // Checking num_of_particles code snippet
   //==========================================
   // {
-  // MPI_Barrier(mpi_comm);
+  // MPI_Barrier(MPI::COMM_WORLD);
   // long local_pos_size = pos.size();
   // long global_pos_size = 0;
   // MPI_Allreduce(&local_pos_size,

@@ -34,6 +34,11 @@
 #include <algorithm>
 #include <random>
 
+
+#ifdef CAVIAR_WITH_MPI
+#include <mpi.h>
+#endif
+
 CAVIAR_NAMESPACE_OPEN
 
 Atom_data::Atom_data(CAVIAR *fptr) : Pointers{fptr},
@@ -459,15 +464,15 @@ long Atom_data::get_num_of_atoms_global()
   int num_total_atoms = 0;
   int num_local_atoms = atom_struct_owned.id.size();
 #ifdef CAVIAR_WITH_MPI
-  MPI_Barrier(mpi_comm); // does it have to be here??
-  MPI_Allreduce(&num_local_atoms, &num_total_atoms, 1, MPI_UNSIGNED, MPI_SUM, mpi_comm);
+  MPI_Barrier(MPI::COMM_WORLD); // does it have to be here??
+  MPI_Allreduce(&num_local_atoms, &num_total_atoms, 1, MPI_UNSIGNED, MPI_SUM, MPI::COMM_WORLD);
 #else
   num_total_atoms = num_local_atoms;
 #endif
   return num_total_atoms;
 }
 
-void Atom_data::set_num_total_atoms(GlobalID_t n)
+void Atom_data::set_num_total_atoms(GlobalID_t )
 {
   // num_total_atoms = n;
   // num_local_atoms_est = n * expected_imbalance_factor / comm->nprocs;

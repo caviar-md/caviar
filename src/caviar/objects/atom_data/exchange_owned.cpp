@@ -19,7 +19,6 @@
 #include "caviar/interpreter/error.h"
 #include "caviar/objects/domain.h"
 
-#include <algorithm>
 
 CAVIAR_NAMESPACE_OPEN
 

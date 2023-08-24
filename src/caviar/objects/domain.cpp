@@ -17,6 +17,10 @@
 #include "caviar/objects/domain.h"
 #include "caviar/interpreter/communicator.h"
 
+#ifdef CAVIAR_WITH_MPI
+#include <mpi.h>
+#endif
+
 CAVIAR_NAMESPACE_OPEN
 
 Domain::Domain(CAVIAR *fptr) : Pointers{fptr},
@@ -26,8 +30,8 @@ Domain::Domain(CAVIAR *fptr) : Pointers{fptr},
 {
   FC_OBJECT_INITIALIZE
 #if defined(CAVIAR_WITH_MPI)
-  MPI_Comm_rank(mpi_comm, &me);
-  MPI_Comm_size(mpi_comm, &nprocs);
+  MPI_Comm_rank(MPI::COMM_WORLD, &me);
+  MPI_Comm_size(MPI::COMM_WORLD, &nprocs);
 #endif
 }
 

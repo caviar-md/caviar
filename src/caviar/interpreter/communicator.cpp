@@ -16,6 +16,9 @@
 
 #include "caviar/interpreter/communicator.h"
 #include "caviar/utility/vector.h"
+#if defined(CAVIAR_WITH_MPI)
+#include <mpi.h>
+#endif
 
 CAVIAR_NAMESPACE_OPEN
 namespace interpreter
@@ -23,9 +26,11 @@ namespace interpreter
   Communicator::Communicator(CAVIAR *fptr) : Pointers{fptr}
   {
 #if defined(CAVIAR_WITH_MPI)
-    MPI_Comm_rank(mpi_comm, &me);
-    MPI_Comm_size(mpi_comm, &nprocs);
 
+    MPI_Comm_rank(MPI::COMM_WORLD, &me);
+    MPI_Comm_size(MPI::COMM_WORLD, &nprocs);
+
+    /*
     // Adding a MPI type for caviar::Vector
     const int nitems = 3;
     int blocklengths[3] = {1, 1, 1};
@@ -39,13 +44,14 @@ namespace interpreter
 
     MPI_Type_create_struct(nitems, blocklengths, offsets, types, &mpi_fc_vector_type);
     MPI_Type_commit(&mpi_fc_vector_type);
+    */
 #endif
   }
 
   void Communicator::broadcast(bool &flag)
   {
 #if defined(CAVIAR_WITH_MPI)
-    MPI_Bcast(&flag, 1, MPI::BOOL, 0, mpi_comm);
+    MPI_Bcast(&flag, 1, MPI::BOOL, 0, MPI::COMM_WORLD);
 #else
     std::cout << "Communicator::broadcast " << flag << std::endl;
 #endif
@@ -54,7 +60,7 @@ namespace interpreter
   void Communicator::broadcast(size_t &n)
   {
 #if defined(CAVIAR_WITH_MPI)
-    MPI_Bcast(&n, 1, MPI::INT, 0, mpi_comm);
+    MPI_Bcast(&n, 1, MPI::INT, 0, MPI::COMM_WORLD);
 #else
     std::cout << "Communicator::broadcast " << n << std::endl;
 #endif
@@ -63,8 +69,8 @@ namespace interpreter
   void Communicator::broadcast(size_t &n, char *str)
   {
 #if defined(CAVIAR_WITH_MPI)
-    MPI_Bcast(&n, 1, MPI::INT, 0, mpi_comm);
-    MPI_Bcast(str, n, MPI::CHAR, 0, mpi_comm);
+    MPI_Bcast(&n, 1, MPI::INT, 0, MPI::COMM_WORLD);
+    MPI_Bcast(str, n, MPI::CHAR, 0, MPI::COMM_WORLD);
 #else
     std::cout << "Communicator::broadcast " << n << " " << str << std::endl;
 #endif
@@ -75,8 +81,8 @@ namespace interpreter
 #if defined(CAVIAR_WITH_MPI)
 
     int n = me == 0 ? str.length() : 0;
-    MPI_Bcast(&n, 1, MPI::INT, 0, mpi_comm);
-    MPI_Barrier(mpi_comm);
+    MPI_Bcast(&n, 1, MPI::INT, 0, MPI::COMM_WORLD);
+    MPI_Barrier(MPI::COMM_WORLD);
 
     // The reason behind '[n+1]' for 'char *tmp' is because of 'strcpy':
     // (from http://www.cplusplus.com/reference/cstring/strcpy/)
@@ -87,7 +93,7 @@ namespace interpreter
 
     strcpy(tmp, str.c_str());
 
-    MPI_Bcast(tmp, n, MPI::CHAR, 0, mpi_comm);
+    MPI_Bcast(tmp, n, MPI::CHAR, 0, MPI::COMM_WORLD);
 
     if (tmp)
     {
@@ -103,7 +109,7 @@ namespace interpreter
     {
     }
 
-    MPI_Barrier(mpi_comm);
+    MPI_Barrier(MPI::COMM_WORLD);
 
     delete[] tmp;
 

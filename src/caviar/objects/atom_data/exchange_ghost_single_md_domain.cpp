@@ -20,6 +20,7 @@
 
 #include <algorithm>
 
+
 CAVIAR_NAMESPACE_OPEN
 
 void Atom_data::exchange_ghost_single_md_domain(long) // timestep

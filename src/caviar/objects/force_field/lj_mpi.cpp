@@ -20,7 +20,9 @@
 #include "caviar/objects/domain.h"
 #include "caviar/utility/interpreter_io_headers.h"
 #include <cmath>
-
+#ifdef CAVIAR_WITH_MPI
+#include <mpi.h>
+#endif
 CAVIAR_NAMESPACE_OPEN
 
 namespace force_field
@@ -205,19 +207,19 @@ namespace force_field
 #ifdef CAVIAR_WITH_MPI
     for (auto i = 1; i < nd; ++i)
     {
-      MPI_Send(&g_num_send[i], 1, MPI_INT, neighborlist_domains[i], 0, mpi_comm);
-      MPI_Recv(&g_num_recv[i], 1, MPI_INT, neighborlist_domains[i], 0, mpi_comm, MPI_STATUS_IGNORE);
+      MPI_Send(&g_num_send[i], 1, MPI_INT, neighborlist_domains[i], 0, MPI::COMM_WORLD);
+      MPI_Recv(&g_num_recv[i], 1, MPI_INT, neighborlist_domains[i], 0, MPI::COMM_WORLD, MPI_STATUS_IGNORE);
     }
 
-    MPI_Barrier(mpi_comm);
+    MPI_Barrier(MPI::COMM_WORLD);
 
     for (auto i = 1; i < nd; ++i)
     {
       int send_size = g_num_send[i];
       if (send_size != 0)
       {
-        MPI_Send(&g_send_accel[i][0], 3 * send_size, MPI_DOUBLE, neighborlist_domains[i], 0, mpi_comm);
-        MPI_Send(&g_send_id[i][0], send_size, MPI_INT, neighborlist_domains[i], 1, mpi_comm);
+        MPI_Send(&g_send_accel[i][0], 3 * send_size, MPI_DOUBLE, neighborlist_domains[i], 0, MPI::COMM_WORLD);
+        MPI_Send(&g_send_id[i][0], send_size, MPI_INT, neighborlist_domains[i], 1, MPI::COMM_WORLD);
       }
     }
 
@@ -228,8 +230,8 @@ namespace force_field
       {
         g_recv_id[i].resize(recv_size);
         g_recv_accel[i].resize(recv_size);
-        MPI_Recv(&g_recv_accel[i][0], 3 * recv_size, MPI_DOUBLE, neighborlist_domains[i], 0, mpi_comm, MPI_STATUS_IGNORE);
-        MPI_Recv(&g_recv_id[i][0], recv_size, MPI_INT, neighborlist_domains[i], 1, mpi_comm, MPI_STATUS_IGNORE);
+        MPI_Recv(&g_recv_accel[i][0], 3 * recv_size, MPI_DOUBLE, neighborlist_domains[i], 0, MPI::COMM_WORLD, MPI_STATUS_IGNORE);
+        MPI_Recv(&g_recv_id[i][0], recv_size, MPI_INT, neighborlist_domains[i], 1, MPI::COMM_WORLD, MPI_STATUS_IGNORE);
       }
     }
 

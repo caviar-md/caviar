@@ -26,26 +26,23 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-#if defined(CAVIAR_WITH_MPI)
-CAVIAR::CAVIAR(int argc, char **argv, MPI_Comm mpi_comm) : mpi_comm{mpi_comm},
-#else
 CAVIAR::CAVIAR(int argc, char **argv) :
-#endif
-                                                           comm{new interpreter::Communicator{this}},
-                                                           error{new interpreter::Error{this}},
-                                                           output{new interpreter::Output{this}},
-                                                           input{new interpreter::Input{this}},
-                                                           object_handler{new interpreter::Object_handler{this}},
-                                                           object_container{new interpreter::Object_container{this}},
-                                                           object_creator{new interpreter::Object_creator{this}},
-                                                           in{std::cin.rdbuf()},
-                                                           out{std::cout.rdbuf()},
-                                                           err{std::cerr.rdbuf()},
-                                                           log_flag{true},
-                                                           out_flag{true},
-                                                           err_flag{true},
-                                                           argc{argc},
-                                                           argv{argv}
+
+                                        comm{new interpreter::Communicator{this}},
+                                        error{new interpreter::Error{this}},
+                                        output{new interpreter::Output{this}},
+                                        input{new interpreter::Input{this}},
+                                        object_handler{new interpreter::Object_handler{this}},
+                                        object_container{new interpreter::Object_container{this}},
+                                        object_creator{new interpreter::Object_creator{this}},
+                                        in{std::cin.rdbuf()},
+                                        out{std::cout.rdbuf()},
+                                        err{std::cerr.rdbuf()},
+                                        log_flag{true},
+                                        out_flag{true},
+                                        err_flag{true},
+                                        argc{argc},
+                                        argv{argv}
 {
   if (comm->me == 0)
     log.open("log");

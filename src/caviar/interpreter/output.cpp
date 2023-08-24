@@ -17,7 +17,9 @@
 #include "caviar/interpreter/output.h"
 #include "caviar/interpreter/communicator.h"
 #include "caviar/utility/interpreter_io_headers.h"
-
+#if defined(CAVIAR_WITH_MPI)
+#include<mpi.h>
+#endif
 CAVIAR_NAMESPACE_OPEN
 namespace interpreter
 {
@@ -39,7 +41,7 @@ namespace interpreter
     if (output_info[level])
     {
 #if defined(CAVIAR_WITH_MPI)
-      MPI_Barrier(mpi_comm);
+      MPI_Barrier(MPI::COMM_WORLD);
       int me = comm->me;
       if (me == 0)
       {
@@ -85,7 +87,7 @@ namespace interpreter
     if (output_warning[level])
     {
 #if defined(CAVIAR_WITH_MPI)
-      MPI_Barrier(mpi_comm);
+      MPI_Barrier(MPI::COMM_WORLD);
       int me = comm->me;
       if (me == 0)
       {
@@ -109,7 +111,7 @@ namespace interpreter
   void Output::comment(const std::string &str, bool endline)
   {
 #if defined(CAVIAR_WITH_MPI)
-    MPI_Barrier(mpi_comm);
+    MPI_Barrier(MPI::COMM_WORLD);
     int me = comm->me;
     if (me == 0)
     {

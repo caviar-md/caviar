@@ -24,18 +24,16 @@
 #include <deal.II/base/mpi.h>
 #endif
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
 
 #if defined(CAVIAR_WITH_DEALII_MPI)
   dealii::Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
-  caviar::CAVIAR caviar(argc, argv, MPI::COMM_WORLD);
 #elif defined(CAVIAR_WITH_MPI)
   MPI_Init(&argc, &argv);
-  caviar::CAVIAR caviar(argc, argv, MPI::COMM_WORLD);
-#else
-  caviar::CAVIAR caviar(argc, argv);
 #endif
+
+  caviar::CAVIAR caviar(argc, argv);
 
   try
   {

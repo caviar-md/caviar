@@ -21,7 +21,9 @@
 #include "caviar/utility/common_template_functions.h"
 #include "caviar/objects/unique/time_function_3d.h"
 #include <algorithm>
-
+#ifdef CAVIAR_WITH_MPI
+#include <mpi.h>
+#endif
 CAVIAR_NAMESPACE_OPEN
 
 double Atom_data::kinetic_energy()
@@ -114,7 +116,7 @@ double Atom_data::kinetic_energy()
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
   e_total = e_owned;
 #elif defined(CAVIAR_WITH_MPI)
-  MPI_Allreduce(&e_owned, &e_total, 1, MPI_DOUBLE, MPI_SUM, mpi_comm);
+  MPI_Allreduce(&e_owned, &e_total, 1, MPI_DOUBLE, MPI_SUM, MPI::COMM_WORLD);
 #else
   e_total = e_owned;
 #endif
@@ -223,7 +225,7 @@ double Atom_data::kinetic_energy(const int t)
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
   e_total = e_owned;
 #elif defined(CAVIAR_WITH_MPI)
-  MPI_Allreduce(&e_owned, &e_total, 1, MPI_DOUBLE, MPI_SUM, mpi_comm);
+  MPI_Allreduce(&e_owned, &e_total, 1, MPI_DOUBLE, MPI_SUM, MPI::COMM_WORLD);
 #else
   e_total = e_owned;
 #endif

@@ -15,7 +15,9 @@
 //========================================================================
 
 #include "caviar/interpreter/error.h"
-
+#if defined(CAVIAR_WITH_MPI)
+#include<mpi.h>
+#endif
 CAVIAR_NAMESPACE_OPEN
 namespace interpreter
 {
@@ -33,8 +35,8 @@ namespace interpreter
   {
     int me = 0;
 #ifdef CAVIAR_WITH_MPI
-    MPI_Comm_rank(mpi_comm, &me);
-    MPI_Barrier(mpi_comm);
+    MPI_Comm_rank(MPI::COMM_WORLD, &me);
+    MPI_Barrier(MPI::COMM_WORLD);
 #endif
     std::cout << "  - ERROR occured!" << std::endl;
     if (me == 0)
@@ -72,7 +74,7 @@ namespace interpreter
   {
 #ifdef CAVIAR_WITH_MPI
     int me;
-    MPI_Comm_rank(mpi_comm, &me);
+    MPI_Comm_rank(MPI::COMM_WORLD, &me);
     std::cout << "  - ERROR occured!" << std::endl;
     if (err_flag)
     {
@@ -94,7 +96,7 @@ namespace interpreter
         log << ' ';
       log << '^' << std::endl;
     }
-    MPI_Abort(mpi_comm, 1);
+    MPI_Abort(MPI::COMM_WORLD, 1);
 #else
     all(file, line, func, parsing_line, col, str);
 #endif
@@ -104,8 +106,8 @@ namespace interpreter
   {
     int me = 0;
 #ifdef CAVIAR_WITH_MPI
-    MPI_Comm_rank(mpi_comm, &me);
-    MPI_Barrier(mpi_comm);
+    MPI_Comm_rank(MPI::COMM_WORLD, &me);
+    MPI_Barrier(MPI::COMM_WORLD);
 #endif
     std::cout << "ERROR occured!" << std::endl;
     //  /*
@@ -143,7 +145,7 @@ namespace interpreter
   {
 #ifdef CAVIAR_WITH_MPI
     int me;
-    MPI_Comm_rank(mpi_comm, &me);
+    MPI_Comm_rank(MPI::COMM_WORLD, &me);
     std::cout << "  - ERROR occured!" << std::endl;
     if (err_flag)
     {
@@ -165,7 +167,7 @@ namespace interpreter
         log << ' ';
       log << '^' << std::endl;
     }
-    MPI_Abort(mpi_comm, 1);
+    MPI_Abort(MPI::COMM_WORLD, 1);
 #else
     all(file, line, func, parsing_line, col, str);
 #endif
@@ -175,8 +177,8 @@ namespace interpreter
   {
     int me = 0;
 #ifdef CAVIAR_WITH_MPI
-    MPI_Comm_rank(mpi_comm, &me);
-    MPI_Barrier(mpi_comm);
+    MPI_Comm_rank(MPI::COMM_WORLD, &me);
+    MPI_Barrier(MPI::COMM_WORLD);
 #endif
     std::cout << "  - ERROR occured!" << std::endl;
 
@@ -206,7 +208,7 @@ namespace interpreter
   {
 #ifdef CAVIAR_WITH_MPI
     int me;
-    MPI_Comm_rank(mpi_comm, &me);
+    MPI_Comm_rank(MPI::COMM_WORLD, &me);
     std::cout << "  - ERROR occured!" << std::endl;
     if (err_flag)
     {
@@ -220,7 +222,7 @@ namespace interpreter
       log << "  - ERROR massage: " << str << std::endl;
       log << "  - ERROR call: at '" << file << ':' << line << "' in '" << func << "'." << std::endl;
     }
-    MPI_Abort(mpi_comm, 1);
+    MPI_Abort(MPI::COMM_WORLD, 1);
 #else
     all(file, line, func, str);
 #endif
