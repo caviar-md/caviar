@@ -575,8 +575,8 @@ bool Atom_data::add_atom(GlobalID_t id,
   // =======================================
   // Adding data to atom_id_to_index.
   // =======================================
-  int atom_id_to_index_size = atom_id_to_index.size();
-  if (atom_id_to_index_size < id + 1) // test case: atom_id_to_index_size = 0 and id = 0
+  unsigned int atom_id_to_index_size = atom_id_to_index.size();
+  if (atom_id_to_index_size <  id + 1) // test case: atom_id_to_index_size = 0 and id = 0
     atom_id_to_index.resize(id + 1, -1);
   atom_id_to_index[id] = atom_struct_owned.id.size() - 1;
 

@@ -286,7 +286,7 @@ public:
 
 
   /**
-   * find and exchange ghost atoms between domains or do periodic ghost
+   * find and exchange ghost atoms between domains or do periodic boundary condition for ghosts.
    */
 
   virtual void exchange_ghost(long step = -1);
@@ -424,13 +424,7 @@ public:
   // GlobalID_t num_total_atoms;
   // AtomType_t num_atom_types;
 
-
- /*
- * the rank of the domain in which the owned counterpart exists. Used in only a few MPI force_field schemes 
- */ 
-  std::vector<int> ghost_MPI_rank;
-
-  /**
+   /**
    * i wonder if this should be here or it should be in the neighborlist class
    */
   std::vector<Vector<Real_t>> last_reneighborlist_pos;
@@ -568,6 +562,26 @@ public:
    * CPU efficient case.
    */
   virtual bool exchange_owned_mpi_shared_atoms(long step = -1);
+
+  /**
+   * find and exchange ghost atoms between domain or do periodic boundary condition movement.
+   * It is used in serial simulation case or in MPI when we consider all MD calculations 
+   * are in mpi_rank==0
+   */
+  virtual void exchange_ghost_single_md_domain(long step = -1);
+
+
+  /**
+   * find and exchange ghost atoms between domain or do periodic boundary condition movement.
+   * Memory efficient case.
+   */
+  virtual void exchange_ghost_mpi(long step = -1);
+
+  /**
+   * find and exchange ghost atoms between domain or do periodic boundary condition movement.
+   * CPU efficient case.
+   */
+  virtual void exchange_ghost_mpi_shared_atoms(long step = -1);
   //===========================
   // Public Section
   //===========================

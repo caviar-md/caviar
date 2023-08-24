@@ -63,6 +63,9 @@ bool Atom_data::exchange_owned_single_md_domain(long) // timestep
 
   int num_local_atoms = atom_struct_owned.id.size();
 
+#ifdef CAVIAR_WITH_OPENMP
+#pragma omp parallel for
+#endif
   for (unsigned int i = 0; i < num_local_atoms; ++i)
   {
     if (bc.x == 1)
