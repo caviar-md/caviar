@@ -19,9 +19,11 @@
 #include "caviar/objects/atom_data.h"
 
 #include <cmath>
+
 #ifdef CAVIAR_WITH_MPI
 #include <mpi.h>
 #endif
+
 CAVIAR_NAMESPACE_OPEN
 
 namespace neighborlist
@@ -76,6 +78,8 @@ namespace neighborlist
   void Verlet_list::init()
   {
     FC_NULLPTR_CHECK(atom_data)
+    my_mpi_rank = atom_data->get_mpi_rank();
+
     if (cutoff <= 0.0)
       error->all(FC_FILE_LINE_FUNC, "cutoff have to non-negative.");
     if (dt <= 0.0)
@@ -133,7 +137,8 @@ namespace neighborlist
 #endif
     cutoff_extra = cutoff_extra_coef * dt * max_vel_all;
 
-    const auto &pos = atom_data->atom_struct_owned.position, &pos_ghost = atom_data->atom_struct_ghost.position;
+    const auto &pos = atom_data->atom_struct_owned.position;
+    const auto &pos_ghost = atom_data->atom_struct_ghost.position;
     const auto cutoff_sq = (cutoff + cutoff_extra) * (cutoff + cutoff_extra);
     const auto pos_size = pos.size();
     neighlist.clear();

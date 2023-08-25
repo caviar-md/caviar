@@ -83,6 +83,9 @@ namespace neighborlist
 
     FC_NULLPTR_CHECK(atom_data)
     FC_NULLPTR_CHECK(domain)
+
+    my_mpi_rank = atom_data->get_mpi_rank();
+
     if (make_neighlist == false)
       output->warning("'make_neighlist' is false. You can only use force_field "
                       "classes that have 'cell_list' implementation. if not, you "
