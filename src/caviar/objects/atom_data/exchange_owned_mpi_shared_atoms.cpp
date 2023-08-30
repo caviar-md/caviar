@@ -51,7 +51,7 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
     if (domain == nullptr)
     error->all("Atom_data::exchange_owned: domain = nullptr");
   bool make_neighlist = false;
-
+  
   const auto bc = domain->boundary_condition;
 
   // cutoff extra may make problem for induced_charge mesh.
@@ -144,31 +144,43 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
     int x_val = 0, y_val = 0, z_val = 0;
 
     if (xlc)
+    {
       x_val = -1;
-    if (xuc)
+      if (grid_index_x == 0)
+        x_val *= bc.x;
+    }
+    else if (xuc)
+    {
       x_val = +1;
-    if (ylc)
-      y_val = -1;
-    if (yuc)
-      y_val = +1;
-    if (zlc)
-      z_val = -1;
-    if (zuc)
-      z_val = +1;
+      if (grid_index_x == nprocs_x - 1)
+        x_val *= bc.x;       
+    }
 
-    // periodic or non-periodic boundary condition
-    if (grid_index_x == 0)
-      x_val *= bc.x;
-    if (grid_index_x == nprocs_x - 1)
-      x_val *= bc.x;
-    if (grid_index_y == 0)
-      y_val *= bc.y;
-    if (grid_index_y == nprocs_y - 1)
-      y_val *= bc.y;
-    if (grid_index_z == 0)
-      z_val *= bc.z;
-    if (grid_index_z == nprocs_z - 1)
-      z_val *= bc.z;
+    if (ylc)
+    {
+      y_val = -1;
+      if (grid_index_y == 0)
+        y_val *= bc.y;       
+    }
+    else if (yuc)
+    {
+      y_val = +1;
+      if (grid_index_y == nprocs_y - 1)
+        y_val *= bc.y;       
+    }
+
+    if (zlc)
+    {
+      z_val = -1;
+      if (grid_index_z == 0)
+        z_val *= bc.z;       
+    }
+    else if (zuc)
+    {
+      z_val = +1;
+      if (grid_index_z == nprocs_z - 1)
+        z_val *= bc.z;       
+    }
 
     if (x_val == 0 && y_val == 0 && z_val == 0)
       continue;
@@ -215,34 +227,47 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
     int x_val = 0, y_val = 0, z_val = 0;
 
     if (xlc)
+    {
       x_val = -1;
-    if (xuc)
+      if (grid_index_x == 0)
+        x_val *= bc.x;
+    }
+    else if (xuc)
+    {
       x_val = +1;
-    if (ylc)
-      y_val = -1;
-    if (yuc)
-      y_val = +1;
-    if (zlc)
-      z_val = -1;
-    if (zuc)
-      z_val = +1;
+      if (grid_index_x == nprocs_x - 1)
+        x_val *= bc.x;       
+    }
 
-    // periodic or non-periodic boundary condition
-    if (grid_index_x == 0)
-      x_val *= bc.x;
-    if (grid_index_x == nprocs_x - 1)
-      x_val *= bc.x;
-    if (grid_index_y == 0)
-      y_val *= bc.y;
-    if (grid_index_y == nprocs_y - 1)
-      y_val *= bc.y;
-    if (grid_index_z == 0)
-      z_val *= bc.z;
-    if (grid_index_z == nprocs_z - 1)
-      z_val *= bc.z;
+    if (ylc)
+    {
+      y_val = -1;
+      if (grid_index_y == 0)
+        y_val *= bc.y;       
+    }
+    else if (yuc)
+    {
+      y_val = +1;
+      if (grid_index_y == nprocs_y - 1)
+        y_val *= bc.y;       
+    }
+
+    if (zlc)
+    {
+      z_val = -1;
+      if (grid_index_z == 0)
+        z_val *= bc.z;       
+    }
+    else if (zuc)
+    {
+      z_val = +1;
+      if (grid_index_z == nprocs_z - 1)
+        z_val *= bc.z;       
+    }
 
     if (x_val == 0 && y_val == 0 && z_val == 0)
       continue;
+      
     int i = x_val + 1;
     int j = y_val + 1;
     int k = z_val + 1;

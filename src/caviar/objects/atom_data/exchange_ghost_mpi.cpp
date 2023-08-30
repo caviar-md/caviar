@@ -124,32 +124,43 @@ void Atom_data::exchange_ghost_mpi(long ) // timestep
 
     int x_val = 0, y_val = 0, z_val = 0;
     if (xlc)
+    {
       x_val = -1;
+      if (grid_index_x == 0)
+        x_val *= bc.x;
+    }
     else if (xuc)
+    {
       x_val = +1;
+      if (grid_index_x == nprocs_x - 1)
+        x_val *= bc.x;       
+    }
 
     if (ylc)
+    {
       y_val = -1;
+      if (grid_index_y == 0)
+        y_val *= bc.y;       
+    }
     else if (yuc)
+    {
       y_val = +1;
+      if (grid_index_y == nprocs_y - 1)
+        y_val *= bc.y;       
+    }
 
     if (zlc)
+    {
       z_val = -1;
+      if (grid_index_z == 0)
+        z_val *= bc.z;       
+    }
     else if (zuc)
+    {
       z_val = +1;
-
-    if (grid_index_x == 0)
-      x_val *= bc.x; // periodic or non-periodic boundary condition
-    if (grid_index_x == nprocs_x - 1)
-      x_val *= bc.x; // //
-    if (grid_index_y == 0)
-      y_val *= bc.y; // //
-    if (grid_index_y == nprocs_y - 1)
-      y_val *= bc.y; // //
-    if (grid_index_z == 0)
-      z_val *= bc.z; // //
-    if (grid_index_z == nprocs_z - 1)
-      z_val *= bc.z; // //
+      if (grid_index_z == nprocs_z - 1)
+        z_val *= bc.z;       
+    }
 
     if (x_val == 0 && y_val == 0 && z_val == 0)
       continue;

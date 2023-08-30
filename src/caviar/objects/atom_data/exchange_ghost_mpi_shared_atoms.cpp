@@ -38,7 +38,7 @@ CAVIAR_NAMESPACE_OPEN
   }                      \
   }
 
-void Atom_data::exchange_ghost_mpi_shared_atoms(long ) // timestep
+void Atom_data::exchange_ghost_mpi_shared_atoms(long) // timestep
 {
 #if defined(CAVIAR_WITH_MPI)
 
@@ -70,8 +70,6 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long ) // timestep
   auto &g_id = atom_struct_ghost.id;
   auto &g_type = atom_struct_ghost.type;
 
-  
-
   const auto grid_index_x = domain->grid_index_x;
   const auto grid_index_y = domain->grid_index_y;
   const auto grid_index_z = domain->grid_index_z;
@@ -83,7 +81,6 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long ) // timestep
   //  const auto nprocs = domain->nprocs;
   const auto me = domain->me;
   const auto &all = domain->all;
-
 
   std::vector<int> send_id[3][3][3];    // global id of the atom: atom_struct_owned.id
   std::vector<int> recv_id[3][3][3];    // global id of the atom: atom_struct_owned.id
@@ -109,12 +106,10 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long ) // timestep
 
   for (unsigned i = 0; i < pos_size; ++i)
   {
-    //std::cout << "y 1 " << g_pos.size() << std::endl;
 
     if (atom_struct_owned.mpi_rank[i] != my_mpi_rank)
       continue;
 
-    //std::cout << "y 2 " << g_pos.size() << std::endl;
     const auto xlc = pos[i].x < x_llow;
     const auto xuc = pos[i].x > x_lupp;
     const auto ylc = pos[i].y < y_llow;
@@ -123,85 +118,90 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long ) // timestep
     const auto zuc = pos[i].z > z_lupp;
 
     int x_val = 0, y_val = 0, z_val = 0;
+
     if (xlc)
+    {
       x_val = -1;
+      if (grid_index_x == 0)
+        x_val *= bc.x;
+    }
     else if (xuc)
+    {
       x_val = +1;
+      if (grid_index_x == nprocs_x - 1)
+        x_val *= bc.x;       
+    }
 
     if (ylc)
+    {
       y_val = -1;
+      if (grid_index_y == 0)
+        y_val *= bc.y;       
+    }
     else if (yuc)
+    {
       y_val = +1;
+      if (grid_index_y == nprocs_y - 1)
+        y_val *= bc.y;       
+    }
 
     if (zlc)
+    {
       z_val = -1;
+      if (grid_index_z == 0)
+        z_val *= bc.z;       
+    }
     else if (zuc)
+    {
       z_val = +1;
-
-    if (grid_index_x == 0)
-      x_val *= bc.x; // periodic or non-periodic boundary condition
-    if (grid_index_x == nprocs_x - 1)
-      x_val *= bc.x; // //
-    if (grid_index_y == 0)
-      y_val *= bc.y; // //
-    if (grid_index_y == nprocs_y - 1)
-      y_val *= bc.y; // //
-    if (grid_index_z == 0)
-      z_val *= bc.z; // //
-    if (grid_index_z == nprocs_z - 1)
-      z_val *= bc.z; // //
+      if (grid_index_z == nprocs_z - 1)
+        z_val *= bc.z;       
+    }
 
     if (x_val == 0 && y_val == 0 && z_val == 0)
       continue;
-    //std::cout << "y 3 " << g_pos.size() << std::endl;
+      
     if (x_val != 0)
     {
       send_id[x_val + 1][1][1].emplace_back(id[i]);
       send_index[x_val + 1][1][1].emplace_back(i);
       send_num[x_val + 1][1][1]++;
-      //std::cout << "X 1 " << g_pos.size() << std::endl;
     }
     if (y_val != 0)
     {
       send_id[1][y_val + 1][1].emplace_back(id[i]);
       send_index[1][y_val + 1][1].emplace_back(i);
       send_num[1][y_val + 1][1]++;
-      //std::cout << "X 1 " << g_pos.size() << std::endl;
     }
     if (z_val != 0)
     {
       send_id[1][1][z_val + 1].emplace_back(id[i]);
       send_index[1][1][z_val + 1].emplace_back(i);
       send_num[1][1][z_val + 1]++;
-      //std::cout << "X 1 " << g_pos.size() << std::endl;
     }
     if (x_val != 0 && y_val != 0)
     {
       send_id[x_val + 1][y_val + 1][1].emplace_back(id[i]);
       send_index[x_val + 1][y_val + 1][1].emplace_back(i);
       send_num[x_val + 1][y_val + 1][1]++;
-      //std::cout << "X 1 " << g_pos.size() << std::endl;
     }
     if (x_val != 0 && z_val != 0)
     {
       send_id[x_val + 1][1][z_val + 1].emplace_back(id[i]);
       send_index[x_val + 1][1][z_val + 1].emplace_back(i);
       send_num[x_val + 1][1][z_val + 1]++;
-      //std::cout << "X 1 " << g_pos.size() << std::endl;
     }
     if (y_val != 0 && z_val != 0)
     {
       send_id[1][y_val + 1][z_val + 1].emplace_back(id[i]);
       send_index[1][y_val + 1][z_val + 1].emplace_back(i);
       send_num[1][y_val + 1][z_val + 1]++;
-      //std::cout << "X 1 " << g_pos.size() << std::endl;
     }
     if (x_val != 0 && y_val != 0 && z_val != 0)
     {
       send_id[x_val + 1][y_val + 1][z_val + 1].emplace_back(id[i]);
       send_index[x_val + 1][y_val + 1][z_val + 1].emplace_back(i);
       send_num[x_val + 1][y_val + 1][z_val + 1]++;
-      //std::cout << "X 1 " << g_pos.size() << std::endl;
     }
   }
 
@@ -244,8 +244,6 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long ) // timestep
       mpinf.vel = mpinf.total;
       mpinf.total += 3;
     }
-
-
   }
 
   // ================================================
@@ -310,7 +308,6 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long ) // timestep
 
   FOR_IJK_LOOP_END
 
-
   // ================================================
   // resize recv_data to the correct value to increase filling performance
   // ================================================
@@ -320,7 +317,6 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long ) // timestep
   {
     recv_data[i][j][k].resize(mpinf.total * recv_num[i][j][k], 0);
   }
-
 
   FOR_IJK_LOOP_END
 
@@ -345,7 +341,6 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long ) // timestep
   if (recv_num[i][j][k] > 0)
   {
     MPI_Recv(recv_data[i][j][k].data(), mpinf.total * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], MPI::COMM_WORLD, MPI_STATUS_IGNORE); // TAG 1
-
   }
   FOR_IJK_LOOP_END
 
@@ -375,12 +370,10 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long ) // timestep
   if (make_ghost_velocity)
     g_vel.resize(new_size);
 
-
   for (int c = 0; c < N; ++c)
   {
 
     int m = old_size + c;
-
 
     g_id[m] = recv_data[i][j][k][mpinf.id * N + c];
 
@@ -440,12 +433,11 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long ) // timestep
     }
   }
 
-  //std::cout << "g_pos size " << g_pos.size() << std::endl;
+  // std::cout << "g_pos size " << g_pos.size() << std::endl;
 
   FOR_IJK_LOOP_END
 
-
-// MPI_Barrier(MPI::COMM_WORLD);
+  // MPI_Barrier(MPI::COMM_WORLD);
 
 #endif
 }
