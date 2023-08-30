@@ -603,7 +603,7 @@ bool Atom_data::atom_struct_owned_resize(long new_size)
     atom_struct_owned.acceleration_old.resize(new_size, caviar::Vector<double>{0, 0, 0});
   if (msd_process)
     atom_struct_owned.msd_domain_cross.resize(new_size, caviar::Vector<int>{0, 0, 0});
-  atom_struct_owned.molecule_index.resize(new_size, 0);
+  atom_struct_owned.molecule_index.resize(new_size, -1);
   atom_struct_owned.atomic_bond_count.resize(new_size, 0);
   return true;
 }

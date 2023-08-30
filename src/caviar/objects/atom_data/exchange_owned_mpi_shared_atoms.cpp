@@ -402,8 +402,8 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
       send_data[i][j][k][(mpinf.msd * N) + (3 * c) + 2] = msd[m].z;
     }
 
-    send_data[i][j][k][(mpinf.mol_ind * N) + (3 * c) + 2] = atom_struct_owned.molecule_index[m];
-    send_data[i][j][k][(mpinf.atomic_bc * N) + (3 * c) + 2] = atom_struct_owned.atomic_bond_count[m];
+    send_data[i][j][k][(mpinf.mol_ind * N) + (3 * c)] = atom_struct_owned.molecule_index[m];
+    send_data[i][j][k][(mpinf.atomic_bc * N) + (3 * c)] = atom_struct_owned.atomic_bond_count[m];
 
 
     int mi = atom_struct_owned.molecule_index[m];
@@ -507,8 +507,8 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
       msd[m].z = recv_data[i][j][k][(mpinf.msd * N) + (3 * c) + 2];
     }
 
-    atom_struct_owned.molecule_index[m] = recv_data[i][j][k][(mpinf.mol_ind * N) + (3 * c) + 2];
-    atom_struct_owned.atomic_bond_count[m] = recv_data[i][j][k][(mpinf.atomic_bc * N) + (3 * c) + 2];
+    atom_struct_owned.molecule_index[m] = recv_data[i][j][k][(mpinf.mol_ind * N) + (3 * c)];
+    atom_struct_owned.atomic_bond_count[m] = recv_data[i][j][k][(mpinf.atomic_bc * N) + (3 * c)];
 
     int mi = atom_struct_owned.molecule_index[m];
     if (mi  > -1) molecule_struct_owned[mi].ghost = false;
