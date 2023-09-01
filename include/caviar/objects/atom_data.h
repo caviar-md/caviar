@@ -424,10 +424,6 @@ public:
   // GlobalID_t num_total_atoms;
   // AtomType_t num_atom_types;
 
-   /**
-   * i wonder if this should be here or it should be in the neighborlist class
-   */
-  std::vector<Vector<Real_t>> last_reneighborlist_pos;
 
   /**
    * if true, more than just atom position have to be synched in single domain mpi case

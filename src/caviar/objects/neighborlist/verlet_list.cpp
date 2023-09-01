@@ -20,10 +20,6 @@
 
 #include <cmath>
 
-#ifdef CAVIAR_WITH_MPI
-#include <mpi.h>
-#endif
-
 CAVIAR_NAMESPACE_OPEN
 
 namespace neighborlist
@@ -34,7 +30,7 @@ namespace neighborlist
     cutoff = -1.0;
     dt = -1.0;
     cutoff_extra = 0.0; // this value changes every timestep
-    cutoff_extra_coef = 30.0;
+    cutoff_extra_coef = 0.0;
   }
 
   bool Verlet_list::read(caviar::interpreter::Parser *parser)
@@ -84,58 +80,59 @@ namespace neighborlist
       error->all(FC_FILE_LINE_FUNC, "cutoff have to non-negative.");
     if (dt <= 0.0)
       error->all(FC_FILE_LINE_FUNC, "dt have to non-negative.");
-    auto &old_pos = atom_data->last_reneighborlist_pos;
+
     const auto &pos = atom_data->atom_struct_owned.position;
-    old_pos.resize(pos.size());
+    pos_old.resize(pos.size());
   }
 
   bool Verlet_list::rebuild_neighlist()
   {
-    bool result = false;
-    const auto &pos = atom_data->atom_struct_owned.position, &old_pos = atom_data->last_reneighborlist_pos;
-    if (pos.size() != old_pos.size())
-      result = true;
+
+    const auto &pos = atom_data->atom_struct_owned.position; 
+
+    unsigned int pos_size = pos.size();
+
+    if (pos_size != pos_old.size())
+    {
+      return true;
+    }
     else
     {
-      for (unsigned int i = 0; i < old_pos.size(); ++i)
+      for (unsigned int i = 0; i < pos_size; ++i)
       {
 #ifdef CAVIAR_WITH_MPI
-        if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+        if (atom_data->atom_struct_owned.mpi_rank[i] != mpi_rank_old[i]) //make new verlet_list if any mpi_rank is changed,
+          return true;
+
+        if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank) // then, ignore mpi_ranks out of the domain
           continue;
 #endif
 
-        auto disp = pos[i] - old_pos[i];
-        result |= (disp * disp > cutoff_extra * cutoff_extra / 4);
+        auto disp = pos[i] - pos_old[i];
+        if (disp * disp > cutoff_extra * cutoff_extra / 4)
+          return true;
       }
     }
-#if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
 
-#elif defined(CAVIAR_WITH_MPI)
-    MPI_Allreduce(MPI::IN_PLACE, &result, 1, MPI::BOOL, MPI::LOR, MPI::COMM_WORLD);
-#endif
-    return result;
+    return false;
   }
 
   void Verlet_list::build_neighlist()
   {
-    double max_vel_sq = 0.0;
-    for (const auto v : atom_data->atom_struct_owned.velocity)
-    { // Any faster scheme using <algorithm>?
-      double vel_sq_temp = v * v;
-      if (max_vel_sq < vel_sq_temp)
-        max_vel_sq = vel_sq_temp;
-    }
 
-#if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
-    double max_vel_all = std::sqrt(max_vel_sq);
-#elif defined(CAVIAR_WITH_MPI)
-    double max_vel_sq_all = 0.0;
-    MPI_Allreduce(&max_vel_sq, &max_vel_sq_all, 1, MPI_DOUBLE, MPI_MAX, MPI::COMM_WORLD);
-    double max_vel_all = std::sqrt(max_vel_sq_all);
-#else
-    double max_vel_all = std::sqrt(max_vel_sq);
-#endif
-    cutoff_extra = cutoff_extra_coef * dt * max_vel_all;
+    if (cutoff_extra_coef > 0)
+    {
+      const auto &vel = atom_data->atom_struct_owned.velocity;
+
+      double max_vel_sq = 0.0;
+      for (unsigned int i = 0; i < vel.size(); ++i)
+      {
+        double vel_sq_temp = vel[i] * vel[i];
+        if (max_vel_sq < vel_sq_temp)
+          max_vel_sq = vel_sq_temp;
+      }
+      cutoff_extra = cutoff_extra_coef * dt * std::sqrt(max_vel_sq);
+    }
 
     const auto &pos = atom_data->atom_struct_owned.position;
     const auto &pos_ghost = atom_data->atom_struct_ghost.position;
@@ -172,14 +169,8 @@ namespace neighborlist
       }
     }
 
-    auto &old_pos = atom_data->last_reneighborlist_pos;
-    /*
-      old_pos.clear ();
-      for (unsigned int i=0; i<pos_size; ++i) {
-        old_pos.push_back (pos[i]);
-      }
-    */
-    old_pos = pos;
+    pos_old = pos;
+    mpi_rank_old = atom_data->atom_struct_owned.mpi_rank;
   }
 
 } // neighborlist

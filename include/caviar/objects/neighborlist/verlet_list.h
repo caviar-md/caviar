@@ -37,8 +37,14 @@ namespace neighborlist
     void build_neighlist();
     double dt, cutoff_extra;
     double cutoff_extra_coef;
-    //  double cutoff; // Defined in the base class
-  public:
+
+  private:
+  /**
+   * position of the particles at the previous verlet list generation step
+  */
+  std::vector<Vector<double>> pos_old;
+  std::vector<int> mpi_rank_old;
+
   };
 
 } // neighborlist
