@@ -70,13 +70,13 @@ namespace domain
       }
       else if (string_cmp(t, "info"))
       {
-        std::cout << "MPI Rank: " << me 
-                  << " local.x [" << lower_local.x << " , " <<  upper_local.x << "]" 
-                  << " local.y [" << lower_local.y << " , " <<  upper_local.y << "]" 
-                  << " local.z [" << lower_local.z << " , " <<  upper_local.z << "]" 
-                  << " global.x [" << lower_global.x << " , " <<  upper_global.x << "]" 
-                  << " global.y [" << lower_global.y << " , " <<  upper_global.y << "]" 
-                  << " global.z [" << lower_global.z << " , " <<  upper_global.z << "]" 
+        std::cout << "MPI Rank: " << me
+                  << " local.x [" << lower_local.x << " , " << upper_local.x << "]"
+                  << " local.y [" << lower_local.y << " , " << upper_local.y << "]"
+                  << " local.z [" << lower_local.z << " , " << upper_local.z << "]"
+                  << " global.x [" << lower_global.x << " , " << upper_global.x << "]"
+                  << " global.y [" << lower_global.y << " , " << upper_global.y << "]"
+                  << " global.z [" << lower_global.z << " , " << upper_global.z << "]"
                   << std::endl;
       }
       else if (string_cmp(t, "generate"))
@@ -128,10 +128,11 @@ namespace domain
 
   double Box::fix_distance_x(double d)
   {
-#ifdef CAVIAR_WITH_MPI
-    error->all(FC_FILE_LINE_FUNC, "not implemented.");
-    return 0.0*d;
-#else
+#if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
+
+#elif CAVIAR_WITH_MPI
+    return d;
+#endif
     if (boundary_condition.x == 1)
     {
       if (d > +half_edge.x)
@@ -144,15 +145,15 @@ namespace domain
       }
     }
     return d;
-#endif
   }
 
   double Box::fix_distance_y(double d)
   {
-#ifdef CAVIAR_WITH_MPI
-    error->all(FC_FILE_LINE_FUNC, "not implemented.");
-    return 0.0*d;
-#else
+#if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
+
+#elif CAVIAR_WITH_MPI
+    return d;
+#endif
     if (boundary_condition.y == 1)
     {
       if (d > +half_edge.y)
@@ -165,15 +166,15 @@ namespace domain
       }
     }
     return d;
-#endif
   }
 
   double Box::fix_distance_z(double d)
   {
-#ifdef CAVIAR_WITH_MPI
-    error->all(FC_FILE_LINE_FUNC, "not implemented.");
-    return 0.0*d;
-#else
+#if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
+
+#elif CAVIAR_WITH_MPI
+    return d;
+#endif
     if (boundary_condition.z == 1)
     {
       if (d > +half_edge.z)
@@ -186,7 +187,6 @@ namespace domain
       }
     }
     return d;
-#endif
   }
 
   caviar::Vector<double> Box::fix_distance(caviar::Vector<double> v)
