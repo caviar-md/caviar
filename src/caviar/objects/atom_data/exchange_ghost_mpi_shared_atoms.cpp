@@ -60,6 +60,10 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long) // timestep
   const auto y_width = domain->upper_local.y - domain->lower_local.y;
   const auto z_width = domain->upper_local.z - domain->lower_local.z;
 
+  const auto x_width_g = domain->upper_global.x - domain->lower_global.x;
+  const auto y_width_g = domain->upper_global.y - domain->lower_global.y;
+  const auto z_width_g = domain->upper_global.z - domain->lower_global.z;
+
   auto &pos = atom_struct_owned.position;
   auto &vel = atom_struct_owned.velocity;
   auto &id = atom_struct_owned.id;
@@ -246,14 +250,6 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long) // timestep
     }
   }
 
-  // ================================================
-  // resize send_data to the correct value to increase filling performance
-  // ================================================
-
-  FOR_IJK_LOOP_START
-  if (send_num[i][j][k] > 0)
-    send_data[i][j][k].resize(mpinf.total * send_num[i][j][k], 0);
-  FOR_IJK_LOOP_END
 
   // ================================================
   //  FILL the send_data packets
@@ -267,15 +263,63 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long) // timestep
   auto N = send_num[i][j][k];
   if (N == 0)
     continue;
+
+  send_data[i][j][k].resize(mpinf.total * send_num[i][j][k], 0);
+
   for (auto m : send_index[i][j][k])
   {
+    Vector<double> pos_tmp = pos[m];
+    //================================================================
+    // Fixing the position of the atoms in periodic boundary condition
+    //================================================================
+    if (bc.x == 1)
+    {
+      if ((grid_index_x == 0) && (i == 0))
+      {
+        pos_tmp.x += x_width_g;
+      }
+    
+      if ((grid_index_x == nprocs_x - 1) && (i == 2))
+      {
+        pos_tmp.x -= x_width_g;
+      }
+    }
+
+    if (bc.y == 1)
+    {
+      if ((grid_index_y == 0) && (j == 0))
+      {
+        pos_tmp.y += y_width_g;
+      }
+
+      if ((grid_index_y == nprocs_y - 1) && (j == 2))
+      {
+        pos_tmp.y -= y_width_g;
+      }
+    }
+
+    if (bc.z == 1)
+    {
+      if ((grid_index_z == 0) && (k == 0) )
+      {
+        pos_tmp.z += z_width_g;
+      }
+
+      if ((grid_index_z == nprocs_z - 1) && (k == 2))
+      {
+        pos_tmp.z -= z_width_g;
+      }
+    }
+    //================================================================
+    // Prepairing Send_data
+    //================================================================
     send_data[i][j][k][mpinf.id * N + c] = id[m];
 
     send_data[i][j][k][mpinf.type * N + c] = type[m];
 
-    send_data[i][j][k][(mpinf.pos * N) + (3 * c) + 0] = pos[m].x;
-    send_data[i][j][k][(mpinf.pos * N) + (3 * c) + 1] = pos[m].y;
-    send_data[i][j][k][(mpinf.pos * N) + (3 * c) + 2] = pos[m].z;
+    send_data[i][j][k][(mpinf.pos * N) + (3 * c) + 0] = pos_tmp.x;
+    send_data[i][j][k][(mpinf.pos * N) + (3 * c) + 1] = pos_tmp.y;
+    send_data[i][j][k][(mpinf.pos * N) + (3 * c) + 2] = pos_tmp.z;
 
     if (make_ghost_velocity)
     {
@@ -304,21 +348,11 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long) // timestep
   if (me == all[i][j][k])
     continue;
 
+
   MPI_Recv(&recv_num[i][j][k], 1, MPI_INT, all[i][j][k], recv_mpi_tag[i][j][k], MPI::COMM_WORLD, MPI_STATUS_IGNORE); // TAG 0
 
   FOR_IJK_LOOP_END
 
-  // ================================================
-  // resize recv_data to the correct value to increase filling performance
-  // ================================================
-
-  FOR_IJK_LOOP_START
-  if (recv_num[i][j][k] > 0)
-  {
-    recv_data[i][j][k].resize(mpinf.total * recv_num[i][j][k], 0);
-  }
-
-  FOR_IJK_LOOP_END
 
   // ================================================
   // SEND OWNED DATA
@@ -327,21 +361,25 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long) // timestep
   FOR_IJK_LOOP_START
   if (me == all[i][j][k])
     continue;
-  if (send_num[i][j][k] > 0)
-  {
 
-    MPI_Send(send_data[i][j][k].data(), mpinf.total * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], MPI::COMM_WORLD); // TAG 1
-  }
+  if (send_num[i][j][k] == 0)
+    continue;  
+
+  MPI_Send(send_data[i][j][k].data(), mpinf.total * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], MPI::COMM_WORLD); // TAG 1
+  
   FOR_IJK_LOOP_END
 
   FOR_IJK_LOOP_START
   if (me == all[i][j][k])
     continue;
 
-  if (recv_num[i][j][k] > 0)
-  {
-    MPI_Recv(recv_data[i][j][k].data(), mpinf.total * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], MPI::COMM_WORLD, MPI_STATUS_IGNORE); // TAG 1
-  }
+  if (recv_num[i][j][k] == 0)
+    continue;
+  
+  recv_data[i][j][k].resize(mpinf.total * recv_num[i][j][k], 0);
+
+  MPI_Recv(recv_data[i][j][k].data(), mpinf.total * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], MPI::COMM_WORLD, MPI_STATUS_IGNORE); // TAG 1
+  
   FOR_IJK_LOOP_END
 
   // ================================================
@@ -390,28 +428,6 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long) // timestep
       g_vel[m].z = recv_data[i][j][k][(mpinf.vel * N) + (3 * c) + 2];
     }
 
-    // ================================================
-    // Applying periodic boundary condition for particles comming from other domains
-    // ================================================
-
-    if (i == 0)
-      while (g_pos[m].x < x_llow)
-        g_pos[m].x += x_width;
-    if (j == 0)
-      while (g_pos[m].y < y_llow)
-        g_pos[m].y += y_width;
-    if (k == 0)
-      while (g_pos[m].z < z_llow)
-        g_pos[m].z += z_width;
-    if (i == 2)
-      while (g_pos[m].x > x_lupp)
-        g_pos[m].x -= x_width;
-    if (j == 2)
-      while (g_pos[m].y > y_lupp)
-        g_pos[m].y -= y_width;
-    if (k == 2)
-      while (g_pos[m].z > z_lupp)
-        g_pos[m].z -= z_width;
   }
 
   FOR_IJK_LOOP_END
@@ -426,7 +442,8 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long) // timestep
     auto x_val = i - 1, y_val = j - 1, z_val = k - 1;
     for (auto m : send_index[i][j][k])
     {
-      g_vel.emplace_back(vel[m].x, vel[m].y, vel[m].z);
+      if (make_ghost_velocity)
+        g_vel.emplace_back(vel[m].x, vel[m].y, vel[m].z);
       g_pos.emplace_back(pos[m].x - x_val * x_width, pos[m].y - y_val * y_width, pos[m].z - z_val * z_width);
       g_id.emplace_back(id[m]);
       g_type.emplace_back(type[m]);
@@ -438,6 +455,7 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long) // timestep
   FOR_IJK_LOOP_END
 
   // MPI_Barrier(MPI::COMM_WORLD);
+
 
 #endif
 }

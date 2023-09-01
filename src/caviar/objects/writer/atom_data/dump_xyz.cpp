@@ -87,7 +87,7 @@ namespace writer
       if (mpi_single_file)
         dump_xyz_ghost_mpi(i);
       if (mpi_separate_files)
-        dump_xyz_ghost_serial(i, my_mpi_rank);
+        dump_xyz_ghost_serial(i, true);
     }
     else
     {

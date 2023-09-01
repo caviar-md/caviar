@@ -47,12 +47,14 @@ CAVIAR_NAMESPACE_OPEN
 bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
 {
 #if defined(CAVIAR_WITH_MPI)
+  // MPI_Barrier(MPI::COMM_WORLD);
 
-    if (domain == nullptr)
+  if (domain == nullptr)
     error->all("Atom_data::exchange_owned: domain = nullptr");
   bool make_neighlist = false;
-  
+
   const auto bc = domain->boundary_condition;
+
 
   // cutoff extra may make problem for induced_charge mesh.
   // in the situations that the mesh size is exactly equal to the domain
@@ -71,14 +73,18 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
   const auto y_width = domain->upper_local.y - domain->lower_local.y;
   const auto z_width = domain->upper_local.z - domain->lower_local.z;
 
+  const auto x_width_g = domain->upper_global.x - domain->lower_global.x;
+  const auto y_width_g = domain->upper_global.y - domain->lower_global.y;
+  const auto z_width_g = domain->upper_global.z - domain->lower_global.z;
+
   auto &pos = atom_struct_owned.position;
 
-  // MPI_Barrier(MPI::COMM_WORLD);
+
 
   auto &vel = atom_struct_owned.velocity;
   auto &acc = atom_struct_owned.acceleration;
   auto &id = atom_struct_owned.id;
-  auto &type = atom_struct_owned.type;
+  //auto &type = atom_struct_owned.type;
   auto &msd = atom_struct_owned.msd_domain_cross;
   auto &molecule_index = atom_struct_owned.molecule_index;
 
@@ -92,17 +98,18 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
 
   const auto me = domain->me;
 
+
   const auto &all = domain->all;
 
   std::vector<int> send_index[3][3][3]; // the index of std::vector<> of the owned
   std::vector<int> send_index_all;      // the index of std::vector<> of the owned, in a 1D vector
 
-  //std::vector<int> send_index_molecule[3][3][3];           // the index of std::vector<> of the owned molecules
+  // std::vector<int> send_index_molecule[3][3][3];           // the index of std::vector<> of the owned molecules
   std::vector<int> send_index_molecule_send_data[3][3][3]; // the index of std::vector<> of the owned molecules
   std::vector<int> send_index_molecule_recv_data[3][3][3]; // the index of std::vector<> of the owned molecules
 
-  int send_num[3][3][3];           // num of owned to be send to the domain all[i][j][k]
-  //int send_num_molecules[3][3][3]; // num of molecules to be send to the domain all[i][j][k]
+  int send_num[3][3][3]; // num of owned to be send to the domain all[i][j][k]
+  // int send_num_molecules[3][3][3]; // num of molecules to be send to the domain all[i][j][k]
 
   int recv_num[3][3][3]; // num of owned to be recieved from domain all[i][j][k]/ used in he
 
@@ -113,7 +120,7 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
     FOR_IJK_LOOP_START
     send_num[i][j][k] = 0;
     recv_num[i][j][k] = 0;
-    //send_num_molecules[i][j][k] = 0;
+    // send_num_molecules[i][j][k] = 0;
     send_mpi_tag[i][j][k] = m;
     recv_mpi_tag[i][j][k] = 26 - m;
     m++;
@@ -153,33 +160,33 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
     {
       x_val = +1;
       if (grid_index_x == nprocs_x - 1)
-        x_val *= bc.x;       
+        x_val *= bc.x;
     }
 
     if (ylc)
     {
       y_val = -1;
       if (grid_index_y == 0)
-        y_val *= bc.y;       
+        y_val *= bc.y;
     }
     else if (yuc)
     {
       y_val = +1;
       if (grid_index_y == nprocs_y - 1)
-        y_val *= bc.y;       
+        y_val *= bc.y;
     }
 
     if (zlc)
     {
       z_val = -1;
       if (grid_index_z == 0)
-        z_val *= bc.z;       
+        z_val *= bc.z;
     }
     else if (zuc)
     {
       z_val = +1;
       if (grid_index_z == nprocs_z - 1)
-        z_val *= bc.z;       
+        z_val *= bc.z;
     }
 
     if (x_val == 0 && y_val == 0 && z_val == 0)
@@ -206,7 +213,8 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
   for (unsigned m = 0; m < num_local_molecules; ++m)
   {
 
-    if (molecule_struct_owned[m].ghost) continue;
+    if (molecule_struct_owned[m].ghost)
+      continue;
 
     Vector<double> cm{0, 0, 0}; // center of molecule
     int molecule_size = molecule_struct_owned[m].atom_list.size();
@@ -236,38 +244,38 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
     {
       x_val = +1;
       if (grid_index_x == nprocs_x - 1)
-        x_val *= bc.x;       
+        x_val *= bc.x;
     }
 
     if (ylc)
     {
       y_val = -1;
       if (grid_index_y == 0)
-        y_val *= bc.y;       
+        y_val *= bc.y;
     }
     else if (yuc)
     {
       y_val = +1;
       if (grid_index_y == nprocs_y - 1)
-        y_val *= bc.y;       
+        y_val *= bc.y;
     }
 
     if (zlc)
     {
       z_val = -1;
       if (grid_index_z == 0)
-        z_val *= bc.z;       
+        z_val *= bc.z;
     }
     else if (zuc)
     {
       z_val = +1;
       if (grid_index_z == nprocs_z - 1)
-        z_val *= bc.z;       
+        z_val *= bc.z;
     }
 
     if (x_val == 0 && y_val == 0 && z_val == 0)
       continue;
-      
+
     int i = x_val + 1;
     int j = y_val + 1;
     int k = z_val + 1;
@@ -286,6 +294,8 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
       }
     }
   }
+
+
   // ================================================
   // making the send_data
   // ================================================
@@ -316,8 +326,8 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
     mpinf.id = mpinf.total;
     mpinf.total += 1;
 
-    mpinf.type = mpinf.total;
-    mpinf.total += 1;
+    //mpinf.type = mpinf.total;
+    //mpinf.total += 1;
 
     mpinf.pos = mpinf.total;
     mpinf.total += 3;
@@ -356,14 +366,6 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
     mpinf.total += 1;
   }
 
-  // ================================================
-  // resize send_data to the correct value to increase filling performance
-  // ================================================
-
-  FOR_IJK_LOOP_START
-  if (send_num[i][j][k] > 0)
-    send_data[i][j][k].resize(mpinf.total * send_num[i][j][k], 0);
-  FOR_IJK_LOOP_END
 
   // ================================================
   //  FILL the send_data packets
@@ -377,11 +379,58 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
   auto N = send_num[i][j][k];
   if (N == 0)
     continue;
+  send_data[i][j][k].resize(mpinf.total * send_num[i][j][k], 0);
+
   for (auto m : send_index[i][j][k])
   {
-    send_data[i][j][k][mpinf.id * N + c] = id[m];
 
-    send_data[i][j][k][mpinf.type * N + c] = type[m];
+    
+    //================================================================
+    // Fixing the position of the atoms in periodic boundary condition
+    //================================================================
+    if (bc.x == 1)
+    {
+      if ((grid_index_x == 0) && (i == 0))
+      {
+        pos[m].x += x_width_g;
+      }
+    
+      if ((grid_index_x == nprocs_x - 1) && (i == 2))
+      {
+        pos[m].x -= x_width_g;
+      }
+    }
+
+    if (bc.y == 1)
+    {
+      if ((grid_index_y == 0) && (j == 0))
+      {
+        pos[m].y += y_width_g;
+      }
+
+      if ((grid_index_y == nprocs_y - 1) && (j == 2))
+      {
+        pos[m].y -= y_width_g;
+      }
+    }
+
+    if (bc.z == 1)
+    {
+      if ((grid_index_z == 0) && (k == 0) )
+      {
+        pos[m].z += z_width_g;
+      }
+
+      if ((grid_index_z == nprocs_z - 1) && (k == 2))
+      {
+        pos[m].z -= z_width_g;
+      }
+    }
+    //================================================================
+    // Prepairing Send_data
+    //================================================================
+
+    send_data[i][j][k][mpinf.id * N + c] = id[m];
 
     send_data[i][j][k][(mpinf.pos * N) + (3 * c) + 0] = pos[m].x;
     send_data[i][j][k][(mpinf.pos * N) + (3 * c) + 1] = pos[m].y;
@@ -402,12 +451,14 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
       send_data[i][j][k][(mpinf.msd * N) + (3 * c) + 2] = msd[m].z;
     }
 
-    send_data[i][j][k][(mpinf.mol_ind * N) + (3 * c)] = atom_struct_owned.molecule_index[m];
-    send_data[i][j][k][(mpinf.atomic_bc * N) + (3 * c)] = atom_struct_owned.atomic_bond_count[m];
-
-
+    send_data[i][j][k][(mpinf.mol_ind * N) + c] = atom_struct_owned.molecule_index[m];
+    send_data[i][j][k][(mpinf.atomic_bc * N) + c] = atom_struct_owned.atomic_bond_count[m];
+    // //================================================================
+    // // finalizing 
+    // //================================================================
     int mi = atom_struct_owned.molecule_index[m];
-    if (mi  > -1) molecule_struct_owned[mi].ghost = true;
+    if (mi > -1)
+      molecule_struct_owned[mi].ghost = true;
 
     c++;
   }
@@ -426,6 +477,7 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
 
   FOR_IJK_LOOP_END
 
+
   FOR_IJK_LOOP_START
   if (me == all[i][j][k])
     continue;
@@ -434,14 +486,7 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
 
   FOR_IJK_LOOP_END
 
-  // ================================================
-  // resize recv_data to the correct value to increase filling performance
-  // ================================================
 
-  FOR_IJK_LOOP_START
-  if (recv_num[i][j][k] > 0)
-    recv_data[i][j][k].resize(mpinf.total * recv_num[i][j][k], 0);
-  FOR_IJK_LOOP_END
 
   // ================================================
   // SEND OWNED DATA
@@ -450,19 +495,28 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
   FOR_IJK_LOOP_START
   if (me == all[i][j][k])
     continue;
-  if (send_num[i][j][k] > 0)
-    MPI_Send(send_data[i][j][k].data(), mpinf.total * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], MPI::COMM_WORLD); // TAG 1
+  if (send_num[i][j][k] == 0)
+    continue;
+
+
+  MPI_Send(send_data[i][j][k].data(), mpinf.total * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], MPI::COMM_WORLD); // TAG 1
 
   FOR_IJK_LOOP_END
+
 
   FOR_IJK_LOOP_START
   if (me == all[i][j][k])
     continue;
 
-  if (recv_num[i][j][k] > 0)
-    MPI_Recv(recv_data[i][j][k].data(), mpinf.total * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], MPI::COMM_WORLD, MPI_STATUS_IGNORE); // TAG 1
+  if (recv_num[i][j][k] == 0)
+    continue;
+
+  recv_data[i][j][k].resize(mpinf.total * recv_num[i][j][k], 0);
+
+  MPI_Recv(recv_data[i][j][k].data(), mpinf.total * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], MPI::COMM_WORLD, MPI_STATUS_IGNORE); // TAG 1  
 
   FOR_IJK_LOOP_END
+
 
   // ================================================
   // FILL the atom_data.owned with depacketing recv_data
@@ -478,14 +532,15 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
   if (N == 0)
     continue;
 
-
   for (int c = 0; c < N; ++c)
   {
 
-
     int id_c = recv_data[i][j][k][mpinf.id * N + c];
     int m = atom_id_to_index[id_c];
+
+
     atom_struct_owned.mpi_rank[m] = my_mpi_rank;
+
 
     pos[m].x = recv_data[i][j][k][(mpinf.pos * N) + (3 * c) + 0];
     pos[m].y = recv_data[i][j][k][(mpinf.pos * N) + (3 * c) + 1];
@@ -507,34 +562,14 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
       msd[m].z = recv_data[i][j][k][(mpinf.msd * N) + (3 * c) + 2];
     }
 
-    atom_struct_owned.molecule_index[m] = recv_data[i][j][k][(mpinf.mol_ind * N) + (3 * c)];
-    atom_struct_owned.atomic_bond_count[m] = recv_data[i][j][k][(mpinf.atomic_bc * N) + (3 * c)];
+    atom_struct_owned.molecule_index[m] = recv_data[i][j][k][(mpinf.mol_ind * N) + c];
+    atom_struct_owned.atomic_bond_count[m] = recv_data[i][j][k][(mpinf.atomic_bc * N) + c];
 
     int mi = atom_struct_owned.molecule_index[m];
-    if (mi  > -1) molecule_struct_owned[mi].ghost = false;
+    if (mi > -1)
+      molecule_struct_owned[mi].ghost = false;
 
-    // ================================================
-    // Applying periodic boundary condition for particles comming from other domains
-    // ================================================
 
-    if (i == 0)
-      while (pos[m].x < x_llow)
-        pos[m].x += x_width;
-    if (j == 0)
-      while (pos[m].y < y_llow)
-        pos[m].y += y_width;
-    if (k == 0)
-      while (pos[m].z < z_llow)
-        pos[m].z += z_width;
-    if (i == 2)
-      while (pos[m].x > x_lupp)
-        pos[m].x -= x_width;
-    if (j == 2)
-      while (pos[m].y > y_lupp)
-        pos[m].y -= y_width;
-    if (k == 2)
-      while (pos[m].z > z_lupp)
-        pos[m].z -= z_width;
   }
 
   FOR_IJK_LOOP_END
@@ -560,8 +595,9 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
   // Reseting mpi_rank of the particles which are send to another domains
   // ================================================
   for (unsigned int i = 0; i < send_index_all.size(); ++i)
-    atom_struct_owned.mpi_rank[i] = -1;
-
+  {
+    atom_struct_owned.mpi_rank[send_index_all[i]] = -1;
+  }
   // ================================================================================================
 
   //==========================================
@@ -575,12 +611,12 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
   //               &global_pos_size,
   //               1, MPI::LONG, MPI_SUM, MPI::COMM_WORLD);
   // }
+
+
   return make_neighlist;
 #else
   return false;
 #endif
 }
-
-
 
 CAVIAR_NAMESPACE_CLOSE
