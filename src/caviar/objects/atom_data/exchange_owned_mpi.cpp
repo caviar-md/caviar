@@ -55,18 +55,13 @@ bool Atom_data::exchange_owned_mpi(long) // timestep
 
   const auto bc = domain->boundary_condition;
 
-  // cutoff extra may make problem for induced_charge mesh.
-  // in the situations that the mesh size is exactly equal to the domain
-  // measurements, cutoff_extra may makes the particles go outside of the mesh.
-  // that throws an exception when calculating the force or accelerations on
-  // the particle. in order to avoid that, one can fix it by setting cutoff_extra
-  // to zero, or by fixing particle position in the forcefield calculations.
-  const auto x_llow = domain->lower_local.x - cutoff_extra;
-  const auto x_lupp = domain->upper_local.x + cutoff_extra;
-  const auto y_llow = domain->lower_local.y - cutoff_extra;
-  const auto y_lupp = domain->upper_local.y + cutoff_extra;
-  const auto z_llow = domain->lower_local.z - cutoff_extra;
-  const auto z_lupp = domain->upper_local.z + cutoff_extra;
+
+  const auto x_llow = domain->lower_local.x;
+  const auto x_lupp = domain->upper_local.x;
+  const auto y_llow = domain->lower_local.y;
+  const auto y_lupp = domain->upper_local.y;
+  const auto z_llow = domain->lower_local.z;
+  const auto z_lupp = domain->upper_local.z;
 
   const auto x_width = domain->upper_local.x - domain->lower_local.x;
   const auto y_width = domain->upper_local.y - domain->lower_local.y;
