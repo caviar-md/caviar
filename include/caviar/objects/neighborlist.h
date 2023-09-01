@@ -39,7 +39,7 @@ public:
   virtual bool rebuild_neighlist();
   virtual void build_neighlist() = 0;
   virtual void calculate_cutoff_extra();
-
+  virtual void all_atom_test_function(int state=0);
   std::vector<std::vector<LocalID_t>> neighlist;
 
   // 'Cell_list' public functions and variables;
@@ -64,12 +64,30 @@ public:
   int my_mpi_rank = -1;
 
   protected:
+
+  /**
+   * position of the ghost particles at the previous verlet list generation step
+  */
+  std::vector<Vector<double>> ghost_pos_old;
+
   /**
    * position of the particles at the previous verlet list generation step
   */
   std::vector<Vector<double>> pos_old;
   std::vector<int> mpi_rank_old;
   double local_cutoff; // in verlet_list, it is the same as cutoff. in cell_list, it is cutoff_neighlist;
+  /**
+  *  if true, all of the atoms will see all of the other atoms
+  *  the result of simulation must be exactly the same as the neighborlist with correct parameters.
+  */
+  bool all_atom_test = false;
+
+  /**
+  *  if true, verlet_list will be made on every timestep
+  *  the result of simulation must be exactly the same as the neighborlist with correct parameters.
+  */
+  bool rebuild_test = false;
+
 public:
 
   FC_BASE_OBJECT_COMMON_TOOLS

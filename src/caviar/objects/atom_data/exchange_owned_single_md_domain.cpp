@@ -38,7 +38,7 @@ bool Atom_data::exchange_owned_single_md_domain(long) // timestep
     return false;
 #endif
 
-  bool make_neighlist = false;
+  bool update_verlet_list = false;
 
   const auto bc = domain->boundary_condition;
 
@@ -125,6 +125,7 @@ bool Atom_data::exchange_owned_single_md_domain(long) // timestep
       }
     }
   }
+  return update_verlet_list;
 }
 //======================================================
 //                                                    ||

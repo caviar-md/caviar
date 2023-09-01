@@ -64,6 +64,14 @@ namespace neighborlist
         if (cutoff_extra_coef < 0.0)
           error->all(FC_FILE_LINE_FUNC_PARSE, "cutoff_extra_coef have to non-negative.");
       }
+      else if (string_cmp(t, "all_atom_test"))
+      {
+        all_atom_test = true;
+      }
+      else if (string_cmp(t, "rebuild_test"))
+      {
+        rebuild_test = true;
+      }
       else
         error->all(FC_FILE_LINE_FUNC_PARSE, "Unknown variable or command");
     }
@@ -89,6 +97,12 @@ namespace neighborlist
 
   void Verlet_list::build_neighlist()
   {
+    if (all_atom_test)
+    {
+      all_atom_test_function(0);
+      return;
+    }
+
     calculate_cutoff_extra();
 
     const auto &pos = atom_data->atom_struct_owned.position;
@@ -127,6 +141,7 @@ namespace neighborlist
     }
 
     pos_old = pos;
+    ghost_pos_old = pos_ghost;
 #ifdef CAVIAR_WITH_MPI
     mpi_rank_old = atom_data->atom_struct_owned.mpi_rank;
 #endif

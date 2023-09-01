@@ -72,6 +72,14 @@ namespace neighborlist
         FIND_OBJECT_BY_NAME(domain, it)
         domain = object_container->domain[it->second.index];
       }
+      else if (string_cmp(t, "all_atom_test"))
+      {
+        all_atom_test = true;
+      }
+      else if (string_cmp(t, "rebuild_test"))
+      {
+        rebuild_test = true;
+      }
       else
         error->all(FC_FILE_LINE_FUNC_PARSE, "Unknown variable or command");
     }
@@ -171,6 +179,7 @@ namespace neighborlist
     const auto &pos = atom_data->atom_struct_owned.position;
     const auto &pos_ghost = atom_data->atom_struct_ghost.position;
     const auto pos_size = pos.size();
+    const auto ghost_size = pos_ghost.size();
 
     for (unsigned int i = 0; i < pos_size; ++i)
     {
@@ -182,7 +191,7 @@ namespace neighborlist
       binlist[ind.x][ind.y][ind.z].emplace_back(i);
     }
 
-    for (unsigned int i = 0; i < pos_ghost.size(); ++i)
+    for (unsigned int i = 0; i < ghost_size; ++i)
     {
       const auto ind = binlist_index(pos_ghost[i]);
       binlist[ind.x][ind.y][ind.z].emplace_back(i + pos_size);
@@ -192,6 +201,8 @@ namespace neighborlist
   void Cell_list::build_verlet_list_from_bins()
   {
     const auto &pos = atom_data->atom_struct_owned.position;
+    const auto &pos_ghost = atom_data->atom_struct_ghost.position;
+
     const int pos_size = pos.size();
     const auto cutoff_neighlist_sq = cutoff_neighlist * cutoff_neighlist;
     const auto &nb = neigh_bin;
@@ -217,9 +228,9 @@ namespace neighborlist
           {
             auto dr = pos[i];
             if (ind_j >= pos_size) // Ghost condition
-              dr -= atom_data->atom_struct_ghost.position[ind_j - pos_size];
+              dr -= pos_ghost[ind_j - pos_size];
             else
-              dr -= atom_data->atom_struct_owned.position[ind_j];
+              dr -= pos[ind_j];
             if (dr * dr < cutoff_neighlist_sq)
               neighlist[i].emplace_back(ind_j);
           }
@@ -228,6 +239,7 @@ namespace neighborlist
     }
 
     pos_old = pos;
+    ghost_pos_old = pos_ghost;    
 #ifdef CAVIAR_WITH_MPI
     mpi_rank_old = atom_data->atom_struct_owned.mpi_rank;
 #endif

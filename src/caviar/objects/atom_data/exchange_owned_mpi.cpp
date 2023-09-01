@@ -51,7 +51,7 @@ bool Atom_data::exchange_owned_mpi(long) // timestep
 
   if (domain == nullptr)
     error->all("Atom_data::exchange_owned: domain = nullptr");
-  bool make_neighlist = false;
+  bool update_verlet_list = false;
 
   const auto bc = domain->boundary_condition;
 
@@ -178,6 +178,9 @@ bool Atom_data::exchange_owned_mpi(long) // timestep
     }
     if (x_val == 0 && y_val == 0 && z_val == 0)
       continue;
+
+    update_verlet_list = true;
+
     int i = x_val + 1;
     int j = y_val + 1;
     int k = z_val + 1;
@@ -261,6 +264,9 @@ bool Atom_data::exchange_owned_mpi(long) // timestep
 
     if (x_val == 0 && y_val == 0 && z_val == 0)
       continue;
+
+    update_verlet_list = true;
+    
     int i = x_val + 1;
     int j = y_val + 1;
     int k = z_val + 1;
@@ -612,7 +618,7 @@ bool Atom_data::exchange_owned_mpi(long) // timestep
   if (send_index_all.size() > 0)
   {
     remove_atom(send_index_all);
-    make_neighlist = true;
+    
   }
 
   //==========================================
@@ -627,7 +633,7 @@ bool Atom_data::exchange_owned_mpi(long) // timestep
   //               1, MPI::LONG, MPI_SUM, MPI::COMM_WORLD);
   // }
 
-  return make_neighlist;
+  return update_verlet_list;
 #else
   return false;
 #endif

@@ -25,9 +25,9 @@
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/utility/time_utility.h"
 #include "caviar/interpreter/communicator.h"
-#ifdef CAVIAR_WITH_MPI
-#include <mpi.h>
-#endif
+// #ifdef CAVIAR_WITH_MPI
+// #include <mpi.h>
+// #endif
 CAVIAR_NAMESPACE_OPEN
 
 Md_simulator::Md_simulator(CAVIAR *fptr) : Pointers{fptr},
@@ -492,11 +492,11 @@ bool Md_simulator::boundary_condition()
   result = atom_data->exchange_owned(current_step);
 
   atom_data->exchange_ghost(current_step);
-#if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
-
-#elif defined(CAVIAR_WITH_MPI)
-  MPI_Allreduce(MPI::IN_PLACE, &result, 1, MPI::BOOL, MPI::LOR, MPI::COMM_WORLD);
-#endif
+//#if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
+//
+// #elif defined(CAVIAR_WITH_MPI)
+//   MPI_Allreduce(MPI::IN_PLACE, &result, 1, MPI::BOOL, MPI::LOR, MPI::COMM_WORLD);
+// #endif
   return result;
 }
 
