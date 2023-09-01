@@ -54,13 +54,13 @@ namespace neighborlist
       else if (string_cmp(t, "cutoff"))
       {
         GET_OR_CHOOSE_A_REAL(cutoff, "", "")
-        if (cutoff < 0.0)
+        if (cutoff <= 0.0)
           error->all(FC_FILE_LINE_FUNC_PARSE, "cutoff have to non-negative.");
       }
       else if (string_cmp(t, "cutoff_neighlist"))
       {
         GET_OR_CHOOSE_A_REAL(cutoff_neighlist, "", "")
-        if (cutoff_neighlist < 0.0)
+        if (cutoff_neighlist <= 0.0)
           error->all(FC_FILE_LINE_FUNC_PARSE, "cutoff_neighlist have to non-negative.");
       }
       else if (string_cmp(t, "make_neighlist"))
@@ -84,19 +84,32 @@ namespace neighborlist
     FC_NULLPTR_CHECK(atom_data)
     FC_NULLPTR_CHECK(domain)
 
-    my_mpi_rank = atom_data->get_mpi_rank();
+    if (cutoff <= 0.0)
+      error->all(FC_FILE_LINE_FUNC, "cutoff have to non-negative.");
 
-    if (make_neighlist == false)
-      output->warning("'make_neighlist' is false. You can only use force_field "
-                      "classes that have 'cell_list' implementation. if not, you "
-                      "may get a 'segmentation fault' error.");
+    if (make_neighlist)
+    {
+      if (cutoff_neighlist <= 0.0)
+        error->all(FC_FILE_LINE_FUNC, "cutoff_neighlist have to non-negative.");
+      if (cutoff_neighlist > cutoff)
+        error->all(FC_FILE_LINE_FUNC, "cutoff_neighlist must be less than or equal to cutoff for optimization purpose");
+
+      local_cutoff = cutoff_neighlist;
+    }
+    else
+    {
+      output->warning("'make_neighlist' is false. The force_fields using verlet_list won't function.");
+    }
+
+    my_mpi_rank = atom_data->get_mpi_rank();
 
     auto dd = domain->upper_local - domain->lower_local; // NO DOMAIN DECOMPOSITION
     auto bc = domain->boundary_condition;
+    cutoff_inv = 1.0 / cutoff;
 
-    no_bins.x = std::ceil(dd.x / cutoff);
-    no_bins.y = std::ceil(dd.y / cutoff);
-    no_bins.z = std::ceil(dd.z / cutoff);
+    no_bins.x = std::ceil(dd.x * cutoff_inv);
+    no_bins.y = std::ceil(dd.y * cutoff_inv);
+    no_bins.z = std::ceil(dd.z * cutoff_inv);
 
     if (bc.x == 1)
       no_bins.x += 2;
@@ -105,8 +118,8 @@ namespace neighborlist
     if (bc.z == 1)
       no_bins.z += 2;
 
-    std::string s = "no_bins.x : " + std::to_string(no_bins.x) + " ,no_bins.y : " + std::to_string(no_bins.y) + " ,no_bins.z : " + std::to_string(no_bins.z);
-    output->info(s);
+    // std::string s = "no_bins.x : " + std::to_string(no_bins.x) + " ,no_bins.y : " + std::to_string(no_bins.y) + " ,no_bins.z : " + std::to_string(no_bins.z);
+    // output->info(s);
 
     binlist.resize(no_bins.x);
 
@@ -118,19 +131,15 @@ namespace neighborlist
         binlist[i][j].resize(no_bins.z);
 
     make_neigh_bin();
-  }
 
-  bool Cell_list::rebuild_neighlist()
-  {
-    return true;
   }
 
   Vector<int> Cell_list::binlist_index(const Vector<double> &pos)
   {
     auto ind = domain->boundary_condition;
-    ind.x += int_floor((pos.x - domain->lower_local.x) / cutoff);
-    ind.y += int_floor((pos.y - domain->lower_local.y) / cutoff);
-    ind.z += int_floor((pos.z - domain->lower_local.z) / cutoff);
+    ind.x += std::floor((pos.x - domain->lower_local.x) * cutoff_inv); // int_floor
+    ind.y += std::floor((pos.y - domain->lower_local.y) * cutoff_inv);
+    ind.z += std::floor((pos.z - domain->lower_local.z) * cutoff_inv);
     if (ind.x < 0)
       ind.x = 0;
     if (ind.y < 0)
@@ -180,46 +189,60 @@ namespace neighborlist
     }
   }
 
+  void Cell_list::build_verlet_list_from_bins()
+  {
+    const auto &pos = atom_data->atom_struct_owned.position;
+    const int pos_size = pos.size();
+    const auto cutoff_neighlist_sq = cutoff_neighlist * cutoff_neighlist;
+    const auto &nb = neigh_bin;
+    neighlist.clear();
+    neighlist.resize(pos_size);
+
+    for (int i = 0; i < pos_size; ++i)
+    {
+#ifdef CAVIAR_WITH_MPI
+      if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+        continue;
+#endif
+      auto nb_i = neigh_bin_index(pos[i]);
+
+      for (unsigned nb_j = 0; nb_j < nb[nb_i].size(); ++nb_j)
+      {
+        const auto &nb_ij = nb[nb_i][nb_j];
+        for (unsigned j = 0; j < binlist[nb_ij.x][nb_ij.y][nb_ij.z].size(); ++j)
+        {
+
+          const auto ind_j = binlist[nb_ij.x][nb_ij.y][nb_ij.z][j];
+          if (ind_j > i)
+          {
+            auto dr = pos[i];
+            if (ind_j >= pos_size) // Ghost condition
+              dr -= atom_data->atom_struct_ghost.position[ind_j - pos_size];
+            else
+              dr -= atom_data->atom_struct_owned.position[ind_j];
+            if (dr * dr < cutoff_neighlist_sq)
+              neighlist[i].emplace_back(ind_j);
+          }
+        }
+      }
+    }
+
+    pos_old = pos;
+#ifdef CAVIAR_WITH_MPI
+    mpi_rank_old = atom_data->atom_struct_owned.mpi_rank;
+#endif
+  }
+
   void Cell_list::build_neighlist()
   {
     build_binlist();
     if (make_neighlist)
     {
-      const auto &pos = atom_data->atom_struct_owned.position;
-      const int pos_size = pos.size();
-      const auto cutoff_neighlist_sq = cutoff_neighlist * cutoff_neighlist;
-      const auto &nb = neigh_bin;
-      neighlist.clear();
-      neighlist.resize(pos_size);
-
-      for (int i = 0; i < pos_size; ++i)
+      if (rebuild_neighlist())
       {
-#ifdef CAVIAR_WITH_MPI
-        if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
-          continue;
-#endif
-        auto nb_i = neigh_bin_index(pos[i]);
-
-        for (unsigned nb_j = 0; nb_j < nb[nb_i].size(); ++nb_j)
-        {
-          const auto &nb_ij = nb[nb_i][nb_j];
-          for (unsigned j = 0; j < binlist[nb_ij.x][nb_ij.y][nb_ij.z].size(); ++j)
-          {
-
-            const auto ind_j = binlist[nb_ij.x][nb_ij.y][nb_ij.z][j];
-            if (ind_j > i)
-            {
-              auto dr = pos[i];
-              if (ind_j >= pos_size) // Ghost condition
-                dr -= atom_data->atom_struct_ghost.position[ind_j - pos_size];
-              else
-                dr -= atom_data->atom_struct_owned.position[ind_j];
-              if (dr * dr < cutoff_neighlist_sq)
-                neighlist[i].emplace_back(ind_j);
-            }
-          }
-        }
-      }
+        calculate_cutoff_extra();
+        build_verlet_list_from_bins();
+      }        
     }
   }
 

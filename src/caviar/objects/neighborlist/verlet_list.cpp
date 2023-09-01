@@ -83,56 +83,13 @@ namespace neighborlist
 
     const auto &pos = atom_data->atom_struct_owned.position;
     pos_old.resize(pos.size());
-  }
 
-  bool Verlet_list::rebuild_neighlist()
-  {
-
-    const auto &pos = atom_data->atom_struct_owned.position; 
-
-    unsigned int pos_size = pos.size();
-
-    if (pos_size != pos_old.size())
-    {
-      return true;
-    }
-    else
-    {
-      for (unsigned int i = 0; i < pos_size; ++i)
-      {
-#ifdef CAVIAR_WITH_MPI
-        if (atom_data->atom_struct_owned.mpi_rank[i] != mpi_rank_old[i]) //make new verlet_list if any mpi_rank is changed,
-          return true;
-
-        if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank) // then, ignore mpi_ranks out of the domain
-          continue;
-#endif
-
-        auto disp = pos[i] - pos_old[i];
-        if (disp * disp > cutoff_extra * cutoff_extra / 4)
-          return true;
-      }
-    }
-
-    return false;
+    local_cutoff = cutoff;
   }
 
   void Verlet_list::build_neighlist()
   {
-
-    if (cutoff_extra_coef > 0)
-    {
-      const auto &vel = atom_data->atom_struct_owned.velocity;
-
-      double max_vel_sq = 0.0;
-      for (unsigned int i = 0; i < vel.size(); ++i)
-      {
-        double vel_sq_temp = vel[i] * vel[i];
-        if (max_vel_sq < vel_sq_temp)
-          max_vel_sq = vel_sq_temp;
-      }
-      cutoff_extra = cutoff_extra_coef * dt * std::sqrt(max_vel_sq);
-    }
+    calculate_cutoff_extra();
 
     const auto &pos = atom_data->atom_struct_owned.position;
     const auto &pos_ghost = atom_data->atom_struct_ghost.position;
@@ -170,7 +127,9 @@ namespace neighborlist
     }
 
     pos_old = pos;
+#ifdef CAVIAR_WITH_MPI
     mpi_rank_old = atom_data->atom_struct_owned.mpi_rank;
+#endif
   }
 
 } // neighborlist

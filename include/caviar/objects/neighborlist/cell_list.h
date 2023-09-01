@@ -37,13 +37,14 @@ namespace neighborlist
     Cell_list(class CAVIAR *);
     bool read(class caviar::interpreter::Parser *);
     void init();
-    bool rebuild_neighlist();
     void build_neighlist();
     void build_binlist();
     Vector<int> binlist_index(const Vector<double> &);
     int neigh_bin_index(const Vector<double> &);
-
+    void build_verlet_list_from_bins();
   public:
+
+
     void make_neigh_bin();
     class Domain *domain;
     bool domain_set;
@@ -54,6 +55,9 @@ namespace neighborlist
     bool make_neighlist;
 
     double cutoff_neighlist;
+
+    private:
+    double cutoff_inv; // inverse of cutoff. For faster computations
   };
 
 } // neighborlist

@@ -36,8 +36,10 @@ public:
   virtual ~Neighborlist();
   virtual bool read(class caviar::interpreter::Parser *) = 0;
   virtual void init() = 0;
-  virtual bool rebuild_neighlist() = 0;
+  virtual bool rebuild_neighlist();
   virtual void build_neighlist() = 0;
+  virtual void calculate_cutoff_extra();
+
   std::vector<std::vector<LocalID_t>> neighlist;
 
   // 'Cell_list' public functions and variables;
@@ -46,13 +48,30 @@ public:
   std::vector<std::vector<std::vector<std::vector<int>>>> binlist;
   std::vector<std::vector<Vector<int>>> neigh_bin;
   Vector<int> no_bins;
+  double dt;
   double cutoff;
+  /**
+   * if (cutoff_extra_coef > 0 ) cutoff_extra calculated according to maximum velocity of the particles and added to cutoff in order 
+   * to have less neighborlist re-make.
+  */
+  double cutoff_extra; 
+  double cutoff_extra_coef;
 
   class caviar::Atom_data *atom_data;
   /**
    * MPI rank of the classs
   */
   int my_mpi_rank = -1;
+
+  protected:
+  /**
+   * position of the particles at the previous verlet list generation step
+  */
+  std::vector<Vector<double>> pos_old;
+  std::vector<int> mpi_rank_old;
+  double local_cutoff; // in verlet_list, it is the same as cutoff. in cell_list, it is cutoff_neighlist;
+public:
+
   FC_BASE_OBJECT_COMMON_TOOLS
 };
 
