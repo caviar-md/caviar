@@ -45,6 +45,12 @@ int Neighborlist::neigh_bin_index(const Vector<double> &a)
 
 bool Neighborlist::rebuild_neighlist()
 {
+  if (initialize)
+  {
+    initialize = false;
+    init();
+  }
+
   if (rebuild_test)
   {
     return true;
@@ -62,8 +68,6 @@ bool Neighborlist::rebuild_neighlist()
   }
   else
   {
-    double threshold_distance_sq = (local_cutoff + cutoff_extra)*(local_cutoff + cutoff_extra)*0.25;
-
     for (unsigned int i = 0; i < pos_size; ++i)
     {
 #ifdef CAVIAR_WITH_MPI
@@ -92,22 +96,22 @@ bool Neighborlist::rebuild_neighlist()
 
 void Neighborlist::calculate_cutoff_extra()
 {
-  if (cutoff_extra_coef <= 0)
-  {
-    cutoff_extra = 0;
-    return;
-  }
+  // if (cutoff_extra_coef <= 0)
+  // {
+  //   cutoff_extra = 0;
+  //   return;
+  // }
 
-  const auto &vel = atom_data->atom_struct_owned.velocity;
+  // const auto &vel = atom_data->atom_struct_owned.velocity;
 
-  double max_vel_sq = 0.0;
-  for (unsigned int i = 0; i < vel.size(); ++i)
-  {
-    double vel_sq_temp = vel[i] * vel[i];
-    if (max_vel_sq < vel_sq_temp)
-      max_vel_sq = vel_sq_temp;
-  }
-  cutoff_extra = cutoff_extra_coef * dt * std::sqrt(max_vel_sq);
+  // double max_vel_sq = 0.0;
+  // for (unsigned int i = 0; i < vel.size(); ++i)
+  // {
+  //   double vel_sq_temp = vel[i] * vel[i];
+  //   if (max_vel_sq < vel_sq_temp)
+  //     max_vel_sq = vel_sq_temp;
+  // }
+  // cutoff_extra = cutoff_extra_coef * dt * std::sqrt(max_vel_sq);
 }
 
 void Neighborlist::all_atom_test_function(int state)
@@ -133,11 +137,10 @@ void Neighborlist::all_atom_test_function(int state)
           continue;
 #endif
         neighlist[i].emplace_back(j);
-        
       }
       for (unsigned int j = 0; j < pos_ghost.size(); ++j)
       {
-        neighlist[i].emplace_back(j + pos_size);        
+        neighlist[i].emplace_back(j + pos_size);
       }
     }
   }

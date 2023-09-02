@@ -27,10 +27,6 @@ namespace neighborlist
   Verlet_list::Verlet_list(CAVIAR *fptr) : Neighborlist{fptr}
   {
     FC_OBJECT_INITIALIZE_INFO
-    cutoff = -1.0;
-    dt = -1.0;
-    cutoff_extra = 0.0; // this value changes every timestep
-    cutoff_extra_coef = 0.0;
   }
 
   bool Verlet_list::read(caviar::interpreter::Parser *parser)
@@ -52,17 +48,17 @@ namespace neighborlist
         if (cutoff < 0.0)
           error->all(FC_FILE_LINE_FUNC_PARSE, "cutoff have to non-negative.");
       }
+      else if (string_cmp(t, "cutoff_extra_coef"))
+      {
+        GET_OR_CHOOSE_A_REAL(cutoff_extra_coef, "", "")
+        if (cutoff_extra_coef < 1.0)
+          error->all(FC_FILE_LINE_FUNC_PARSE, "cutoff_extra_coef must be larger than 1.0");
+      }
       else if (string_cmp(t, "dt"))
       {
         GET_OR_CHOOSE_A_REAL(dt, "", "")
         if (dt < 0.0)
           error->all(FC_FILE_LINE_FUNC_PARSE, "dt have to non-negative.");
-      }
-      else if (string_cmp(t, "cutoff_extra_coef"))
-      {
-        GET_OR_CHOOSE_A_REAL(cutoff_extra_coef, "", "")
-        if (cutoff_extra_coef < 0.0)
-          error->all(FC_FILE_LINE_FUNC_PARSE, "cutoff_extra_coef have to non-negative.");
       }
       else if (string_cmp(t, "all_atom_test"))
       {
@@ -81,39 +77,44 @@ namespace neighborlist
 
   void Verlet_list::init()
   {
+    if (!initialize)
+      return;
+    initialize = false;
+
     FC_NULLPTR_CHECK(atom_data)
     my_mpi_rank = atom_data->get_mpi_rank();
 
     if (cutoff <= 0.0)
       error->all(FC_FILE_LINE_FUNC, "cutoff have to non-negative.");
-    if (dt <= 0.0)
-      error->all(FC_FILE_LINE_FUNC, "dt have to non-negative.");
+    if (cutoff_extra_coef < 1.0)
+      error->all(FC_FILE_LINE_FUNC, "cutoff_extra_coef must be equal or larger than 1.0");
+
+    cutoff_extra = cutoff * cutoff_extra_coef;
+    threshold_distance_sq = 0.25 * (cutoff_extra - cutoff) * (cutoff_extra - cutoff);
 
     const auto &pos = atom_data->atom_struct_owned.position;
     pos_old.resize(pos.size());
-
-    local_cutoff = cutoff;
   }
 
   void Verlet_list::build_neighlist()
   {
+
     if (all_atom_test)
     {
       all_atom_test_function(0);
       return;
     }
 
-    calculate_cutoff_extra();
-
     const auto &pos = atom_data->atom_struct_owned.position;
     const auto &pos_ghost = atom_data->atom_struct_ghost.position;
-    const auto cutoff_sq = (cutoff + cutoff_extra) * (cutoff + cutoff_extra);
+    const auto cutoff_extra_sq = cutoff_extra * cutoff_extra;
     const auto pos_size = pos.size();
-    neighlist.clear();
     neighlist.resize(pos_size);
-
+    //std::cout << cutoff_extra_sq << std::endl;
     for (unsigned int i = 0; i < pos_size; ++i)
     {
+      neighlist[i].clear();
+
 #ifdef CAVIAR_WITH_MPI
       if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
         continue;
@@ -125,7 +126,7 @@ namespace neighborlist
           continue;
 #endif
         auto dr = pos[j] - pos[i];
-        if (dr * dr < cutoff_sq)
+        if (dr * dr < cutoff_extra_sq)
         {
           neighlist[i].emplace_back(j);
         }
@@ -133,7 +134,7 @@ namespace neighborlist
       for (unsigned int j = 0; j < pos_ghost.size(); ++j)
       {
         auto dr = pos_ghost[j] - pos[i];
-        if (dr * dr < cutoff_sq)
+        if (dr * dr < cutoff_extra_sq)
         {
           neighlist[i].emplace_back(j + pos_size);
         }

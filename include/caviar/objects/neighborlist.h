@@ -40,22 +40,53 @@ public:
   virtual void build_neighlist() = 0;
   virtual void calculate_cutoff_extra();
   virtual void all_atom_test_function(int state=0);
-  std::vector<std::vector<LocalID_t>> neighlist;
 
-  // 'Cell_list' public functions and variables;
   virtual Vector<int> binlist_index(const Vector<double> &);
   virtual int neigh_bin_index(const Vector<double> &);
-  std::vector<std::vector<std::vector<std::vector<int>>>> binlist;
-  std::vector<std::vector<Vector<int>>> neigh_bin;
-  Vector<int> no_bins;
-  double dt;
-  double cutoff;
+
   /**
-   * if (cutoff_extra_coef > 0 ) cutoff_extra calculated according to maximum velocity of the particles and added to cutoff in order 
-   * to have less neighborlist re-make.
+   * 
+   * Verlet list: the list of the neighbors of each atom
   */
-  double cutoff_extra; 
-  double cutoff_extra_coef;
+  std::vector<std::vector<unsigned int>> neighlist;
+
+  /**
+   * Cell List: The list of particles index in each bin
+  */
+  std::vector<std::vector<std::vector<std::vector<int>>>> binlist;
+
+  /**
+   * Cell List: The 3D index of the neighbors of each bin. 
+  */
+  std::vector<std::vector<Vector<int>>> neigh_bin;
+
+  /**
+   * Cell List: Number of bins in each direction
+  */
+  Vector<int> no_bins;
+
+  /**
+   * Maximum cutoff of short-ranged force-fields.
+  */
+  double cutoff = 0;
+
+  /**
+   * cutoff_extra = cutoff_extra_coef * cutoff
+  */
+  double cutoff_extra = 0; 
+
+
+  /**
+   * square of rebuild verlet list threshold distance ~ (0.5*(cutoff_extra - cutoff))^2
+  */
+  double threshold_distance_sq;
+
+
+  double cutoff_extra_coef = 1.12347;
+  /**
+   * Timestep, Used in cutoff_extra calculations
+  */
+  double dt;
 
   class caviar::Atom_data *atom_data;
   /**
@@ -75,7 +106,7 @@ public:
   */
   std::vector<Vector<double>> pos_old;
   std::vector<int> mpi_rank_old;
-  double local_cutoff; // in verlet_list, it is the same as cutoff. in cell_list, it is cutoff_neighlist;
+
   /**
   *  if true, all of the atoms will see all of the other atoms
   *  the result of simulation must be exactly the same as the neighborlist with correct parameters.
@@ -87,6 +118,7 @@ public:
   *  the result of simulation must be exactly the same as the neighborlist with correct parameters.
   */
   bool rebuild_test = false;
+  bool initialize = true;
 
 public:
 

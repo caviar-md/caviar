@@ -34,7 +34,7 @@ namespace neighborlist
     bool read(class caviar::interpreter::Parser *);
     void init();
     void build_neighlist();
-    
+
   };
 
 } // neighborlist
