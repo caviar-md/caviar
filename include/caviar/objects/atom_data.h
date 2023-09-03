@@ -515,6 +515,27 @@ public:
   //===========================
   private:
   /**
+   * The tools meant to use in MPI mode. In order to reduce memory allocation in each timestep, we define them out of scope
+   */
+  struct
+  {
+    std::vector<int> send_index[3][3][3]; // the index of std::vector<> of the owned
+    std::vector<int> send_index_all;      // the index of std::vector<> of the owned, in a 1D vector
+
+    std::vector<double> send_data[3][3][3]; 
+    std::vector<double> recv_data[3][3][3];
+
+    int send_num[3][3][3]; // num of owned to be send to the domain all[i][j][k]
+    int recv_num[3][3][3]; // num of owned to be recieved from domain all[i][j][k]/ used in he
+
+    int send_mpi_tag[3][3][3]; // since there might be two messages from the same domain to another but from different angles,
+    int recv_mpi_tag[3][3][3]; // , this tag helps to distinguish messages form each other.
+
+    bool initialize = true;
+
+  } mpi_tools;
+
+  /**
    * Add mean square distance (MSD) calculations if needed. The default value is false for performance.
    */
   bool msd_process = false;

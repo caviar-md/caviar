@@ -320,7 +320,6 @@ namespace neighborlist
   {
     neigh_bin.clear();
     neigh_bin.resize(no_bins.x * no_bins.y * no_bins.z);
-    auto bc = domain->boundary_condition;
 
     Vector<int> ind{0, 0, 0};
 
@@ -353,7 +352,7 @@ namespace neighborlist
           if (ind_z_max == no_bins.z)
             ind_z_max = no_bins.z - 1;
 #else
-          if (bc.x == 0)
+          if (domain->boundary_condition.x == 0)
           {
             if (ind_x_min == -1)
               ind_x_min = 0;
@@ -361,7 +360,7 @@ namespace neighborlist
               ind_x_max = no_bins.x - 1;
           }
 
-          if (bc.y == 0)
+          if (domain->boundary_condition.y == 0)
           {
             if (ind_y_min == -1)
               ind_y_min = 0;
@@ -369,7 +368,7 @@ namespace neighborlist
               ind_y_max = no_bins.y - 1;
           }
 
-          if (bc.z == 0)
+          if (domain->boundary_condition.z == 0)
           {
             if (ind_z_min == -1)
               ind_z_min = 0;

@@ -82,29 +82,46 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long) // timestep
   const auto nprocs_y = domain->nprocs_y;
   const auto nprocs_z = domain->nprocs_z;
 
-  //  const auto nprocs = domain->nprocs;
   const auto me = domain->me;
   const auto &all = domain->all;
 
-  std::vector<int> send_id[3][3][3];    // global id of the atom: atom_struct_owned.id
-  std::vector<int> recv_id[3][3][3];    // global id of the atom: atom_struct_owned.id
-  std::vector<int> send_index[3][3][3]; // the index of std::vector<> of the owned
 
-  int send_num[3][3][3]; // num of owned to be send to the domain all[i][j][k]
-  int recv_num[3][3][3]; // num of owned to be recieved from domain all[i][j][k]
+  auto &send_index = mpi_tools.send_index;  // the index of std::vector<> of the owned
+  auto &send_index_all = mpi_tools.send_index_all;      // the index of std::vector<> of the owned, in a 1D vector
 
-  int send_mpi_tag[3][3][3]; // since there might be two messages from the same domain to another but from different angles,
-  int recv_mpi_tag[3][3][3]; // , this tag helps to distinguish messages form each other.
+  auto &send_data = mpi_tools.send_data; 
+  auto &recv_data = mpi_tools.recv_data;
+  
+  auto &send_num = mpi_tools.send_num; // num of owned to be send to the domain all[i][j][k]
+  auto &recv_num = mpi_tools.recv_num; // num of owned to be recieved from domain all[i][j][k]/ used in he
+
+  auto &send_mpi_tag = mpi_tools.send_mpi_tag; // since there might be two messages from the same domain to another but from different angles,
+  auto &recv_mpi_tag = mpi_tools.recv_mpi_tag; // , this tag helps to distinguish messages form each other.
+
+  if (mpi_tools.initialize)
   {
+    mpi_tools.initialize = false;
     int m = 0;
     FOR_IJK_LOOP_START
-    send_num[i][j][k] = 0;
-    recv_num[i][j][k] = 0;
     send_mpi_tag[i][j][k] = m;
-    recv_mpi_tag[i][j][k] = m;
+    recv_mpi_tag[i][j][k] = 26 - m;
     m++;
     FOR_IJK_LOOP_END
   }
+
+  FOR_IJK_LOOP_START
+  send_num[i][j][k] = 0;
+  recv_num[i][j][k] = 0;
+  send_data[i][j][k].clear();
+  recv_data[i][j][k].clear();
+  send_index[i][j][k].clear();
+  FOR_IJK_LOOP_END
+
+  send_index_all.clear();
+
+  // ================================================
+  // finding the atoms to be send to other domains. These atoms are not part of any molecules.
+  // ================================================
 
   unsigned pos_size = pos.size();
 
@@ -167,43 +184,36 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long) // timestep
       
     if (x_val != 0)
     {
-      send_id[x_val + 1][1][1].emplace_back(id[i]);
       send_index[x_val + 1][1][1].emplace_back(i);
       send_num[x_val + 1][1][1]++;
     }
     if (y_val != 0)
     {
-      send_id[1][y_val + 1][1].emplace_back(id[i]);
       send_index[1][y_val + 1][1].emplace_back(i);
       send_num[1][y_val + 1][1]++;
     }
     if (z_val != 0)
     {
-      send_id[1][1][z_val + 1].emplace_back(id[i]);
       send_index[1][1][z_val + 1].emplace_back(i);
       send_num[1][1][z_val + 1]++;
     }
     if (x_val != 0 && y_val != 0)
     {
-      send_id[x_val + 1][y_val + 1][1].emplace_back(id[i]);
       send_index[x_val + 1][y_val + 1][1].emplace_back(i);
       send_num[x_val + 1][y_val + 1][1]++;
     }
     if (x_val != 0 && z_val != 0)
     {
-      send_id[x_val + 1][1][z_val + 1].emplace_back(id[i]);
       send_index[x_val + 1][1][z_val + 1].emplace_back(i);
       send_num[x_val + 1][1][z_val + 1]++;
     }
     if (y_val != 0 && z_val != 0)
     {
-      send_id[1][y_val + 1][z_val + 1].emplace_back(id[i]);
       send_index[1][y_val + 1][z_val + 1].emplace_back(i);
       send_num[1][y_val + 1][z_val + 1]++;
     }
     if (x_val != 0 && y_val != 0 && z_val != 0)
     {
-      send_id[x_val + 1][y_val + 1][z_val + 1].emplace_back(id[i]);
       send_index[x_val + 1][y_val + 1][z_val + 1].emplace_back(i);
       send_num[x_val + 1][y_val + 1][z_val + 1]++;
     }
@@ -224,8 +234,6 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long) // timestep
   // if (make_ghost_velocity):
   // N x atom_struct_owned.velocity         [5N    : 8N-1 ]
   // BOND ? ANGLE? DIHEDRAL ?
-
-  std::vector<double> send_data[3][3][3], recv_data[3][3][3];
 
   auto &mpinf = mpi_packet_info_ghost;
 
