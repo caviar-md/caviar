@@ -14,31 +14,26 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_NEIGHBORLIST_VERLETLIST_H
-#define CAVIAR_OBJECTS_NEIGHBORLIST_VERLETLIST_H
-
-#include "caviar/objects/neighborlist.h"
+#include "caviar/objects/neighborlist/basic.h"
+#include "caviar/utility/interpreter_io_headers.h"
+//#include "caviar/utility/time_utility.h"
+#include "caviar/interpreter/communicator.h"
+//#include <ctime>
 
 CAVIAR_NAMESPACE_OPEN
 
 namespace neighborlist
 {
 
-  /**
-   * A verlet list.
-   */
-  class Verlet_list : public Neighborlist
+  Basic::Basic(CAVIAR *fptr) : Neighborlist{fptr} 
   {
-  public:
-    Verlet_list(class CAVIAR *);
-    bool read(class caviar::interpreter::Parser *);
-    void init();
-    void build_neighlist();
+    FC_OBJECT_INITIALIZE_INFO
+  }
 
-  };
+  Basic::~Basic()
+  {
+  }
 
-} // neighborlist
+} // md_simulator
 
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

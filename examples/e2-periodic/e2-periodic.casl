@@ -90,19 +90,15 @@ adata add_type_charge 0 0.0
 
 #===== Neighborlist
 
-neighborlist  verlet_list neigh_verlet
-neigh_verlet set_atom_data adata
-neigh_verlet cutoff all_cutoff
-neigh_verlet dt 0.001
+neighborlist basic neigh 
+neigh set_atom_data adata
+neigh set_domain dom
+neigh cutoff all_cutoff
+neigh cutoff_extra_coef 1.321
+neigh dt 0.001
+neigh make_verlet_list_from_cell_list
+neigh build_cell_list
 
-#===== Neighborlist
-
-neighborlist  cell_list neigh_cell
-neigh_cell set_atom_data adata
-neigh_cell cutoff all_cutoff
-neigh_cell set_domain dom
-neigh_cell make_neighlist
-neigh_cell cutoff_neighlist 10
 
 #===== force_field
 
@@ -111,8 +107,7 @@ force_field  lj f_lj
 f_lj cutoff all_cutoff
 f_lj epsilon 0 0 1.0
 f_lj sigma 0 0 1.0
-#f_lj set_neighborlist neigh_verlet
-f_lj set_neighborlist neigh_cell
+f_lj set_neighborlist neigh
 f_lj set_atom_data adata
 f_lj set_domain dom
 
@@ -131,11 +126,10 @@ sim set_atom_data adata
 
 sim integrator_type velocity_verlet
 sim add_force_field f_lj
-#sim add_neighborlist neigh_verlet
-sim add_neighborlist neigh_cell
+sim add_neighborlist neigh
 sim add_writer w1
 sim initial_step 0
-sim final_step 10000
+sim final_step 100000
 sim dt 0.001 
 sim run
 

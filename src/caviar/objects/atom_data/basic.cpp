@@ -22,7 +22,6 @@
 #include "caviar/objects/unique/molecule.h"
 #include "caviar/objects/unique/molecule_group.h"
 #include "caviar/objects/unique/molecule_list.h"
-#include "caviar/objects/neighborlist/cell_list.h"
 #include "caviar/interpreter/object_handler/preprocessors_new.h"
 
 CAVIAR_NAMESPACE_OPEN

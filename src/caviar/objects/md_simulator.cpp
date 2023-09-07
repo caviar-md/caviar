@@ -354,19 +354,10 @@ void Md_simulator::re_calculate_acc()
 {
   // Here there's 'r(t)' stored in 'atom_data->atom_struct_owned.position'
   // First calculate 'a(t)' by using 'r(t)'
-  bool make_list = boundary_condition();
+  bool update_neighborlist = boundary_condition();
 
-  if (make_list)
-    for (auto &&n : neighborlist)
-      n->build_neighlist();
-  else
-  {
-    for (auto &&n : neighborlist)
-      make_list = make_list || n->rebuild_neighlist();
-    if (make_list)
-      for (auto &&n : neighborlist)
-        n->build_neighlist();
-  }
+  for (auto &&n : neighborlist)
+    n->build(update_neighborlist);
 
   atom_data->reset_owned_acceleration();
 
@@ -421,16 +412,10 @@ void Md_simulator::step()
     for (auto&& c : constraint)
       c -> step_part_II (i);
 
-    bool make_list = boundary_condition ();
+    bool update_neighborlist = boundary_condition ();
 
-    if (make_list)
-      for (auto&& n: neighborlist) n->build_neighlist ();
-    else {
-      for (auto&& n: neighborlist)
-        make_list = make_list || n->rebuild_neighlist ();
-      if (make_list)
-        for (auto&& n: neighborlist) n->build_neighlist ();
-    }
+    for (auto &&n : neighborlist)
+      n->build(update_neighborlist);
 
   }
 
@@ -492,11 +477,11 @@ bool Md_simulator::boundary_condition()
   result = atom_data->exchange_owned(current_step);
 
   atom_data->exchange_ghost(current_step);
-//#if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
-//
-// #elif defined(CAVIAR_WITH_MPI)
-//   MPI_Allreduce(MPI::IN_PLACE, &result, 1, MPI::BOOL, MPI::LOR, MPI::COMM_WORLD);
-// #endif
+  // #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
+  //
+  //  #elif defined(CAVIAR_WITH_MPI)
+  //    MPI_Allreduce(MPI::IN_PLACE, &result, 1, MPI::BOOL, MPI::LOR, MPI::COMM_WORLD);
+  //  #endif
   return result;
 }
 
@@ -526,12 +511,12 @@ void Md_simulator::setup()
   for (auto &&n : neighborlist)
     n->init();
 
-  atom_data->exchange_owned(current_step); // isn't neccesary
+  atom_data->exchange_owned(current_step); 
 
   atom_data->exchange_ghost(current_step);
 
   for (auto &&n : neighborlist)
-    n->build_neighlist();
+    n->build(true);
 
   atom_data->reset_owned_acceleration();
 

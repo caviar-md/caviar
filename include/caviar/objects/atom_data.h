@@ -39,10 +39,6 @@ namespace unique
   class Molecule_list;
   class Time_function_3d;
 }
-namespace neighborlist
-{
-  class Cell_list;
-}
 
 
 /**
@@ -480,11 +476,6 @@ public:
    * usage
    */
   class Domain *domain;
-
-  /**
-   * usage in 'empty_of_atoms()' functions.
-   */
-  class neighborlist::Cell_list *cell_list;
 
 
   void set_msd_process(bool stat)

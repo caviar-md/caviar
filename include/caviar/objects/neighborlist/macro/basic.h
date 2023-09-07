@@ -15,5 +15,5 @@
 //========================================================================
 
 #ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Cell_list, cell_list, neighborlist::Cell_list)
+FC_CHECK_AND_CREATE(Basic, basic, neighborlist::Basic)
 #endif

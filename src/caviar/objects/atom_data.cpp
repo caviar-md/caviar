@@ -20,8 +20,6 @@
 #include "caviar/objects/force_field.h"
 #include "caviar/objects/unique.h"
 #include "caviar/objects/neighborlist.h"
-#include "caviar/objects/neighborlist/cell_list.h"
-#include "caviar/objects/neighborlist/verlet_list.h"
 #include "caviar/objects/unique/atom.h"
 #include "caviar/objects/unique/atom_group.h"
 #include "caviar/objects/unique/atom_list.h"
@@ -45,7 +43,7 @@ Atom_data::Atom_data(CAVIAR *fptr) : Pointers{fptr},
                                      //  num_local_atoms{0},
                                      //  num_total_atoms{0}, num_atom_types{0},
                                      synch_owned_data_bcast_details{true},
-                                     ghost_cutoff{0}, domain{nullptr}, cell_list{nullptr}
+                                     ghost_cutoff{0}, domain{nullptr}
 {
 
   FC_OBJECT_INITIALIZE
@@ -229,12 +227,6 @@ bool Atom_data::read(caviar::interpreter::Parser *parser)
     {
       FIND_OBJECT_BY_NAME(domain, it)
       domain = object_container->domain[it->second.index];
-    }
-    else if (string_cmp(t, "set_cell_list") || string_cmp(t, "cell_list"))
-    {
-      FIND_OBJECT_BY_NAME(neighborlist, it)
-      FC_CHECK_OBJECT_CLASS_NAME(neighborlist, it, cell_list)
-      cell_list = dynamic_cast<neighborlist::Cell_list *>(object_container->neighborlist[it->second.index]);
     }
     else if (string_cmp(t, "add_xyz_data_file"))
     {

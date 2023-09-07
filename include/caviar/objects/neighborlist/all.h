@@ -14,5 +14,4 @@
 //
 //========================================================================
 
-#include "caviar/objects/neighborlist/verlet_list.h"
-#include "caviar/objects/neighborlist/cell_list.h"
+#include "caviar/objects/neighborlist/basic.h"

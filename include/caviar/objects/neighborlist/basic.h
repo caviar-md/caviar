@@ -14,6 +14,30 @@
 //
 //========================================================================
 
-#ifdef FC_CHECK_AND_CREATE_ACTIVATED
-FC_CHECK_AND_CREATE(Verlet_list, verlet_list, neighborlist::Verlet_list)
+#ifndef CAVIAR_OBJECTS_NEIGHBORLIST_BASIC_H
+#define CAVIAR_OBJECTS_NEIGHBORLIST_BASIC_H
+
+#include "caviar/objects/neighborlist.h"
+
+CAVIAR_NAMESPACE_OPEN
+
+namespace neighborlist
+{
+
+   /**
+    * This class has the basic class implementation for Neighborlist
+    *
+    *
+    */
+   class Basic : public Neighborlist
+   {
+   public:
+      Basic(class CAVIAR *);
+      ~Basic();
+   };
+
+} // neighborlist
+
+CAVIAR_NAMESPACE_CLOSE
+
 #endif
