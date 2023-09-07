@@ -22,12 +22,23 @@
 
 CAVIAR_NAMESPACE_OPEN
 
-// inline int int_floor(double x)
-//   {
-//     return (int)(x + 100000) - 100000;
-//   }
+inline int int_floor(double x)
+  {
+    return (int)(x + 100000) - 100000;
+  }
 
 static void remove_duplicates(std::vector<Vector<int>> &v)
+{
+  auto end = v.end();
+  for (auto it = v.begin(); it != end; ++it)
+  {
+    end = std::remove(it + 1, end, *it);
+  }
+
+  v.erase(end, v.end());
+}
+
+static void remove_duplicates(std::vector<unsigned int> &v)
 {
   auto end = v.end();
   for (auto it = v.begin(); it != end; ++it)
@@ -62,6 +73,7 @@ bool Neighborlist::build(bool update_neighborlist)
     update_neighborlist = update_is_needed();
   }
 
+  
   if (update_neighborlist)
   {
     if (make_verlet_list_from_cell_list)
@@ -351,6 +363,8 @@ void Neighborlist::init()
     for (unsigned j = 0; j < binlist[i].size(); ++j)
       binlist[i][j].resize(no_bins.z);
 
+  // binlist_linear.resize(no_bins.x *no_bins.y * no_bins.z);
+  
   make_neigh_bin();
 
   // std::cout << "   " << cutoff << std::endl;
@@ -418,6 +432,7 @@ int Neighborlist::neigh_bin_index(const Vector<double> &pos)
   return ind.x + no_bins.x * ind.y + no_bins.x * no_bins.y * ind.z;
 }
 
+
 void Neighborlist::update_cell_list()
 {
   for (unsigned int i = 0; i < binlist.size(); ++i)
@@ -453,6 +468,47 @@ void Neighborlist::update_cell_list()
   }
 }
 
+
+/*
+
+void Neighborlist::update_cell_list()
+{
+  for (unsigned int i = 0; i < binlist_linear.size(); ++i)
+  {
+
+    binlist_linear[i].clear();         
+  }
+
+  const auto &pos = atom_data->atom_struct_owned.position;
+  const auto &pos_ghost = atom_data->atom_struct_ghost.position;
+  const auto pos_size = pos.size();
+  const auto ghost_size = pos_ghost.size();
+
+  for (unsigned int i = 0; i < pos_size; ++i)
+  {
+#ifdef CAVIAR_WITH_MPI
+    if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+      continue;
+#endif
+    auto ind = binlist_index(pos[i]);
+    binlist_linear[ind.x + no_bins.x * ind.y + no_bins.x * no_bins.y * ind.z].emplace_back(i);
+  }
+
+  for (unsigned int i = 0; i < ghost_size; ++i)
+  {
+    auto ind = binlist_index(pos_ghost[i]);
+    binlist_linear[ind.x + no_bins.x * ind.y + no_bins.x * no_bins.y * ind.z].emplace_back(i + pos_size);
+  }
+}
+*/
+
+
+//==============================================================
+// The result of this function (update_verlet_list_from_cell_lis) 
+// is the same as (update_verlet_list)
+// except it is not sorted. This makes different MD results 
+// due to limited precision of floating point arithmetics
+//==============================================================
 void Neighborlist::update_verlet_list_from_cell_list()
 {
   if (all_atom_test)
@@ -500,8 +556,9 @@ void Neighborlist::update_verlet_list_from_cell_list()
         }
 
         if (dr * dr < cutoff_extra_sq)
-          neighlist[i].emplace_back(ind_j);
+          neighlist[i].emplace_back(ind_j); // not sorted
       }
+
     }
   }
 
@@ -511,6 +568,7 @@ void Neighborlist::update_verlet_list_from_cell_list()
   mpi_rank_old = atom_data->atom_struct_owned.mpi_rank;
 #endif
 }
+
 
 // this function will be called only once at the start or after any change in
 // the Cell_list.
@@ -522,7 +580,10 @@ void Neighborlist::make_neigh_bin()
   neigh_bin.clear();
   neigh_bin.resize(no_bins.x * no_bins.y * no_bins.z);
 
+  //neigh_bin_linear.resize(no_bins.x * no_bins.y * no_bins.z);
+
   Vector<int> ind{0, 0, 0};
+
 
   for (ind.x = 0; ind.x < no_bins.x; ++ind.x)
   {
@@ -587,13 +648,11 @@ void Neighborlist::make_neigh_bin()
           {
             for (int ind_z_i = ind_z_min; ind_z_i <= ind_z_max; ++ind_z_i)
             {
-#if defined(CAVIAR_WITH_MPI) && !defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
               caviar::Vector<int> nvec{ind_x_i, ind_y_i, ind_z_i};
 
-              neigh_bin[k].emplace_back(nvec);
+#if defined(CAVIAR_WITH_MPI) && !defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
 
 #else
-              caviar::Vector<int> nvec{ind_x_i, ind_y_i, ind_z_i};
 
               if (nvec.x == no_bins.x)
                 nvec.x = 0;
@@ -607,9 +666,12 @@ void Neighborlist::make_neigh_bin()
                 nvec.y = no_bins.y - 1;
               if (nvec.z == -1)
                 nvec.z = no_bins.z - 1;
+              
+#endif
 
               neigh_bin[k].emplace_back(nvec);
-#endif
+
+              //neigh_bin_linear[k].emplace_back(nvec.x + no_bins.x * nvec.y + no_bins.x * no_bins.y * nvec.z);
             }
           }
         }
@@ -621,6 +683,14 @@ void Neighborlist::make_neigh_bin()
   {
     remove_duplicates(neigh_bin[i]);
   }
+
+  // for (unsigned int i = 0; i < neigh_bin_linear.size(); ++i)
+  // {
+  //   remove_duplicates(neigh_bin_linear[i]);
+  // }
+
+
+
 }
 
 CAVIAR_NAMESPACE_CLOSE

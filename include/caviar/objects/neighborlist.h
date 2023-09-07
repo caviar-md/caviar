@@ -88,14 +88,25 @@ public:
   std::vector<std::vector<unsigned int>> neighlist;
 
   /**
-   * Cell List: The list of particles index in each bin
+   * Cell List: The list of particles index in each bin with 3 Index in 3D
    */
-  std::vector<std::vector<std::vector<std::vector<int>>>> binlist;
+  std::vector<std::vector<std::vector<std::vector<unsigned int>>>> binlist;
+
+  ///**
+  // * Cell List: The list of particles index in each bin
+  // */
+  //std::vector<std::vector<unsigned int>> binlist_linear;
+
 
   /**
    * Cell List: The 3D index of the neighbors of each bin.
    */
   std::vector<std::vector<Vector<int>>> neigh_bin;
+
+  ///*
+  // * Cell List: The 3D index of the neighbors of each bin.
+  // */
+  //std::vector<std::vector<unsigned int>> neigh_bin_linear;
 
   /**
    * Cell List: Number of bins in each direction
