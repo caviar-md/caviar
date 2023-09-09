@@ -32,7 +32,6 @@
 #include <algorithm>
 #include <random>
 
-
 // #ifdef CAVIAR_WITH_MPI
 // #include <mpi.h>
 // #endif
@@ -355,7 +354,8 @@ Vector<Real_t> Atom_data::owned_position_cm()
 #endif
   for (unsigned int i = 0; i < p_size; ++i)
   {
-    if (atom_struct_owned.mpi_rank[i] != my_mpi_rank) continue;
+    if (atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+      continue;
 
     auto type_i = atom_struct_owned.type[i];
     auto mass_i = atom_type_params.mass[type_i];
@@ -396,7 +396,8 @@ Vector<double> Atom_data::owned_angular_momentum_cm(const Vector<double> &p_cm)
 #endif
   for (unsigned int i = 0; i < p_size; ++i)
   {
-    if (atom_struct_owned.mpi_rank[i] != my_mpi_rank) continue;
+    if (atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+      continue;
 
     auto type_i = atom_struct_owned.type[i];
     auto mass_i = atom_type_params.mass[type_i];
@@ -418,7 +419,8 @@ std::vector<std::vector<double>> Atom_data::owned_inertia_tensor_cm(const Vector
 #endif
   for (unsigned int i = 0; i < p_size; ++i)
   {
-    if (atom_struct_owned.mpi_rank[i] != my_mpi_rank) continue;
+    if (atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+      continue;
 
     auto type_i = atom_struct_owned.type[i];
     auto mass_i = atom_type_params.mass[type_i];
@@ -460,15 +462,15 @@ long Atom_data::get_num_of_atoms_global()
 #ifdef CAVIAR_WITH_MPI
   num_total_atoms = num_local_atoms;
 
-  //MPI_Barrier(MPI::COMM_WORLD); // does it have to be here??
-  //MPI_Allreduce(&num_local_atoms, &num_total_atoms, 1, MPI_UNSIGNED, MPI_SUM, MPI::COMM_WORLD);
+  // MPI_Barrier(MPI::COMM_WORLD); // does it have to be here??
+  // MPI_Allreduce(&num_local_atoms, &num_total_atoms, 1, MPI_UNSIGNED, MPI_SUM, MPI::COMM_WORLD);
 #else
   num_total_atoms = num_local_atoms;
 #endif
   return num_total_atoms;
 }
 
-void Atom_data::set_num_total_atoms(GlobalID_t )
+void Atom_data::set_num_total_atoms(GlobalID_t)
 {
   // num_total_atoms = n;
   // num_local_atoms_est = n * expected_imbalance_factor / comm->nprocs;
@@ -502,12 +504,32 @@ bool Atom_data::position_inside_local_domain(const Vector<double> &pos)
   //   return false;
   // #endif
 
-  if (pos.x >= domain->lower_local.x && pos.x < domain->upper_local.x &&
-      pos.y >= domain->lower_local.y && pos.y < domain->upper_local.y &&
-      pos.z >= domain->lower_local.z && pos.z < domain->upper_local.z)
-    return true;
+  // if (pos.x >= domain->lower_local.x && pos.x < domain->upper_local.x &&
+  //     pos.y >= domain->lower_local.y && pos.y < domain->upper_local.y &&
+  //     pos.z >= domain->lower_local.z && pos.z < domain->upper_local.z)
+  //   return true;
 
-  return false;
+  // return false;
+
+  if (pos.x < domain->lower_local.x || pos.x > domain->upper_local.x ||
+      pos.y < domain->lower_local.y || pos.y > domain->upper_local.y ||
+      pos.z < domain->lower_local.z || pos.z > domain->upper_local.z)
+    return false;
+
+  return true;
+}
+
+bool Atom_data::position_inside_global_domain(const Vector<double> &pos)
+{
+  if (domain == nullptr)
+    error->all(FC_FILE_LINE_FUNC, "domain = nullptr");
+
+  if (pos.x < domain->lower_global.x || pos.x > domain->upper_global.x ||
+      pos.y < domain->lower_global.y || pos.y > domain->upper_global.y ||
+      pos.z < domain->lower_global.z || pos.z > domain->upper_global.z)
+    return false;
+
+  return true;
 }
 
 void Atom_data::remove_atom(std::vector<int> v_delete_list)
@@ -526,8 +548,8 @@ void Atom_data::remove_atom(const int i)
   // =======================================
   error->all(FC_FILE_LINE_FUNC, "NOT implemented");
 
-  for (int j = atom_struct_owned.position.size()-1; j > i; j--)
-    atom_id_to_index[j] = atom_id_to_index[j-1];
+  for (int j = atom_struct_owned.position.size() - 1; j > i; j--)
+    atom_id_to_index[j] = atom_id_to_index[j - 1];
   atom_id_to_index[i] = -1;
 
   // =======================================
@@ -581,7 +603,7 @@ bool Atom_data::add_atom(GlobalID_t id,
   // Adding data to atom_id_to_index.
   // =======================================
   unsigned int atom_id_to_index_size = atom_id_to_index.size();
-  if (atom_id_to_index_size <  id + 1) // test case: atom_id_to_index_size = 0 and id = 0
+  if (atom_id_to_index_size < id + 1) // test case: atom_id_to_index_size = 0 and id = 0
     atom_id_to_index.resize(id + 1, -1);
   atom_id_to_index[id] = atom_struct_owned.id.size() - 1;
 
@@ -766,7 +788,6 @@ int Atom_data::get_mpi_rank()
   return my_mpi_rank;
 }
 
-
 void Atom_data::set_atoms_mpi_rank()
 {
   get_mpi_rank();
@@ -779,14 +800,14 @@ void Atom_data::set_atoms_mpi_rank()
     {
       atom_struct_owned.mpi_rank[i] = my_mpi_rank;
       int mi = atom_struct_owned.molecule_index[i];
-      if (mi > -1) 
+      if (mi > -1)
         molecule_struct_owned[mi].ghost = false;
     }
-    else 
+    else
     {
       atom_struct_owned.mpi_rank[i] = -1;
       int mi = atom_struct_owned.molecule_index[i];
-      if (mi > -1) 
+      if (mi > -1)
         molecule_struct_owned[mi].ghost = true;
     }
   }

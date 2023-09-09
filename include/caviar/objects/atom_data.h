@@ -292,6 +292,11 @@ public:
   virtual bool position_inside_local_domain(const Vector<double> &pos);
 
   /**
+   * Check if the position is inside simulation box
+   */
+  virtual bool position_inside_global_domain(const Vector<double> &pos);
+
+  /**
    * in MPI, it is the sum of local atoms.
    */
   virtual long get_num_of_atoms_local();

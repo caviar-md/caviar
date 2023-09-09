@@ -35,9 +35,8 @@ bool Atom_data::add_atom(caviar::unique::Atom &a)
     const auto t = a.type;
     const auto pos = a.pos_tot();
     const auto vel = a.vel_tot();
-    // if (position_inside_local_domain(pos))
-    //     return add_atom(id, t, pos, vel);
-    // return false;
+    if (!position_inside_global_domain(pos))
+        return false;
     return add_atom(id, t, pos, vel);    
 }
 
@@ -480,7 +479,7 @@ bool Atom_data::add_molecule(caviar::unique::Molecule &m)
 
     //--------------------------------------------------------------
     // check whether the center of mass of atoms of the molecule
-    // is inside the MPI domain or not. If not, ignore the molecule
+    // is inside the simulation box or not. If not, ignore the molecule
     //--------------------------------------------------------------
     // Vector<double> pos_cm(0, 0, 0);
     // for (unsigned int i = 0; i < pos.size(); ++i)
@@ -489,9 +488,18 @@ bool Atom_data::add_molecule(caviar::unique::Molecule &m)
     // }
     // pos_cm *= 1.0 / pos.size();
 
-    
-    // if (!position_inside_local_domain(pos_cm))
+    // if (!position_inside_global_domain(pos_cm))
     //     return false;
+
+    // Checking if and only if All of the atoms of the molecule are
+    // inside the global domain so that all of the atoms must have
+    // a dedicated MPI process
+    for (unsigned int i = 0; i < pos.size(); ++i)
+    {
+        if (!position_inside_global_domain(pos[i]))
+            return false;
+    }
+
 
     //----------------------------------------------------------
     // add a copy of molecule's atom into Atom data as new atoms
