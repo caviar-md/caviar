@@ -196,6 +196,8 @@ namespace writer
     if (output_msd)
     {
       FC_NULLPTR_CHECK(domain)
+      if (!atom_data->get_msd_process())
+        error->all(FC_FILE_LINE_FUNC,"In order to have 'output_msd' in writer::Atom_data, 'msd_process' must be activated in atom_data::Atom_data");
     }
 
     // --- just to make povray outpuy folder ---

@@ -269,10 +269,9 @@ public:
   virtual double kinetic_energy(const int);
 
   /**
-   * a simple adding a random velocity to all of the atoms. It may be useful
-   * in some initial system settings.
+   * a simple adding a random velocity to all of the atoms. The argument is the seed for random initialization.
    */
-  virtual void add_random_velocity();
+  virtual void add_random_velocity(unsigned int seed);
 
   /**
    * find and exchange owned atoms between domain or do periodic boundary condition movement.
@@ -477,6 +476,10 @@ public:
    */
   class Domain *domain;
 
+  bool get_msd_process()
+  {
+    return msd_process;
+  }
 
   void set_msd_process(bool stat)
   {
