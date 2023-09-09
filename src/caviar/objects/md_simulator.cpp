@@ -387,6 +387,7 @@ void Md_simulator::step()
 
     for (auto &&tf : time_function)
       tf->update_time_variable(time);
+
     for (auto &&tf : time_function_3d)
       tf->update_time_variable(time);
 
@@ -487,6 +488,7 @@ bool Md_simulator::boundary_condition()
 
 void Md_simulator::setup()
 {
+
   t_start = clock();
   if (use_time)
   {
@@ -511,7 +513,7 @@ void Md_simulator::setup()
   for (auto &&n : neighborlist)
     n->init();
 
-  atom_data->exchange_owned(current_step); 
+  atom_data->exchange_owned(current_step);
 
   atom_data->exchange_ghost(current_step);
 
@@ -689,7 +691,6 @@ void Md_simulator::integrate_leap_frog()
   // auto &acc_old = atom_data -> atom_struct_owned.acceleration_old; //velocity verlet
   // auto &pos_old = atom_data -> atom_struct_owned.position_old; //verlet - also shake and m_shake uses this
   // const auto two_dt_inv = 1.0/(2.0*dt);//verlet
-
   //-------------------------------
   //-------------------------------
   // re_calculate_acc(); // use r(t) to calculate a(t). The forces has to be velocity independent
@@ -705,6 +706,13 @@ void Md_simulator::integrate_leap_frog()
     if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
       continue;
 #endif
+    if (std::isnan(acc[i].x) || std::isnan(acc[i].y) || std::isnan(acc[i].z))
+    {
+      error->all(FC_FILE_LINE_FUNC,
+                 "(MPI_RANK: " + std::to_string(my_mpi_rank) +
+                     ", timestep:"+ std::to_string(current_step) +"): The atom with id "+ std::to_string(atom_data->atom_struct_owned.id[i]) + " and index "+ std::to_string(i) + " at position (" + std::to_string(pos[i].x) +
+                     " , " + std::to_string(pos[i].y) + " , " + std::to_string(pos[i].z) + ") is NaN.");
+    }
     vel[i] += 0.5 * dt * acc[i]; // v (t + dt/2) = v (t) + (dt/2) a (t)
     pos[i] += dt * vel[i];       // r (t + dt) = r (t) + dt * v (t + dt/2)
   }

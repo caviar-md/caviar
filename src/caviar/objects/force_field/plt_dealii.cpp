@@ -462,7 +462,7 @@ namespace force_field
 
       atom_data->exchange_ghost();
 
-      neighborlist->build_neighlist();
+      neighborlist->build(true);
 
       atom_data->reset_owned_acceleration();
       for (auto &&f_custom : force_field_custom)
@@ -583,7 +583,7 @@ namespace force_field
 
       atom_data->exchange_ghost();
 
-      neighborlist->build_neighlist();
+      neighborlist->build(true);
 
       atom_data->reset_owned_acceleration();
       for (auto &&f_custom : force_field_custom)

@@ -259,7 +259,9 @@ bool Atom_data::read(caviar::interpreter::Parser *parser)
     }
     else if (string_cmp(t, "add_random_velocity"))
     {
-      add_random_velocity();
+      unsigned int seed = parser->get_int();
+
+      add_random_velocity(seed);
       return true;
     }
     else if (string_cmp(t, "n_r_df"))
@@ -522,7 +524,11 @@ void Atom_data::remove_atom(const int i)
   // =======================================
   // reseting  atom_id_to_index value. It's important for MPI modes and molecules
   // =======================================
-  atom_id_to_index[atom_struct_owned.id[i]] = -1;
+  error->all(FC_FILE_LINE_FUNC, "NOT implemented");
+
+  for (int j = atom_struct_owned.position.size()-1; j > i; j--)
+    atom_id_to_index[j] = atom_id_to_index[j-1];
+  atom_id_to_index[i] = -1;
 
   // =======================================
 
@@ -656,11 +662,11 @@ bool Atom_data::add_charges(unsigned int type, Real_t c)
   return true; // WARNING
 }
 
-void Atom_data::add_random_velocity()
+void Atom_data::add_random_velocity(unsigned int seed)
 {
 
   // setting random velocity to all the particles
-  std::mt19937 mt(1);
+  std::mt19937 mt(seed);
   std::uniform_real_distribution<double> dist(-1.0, 1.0);
   for (auto &&v : atom_struct_owned.velocity)
   {
@@ -784,6 +790,20 @@ void Atom_data::set_atoms_mpi_rank()
         molecule_struct_owned[mi].ghost = true;
     }
   }
+
+  // TODO : Develop... consider molecules as well
+  //  removing the atoms which are outside of simulation box
+  // std::vector<int> index_to_remove;
+  // for (int i = 0; i < num_atoms; ++i)
+  // {
+  //   auto &pos = atom_struct_owned.position[i];
+  //   if (
+  //       !(pos.x >= domain->lower_global.x && pos.x < domain->upper_global.x) ||
+  //       !(pos.y >= domain->lower_global.y && pos.y < domain->upper_global.y) ||
+  //       !(pos.z >= domain->lower_global.z && pos.z < domain->upper_global.z))
+  //       index_to_remove.emplace_back(i);
+  // }
+  // remove_atom(index_to_remove);
 }
 
 CAVIAR_NAMESPACE_CLOSE

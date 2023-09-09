@@ -38,16 +38,18 @@ static void remove_duplicates(std::vector<Vector<int>> &v)
   v.erase(end, v.end());
 }
 
-static void remove_duplicates(std::vector<unsigned int> &v)
-{
-  auto end = v.end();
-  for (auto it = v.begin(); it != end; ++it)
-  {
-    end = std::remove(it + 1, end, *it);
-  }
-
-  v.erase(end, v.end());
-}
+//
+//static void remove_duplicates(std::vector<unsigned int> &v)
+//{
+//  auto end = v.end();
+//  for (auto it = v.begin(); it != end; ++it)
+//  {
+//    end = std::remove(it + 1, end, *it);
+//  }
+//
+//  v.erase(end, v.end());
+//}
+//
 
 Neighborlist::Neighborlist(CAVIAR *fptr) : Pointers{fptr},
                                            atom_data{nullptr} {
@@ -520,12 +522,12 @@ void Neighborlist::update_verlet_list_from_cell_list()
   const auto &pos = atom_data->atom_struct_owned.position;
   const auto &pos_ghost = atom_data->atom_struct_ghost.position;
 
-  const int pos_size = pos.size();
+  const unsigned int pos_size = pos.size();
   const auto cutoff_extra_sq = cutoff_extra * cutoff_extra;
   const auto &nb = neigh_bin;
   neighlist.resize(pos_size);
 
-  for (int i = 0; i < pos_size; ++i)
+  for (unsigned int i = 0; i < pos_size; ++i)
   {
     neighlist[i].clear();
 
@@ -535,13 +537,13 @@ void Neighborlist::update_verlet_list_from_cell_list()
 #endif
 
     auto nb_i = neigh_bin_index(pos[i]);
-    for (unsigned nb_j = 0; nb_j < nb[nb_i].size(); ++nb_j)
+    for (unsigned int nb_j = 0; nb_j < nb[nb_i].size(); ++nb_j)
     {
       const auto &nb_ij = nb[nb_i][nb_j];
       for (unsigned j = 0; j < binlist[nb_ij.x][nb_ij.y][nb_ij.z].size(); ++j)
       {
         auto dr = pos[i];
-        auto ind_j = binlist[nb_ij.x][nb_ij.y][nb_ij.z][j];
+        unsigned int ind_j = binlist[nb_ij.x][nb_ij.y][nb_ij.z][j];
         bool ghost = (ind_j >= pos_size);
         if (ghost)
         {

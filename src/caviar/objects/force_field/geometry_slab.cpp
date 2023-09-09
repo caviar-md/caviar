@@ -175,6 +175,7 @@ namespace force_field
 #endif
       for (unsigned int i = 0; i < pos.size(); ++i)
       {
+        
         #ifdef CAVIAR_WITH_MPI
       if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
         continue;
@@ -207,8 +208,13 @@ namespace force_field
 
         if (compression > 0)
         {
+          if (dist == 0)
+          {
+            error->all(FC_FILE_LINE_FUNC,"The particle with index " + std::to_string(i) + " is on the slab at the position (" + std::to_string(pos[i].x) + " , " + std::to_string(pos[i].y) + " , " + std::to_string(pos[i].z) + ")");
+          }
           double dx_norm = dx / dist;
-          acc[i] += mass_inv_i * abs_contact_vector * dx_norm * (young_modulus * compression - (vel[i] * abs_contact_vector) * dissip_coef);
+          acc[i] += mass_inv_i * abs_contact_vector * dx_norm * (young_modulus * compression - (vel[i] * abs_contact_vector) * dissip_coef);       
+
         }
       }
     }
