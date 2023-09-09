@@ -41,7 +41,6 @@ CAVIAR_NAMESPACE_OPEN
 void Atom_data::exchange_ghost_mpi_shared_atoms(long) // timestep
 {
 #if defined(CAVIAR_WITH_MPI)
-
   atom_struct_ghost.position.clear();
   atom_struct_ghost.velocity.clear();
   atom_struct_ghost.id.clear();
@@ -97,7 +96,9 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long) // timestep
 
   auto &send_mpi_tag = mpi_tools.send_mpi_tag; // since there might be two messages from the same domain to another but from different angles,
   auto &recv_mpi_tag = mpi_tools.recv_mpi_tag; // , this tag helps to distinguish messages form each other.
-
+  
+  MPI_Request mpi_requests[3][3][3];
+  
   if (mpi_tools.initialize)
   {
     mpi_tools.initialize = false;
@@ -318,6 +319,7 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long) // timestep
         pos_tmp.z -= z_width_g;
       }
     }
+
     //================================================================
     // Prepairing Send_data
     //================================================================
@@ -348,7 +350,8 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long) // timestep
   if (me == all[i][j][k])
     continue;
 
-  MPI_Send(&send_num[i][j][k], 1, MPI_INT, all[i][j][k], send_mpi_tag[i][j][k], MPI::COMM_WORLD); // TAG 0
+  //MPI_Send(&send_num[i][j][k], 1, MPI_INT, all[i][j][k], send_mpi_tag[i][j][k], MPI::COMM_WORLD); // TAG 0
+  MPI_Isend(&send_num[i][j][k], 1, MPI_INT, all[i][j][k], send_mpi_tag[i][j][k], MPI::COMM_WORLD, &mpi_requests[i][j][k]); // TAG 0
 
   FOR_IJK_LOOP_END
 
@@ -357,23 +360,31 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long) // timestep
     continue;
 
 
-  MPI_Recv(&recv_num[i][j][k], 1, MPI_INT, all[i][j][k], recv_mpi_tag[i][j][k], MPI::COMM_WORLD, MPI_STATUS_IGNORE); // TAG 0
+  //MPI_Recv(&recv_num[i][j][k], 1, MPI_INT, all[i][j][k], recv_mpi_tag[i][j][k], MPI::COMM_WORLD, MPI_STATUS_IGNORE); // TAG 0
+  MPI_Irecv(&recv_num[i][j][k], 1, MPI_INT, all[i][j][k], recv_mpi_tag[i][j][k], MPI::COMM_WORLD, &mpi_requests[i][j][k]); // TAG 0
 
   FOR_IJK_LOOP_END
 
+  FOR_IJK_LOOP_START
+  if (me == all[i][j][k])
+  continue;
+  MPI_Wait(&mpi_requests[i][j][k], MPI_STATUS_IGNORE);
+  FOR_IJK_LOOP_END
 
   // ================================================
   // SEND OWNED DATA
   // ================================================
 
   FOR_IJK_LOOP_START
+
   if (me == all[i][j][k])
     continue;
 
   if (send_num[i][j][k] == 0)
     continue;  
-
-  MPI_Send(send_data[i][j][k].data(), mpinf.total * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], MPI::COMM_WORLD); // TAG 1
+   MPI_Request request;
+  //MPI_Send(send_data[i][j][k].data(), mpinf.total * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], MPI::COMM_WORLD); // TAG 1
+  MPI_Isend(send_data[i][j][k].data(), mpinf.total * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], MPI::COMM_WORLD, &mpi_requests[i][j][k]); // TAG 1
   
   FOR_IJK_LOOP_END
 
@@ -386,10 +397,19 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long) // timestep
   
   recv_data[i][j][k].resize(mpinf.total * recv_num[i][j][k], 0);
 
-  MPI_Recv(recv_data[i][j][k].data(), mpinf.total * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], MPI::COMM_WORLD, MPI_STATUS_IGNORE); // TAG 1
+  //MPI_Recv(recv_data[i][j][k].data(), mpinf.total * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], MPI::COMM_WORLD, MPI_STATUS_IGNORE); // TAG 1
+  MPI_Irecv(recv_data[i][j][k].data(), mpinf.total * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], MPI::COMM_WORLD, &mpi_requests[i][j][k]); // TAG 1
   
   FOR_IJK_LOOP_END
 
+  FOR_IJK_LOOP_START
+  if (me == all[i][j][k])
+  continue;
+
+  if (recv_num[i][j][k] == 0)
+  continue;
+  MPI_Wait(&mpi_requests[i][j][k], MPI_STATUS_IGNORE);
+  FOR_IJK_LOOP_END
   // ================================================
   // FILL the atom_data.owned with depacketing recv_data
   // ================================================
