@@ -16,7 +16,7 @@
 
 #include "caviar/objects/domain.h"
 #include "caviar/interpreter/communicator.h"
-
+#include <array>
 #ifdef CAVIAR_WITH_MPI
 #include <mpi.h>
 #endif
@@ -124,6 +124,8 @@ static std::vector<std::array<int, 3>> possible_grids(int nprocs)
     {
       if (nprocs_yz % nprocs_y)
         continue;
+      //std::array<int, 3> grid = {nprocs_x, nprocs_y, nprocs_yz / nprocs_y};
+      //grids.push_back(grid);
       grids.push_back({nprocs_x, nprocs_y, nprocs_yz / nprocs_y});
     }
   }

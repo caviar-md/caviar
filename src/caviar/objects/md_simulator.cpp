@@ -559,7 +559,13 @@ void Md_simulator::integrate_velocity_verlet()
     if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
       continue;
 #endif
-
+    if (std::isnan(acc[i].x) || std::isnan(acc[i].y) || std::isnan(acc[i].z))
+    {
+      error->all(FC_FILE_LINE_FUNC,
+                 "(MPI_RANK: " + std::to_string(my_mpi_rank) +
+                     ", timestep:"+ std::to_string(current_step) +"): The atom with id "+ std::to_string(atom_data->atom_struct_owned.id[i]) + " and index "+ std::to_string(i) + " at position (" + std::to_string(pos[i].x) +
+                     " , " + std::to_string(pos[i].y) + " , " + std::to_string(pos[i].z) + ") is has NaN acceleration.");
+    }
     pos[i] += vel[i] * dt + 0.5 * acc[i] * dt * dt; // r(t+dt) = r(t) + v(t)*dt + 1/2 * a(t) * dt^2
     acc_old[i] = acc[i];                            // XXX check it
   }
@@ -631,6 +637,14 @@ void Md_simulator::integrate_velocity_verlet_langevin()
     if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
       continue;
 #endif
+    if (std::isnan(acc[i].x) || std::isnan(acc[i].y) || std::isnan(acc[i].z))
+    {
+      error->all(FC_FILE_LINE_FUNC,
+                 "(MPI_RANK: " + std::to_string(my_mpi_rank) +
+                     ", timestep:"+ std::to_string(current_step) +"): The atom with id "+ std::to_string(atom_data->atom_struct_owned.id[i]) + " and index "+ std::to_string(i) + " at position (" + std::to_string(pos[i].x) +
+                     " , " + std::to_string(pos[i].y) + " , " + std::to_string(pos[i].z) + ") is has NaN acceleration.");
+    }
+
     const auto eta = Vector<double>{L.eta_x[i], L.eta_y[i], L.eta_z[i]};
 
     vel[i] += 0.5 * acc[i] * dt + L.b * eta;
@@ -711,7 +725,7 @@ void Md_simulator::integrate_leap_frog()
       error->all(FC_FILE_LINE_FUNC,
                  "(MPI_RANK: " + std::to_string(my_mpi_rank) +
                      ", timestep:"+ std::to_string(current_step) +"): The atom with id "+ std::to_string(atom_data->atom_struct_owned.id[i]) + " and index "+ std::to_string(i) + " at position (" + std::to_string(pos[i].x) +
-                     " , " + std::to_string(pos[i].y) + " , " + std::to_string(pos[i].z) + ") is NaN.");
+                     " , " + std::to_string(pos[i].y) + " , " + std::to_string(pos[i].z) + ") is has NaN acceleration.");
     }
     vel[i] += 0.5 * dt * acc[i]; // v (t + dt/2) = v (t) + (dt/2) a (t)
     pos[i] += dt * vel[i];       // r (t + dt) = r (t) + dt * v (t + dt/2)

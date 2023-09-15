@@ -492,17 +492,17 @@ bool Atom_data::position_inside_local_domain(const Vector<double> &pos)
   if (domain == nullptr)
     error->all(FC_FILE_LINE_FUNC, "domain = nullptr");
 
-  // #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
-  //   const auto me = domain->me;
-  //   if (me == 0)
-  //   {
-  //     if (pos.x >= domain->lower_local.x && pos.x < domain->upper_local.x &&
-  //         pos.y >= domain->lower_local.y && pos.y < domain->upper_local.y &&
-  //         pos.z >= domain->lower_local.z && pos.z < domain->upper_local.z)
-  //       return true;
-  //   }
-  //   return false;
-  // #endif
+  #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
+    const auto me = domain->me;
+    if (me == 0)
+    {
+      if (pos.x >= domain->lower_local.x && pos.x < domain->upper_local.x &&
+          pos.y >= domain->lower_local.y && pos.y < domain->upper_local.y &&
+          pos.z >= domain->lower_local.z && pos.z < domain->upper_local.z)
+        return true;
+    }
+    return false;
+  #endif
 
   // if (pos.x >= domain->lower_local.x && pos.x < domain->upper_local.x &&
   //     pos.y >= domain->lower_local.y && pos.y < domain->upper_local.y &&
@@ -511,9 +511,9 @@ bool Atom_data::position_inside_local_domain(const Vector<double> &pos)
 
   // return false;
 
-  if (pos.x < domain->lower_local.x || pos.x > domain->upper_local.x ||
-      pos.y < domain->lower_local.y || pos.y > domain->upper_local.y ||
-      pos.z < domain->lower_local.z || pos.z > domain->upper_local.z)
+  if (pos.x < domain->lower_local.x || pos.x >= domain->upper_local.x ||
+      pos.y < domain->lower_local.y || pos.y >= domain->upper_local.y ||
+      pos.z < domain->lower_local.z || pos.z >= domain->upper_local.z)
     return false;
 
   return true;
@@ -524,9 +524,9 @@ bool Atom_data::position_inside_global_domain(const Vector<double> &pos)
   if (domain == nullptr)
     error->all(FC_FILE_LINE_FUNC, "domain = nullptr");
 
-  if (pos.x < domain->lower_global.x || pos.x > domain->upper_global.x ||
-      pos.y < domain->lower_global.y || pos.y > domain->upper_global.y ||
-      pos.z < domain->lower_global.z || pos.z > domain->upper_global.z)
+  if (pos.x < domain->lower_global.x || pos.x >= domain->upper_global.x ||
+      pos.y < domain->lower_global.y || pos.y >= domain->upper_global.y ||
+      pos.z < domain->lower_global.z || pos.z >= domain->upper_global.z)
     return false;
 
   return true;
