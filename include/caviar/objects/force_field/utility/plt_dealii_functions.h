@@ -426,11 +426,28 @@ namespace force_field
     {
 
       dealii::Vector<float> estimated_error_per_cell(triangulation.n_active_cells());
+#if DEALII_VERSION_MAJOR == 8
       KellyErrorEstimator<3>::estimate(dof_handler,
                                        QGauss<3 - 1>(3),
                                        typename FunctionMap<3>::type(),
                                        solution,
                                        estimated_error_per_cell);
+#elif DEALII_VERSION_MAJOR == 9 && DEALII_VERSION_MINOR < 3
+      KellyErrorEstimator<3>::estimate(dof_handler,
+                                       QGauss<3 - 1>(3),
+                                       typename FunctionMap<3>::type(),
+                                       solution,
+                                       estimated_error_per_cell);
+#elif DEALII_VERSION_MAJOR == 9 && DEALII_VERSION_MINOR >= 3
+            KellyErrorEstimator<3>::estimate(dof_handler,
+                                       QGauss<3 - 1>(3),
+                                       {},
+                                       solution,
+                                       estimated_error_per_cell);
+#else
+  #error not implemented
+#endif
+
       GridRefinement::refine_and_coarsen_fixed_number(triangulation,
                                                       estimated_error_per_cell,
                                                       param1, param2);

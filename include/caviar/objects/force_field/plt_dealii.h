@@ -37,6 +37,16 @@
 #include <deal.II/lac/sparse_matrix.h>
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
 
+#if DEALII_VERSION_MAJOR == 8
+ #include <deal.II/lac/constraint_matrix.h> // deal.ii-8.5.1 & 9.2
+#elif DEALII_VERSION_MAJOR == 9 && DEALII_VERSION_MINOR < 3
+ #include <deal.II/lac/constraint_matrix.h> // deal.ii-8.5.1 & 9.2
+#elif DEALII_VERSION_MAJOR == 9 && DEALII_VERSION_MINOR >= 3
+#include <deal.II/lac/affine_constraints.h> // deal.ii-9.4
+#else
+  #error not implemented
+#endif   
+
 CAVIAR_NAMESPACE_OPEN
 
 class Atom_data;
@@ -136,7 +146,16 @@ namespace force_field
     SparsityPattern sparsity_pattern;
     SparseMatrix<double> system_matrix;
 
-    ConstraintMatrix constraints;
+#if DEALII_VERSION_MAJOR == 8
+ConstraintMatrix constraints;
+#elif DEALII_VERSION_MAJOR == 9 && DEALII_VERSION_MINOR < 3
+ConstraintMatrix constraints;
+#elif DEALII_VERSION_MAJOR == 9 && DEALII_VERSION_MINOR >= 3
+AffineConstraints<double> constraints;
+#else
+  #error not implemented
+#endif   
+    
 
     dealii::Vector<double> solution;
     dealii::Vector<double> system_rhs;
