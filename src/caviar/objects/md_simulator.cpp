@@ -361,8 +361,13 @@ void Md_simulator::re_calculate_acc()
 
   atom_data->reset_owned_acceleration();
 
+  atom_data->reset_pressure();
+
   for (auto &&f : force_field)
     f->calculate_acceleration();
+  
+
+  atom_data->finalize_pressure();
 }
 
 void Md_simulator::step(int64_t i)
@@ -424,8 +429,12 @@ void Md_simulator::step()
 
   atom_data -> reset_owned_acceleration();
 
+  atom_data->reset_pressure();
+
   for (auto&& f : force_field)
     f -> calculate_acceleration ();
+
+  atom_data->finalize_pressure();
 
   MPI_Barrier(MPI::COMM_WORLD);
 
@@ -522,9 +531,13 @@ void Md_simulator::setup()
 
   atom_data->reset_owned_acceleration();
 
+  atom_data->reset_pressure();
+
   for (auto &&f : force_field)
     f->calculate_acceleration();
 
+  atom_data->finalize_pressure();
+  
   for (auto &&w : writer)
     w->write(0, 0.0);
 }
