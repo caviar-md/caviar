@@ -23,8 +23,17 @@ CAVIAR_NAMESPACE_OPEN
 
 namespace writer
 {
+  void Atom_data::dump_povray_mpi(int64_t, double)
+  {
 
-  void Atom_data::dump_povray(int64_t)
+  }
+
+  void Atom_data::dump_povray_mpi_shared_atoms(int64_t, double)
+  {
+    
+  }
+
+  void Atom_data::dump_povray_serial(int64_t, double, bool)
   {
     /*
     #ifdef CAVIAR_WITH_MPI

@@ -23,17 +23,81 @@ CAVIAR_NAMESPACE_OPEN
 namespace writer
 {
 
-  void Atom_data::dump_energy(int64_t i)
+  void Atom_data::dump_energy_mpi(int64_t , double )
   {
-    dump_energy(i, 0.0);
+    // double k_e = atom_data->kinetic_energy();
+
+    // ofs_energy << i << " " << t << " " << k_e << std::endl;
   }
 
-  void Atom_data::dump_energy(int64_t i, double t)
+  void Atom_data::dump_energy_mpi_shared_atoms(int64_t i, double t)
+  {
+
+    double k_e = atom_data->kinetic_energy();
+
+    if (my_mpi_rank != 0)
+      return;
+
+    ofs_energy << i << " " << t << " " << k_e << std::endl;
+  }
+
+  void Atom_data::dump_energy_serial(int64_t i, double t, bool)
   {
 
     double k_e = atom_data->kinetic_energy();
 
     ofs_energy << i << " " << t << " " << k_e << std::endl;
+  }
+
+  void Atom_data::dump_temperature_mpi(int64_t , double )
+  {
+    // double k_e = atom_data->temperature();
+
+    // ofs_temperature << i << " " << t << " " << k_e << std::endl;
+  }
+
+  void Atom_data::dump_temperature_mpi_shared_atoms(int64_t i, double t)
+  {
+    double k_e = atom_data->temperature();
+
+    if (my_mpi_rank != 0)
+      return;
+
+    ofs_temperature << i << " " << t << " " << k_e << std::endl;
+  }
+
+  void Atom_data::dump_temperature_serial(int64_t i, double t, bool )
+  {
+
+    double k_e = atom_data->temperature();
+
+    ofs_temperature << i << " " << t << " " << k_e << std::endl;
+  }
+
+  void Atom_data::dump_pressure_mpi(int64_t , double )
+  {
+    // double p = atom_data->pressure();
+
+    // ofs_pressure << i << " " << t << " " << p << std::endl;
+  }
+
+  void Atom_data::dump_pressure_mpi_shared_atoms(int64_t i, double t)
+  {
+
+    double p = atom_data->pressure();
+
+    if (my_mpi_rank != 0)
+      return;
+
+    ofs_pressure << i << " " << t << " " << p << std::endl;
+  }
+
+  void Atom_data::dump_pressure_serial(int64_t i, double t, bool )
+  {
+
+    double p = atom_data->pressure();
+
+    ofs_pressure << i << " " << t << " " << p << std::endl;
   }
 
 } // writer

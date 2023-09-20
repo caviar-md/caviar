@@ -32,7 +32,7 @@ namespace writer
   //================================================
   //                                              ||
   //================================================
-  void Atom_data::dump_xyz_serial(int64_t, bool mpi_files)
+  void Atom_data::dump_xyz_serial(int64_t, double, bool mpi_files)
   {
     auto &pos = atom_data->atom_struct_owned.position;
     auto &type = atom_data->atom_struct_owned.type;
@@ -98,7 +98,7 @@ namespace writer
   //================================================
   //                                              ||
   //================================================
-  void Atom_data::dump_xyz_ghost_serial(int64_t, bool mpi_files)
+  void Atom_data::dump_xyz_ghost_serial(int64_t, double, bool mpi_files)
   {
     auto &pos = atom_data->atom_struct_ghost.position;
     auto &type = atom_data->atom_struct_ghost.type;

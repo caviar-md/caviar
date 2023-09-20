@@ -31,7 +31,7 @@ namespace writer
   //================================================
   //                                              ||
   //================================================
-  void Atom_data::dump_xyz_mpi_shared_atoms(int64_t)
+  void Atom_data::dump_xyz_mpi_shared_atoms(int64_t, double)
   {
 #if defined(CAVIAR_WITH_MPI)
 

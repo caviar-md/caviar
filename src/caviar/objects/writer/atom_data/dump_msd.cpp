@@ -23,13 +23,17 @@ CAVIAR_NAMESPACE_OPEN
 
 namespace writer
 {
-
-  void Atom_data::dump_msd(int64_t i)
+  void Atom_data::dump_msd_mpi(int64_t i, double t)
   {
-    dump_msd(i, 0.0);
+
   }
 
-  void Atom_data::dump_msd(int64_t i, double t)
+  void Atom_data::dump_msd_mpi_shared_atoms(int64_t i, double t)
+  {
+
+  }
+
+  void Atom_data::dump_msd_serial(int64_t i, double t, bool)
   {
 
     const auto &pos = atom_data->atom_struct_owned.position;

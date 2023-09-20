@@ -19,6 +19,7 @@
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/utility/time_utility.h"
 #include "caviar/objects/unique/time_function_3d.h"
+#include "caviar/objects/domain.h"
 
 #include <ctime>
 #include <sys/stat.h> // used for mkdir()
@@ -46,13 +47,16 @@ namespace writer
       ofs_xyz_mpi.close();
 
     if (ofs_xyz_ghost_mpi.is_open())
-      ofs_xyz_ghost_mpi.close();      
+      ofs_xyz_ghost_mpi.close();
 
     if (ofs_energy.is_open())
       ofs_energy.close();
 
     if (ofs_temperature.is_open())
       ofs_temperature.close();
+
+    if (ofs_pressure.is_open())
+      ofs_pressure.close();
 
     if (ofs_povray.is_open())
       ofs_povray.close();
@@ -113,6 +117,15 @@ namespace writer
         GET_OR_CHOOSE_A_INT(temperature_step, "", "")
         output_temperature = true;
       }
+      else if (string_cmp(t, "pressure_step"))
+      {
+        GET_OR_CHOOSE_A_INT(pressure_step, "", "")
+        output_pressure = true;
+        if (pressure_step <= 0)
+        {
+          output_pressure = false;
+        }
+      }
       else if (string_cmp(t, "msd_step"))
       {
         GET_OR_CHOOSE_A_INT(msd_step, "", "")
@@ -138,6 +151,10 @@ namespace writer
       else if (string_cmp(t, "file_name_temperature"))
       {
         file_name_temperature = parser->get_val_token().string_value;
+      }
+      else if (string_cmp(t, "file_name_pressure"))
+      {
+        file_name_pressure = parser->get_val_token().string_value;
       }
       else if (string_cmp(t, "file_name_povray"))
       {
@@ -197,7 +214,7 @@ namespace writer
     {
       FC_NULLPTR_CHECK(domain)
       if (!atom_data->get_msd_process())
-        error->all(FC_FILE_LINE_FUNC,"In order to have 'output_msd' in writer::Atom_data, 'msd_process' must be activated in atom_data::Atom_data");
+        error->all(FC_FILE_LINE_FUNC, "In order to have 'output_msd' in writer::Atom_data, 'msd_process' must be activated in atom_data::Atom_data");
     }
 
     // --- just to make povray outpuy folder ---
@@ -241,6 +258,10 @@ namespace writer
         if (!ofs_temperature.is_open())
           ofs_temperature.open((file_name_temperature + ".txt").c_str());
 
+      if (output_pressure)
+        if (!ofs_pressure.is_open())
+          ofs_pressure.open((file_name_pressure + ".txt").c_str());
+
       if (output_msd)
         if (!ofs_msd.is_open())
           ofs_msd.open((file_name_msd + ".txt").c_str());
@@ -250,11 +271,11 @@ namespace writer
     {
       if (output_xyz)
         if (!ofs_xyz_mpi.is_open())
-          ofs_xyz_mpi.open((file_name_xyz +"_mpi" +std::to_string(my_mpi_rank) + ".xyz").c_str());
+          ofs_xyz_mpi.open((file_name_xyz + "_mpi" + std::to_string(my_mpi_rank) + ".xyz").c_str());
 
       if (output_xyz_ghost)
         if (!ofs_xyz_ghost_mpi.is_open())
-          ofs_xyz_ghost_mpi.open((file_name_xyz_ghost +"_mpi"+ std::to_string(my_mpi_rank) + ".xyz").c_str());
+          ofs_xyz_ghost_mpi.open((file_name_xyz_ghost + "_mpi" + std::to_string(my_mpi_rank) + ".xyz").c_str());
     }
     if (my_mpi_rank == 0)
     {
@@ -280,10 +301,14 @@ namespace writer
         if (!ofs_temperature.is_open())
           ofs_temperature.open((file_name_temperature + ".txt").c_str());
 
+      if (output_pressure)
+        if (!ofs_pressure.is_open())
+          ofs_pressure.open((file_name_pressure + ".txt").c_str());
+
       if (output_msd)
         if (!ofs_msd.is_open())
           ofs_msd.open((file_name_msd + ".txt").c_str());
-    } //*/
+    } 
 #else
 
     if (output_xyz)
@@ -306,6 +331,10 @@ namespace writer
       if (!ofs_temperature.is_open())
         ofs_temperature.open((file_name_temperature + ".txt").c_str());
 
+    if (output_pressure)
+      if (!ofs_pressure.is_open())
+        ofs_pressure.open((file_name_pressure + ".txt").c_str());
+
     if (output_msd)
       if (!ofs_msd.is_open())
         ofs_msd.open((file_name_msd + ".txt").c_str());
@@ -315,9 +344,17 @@ namespace writer
   void Atom_data::open_files() {}
   void Atom_data::close_files() {}
   void Atom_data::generate() {}
-  void Atom_data::write() {}
-  void Atom_data::write(int64_t) {} // current time_step
-  void Atom_data::write(double) {}  // current time
+
+  void Atom_data::report_xyz_dump(int64_t i, double t)
+  {
+    double wallTimeXyzDump2 = get_wall_time();
+
+    double dtstart = wallTimeXyzDump2 - wallTimeXyzDump1;
+    std::string s = "dump_xyz [" + std::to_string(i) +
+                    +"] (" + std::to_string(dtstart) + " S)";
+    output->info(s, 2);
+    wallTimeXyzDump1 = wallTimeXyzDump2;
+  }
 
   void Atom_data::write(int64_t i, double t)
   {
@@ -325,29 +362,141 @@ namespace writer
     if (!initialized)
       initialize();
 
+
+#if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
+
+    if (my_mpi_rank == 0)
+    {
+      write_serial(i, t);
+    }
+#elif defined(CAVIAR_WITH_MPI)
+
+    if (comm->nprocs > 1)
+    {
+      if (mpi_single_file)
+      {
+        write_mpi_shared_atoms(i, t);
+        // write_mpi(i);
+      }
+      if (mpi_separate_files)
+        write_serial(i, t, true);
+    }
+    else
+    {
+      write_serial(i, t);
+    }
+
+#else
+
+    write_serial(i, t);
+
+#endif
+
+
+
+
+  }
+
+  void Atom_data::write_mpi(int64_t i, double t)
+  {
     if (output_xyz)
       if (i % xyz_step == 0)
-        dump_xyz(i);
+      {
+        dump_xyz_mpi(i, t);
+        report_xyz_dump(i, t);
+      }
 
     if (output_xyz_ghost)
       if (i % xyz_ghost_step == 0)
-        dump_xyz_ghost(i);
+        dump_xyz_ghost_mpi(i, t);
 
     if (output_energy)
       if (i % energy_step == 0)
-        dump_energy(i, t);
+        dump_energy_mpi(i, t);
 
     if (output_temperature)
       if (i % temperature_step == 0)
-        dump_temperature(i, t);
+        dump_temperature_mpi(i, t);
+
+    if (output_pressure)
+      if (i % pressure_step == 0)
+        dump_pressure_mpi(i, t);
 
     if (output_povray)
       if (i % povray_step == 0)
-        dump_povray(i);
+        dump_povray_mpi(i, t);
 
     if (output_msd)
       if (i % msd_step == 0)
-        dump_msd(i, t);
+        dump_msd_mpi(i, t);
+  }
+
+  void Atom_data::write_mpi_shared_atoms(int64_t i, double t)
+  {
+    if (output_xyz)
+      if (i % xyz_step == 0)
+      {
+        dump_xyz_mpi_shared_atoms(i, t);
+        report_xyz_dump(i, t);
+      }
+
+    if (output_xyz_ghost)
+      if (i % xyz_ghost_step == 0)
+        dump_xyz_ghost_mpi_shared_atoms(i, t);
+
+    if (output_energy)
+      if (i % energy_step == 0)
+        dump_energy_mpi_shared_atoms(i, t);
+
+    if (output_temperature)
+      if (i % temperature_step == 0)
+        dump_temperature_mpi_shared_atoms(i, t);
+
+    if (output_pressure)
+      if (i % pressure_step == 0)
+        dump_pressure_mpi_shared_atoms(i, t);
+
+    if (output_povray)
+      if (i % povray_step == 0)
+        dump_povray_mpi_shared_atoms(i, t);
+
+    if (output_msd)
+      if (i % msd_step == 0)
+        dump_msd_mpi_shared_atoms(i, t);
+  }
+
+  void Atom_data::write_serial(int64_t i, double t, bool mpi_files)
+  {
+    if (output_xyz)
+      if (i % xyz_step == 0)
+      {
+        dump_xyz_serial(i, t, mpi_files);
+        report_xyz_dump(i, t);
+      }
+
+    if (output_xyz_ghost)
+      if (i % xyz_ghost_step == 0)
+        dump_xyz_ghost_serial(i, t, mpi_files);
+
+    if (output_energy)
+      if (i % energy_step == 0)
+        dump_energy_serial(i, t, mpi_files);
+
+    if (output_temperature)
+      if (i % temperature_step == 0)
+        dump_temperature_serial(i, t, mpi_files);
+
+    if (output_pressure)
+      if (i % pressure_step == 0)
+        dump_pressure_serial(i, t, mpi_files);
+
+    if (output_povray)
+      if (i % povray_step == 0)
+        dump_povray_serial(i, t, mpi_files);
+
+    if (output_msd)
+      if (i % msd_step == 0)
+        dump_msd_serial(i, t, mpi_files);
   }
 
   void Atom_data::start_new_files() {}              // add_time_to_previous

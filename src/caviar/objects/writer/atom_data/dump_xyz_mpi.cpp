@@ -32,7 +32,7 @@ namespace writer
   //================================================
   //                                              ||
   //================================================
-  void Atom_data::dump_xyz_mpi(int64_t)
+  void Atom_data::dump_xyz_mpi(int64_t, double)
   {
 #if defined(CAVIAR_WITH_MPI)
 
@@ -233,7 +233,7 @@ namespace writer
   //                                              ||
   //================================================
 
-  void Atom_data::dump_xyz_ghost_mpi(int64_t)
+  void Atom_data::dump_xyz_ghost_mpi(int64_t, double)
   {
 #if defined(CAVIAR_WITH_MPI)
 
