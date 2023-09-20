@@ -43,6 +43,7 @@ namespace constraint
 
         double coupling, dt, temperature;
 
+        double pressure;
     public:
     };
 
