@@ -1920,6 +1920,9 @@ namespace force_field
       auto force = caviar::Vector<double>{frc[0], frc[1], frc[2]};
 
       atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
+
+      if (atom_data->pressure_process)
+        atom_data->add_to_pressure(force*pos[i]);
     }
   }
 

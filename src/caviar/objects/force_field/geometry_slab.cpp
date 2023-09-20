@@ -213,8 +213,12 @@ namespace force_field
             error->all(FC_FILE_LINE_FUNC,"The particle with index " + std::to_string(i) + " is on the slab at the position (" + std::to_string(pos[i].x) + " , " + std::to_string(pos[i].y) + " , " + std::to_string(pos[i].z) + ")");
           }
           double dx_norm = dx / dist;
-          acc[i] += mass_inv_i * abs_contact_vector * dx_norm * (young_modulus * compression - (vel[i] * abs_contact_vector) * dissip_coef);       
+          auto force =  abs_contact_vector * dx_norm * (young_modulus * compression - (vel[i] * abs_contact_vector) * dissip_coef);       
 
+          acc[i] += mass_inv_i * force;  
+              
+          //if (atom_data->pressure_process)
+           // atom_data->add_to_pressure(force*contact_vector);
         }
       }
     }
@@ -257,7 +261,11 @@ namespace force_field
         if (compression > 0)
         {
 
-          acc[i] += mass_inv_i * contact_vector * (young_modulus * compression - ((vel[i] - v_o) * abs_contact_vector) * dissip_coef);
+          auto force = contact_vector * (young_modulus * compression - ((vel[i] - v_o) * abs_contact_vector) * dissip_coef);
+          acc[i] += mass_inv_i * force;
+
+          //if (atom_data->pressure_process)
+           // atom_data->add_to_pressure(force*contact_vector);
         }
       }
     }

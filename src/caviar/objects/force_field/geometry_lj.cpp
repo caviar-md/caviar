@@ -367,6 +367,9 @@ namespace force_field
           // std::cout << "f : " << force << "\n";
 
           acc[i] += force * mass_inv_i;
+
+          // if (atom_data->pressure_process)
+          //   atom_data->add_to_pressure(force*contact_vector);   
         }
       }
     }
