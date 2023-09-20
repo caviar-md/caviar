@@ -128,6 +128,11 @@ bool Atom_data::read(caviar::interpreter::Parser *parser)
       msd_process = true;
       atom_struct_owned.msd_domain_cross.resize(atom_struct_owned.position.size(), caviar::Vector<int>{0, 0, 0});
     }
+    else if (string_cmp(t, "pressure_process"))
+    {
+      pressure_process = true;
+      reset_pressure();
+    }
     else if (string_cmp(t, "add_atom"))
     {
       FIND_OBJECT_BY_NAME(unique, it)

@@ -259,14 +259,63 @@ public:
   virtual double temperature();
 
   /**
-   * calculates total kinetic energy of the atoms
+   * calculates the instantaneous temperature of all of the owned atoms.
+   * by means of equipartition theorem, 'k = 1/2 * k_b * N_df * T'.
+   * It can be defined differently, or for a subset of degree of freedoms.
    */
-  virtual double kinetic_energy();
+  virtual double temperature_mpi_domain();
+
+  /**
+   * returns the instantaneous pressure of all of the owned atoms.
+   */
+  virtual double pressure() {return pressure_;};
+
+  /**
+   * returns the instantaneous pressure of all of the owned atoms.
+   */
+  virtual double pressure_mpi_domain() {return pressure_mpi_domain_;};
+
+  /**
+   * add pair-wise part without coefficient.
+   * 'type' is used to pass a flag
+   */
+  virtual void add_to_pressure(double v, int type);
+  
+  /**
+   * add temperature part
+   */
+  virtual void finalize_pressure();
+
+  /**
+   * add temperature part
+   */
+  virtual void finalize_pressure_mpi_domain();
+
+    /**
+   * add temperature part
+   */
+  virtual void finalize_pressure_total();
+
+  /**
+   * set pressure to zero for a new time-step
+   */
+  virtual void reset_pressure(); 
+
+  bool pressure_process = false;
+
+  double pressure_ = 0;
+  double pressure_mpi_domain_ = 0;
+
 
   /**
    * calculates total kinetic energy of a type of atoms
    */
-  virtual double kinetic_energy(const int);
+  virtual double kinetic_energy(const int t = -1);
+
+  /**
+   * calculates total kinetic energy of a type of atoms
+   */
+  virtual double kinetic_energy_mpi_domain(const int t = -1);
 
   /**
    * a simple adding a random velocity to all of the atoms. The argument is the seed for random initialization.
