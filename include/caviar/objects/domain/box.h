@@ -41,6 +41,12 @@ namespace domain
     double fix_distance_y(double d);
     double fix_distance_z(double d);
 
+    /**
+     * Used in barostat scaling for geometrical forces.
+     * 
+    */   
+    void scale_position(double scale_ratio, caviar::Vector<int> scale_axis);
+    
     caviar::Vector<double> fix_distance(caviar::Vector<double> v);
 
     Vector<Real_t> half_edge;

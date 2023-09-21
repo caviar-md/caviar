@@ -130,7 +130,7 @@ namespace domain
   {
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
 
-#elif CAVIAR_WITH_MPI
+#elif defined(CAVIAR_WITH_MPI)
     return d;
 #endif
     if (boundary_condition.x == 1)
@@ -151,7 +151,7 @@ namespace domain
   {
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
 
-#elif CAVIAR_WITH_MPI
+#elif defined(CAVIAR_WITH_MPI)
     return d;
 #endif
     if (boundary_condition.y == 1)
@@ -172,7 +172,7 @@ namespace domain
   {
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
 
-#elif CAVIAR_WITH_MPI
+#elif defined(CAVIAR_WITH_MPI)
     return d;
 #endif
     if (boundary_condition.z == 1)
@@ -194,6 +194,52 @@ namespace domain
     return caviar::Vector<double>{fix_distance_x(v.x),
                                   fix_distance_y(v.y),
                                   fix_distance_z(v.z)};
+  }
+
+  void Box::scale_position(double xi, caviar::Vector<int> scale_axis)
+  {
+    bool x_axis = (scale_axis.x == 1 ? true: false);
+    bool y_axis = (scale_axis.x == 1 ? true: false);
+    bool z_axis = (scale_axis.x == 1 ? true: false);
+
+    if (x_axis)
+    {
+      lower_global.x *= xi; 
+      upper_global.x *= xi;
+      //lower_local.x *= xi; 
+      //upper_local.x *= xi;
+    }
+
+    if (y_axis)
+    {
+      lower_global.y *= xi; 
+      upper_global.y *= xi;
+      //lower_local.y *= xi; 
+      //upper_local.y *= xi;
+    }
+
+    if (z_axis)
+    {
+      lower_global.z *= xi; 
+      upper_global.z *= xi;
+      //lower_local.z *= xi; 
+      //upper_local.z *= xi;
+    }
+
+#if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
+
+  error->all(FC_FILE_LINE_FUNC, "The scale_position in MPI mode not implemented");
+
+#elif defined(CAVIAR_WITH_MPI)
+  error->all(FC_FILE_LINE_FUNC, "The scale_position in MPI mode not implemented");
+  //calculate_procs_grid();
+#else
+  calculate_local_domain();
+
+#endif
+
+    // it is defined for one-domain case.
+    half_edge = 0.5 * (upper_global - lower_global); // XXX
   }
 
 } // domain

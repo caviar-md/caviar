@@ -16,6 +16,8 @@
 
 #include "caviar/objects/domain.h"
 #include "caviar/interpreter/communicator.h"
+#include "caviar/utility/interpreter_io_headers.h"
+
 #include <array>
 #ifdef CAVIAR_WITH_MPI
 #include <mpi.h>
@@ -211,9 +213,9 @@ Vector<Real_t> Domain::periodic_distance(const Vector<Real_t> v)
   return vf;
 }
 
-void Domain::scale_position(double, caviar::Vector<int> scale_axis)
+void Domain::scale_position(double, caviar::Vector<int> )
 {
-  //error->all(FC_FILE_LINE_FUNC, "The scale_position of this force_field is not implemented");
+  error->all(FC_FILE_LINE_FUNC, "The scale_position of this force_field is not implemented");
 }
 
 
