@@ -329,123 +329,6 @@ int Atom_data::get_n_r_df()
   return n_r_df;
 }
 
-int Atom_data::degree_of_freedoms()
-{
-  auto df = 3 * atom_struct_owned.position.size();
-
-  auto sum_of_bonds = 0;
-  auto sum_of_angles = 0;
-  auto sum_of_dihedrals = 0;
-
-  for (auto &&m : molecule_struct_owned)
-  {
-    sum_of_bonds += m.atomic_bond_vector.size();
-
-    sum_of_angles += m.atomic_angle_vector.size();
-
-    sum_of_dihedrals += m.atomic_properdihedral_vector.size();
-  }
-
-  return df - sum_of_bonds - sum_of_angles - sum_of_dihedrals - get_n_r_df();
-}
-
-Vector<Real_t> Atom_data::owned_position_cm()
-{
-  Vector<Real_t> p_cm{0.0, 0.0, 0.0};
-  double mass_sum = 0.0;
-  auto p_size = atom_struct_owned.position.size(); // MPI check
-#ifdef CAVIAR_WITH_OPENMP
-#pragma omp parallel for reduction(+ : p_cm, mass_sum)
-#endif
-  for (unsigned int i = 0; i < p_size; ++i)
-  {
-    if (atom_struct_owned.mpi_rank[i] != my_mpi_rank)
-      continue;
-
-    auto type_i = atom_struct_owned.type[i];
-    auto mass_i = atom_type_params.mass[type_i];
-    mass_sum += mass_i;
-    p_cm += atom_struct_owned.position[i] * mass_i;
-  }
-  p_cm = p_cm / mass_sum;
-  return p_cm;
-}
-
-Vector<Real_t> Atom_data::owned_velocity_cm()
-{
-  Vector<Real_t> v_cm{0.0, 0.0, 0.0};
-  double mass_sum = 0.0;
-  auto p_size = atom_struct_owned.velocity.size(); // MPI check
-#ifdef CAVIAR_WITH_OPENMP
-#pragma omp parallel for reduction(+ : v_cm, mass_sum)
-#endif
-  for (unsigned int i = 0; i < p_size; ++i)
-  {
-    auto type_i = atom_struct_owned.type[i];
-    auto mass_i = atom_type_params.mass[type_i];
-    mass_sum += mass_i;
-    v_cm += atom_struct_owned.velocity[i] * mass_i;
-  }
-  v_cm = v_cm / mass_sum;
-  return v_cm;
-}
-
-Vector<double> Atom_data::owned_angular_momentum_cm(const Vector<double> &p_cm)
-{
-
-  Vector<double> L_cm{0.0, 0.0, 0.0};
-
-  auto p_size = atom_struct_owned.position.size(); // MPI check
-#ifdef CAVIAR_WITH_OPENMP
-#pragma omp parallel for reduction(+ : L_cm)
-#endif
-  for (unsigned int i = 0; i < p_size; ++i)
-  {
-    if (atom_struct_owned.mpi_rank[i] != my_mpi_rank)
-      continue;
-
-    auto type_i = atom_struct_owned.type[i];
-    auto mass_i = atom_type_params.mass[type_i];
-
-    L_cm += mass_i * cross_product(atom_struct_owned.position[i] - p_cm, atom_struct_owned.velocity[i]);
-  }
-
-  return L_cm;
-}
-
-std::vector<std::vector<double>> Atom_data::owned_inertia_tensor_cm(const Vector<double> &p_cm)
-{
-
-  std::vector<std::vector<double>> I_cm(3, std::vector<double>(3, 0.0));
-
-  auto p_size = atom_struct_owned.position.size(); // MPI check
-#ifdef CAVIAR_WITH_OPENMP
-#pragma omp parallel for reduction(+ : it_cm)
-#endif
-  for (unsigned int i = 0; i < p_size; ++i)
-  {
-    if (atom_struct_owned.mpi_rank[i] != my_mpi_rank)
-      continue;
-
-    auto type_i = atom_struct_owned.type[i];
-    auto mass_i = atom_type_params.mass[type_i];
-    auto p = atom_struct_owned.position[i] - p_cm; // relative position
-    I_cm[0][0] += mass_i * (p.y * p.y + p.z * p.z);
-    I_cm[1][1] += mass_i * (p.x * p.x + p.z * p.z);
-    I_cm[2][2] += mass_i * (p.x * p.x + p.y * p.y);
-
-    I_cm[0][1] -= mass_i * (p.x * p.y);
-    I_cm[1][2] -= mass_i * (p.y * p.z);
-    I_cm[2][0] -= mass_i * (p.z * p.x);
-
-    I_cm[1][0] = I_cm[0][1];
-    I_cm[2][1] = I_cm[1][2];
-    I_cm[0][2] = I_cm[2][0];
-  }
-
-  return I_cm;
-}
-
 void Atom_data::record_owned_old_data()
 {
   if (record_owned_position_old)
@@ -832,9 +715,23 @@ void Atom_data::set_atoms_mpi_rank()
   // remove_atom(index_to_remove);
 }
 
-void Atom_data::scale_position(double, caviar::Vector<int> scale_axis)
+void Atom_data::scale_position(double xi, caviar::Vector<int> scale_axis)
 {
-  error->all(FC_FILE_LINE_FUNC, "The scale_position of this force_field is not implemented");
+  int num_atoms = atom_struct_owned.position.size();
+  bool x_axis = (scale_axis.x == 1 ? true: false);
+  bool y_axis = (scale_axis.x == 1 ? true: false);
+  bool z_axis = (scale_axis.x == 1 ? true: false);
+
+  for (int i = 0; i < num_atoms; ++i)
+  {
+#ifdef CAVIAR_WITH_MPI
+      if (atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+        continue;
+#endif
+    if (x_axis) atom_struct_owned.position[i].x *= xi;
+    if (y_axis) atom_struct_owned.position[i].y *= xi;
+    if (z_axis) atom_struct_owned.position[i].z *= xi;
+  }
 }
 
 CAVIAR_NAMESPACE_CLOSE

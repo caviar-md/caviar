@@ -114,9 +114,19 @@ public:
   virtual Vector<Real_t> owned_position_cm();
 
   /**
+   *  position of the center of mass
+   */
+  virtual Vector<Real_t> owned_position_cm_mpi_domain();
+
+  /**
    *  velocity of the center of mass
    */
   virtual Vector<Real_t> owned_velocity_cm();
+
+  /**
+   *  velocity of the center of mass
+   */
+  virtual Vector<Real_t> owned_velocity_cm_mpi_domain();
 
   /**
    *  angular momentum of the center of mass
@@ -132,10 +142,22 @@ public:
   virtual Vector<double> owned_angular_momentum_cm(const Vector<double> &p_cm);
 
   /**
+   *  angular momentum of the center of mass
+   */
+  virtual Vector<double> owned_angular_momentum_cm_mpi_domain()
+  {
+    return owned_angular_momentum_cm_mpi_domain(owned_position_cm_mpi_domain());
+  }
+
+  /**
+   *  angular momentum of the center of mass
+   */
+  virtual Vector<double> owned_angular_momentum_cm_mpi_domain(const Vector<double> &p_cm);
+  /**
    *  inertia_tensor of the center of mass. The tensor type may be modified
    *  in the future.
    */
-  virtual std::vector<std::vector<double>> owned_inertia_tensor_cm()
+  virtual std::array<std::array<double, 3>, 3>  owned_inertia_tensor_cm()
   {
     return owned_inertia_tensor_cm(owned_position_cm());
   }
@@ -144,8 +166,22 @@ public:
    *  inertia_tensor of the center of mass. The tensor type may be modified
    *  in the future.
    */
-  virtual std::vector<std::vector<double>> owned_inertia_tensor_cm(const Vector<double> &p_cm);
+  virtual std::array<std::array<double, 3>, 3>  owned_inertia_tensor_cm(const Vector<double> &p_cm);
 
+  /**
+   *  inertia_tensor of the center of mass. The tensor type may be modified
+   *  in the future.
+   */
+  virtual std::array<std::array<double, 3>, 3>  owned_inertia_tensor_cm_mpi_domain()
+  {
+    return owned_inertia_tensor_cm_mpi_domain(owned_position_cm_mpi_domain());
+  }
+
+  /**
+   *  inertia_tensor of the center of mass. The tensor type may be modified
+   *  in the future.
+   */
+  virtual std::array<std::array<double, 3>, 3> owned_inertia_tensor_cm_mpi_domain(const Vector<double> &p_cm);
   /**
    * Initial setting of number of atoms.
    */
@@ -163,6 +199,14 @@ public:
    * It should be developed for special cases.
    */
   virtual int degree_of_freedoms();
+
+  /**
+   * total number of system degree of freedom. For simple atomic simulations,
+   * it returns '3*num_total_atoms'. For molecular simulations,
+   * '3*num_total_atoms - atomic_bonds - atomic_angles' is returned.
+   * It should be developed for special cases.
+   */
+  virtual int degree_of_freedoms_mpi_domain();
 
   /**
    * reserve the owned std::vector for a faster push_back assignment
