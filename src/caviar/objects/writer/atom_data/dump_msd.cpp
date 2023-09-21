@@ -23,12 +23,12 @@ CAVIAR_NAMESPACE_OPEN
 
 namespace writer
 {
-  void Atom_data::dump_msd_mpi(int64_t i, double t)
+  void Atom_data::dump_msd_mpi(int64_t , double )
   {
 
   }
 
-  void Atom_data::dump_msd_mpi_shared_atoms(int64_t i, double t)
+  void Atom_data::dump_msd_mpi_shared_atoms(int64_t , double )
   {
 
   }

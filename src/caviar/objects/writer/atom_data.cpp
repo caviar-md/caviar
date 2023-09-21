@@ -20,6 +20,7 @@
 #include "caviar/utility/time_utility.h"
 #include "caviar/objects/unique/time_function_3d.h"
 #include "caviar/objects/domain.h"
+#include "caviar/interpreter/communicator.h"
 
 #include <ctime>
 #include <sys/stat.h> // used for mkdir()
@@ -345,7 +346,7 @@ namespace writer
   void Atom_data::close_files() {}
   void Atom_data::generate() {}
 
-  void Atom_data::report_xyz_dump(int64_t i, double t)
+  void Atom_data::report_xyz_dump(int64_t i, double )
   {
     double wallTimeXyzDump2 = get_wall_time();
 

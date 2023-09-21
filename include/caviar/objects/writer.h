@@ -33,9 +33,6 @@ public:
   virtual ~Writer();
   virtual bool read(class caviar::interpreter::Parser *) = 0;
   virtual void initialize();
-  virtual void write();
-  virtual void write(int64_t);                 // current time_step
-  virtual void write(double);                  // current time
   virtual void write(int64_t, double);         // time_step and time
   virtual void start_new_files();              // add_time_to_previous
   virtual void start_new_files(std::string &); // add_time_to_previous

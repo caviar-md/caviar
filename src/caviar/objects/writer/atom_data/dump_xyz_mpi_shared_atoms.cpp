@@ -277,7 +277,13 @@ namespace writer
 #endif
   }
 
-  
+    //================================================
+  //                                              ||
+  //================================================
+  void Atom_data::dump_xyz_ghost_mpi_shared_atoms(int64_t, double)
+  {
+    //dump_xyz_ghost_mpi_shared_atoms(int64_t, double);
+  }
 
 } // writer
 
