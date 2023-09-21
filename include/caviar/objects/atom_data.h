@@ -54,6 +54,12 @@ public:
   virtual bool read(class caviar::interpreter::Parser *);
 
   /**
+   * Used in barostat scaling for geometrical forces.
+   * 
+  */   
+  virtual void scale_position(double scale_ratio, caviar::Vector<int> scale_axis);
+  
+  /**
    * It represents the position of the origin of non_inertia Cartesian reference frame by a time function.
    * It will be used in ???.
    */

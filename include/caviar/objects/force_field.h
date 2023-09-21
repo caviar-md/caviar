@@ -42,6 +42,13 @@ public:
   virtual double potential(const int);
   virtual Vector<double> field(const Vector<double> &);
   virtual Vector<double> field(const int);
+
+  /**
+   * Used in barostat scaling for geometrical forces.
+   * 
+  */   
+  virtual void scale_position(double scale_ratio, caviar::Vector<int> scale_axis);
+
   double cutoff;
   class Atom_data *atom_data;
   class Domain *domain;

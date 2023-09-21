@@ -832,4 +832,9 @@ void Atom_data::set_atoms_mpi_rank()
   // remove_atom(index_to_remove);
 }
 
+void Atom_data::scale_position(double, caviar::Vector<int> scale_axis)
+{
+  error->all(FC_FILE_LINE_FUNC, "The scale_position of this force_field is not implemented");
+}
+
 CAVIAR_NAMESPACE_CLOSE

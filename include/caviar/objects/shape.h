@@ -51,6 +51,12 @@ public:
   virtual bool is_outside(const Vector<double> &, const double rad);
   virtual bool in_contact(const Vector<double> &, const double rad, Vector<double> &contact_vector) = 0;
 
+  /**
+   * Used in barostat scaling for geometrical forces.
+   * 
+  */   
+  virtual void scale_position(double scale_ratio, caviar::Vector<int> scale_axis);
+  
   FC_BASE_OBJECT_COMMON_TOOLS
 };
 

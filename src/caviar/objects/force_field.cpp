@@ -59,4 +59,9 @@ Vector<double> Force_field::field(const int)
   return Vector<double>{0, 0, 0};
 }
 
+void Force_field::scale_position(double, caviar::Vector<int> scale_axis)
+{
+  //error->all(FC_FILE_LINE_FUNC, "The scale_position of this force_field is not implemented");
+}
+
 CAVIAR_NAMESPACE_CLOSE

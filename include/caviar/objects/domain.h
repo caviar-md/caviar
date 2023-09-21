@@ -39,6 +39,12 @@ public:
   virtual void calculate_procs_grid();
 
   /**
+   * Used in barostat scaling for geometrical forces.
+   * 
+  */   
+  virtual void scale_position(double scale_ratio, caviar::Vector<int> scale_axis);
+  
+  /**
    * calculates process rank from it grid index
    */
   virtual int grid2rank(int x, int y, int z);
