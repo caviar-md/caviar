@@ -39,7 +39,7 @@ bool Shape::is_outside(const Vector<double> &v, const double r)
   return !is_inside(v, r);
 }
 
-void Shape::scale_position(double, caviar::Vector<int> scale_axis)
+void Shape::scale_position(double, caviar::Vector<int>)
 {
   //error->all(FC_FILE_LINE_FUNC, "The scale_position of this force_field is not implemented");
 }

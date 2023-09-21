@@ -21,6 +21,7 @@
 #include "caviar/utility/vector.h"
 #include <algorithm>
 #include <vector>
+#include <array>
 
 /**
  * This file contains some small and useful functions used in the CAVIAR.
@@ -156,9 +157,42 @@ int matrix_inverse(std::vector<std::vector<T>> &A, std::vector<std::vector<T>> &
   }
 }
 
+
 /**
- *  Product of Matrix on a Vector which results in a vector
- *  type 'std::vector < std::vector < typename > >' . It
+ *  a fast matrix inverse template function with std::array. 
+ */
+template <typename T>
+int matrix_inverse_3d(std::array<std::array<T, 3>, 3> &A, std::array<std::array<T, 3>, 3> &A_inv)
+{
+
+  T det = (A[0][0] * (A[1][1] * A[2][2] - A[2][1] * A[1][2])) -
+          (A[0][1] * (A[1][0] * A[2][2] - A[1][2] * A[2][0])) +
+          (A[0][2] * (A[1][0] * A[2][1] - A[1][1] * A[2][0])); //+0.00001;
+
+  if (det == static_cast<T>(0))
+  {
+    return 1;
+  }
+
+  double det_inv = 1.0 / det;
+
+  A_inv[0][0] = (A[1][1] * A[2][2] - A[2][1] * A[1][2]) * det_inv;
+  A_inv[0][1] = (A[0][2] * A[2][1] - A[0][1] * A[2][2]) * det_inv;
+  A_inv[0][2] = (A[0][1] * A[1][2] - A[0][2] * A[1][1]) * det_inv;
+  A_inv[1][0] = (A[1][2] * A[2][0] - A[1][0] * A[2][2]) * det_inv;
+  A_inv[1][1] = (A[0][0] * A[2][2] - A[0][2] * A[2][0]) * det_inv;
+  A_inv[1][2] = (A[1][0] * A[0][2] - A[0][0] * A[1][2]) * det_inv;
+  A_inv[2][0] = (A[1][0] * A[2][1] - A[2][0] * A[1][1]) * det_inv;
+  A_inv[2][1] = (A[2][0] * A[0][1] - A[0][0] * A[2][1]) * det_inv;
+  A_inv[2][2] = (A[0][0] * A[1][1] - A[1][0] * A[0][1]) * det_inv;
+  return 0;
+
+}
+
+
+/**
+ *  Product of a Matrix on a Vector which results in a vector.
+ *  
  */
 template <typename T>
 int matrix_Vector_product(const std::vector<std::vector<T>> &A, const Vector<T> &V, Vector<T> &R)
@@ -180,6 +214,21 @@ int matrix_Vector_product(const std::vector<std::vector<T>> &A, const Vector<T> 
   return 0;
 }
 
+
+/**
+ *  Product of a 3D Matrix on a Vector which results in a vector.
+ *  
+ */
+template <typename T>
+int matrix_Vector_product_3d(const std::array<std::array<T, 3>, 3> &A, const Vector<T> &V, Vector<T> &R)
+{
+
+  R.x = A[0][0] * V.x + A[0][1] * V.y + A[0][2] * V.z;
+  R.y = A[1][0] * V.x + A[1][1] * V.y + A[1][2] * V.z;
+  R.z = A[2][0] * V.x + A[2][1] * V.y + A[2][2] * V.z;
+
+  return 0;
+}
 CAVIAR_NAMESPACE_CLOSE
 
 #endif
