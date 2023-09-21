@@ -1921,8 +1921,8 @@ namespace force_field
 
       atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
 
-      if (atom_data->pressure_process)
-        atom_data->add_to_pressure(force*pos[i]);
+      //if (atom_data->pressure_process)
+      //  atom_data->add_to_pressure(force*pos[i]);
     }
   }
 
@@ -1964,6 +1964,47 @@ namespace force_field
   //==================================================
   //==================================================
   //==================================================
+
+   void Plt_dealii::scale_position(double scale_ratio, caviar::Vector<int> scale_axis)
+   {
+      bool x_axis = (scale_axis.x == 1 ? true: false);
+      bool y_axis = (scale_axis.x == 1 ? true: false);
+      bool z_axis = (scale_axis.x == 1 ? true: false);
+
+
+      Triangulation<3>::active_cell_iterator
+                        cell = triangulation.begin_active(),
+                        endc = triangulation.end();
+      for (; cell!=endc; ++cell)
+      {
+        for (unsigned int i=0; i<GeometryInfo<3>::vertices_per_cell; ++i)
+        {
+          Point<3> &v = cell->vertex(i);
+          if (x_axis)
+            v(0) *= scale_ratio; 
+
+          if (y_axis)
+            v(1) *= scale_ratio; 
+
+          if (z_axis)
+            v(2) *= scale_ratio;
+        }
+      }
+
+  
+      for (int i = 0; i < face_center.size(); ++i)
+      {
+        if (x_axis)
+          face_center[i][0] *= scale_ratio; 
+
+        if (y_axis)
+          face_center[i][1] *= scale_ratio; 
+
+        if (z_axis)
+          face_center[i][2] *= scale_ratio;              
+      }
+   }
+
 
 } // force_field
 

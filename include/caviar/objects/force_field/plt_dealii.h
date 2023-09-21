@@ -40,7 +40,9 @@
 #if DEALII_VERSION_MAJOR == 8
  #include <deal.II/lac/constraint_matrix.h> // deal.ii-8.5.1 & 9.2
 #elif DEALII_VERSION_MAJOR == 9 && DEALII_VERSION_MINOR < 3
- #include <deal.II/lac/constraint_matrix.h> // deal.ii-8.5.1 & 9.2
+ //#include <deal.II/lac/constraint_matrix.h> // deal.ii-8.5.1 & 9.2
+ #include <deal.II/lac/affine_constraints.h> // deal.ii-9.4
+
 #elif DEALII_VERSION_MAJOR == 9 && DEALII_VERSION_MINOR >= 3
 #include <deal.II/lac/affine_constraints.h> // deal.ii-9.4
 #else
@@ -87,6 +89,13 @@ namespace force_field
 
     double potential(const Vector<double> &v); // Gives the total potential (sum of smooth and singular).
     double potential(const int);
+
+
+  /**
+   * Used in barostat scaling for geometrical forces.
+   * 
+  */   
+   void scale_position(double scale_ratio, caviar::Vector<int> scale_axis);
 
     // simple: a dealii standard Laplace solving process is done in every step.
     // faster: Laplace is solved using dealii::Filtered matrix, in order to get
@@ -149,7 +158,8 @@ namespace force_field
 #if DEALII_VERSION_MAJOR == 8
 ConstraintMatrix constraints;
 #elif DEALII_VERSION_MAJOR == 9 && DEALII_VERSION_MINOR < 3
-ConstraintMatrix constraints;
+//ConstraintMatrix constraints;
+AffineConstraints<double> constraints;
 #elif DEALII_VERSION_MAJOR == 9 && DEALII_VERSION_MINOR >= 3
 AffineConstraints<double> constraints;
 #else

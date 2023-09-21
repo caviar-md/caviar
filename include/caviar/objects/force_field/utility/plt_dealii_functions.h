@@ -433,11 +433,17 @@ namespace force_field
                                        solution,
                                        estimated_error_per_cell);
 #elif DEALII_VERSION_MAJOR == 9 && DEALII_VERSION_MINOR < 3
+      // KellyErrorEstimator<3>::estimate(dof_handler,
+      //                                  QGauss<3 - 1>(3),
+      //                                  typename FunctionMap<3>::type(),
+      //                                  solution,
+      //                                  estimated_error_per_cell);
+
       KellyErrorEstimator<3>::estimate(dof_handler,
-                                       QGauss<3 - 1>(3),
-                                       typename FunctionMap<3>::type(),
-                                       solution,
-                                       estimated_error_per_cell);
+                                  QGauss<3 - 1>(3),
+                                  {},
+                                  solution,
+                                  estimated_error_per_cell);                                       
 #elif DEALII_VERSION_MAJOR == 9 && DEALII_VERSION_MINOR >= 3
             KellyErrorEstimator<3>::estimate(dof_handler,
                                        QGauss<3 - 1>(3),
