@@ -53,12 +53,6 @@ namespace constraint
         if (coupling <= 0.0)
           error->all(FC_FILE_LINE_FUNC_PARSE, "coupling have to non-negative.");
       }
-      else if (string_cmp(t, "pressure"))
-      {
-        GET_OR_CHOOSE_A_REAL(pressure, "", "")
-        if (pressure <= 0.0)
-          error->all(FC_FILE_LINE_FUNC_PARSE, "pressure have to non-negative.");
-      }
       else if (string_cmp(t, "dt"))
       {
         GET_OR_CHOOSE_A_REAL(dt, "", "")

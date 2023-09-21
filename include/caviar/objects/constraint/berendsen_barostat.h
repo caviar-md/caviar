@@ -14,34 +14,54 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_CONSTRAINT_BERENDSEN_H
-#define CAVIAR_OBJECTS_CONSTRAINT_BERENDSEN_H
+#ifndef CAVIAR_OBJECTS_CONSTRAINT_BERENDSENBAROSTAT_H
+#define CAVIAR_OBJECTS_CONSTRAINT_BERENDSENBAROSTAT_H
 
 #include "caviar/objects/constraint.h"
 
 CAVIAR_NAMESPACE_OPEN
 
+class Force_field;
+class Domain;
+
 namespace constraint
 {
-
+    
     /**
-     * This class has Brendsen thermostat implemented.
-     * It is implemented according to
-     * 'Berendsen and Nose-Hoover thermostats Victor Ruhle August 8, 2007'
-     *
+     * Brendsen thermostat implementation
+     * Xi = 1 - kappa (dt / tp) (P - P_int(t)) 
+     * r' = Xi^(1/3) * r
+     * for liquid water: tp = 0.01 ps  ...  tp = 0.1 ps
+     * for liquid water: kappa ~ 4.5 * 10E-5 (Bar^(-1))
      */
-    class Berendsen : public Constraint
+    class Berendsen_barostat : public Constraint
     {
     public:
-        Berendsen(class CAVIAR *);
-        ~Berendsen();
+        Berendsen_barostat(class CAVIAR *);
+        ~Berendsen_barostat();
         bool read(class caviar::interpreter::Parser *);
 
         void apply_on_velocity(int64_t);
 
         void verify_settings();
+        
+        /**
+         * the force_fields which a scale_position() must be called.
+         * Not all force_fields needs that. 
+        */        
+        std::vector<Force_field *> force_field;
 
-        double coupling, dt, temperature;
+        Domain *domain;
+
+        double tp;
+        double dt;
+        double kappa;
+        double pressure;
+
+        /**
+         * The direction of scaling simulation box. It will be done on periodic direction of the domain.
+        */
+        caviar::Vector<int> scale_axis;
 
     public:
     };
