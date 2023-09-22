@@ -42,6 +42,16 @@ namespace domain
     double fix_distance_z(double d);
 
     /**
+     * Total volume of (mpi) local domain. In non-mpi simulations, local == global
+    */
+    virtual double volume_local();
+
+    /**
+     * Total volume of global domain
+    */
+    virtual double volume_global();
+
+    /**
      * Used in barostat scaling for geometrical forces.
      * 
     */   

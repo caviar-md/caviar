@@ -62,6 +62,16 @@ public:
 
   virtual Vector<Real_t> periodic_distance(const Vector<Real_t>);
 
+  /**
+   * Total volume of (mpi) local domain. In non-mpi simulations, local == global
+  */
+  virtual double volume_local();
+
+  /**
+   * Total volume of global domain
+  */
+  virtual double volume_global();
+
   Vector<int> boundary_condition;
 
   int grid_index_x, grid_index_y, grid_index_z; // starts from (0) to (nprocs_i-1) ; i=x,y,z

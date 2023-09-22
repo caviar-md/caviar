@@ -215,8 +215,19 @@ Vector<Real_t> Domain::periodic_distance(const Vector<Real_t> v)
 
 void Domain::scale_position(double, caviar::Vector<int> )
 {
-  error->all(FC_FILE_LINE_FUNC, "The scale_position of this force_field is not implemented");
+  error->all(FC_FILE_LINE_FUNC, "The scale_position of this domain is not implemented");
 }
 
+double Domain::volume_local()
+{
+  error->all(FC_FILE_LINE_FUNC, "Not implemented");
+  return 0.0;
+}
+
+double Domain::volume_global()
+{
+  error->all(FC_FILE_LINE_FUNC, "Not implemented");
+  return 0.0;
+}
 
 CAVIAR_NAMESPACE_CLOSE

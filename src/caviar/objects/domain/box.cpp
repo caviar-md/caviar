@@ -242,6 +242,19 @@ namespace domain
     half_edge = 0.5 * (upper_global - lower_global); // XXX
   }
 
+
+  double Box::volume_local()
+  {
+      auto diff = upper_local - lower_local;
+      return  diff.x*diff.y*diff.z;
+  }
+
+  double Box::volume_global()
+  {
+      auto diff = upper_global - lower_global;
+      return  diff.x*diff.y*diff.z;  
+  }
+
 } // domain
 
 CAVIAR_NAMESPACE_CLOSE
