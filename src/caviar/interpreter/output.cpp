@@ -41,7 +41,7 @@ namespace interpreter
     if (output_info[level])
     {
 #if defined(CAVIAR_WITH_MPI)
-      MPI_Barrier(MPI::COMM_WORLD);
+      MPI_Barrier(MPI_COMM_WORLD);
       int me = comm->me;
       if (me == 0)
       {
@@ -87,7 +87,7 @@ namespace interpreter
     if (output_warning[level])
     {
 #if defined(CAVIAR_WITH_MPI)
-      MPI_Barrier(MPI::COMM_WORLD);
+      MPI_Barrier(MPI_COMM_WORLD);
       int me = comm->me;
       if (me == 0)
       {
@@ -111,7 +111,7 @@ namespace interpreter
   void Output::comment(const std::string &str, bool endline)
   {
 #if defined(CAVIAR_WITH_MPI)
-    MPI_Barrier(MPI::COMM_WORLD);
+    MPI_Barrier(MPI_COMM_WORLD);
     int me = comm->me;
     if (me == 0)
     {

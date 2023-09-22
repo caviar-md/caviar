@@ -430,7 +430,7 @@ void Md_simulator::step()
     f -> calculate_acceleration ();
 
 
-  MPI_Barrier(MPI::COMM_WORLD);
+  MPI_Barrier(MPI_COMM_WORLD);
 
   if (my_mpi_rank==0) {
 
@@ -484,7 +484,7 @@ bool Md_simulator::boundary_condition()
   // #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
   //
   //  #elif defined(CAVIAR_WITH_MPI)
-  //    MPI_Allreduce(MPI::IN_PLACE, &result, 1, MPI::BOOL, MPI::LOR, MPI::COMM_WORLD);
+  //    MPI_Allreduce(MPI::IN_PLACE, &result, 1, MPI::BOOL, MPI::LOR, MPI_COMM_WORLD);
   //  #endif
   return result;
 }

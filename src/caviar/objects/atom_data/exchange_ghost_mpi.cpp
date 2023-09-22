@@ -302,7 +302,7 @@ void Atom_data::exchange_ghost_mpi(long ) // timestep
   if (me == all[i][j][k])
     continue;
 
-  MPI_Send(&send_num[i][j][k], 1, MPI_INT, all[i][j][k], send_mpi_tag[i][j][k], MPI::COMM_WORLD); // TAG 0
+  MPI_Send(&send_num[i][j][k], 1, MPI_INT, all[i][j][k], send_mpi_tag[i][j][k], MPI_COMM_WORLD); // TAG 0
 
   FOR_IJK_LOOP_END
 
@@ -310,7 +310,7 @@ void Atom_data::exchange_ghost_mpi(long ) // timestep
   if (me == all[i][j][k])
     continue;
 
-  MPI_Recv(&recv_num[i][j][k], 1, MPI_INT, all[i][j][k], recv_mpi_tag[i][j][k], MPI::COMM_WORLD, MPI_STATUS_IGNORE); // TAG 0
+  MPI_Recv(&recv_num[i][j][k], 1, MPI_INT, all[i][j][k], recv_mpi_tag[i][j][k], MPI_COMM_WORLD, MPI_STATUS_IGNORE); // TAG 0
 
   FOR_IJK_LOOP_END
 
@@ -338,7 +338,7 @@ void Atom_data::exchange_ghost_mpi(long ) // timestep
   if (send_num[i][j][k] > 0)
   {
 
-    MPI_Send(send_data[i][j][k].data(), mpinf.total * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], MPI::COMM_WORLD); // TAG 1
+    MPI_Send(send_data[i][j][k].data(), mpinf.total * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], MPI_COMM_WORLD); // TAG 1
   }
   FOR_IJK_LOOP_END
 
@@ -348,7 +348,7 @@ void Atom_data::exchange_ghost_mpi(long ) // timestep
 
   if (recv_num[i][j][k] > 0)
   {
-    MPI_Recv(recv_data[i][j][k].data(), mpinf.total * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], MPI::COMM_WORLD, MPI_STATUS_IGNORE); // TAG 1
+    MPI_Recv(recv_data[i][j][k].data(), mpinf.total * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], MPI_COMM_WORLD, MPI_STATUS_IGNORE); // TAG 1
 
   }
   FOR_IJK_LOOP_END
@@ -449,7 +449,7 @@ void Atom_data::exchange_ghost_mpi(long ) // timestep
   FOR_IJK_LOOP_END
 
 
-// MPI_Barrier(MPI::COMM_WORLD);
+// MPI_Barrier(MPI_COMM_WORLD);
 
 
 #endif

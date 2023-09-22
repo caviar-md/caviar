@@ -66,7 +66,7 @@ namespace force_field
 
       MPI_Allreduce(&local_potential_of_free_charges,
                     &total_potential_of_free_charges,
-                    1, MPI::DOUBLE, MPI_SUM, MPI::COMM_WORLD);
+                    1, MPI::DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 
       return total_potential - total_potential_of_free_charges;
 #else

@@ -47,7 +47,7 @@ CAVIAR_NAMESPACE_OPEN
 bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
 {
 #if defined(CAVIAR_WITH_MPI)
-  // MPI_Barrier(MPI::COMM_WORLD);
+  // MPI_Barrier(MPI_COMM_WORLD);
 
   if (domain == nullptr)
     error->all("Atom_data::exchange_owned: domain = nullptr");
@@ -477,8 +477,8 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
   if (me == all[i][j][k])
     continue;
 
-  //MPI_Send(&send_num[i][j][k], 1, MPI_INT, all[i][j][k], send_mpi_tag[i][j][k], MPI::COMM_WORLD); // TAG 0
-  MPI_Isend(&send_num[i][j][k], 1, MPI_INT, all[i][j][k], send_mpi_tag[i][j][k], MPI::COMM_WORLD, &mpi_requests[i][j][k]); // TAG 0
+  //MPI_Send(&send_num[i][j][k], 1, MPI_INT, all[i][j][k], send_mpi_tag[i][j][k], MPI_COMM_WORLD); // TAG 0
+  MPI_Isend(&send_num[i][j][k], 1, MPI_INT, all[i][j][k], send_mpi_tag[i][j][k], MPI_COMM_WORLD, &mpi_requests[i][j][k]); // TAG 0
 
   FOR_IJK_LOOP_END
 
@@ -487,8 +487,8 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
   if (me == all[i][j][k])
     continue;
 
-  //MPI_Recv(&recv_num[i][j][k], 1, MPI_INT, all[i][j][k], recv_mpi_tag[i][j][k], MPI::COMM_WORLD, MPI_STATUS_IGNORE); // TAG 0
-  MPI_Irecv(&recv_num[i][j][k], 1, MPI_INT, all[i][j][k], recv_mpi_tag[i][j][k], MPI::COMM_WORLD, &mpi_requests[i][j][k]); // TAG 0
+  //MPI_Recv(&recv_num[i][j][k], 1, MPI_INT, all[i][j][k], recv_mpi_tag[i][j][k], MPI_COMM_WORLD, MPI_STATUS_IGNORE); // TAG 0
+  MPI_Irecv(&recv_num[i][j][k], 1, MPI_INT, all[i][j][k], recv_mpi_tag[i][j][k], MPI_COMM_WORLD, &mpi_requests[i][j][k]); // TAG 0
 
   FOR_IJK_LOOP_END
 
@@ -512,8 +512,8 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
     continue;
 
 
-  //MPI_Send(send_data[i][j][k].data(), mpinf.total * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], MPI::COMM_WORLD); // TAG 1
-  MPI_Isend(send_data[i][j][k].data(), mpinf.total * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], MPI::COMM_WORLD, &mpi_requests[i][j][k]); // TAG 1
+  //MPI_Send(send_data[i][j][k].data(), mpinf.total * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], MPI_COMM_WORLD); // TAG 1
+  MPI_Isend(send_data[i][j][k].data(), mpinf.total * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], MPI_COMM_WORLD, &mpi_requests[i][j][k]); // TAG 1
 
   FOR_IJK_LOOP_END
 
@@ -527,8 +527,8 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
 
   recv_data[i][j][k].resize(mpinf.total * recv_num[i][j][k], 0);
 
-  //MPI_Recv(recv_data[i][j][k].data(), mpinf.total * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], MPI::COMM_WORLD, MPI_STATUS_IGNORE); // TAG 1  
-  MPI_Irecv(recv_data[i][j][k].data(), mpinf.total * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], MPI::COMM_WORLD, &mpi_requests[i][j][k]); // TAG 1  
+  //MPI_Recv(recv_data[i][j][k].data(), mpinf.total * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], MPI_COMM_WORLD, MPI_STATUS_IGNORE); // TAG 1  
+  MPI_Irecv(recv_data[i][j][k].data(), mpinf.total * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], MPI_COMM_WORLD, &mpi_requests[i][j][k]); // TAG 1  
 
   FOR_IJK_LOOP_END
 
@@ -629,12 +629,12 @@ bool Atom_data::exchange_owned_mpi_shared_atoms(long) // timestep
   // Checking num_of_particles code snippet
   //==========================================
   // {
-  // MPI_Barrier(MPI::COMM_WORLD);
+  // MPI_Barrier(MPI_COMM_WORLD);
   // long local_pos_size = pos.size();
   // long global_pos_size = 0;
   // MPI_Allreduce(&local_pos_size,
   //               &global_pos_size,
-  //               1, MPI::LONG, MPI_SUM, MPI::COMM_WORLD);
+  //               1, MPI::LONG, MPI_SUM, MPI_COMM_WORLD);
   // }
 
 

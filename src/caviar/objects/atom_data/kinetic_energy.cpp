@@ -143,7 +143,7 @@ double Atom_data::kinetic_energy(const int t)
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
   e_total = e_local;
 #elif defined(CAVIAR_WITH_MPI)
-  MPI_Allreduce(&e_local, &e_total, 1, MPI_DOUBLE, MPI_SUM, MPI::COMM_WORLD);
+  MPI_Allreduce(&e_local, &e_total, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 #else
   e_total = e_local;
 #endif
@@ -288,7 +288,7 @@ void Atom_data::finalize_pressure_total()
   double p2_total = 0;
   #ifdef CAVIAR_WITH_MPI
 
-  MPI_Allreduce(&p2, &p2_total, 1, MPI_DOUBLE, MPI_SUM, MPI::COMM_WORLD);
+  MPI_Allreduce(&p2, &p2_total, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
   #else
   p2_total = p2;
   #endif
@@ -333,7 +333,7 @@ Vector<Real_t> Atom_data::owned_position_cm()
 
 #elif defined(CAVIAR_WITH_MPI)
   double p_cm_f_total[3] = {0.0, 0.0, 0.0};
-  MPI_Allreduce(&p_cm_f, &p_cm_f_total, 3, MPI_DOUBLE, MPI_SUM, MPI::COMM_WORLD);
+  MPI_Allreduce(&p_cm_f, &p_cm_f_total, 3, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
   p_cm_f[0] = p_cm_f_total[0];
   p_cm_f[1] = p_cm_f_total[1];
   p_cm_f[2] = p_cm_f_total[2];
@@ -402,7 +402,7 @@ Vector<Real_t> Atom_data::owned_velocity_cm()
 
 #elif defined(CAVIAR_WITH_MPI)
   double v_cm_f_total[3] = {0.0, 0.0, 0.0};
-  MPI_Allreduce(&v_cm_f, &v_cm_f_total, 3, MPI_DOUBLE, MPI_SUM, MPI::COMM_WORLD);
+  MPI_Allreduce(&v_cm_f, &v_cm_f_total, 3, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
   v_cm_f[0] = v_cm_f_total[0];
   v_cm_f[1] = v_cm_f_total[1];
   v_cm_f[2] = v_cm_f_total[2];
@@ -466,7 +466,7 @@ Vector<double> Atom_data::owned_angular_momentum_cm(const Vector<double> &p_cm)
 
 #elif defined(CAVIAR_WITH_MPI)
   double L_cm_f_total[3] = {0.0, 0.0, 0.0};
-  MPI_Allreduce(&L_cm_f, &L_cm_f_total, 3, MPI_DOUBLE, MPI_SUM, MPI::COMM_WORLD);
+  MPI_Allreduce(&L_cm_f, &L_cm_f_total, 3, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
   L_cm_f[0] = L_cm_f_total[0];
   L_cm_f[1] = L_cm_f_total[1];
   L_cm_f[2] = L_cm_f_total[2];
@@ -548,7 +548,7 @@ std::array<std::array<double, 3>, 3>  Atom_data::owned_inertia_tensor_cm(const V
         0.0, 0.0, 0.0,
         0.0, 0.0, 0.0,
         0.0, 0.0, 0.0} ;
-  MPI_Allreduce(&I_cm_flat, &I_cm_flat_total, 9, MPI_DOUBLE, MPI_SUM, MPI::COMM_WORLD);
+  MPI_Allreduce(&I_cm_flat, &I_cm_flat_total, 9, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
   I_cm_flat [0] = I_cm_flat_total [0];
   I_cm_flat [1] = I_cm_flat_total [1];
   I_cm_flat [2] = I_cm_flat_total [2];
@@ -625,7 +625,7 @@ int Atom_data::degree_of_freedoms()
 
   int64_t dof_total = 0;
   int64_t dof_local = degree_of_freedoms_mpi_domain();
-  MPI_Allreduce(&dof_local, &dof_total, 1, MPI_LONG, MPI_SUM, MPI::COMM_WORLD);
+  MPI_Allreduce(&dof_local, &dof_total, 1, MPI_LONG, MPI_SUM, MPI_COMM_WORLD);
   return dof_total;
 
 #else

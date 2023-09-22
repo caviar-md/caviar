@@ -68,7 +68,7 @@ bool Atom_data::exchange_owned_mpi(long) // timestep
   const auto z_width = domain->upper_local.z - domain->lower_local.z;
 
   auto &pos = atom_struct_owned.position;
-  // MPI_Barrier(MPI::COMM_WORLD);
+  // MPI_Barrier(MPI_COMM_WORLD);
 
   auto &vel = atom_struct_owned.velocity;
   auto &acc = atom_struct_owned.acceleration;
@@ -472,7 +472,7 @@ bool Atom_data::exchange_owned_mpi(long) // timestep
   if (me == all[i][j][k])
     continue;
 
-  MPI_Send(&send_num[i][j][k], 1, MPI_INT, all[i][j][k], send_mpi_tag[i][j][k], MPI::COMM_WORLD); // TAG 0
+  MPI_Send(&send_num[i][j][k], 1, MPI_INT, all[i][j][k], send_mpi_tag[i][j][k], MPI_COMM_WORLD); // TAG 0
 
   FOR_IJK_LOOP_END
 
@@ -480,7 +480,7 @@ bool Atom_data::exchange_owned_mpi(long) // timestep
   if (me == all[i][j][k])
     continue;
 
-  MPI_Recv(&recv_num[i][j][k], 1, MPI_INT, all[i][j][k], recv_mpi_tag[i][j][k], MPI::COMM_WORLD, MPI_STATUS_IGNORE); // TAG 0
+  MPI_Recv(&recv_num[i][j][k], 1, MPI_INT, all[i][j][k], recv_mpi_tag[i][j][k], MPI_COMM_WORLD, MPI_STATUS_IGNORE); // TAG 0
 
   FOR_IJK_LOOP_END
 
@@ -501,7 +501,7 @@ bool Atom_data::exchange_owned_mpi(long) // timestep
   if (me == all[i][j][k])
     continue;
   if (send_num[i][j][k] > 0)
-    MPI_Send(send_data[i][j][k].data(), mpinf.total * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], MPI::COMM_WORLD); // TAG 1
+    MPI_Send(send_data[i][j][k].data(), mpinf.total * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], MPI_COMM_WORLD); // TAG 1
 
   FOR_IJK_LOOP_END
 
@@ -510,7 +510,7 @@ bool Atom_data::exchange_owned_mpi(long) // timestep
     continue;
 
   if (recv_num[i][j][k] > 0)
-    MPI_Recv(recv_data[i][j][k].data(), mpinf.total * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], MPI::COMM_WORLD, MPI_STATUS_IGNORE); // TAG 1
+    MPI_Recv(recv_data[i][j][k].data(), mpinf.total * recv_num[i][j][k], MPI_DOUBLE, all[i][j][k], recv_mpi_tag[i][j][k], MPI_COMM_WORLD, MPI_STATUS_IGNORE); // TAG 1
 
   FOR_IJK_LOOP_END
 
@@ -625,12 +625,12 @@ bool Atom_data::exchange_owned_mpi(long) // timestep
   // Checking num_of_particles code snippet
   //==========================================
   // {
-  // MPI_Barrier(MPI::COMM_WORLD);
+  // MPI_Barrier(MPI_COMM_WORLD);
   // long local_pos_size = pos.size();
   // long global_pos_size = 0;
   // MPI_Allreduce(&local_pos_size,
   //               &global_pos_size,
-  //               1, MPI::LONG, MPI_SUM, MPI::COMM_WORLD);
+  //               1, MPI::LONG, MPI_SUM, MPI_COMM_WORLD);
   // }
 
   return update_verlet_list;

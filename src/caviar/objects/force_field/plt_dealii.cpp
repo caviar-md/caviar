@@ -1410,7 +1410,7 @@ namespace force_field
       double f_si_total[3] = {0, 0, 0};
 
       MPI_Allreduce(&f_si_local, &f_si_total,
-                    3, MPI::DOUBLE, MPI_SUM, MPI::COMM_WORLD);
+                    3, MPI::DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 
       auto field_tot = dealii::Point<3>{f_si_total[0], f_si_total[1], f_si_total[2]} + f_sm;
 #else
@@ -1800,8 +1800,8 @@ namespace force_field
     error->all(FC_FILE_LINE_FUNC,"parallel code not implemented yet");
 
     int me, nprocs;
-    MPI_Comm_rank (MPI::COMM_WORLD, &me);
-    MPI_Comm_size (MPI::COMM_WORLD, &nprocs);
+    MPI_Comm_rank (MPI_COMM_WORLD, &me);
+    MPI_Comm_size (MPI_COMM_WORLD, &nprocs);
 
     MPI_Barrier (MPI_COMM_WORLD);
     const auto &pos = atom_data -> atom_struct_owned.position;
@@ -1810,22 +1810,22 @@ namespace force_field
     while (root < nprocs) {
 
       unsigned root_pos_size = pos.size();
-      MPI_Bcast (&root_pos_size, 1,  MPI::UNSIGNED, root, MPI::COMM_WORLD);
-      MPI_Barrier (MPI::COMM_WORLD);
+      MPI_Bcast (&root_pos_size, 1,  MPI::UNSIGNED, root, MPI_COMM_WORLD);
+      MPI_Barrier (MPI_COMM_WORLD);
 
       if (root == me) {
 
 
         for (int i = root+1; i < nprocs; ++i) {
-          MPI_Send (type.data(), root_pos_size, MPI::UNSIGNED, i, 0, MPI::COMM_WORLD);
-          MPI_Send (pos.data(), 3*root_pos_size, MPI::DOUBLE, i, 1, MPI::COMM_WORLD);
+          MPI_Send (type.data(), root_pos_size, MPI::UNSIGNED, i, 0, MPI_COMM_WORLD);
+          MPI_Send (pos.data(), 3*root_pos_size, MPI::DOUBLE, i, 1, MPI_COMM_WORLD);
         }
 
         std::vector<Vector<double>> root_acc (root_pos_size,{0,0,0});
 
         for (int i = root+1; i < nprocs; ++i) {
           MPI_Recv (root_acc.data(), 3*root_pos_size, MPI::DOUBLE,
-            root, 2, MPI::COMM_WORLD, MPI_STATUS_IGNORE);
+            root, 2, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         }
 
         for (unsigned  i=0;i<pos.size();++i) {
@@ -1838,10 +1838,10 @@ namespace force_field
           std::vector<unsigned> root_type (root_pos_size);
 
           MPI_Recv (root_type.data(), root_pos_size, MPI::UNSIGNED,
-            root, 0, MPI::COMM_WORLD, MPI_STATUS_IGNORE);
+            root, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
           MPI_Recv (root_pos.data(), 3*root_pos_size, MPI::DOUBLE,
-            root, 1, MPI::COMM_WORLD, MPI_STATUS_IGNORE);
+            root, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
 
           std::vector<Vector<double>> root_acc (root_pos_size,{0,0,0});
@@ -1868,7 +1868,7 @@ namespace force_field
         }
       }
 
-      MPI_Barrier (MPI::COMM_WORLD);
+      MPI_Barrier (MPI_COMM_WORLD);
       ++root;
     }
     */

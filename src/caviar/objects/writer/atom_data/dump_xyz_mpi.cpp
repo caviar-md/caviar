@@ -50,13 +50,13 @@ namespace writer
     if (my_mpi_rank != 0)
     {
 
-      MPI_Send(&send_num, 1, MPI::UNSIGNED, 0, 0, MPI::COMM_WORLD);
+      MPI_Send(&send_num, 1, MPI::UNSIGNED, 0, 0, MPI_COMM_WORLD);
     }
     if (my_mpi_rank == 0)
     {
       for (unsigned i = 1; i < nprocs; ++i)
       {
-        MPI_Recv(&recv_num[i], 1, MPI::UNSIGNED, i, 0, MPI::COMM_WORLD, MPI_STATUS_IGNORE);
+        MPI_Recv(&recv_num[i], 1, MPI::UNSIGNED, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
         num_total_atoms += recv_num[i];
       }
@@ -143,13 +143,13 @@ namespace writer
     if (my_mpi_rank != 0)
       if (send_num > 0)
 
-        MPI_Send(send_data.data(), mpinf.total * send_num, MPI_DOUBLE, 0, 0, MPI::COMM_WORLD); // TAG 1
+        MPI_Send(send_data.data(), mpinf.total * send_num, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD); // TAG 1
 
     if (my_mpi_rank == 0)
       for (unsigned i = 1; i < nprocs; ++i)
         if (recv_num[i] > 0)
 
-          MPI_Recv(recv_data[i].data(), mpinf.total * recv_num[i], MPI_DOUBLE, i, 0, MPI::COMM_WORLD, MPI_STATUS_IGNORE); // TAG 1
+          MPI_Recv(recv_data[i].data(), mpinf.total * recv_num[i], MPI_DOUBLE, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE); // TAG 1
 
     //-----------------------------------------------//
     if (my_mpi_rank != 0)
@@ -250,12 +250,12 @@ namespace writer
 
     //==================================// num_local_atoms send
     if (my_mpi_rank != 0)
-      MPI_Send(&send_num, 1, MPI::UNSIGNED, 0, 0, MPI::COMM_WORLD);
+      MPI_Send(&send_num, 1, MPI::UNSIGNED, 0, 0, MPI_COMM_WORLD);
 
     if (my_mpi_rank == 0)
     {
       for (unsigned i = 1; i < nprocs; ++i)
-        MPI_Recv(&recv_num[i], 1, MPI::UNSIGNED, i, 0, MPI::COMM_WORLD, MPI_STATUS_IGNORE);
+        MPI_Recv(&recv_num[i], 1, MPI::UNSIGNED, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
       for (unsigned int i = 1; i < nprocs; ++i)
         num_total_atoms += recv_num[i];
@@ -337,12 +337,12 @@ namespace writer
 
     if (my_mpi_rank != 0)
       if (send_num > 0)
-        MPI_Send(send_data.data(), mpinf.total * send_num, MPI_DOUBLE, 0, 0, MPI::COMM_WORLD); // TAG 1
+        MPI_Send(send_data.data(), mpinf.total * send_num, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD); // TAG 1
 
     if (my_mpi_rank == 0)
       for (unsigned i = 1; i < nprocs; ++i)
         if (recv_num[i] > 0)
-          MPI_Recv(recv_data[i].data(), mpinf.total * recv_num[i], MPI_DOUBLE, i, 0, MPI::COMM_WORLD, MPI_STATUS_IGNORE); // TAG 1
+          MPI_Recv(recv_data[i].data(), mpinf.total * recv_num[i], MPI_DOUBLE, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE); // TAG 1
 
     //-----------------------------------------------//
 
