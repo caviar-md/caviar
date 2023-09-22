@@ -151,7 +151,35 @@ double Atom_data::kinetic_energy(const int t)
   return e_total;
 }
 
-double Atom_data::temperature()
+void Atom_data::add_to_temperature(double , int ) 
+{
+  //pressure_mpi_domain_ += v;
+  error->all(FC_FILE_LINE_FUNC, "Not implemented");
+}
+
+void Atom_data::finalize_temperature()
+{
+
+  if (!temperature_process)
+    return;
+
+  reset_temperature();
+
+#if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
+  finalize_temperature_mpi_domain();
+  temperature_ = temperature_mpi_domain_;
+#elif defined(CAVIAR_WITH_MPI)
+  finalize_temperature_total();
+  finalize_temperature_mpi_domain();
+#else
+  finalize_temperature_mpi_domain();
+  temperature_ = temperature_mpi_domain_;
+#endif
+
+}
+
+
+void Atom_data::finalize_temperature_total()
 {
   if (k_b < 0)
     error->all(FC_FILE_LINE_FUNC, "k_b is not set.");
@@ -159,11 +187,11 @@ double Atom_data::temperature()
   // by equipartition theorem, k = 1/2 * k_b * N_df * T.
   // It is implemented according to
   // 'Berendsen and Nose-Hoover thermostats Victor Ruhle August 8, 2007'
-  return 2.0 * kinetic_energy() / (k_b * degree_of_freedoms());
+  temperature_ = 2.0 * kinetic_energy() / (k_b * degree_of_freedoms());
 }
 
 
-double Atom_data::temperature_mpi_domain()
+void Atom_data::finalize_temperature_mpi_domain()
 {
   if (k_b < 0)
     error->all(FC_FILE_LINE_FUNC, "k_b is not set.");
@@ -171,15 +199,9 @@ double Atom_data::temperature_mpi_domain()
   // by equipartition theorem, k = 1/2 * k_b * N_df * T.
   // It is implemented according to
   // 'Berendsen and Nose-Hoover thermostats Victor Ruhle August 8, 2007'
-  return 2.0 * kinetic_energy_mpi_domain() / (k_b * degree_of_freedoms_mpi_domain());
+  temperature_mpi_domain_ = 2.0 * kinetic_energy_mpi_domain() / (k_b * degree_of_freedoms_mpi_domain());
 }
 
-
-void Atom_data::reset_pressure()
-{
-  pressure_ = 0;
-  pressure_mpi_domain_ = 0;
-}
 
 void Atom_data::add_to_pressure(double , int ) 
 {
@@ -192,13 +214,15 @@ void Atom_data::finalize_pressure()
 
   if (!pressure_process)
     return;
+    
+  reset_pressure();
 
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
   finalize_pressure_mpi_domain();
   pressure_ = pressure_mpi_domain_;
 #elif defined(CAVIAR_WITH_MPI)
-  //MPI_Allreduce(&e_local, &e_total, 1, MPI_DOUBLE, MPI_SUM, MPI::COMM_WORLD);
   finalize_pressure_total();
+  finalize_pressure_mpi_domain();
 #else
   finalize_pressure_mpi_domain();
   pressure_ = pressure_mpi_domain_;

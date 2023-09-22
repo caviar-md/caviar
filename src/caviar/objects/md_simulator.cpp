@@ -361,13 +361,9 @@ void Md_simulator::re_calculate_acc()
 
   atom_data->reset_owned_acceleration();
 
-  atom_data->reset_pressure();
-
   for (auto &&f : force_field)
     f->calculate_acceleration();
   
-
-  atom_data->finalize_pressure();
 }
 
 void Md_simulator::step(int64_t i)
@@ -429,12 +425,10 @@ void Md_simulator::step()
 
   atom_data -> reset_owned_acceleration();
 
-  atom_data->reset_pressure();
 
   for (auto&& f : force_field)
     f -> calculate_acceleration ();
 
-  atom_data->finalize_pressure();
 
   MPI_Barrier(MPI::COMM_WORLD);
 
@@ -531,10 +525,10 @@ void Md_simulator::setup()
 
   atom_data->reset_owned_acceleration();
 
-  atom_data->reset_pressure();
-
   for (auto &&f : force_field)
     f->calculate_acceleration();
+
+  atom_data->finalize_temperature();
 
   atom_data->finalize_pressure();
   
@@ -603,6 +597,10 @@ void Md_simulator::integrate_velocity_verlet()
     vel[i] += 0.5 * dt * (acc[i] + acc_old[i]); // v(t+dt) = v(t) + ( a(t+dt) + a(t) ) * dt / 2
   }
 
+  atom_data->finalize_temperature();
+
+  atom_data->finalize_pressure();
+
   for (auto &&c : constraint)
     c->apply_on_velocity(current_step);
 
@@ -664,8 +662,15 @@ void Md_simulator::integrate_velocity_verlet_langevin()
     // std::cout << "acc " << acc[i] << ",vel " << vel[i] << "\n";
   }
 
+
+  atom_data->finalize_temperature();
+
+  atom_data->finalize_pressure();
+
   for (auto &&c : constraint)
     c->apply_on_velocity(current_step);
+
+
 
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
@@ -763,6 +768,10 @@ void Md_simulator::integrate_leap_frog()
 #endif
     vel[i] += 0.5 * dt * acc[i]; // v (t + dt) = v (t + dt/2) + (dt/2) a (t + dt)
   }
+
+  atom_data->finalize_temperature();
+
+  atom_data->finalize_pressure();
 
   for (auto &&c : constraint)
     c->apply_on_velocity(current_step);

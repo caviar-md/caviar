@@ -306,14 +306,41 @@ public:
    * by means of equipartition theorem, 'k = 1/2 * k_b * N_df * T'.
    * It can be defined differently, or for a subset of degree of freedoms.
    */
-  virtual double temperature();
+  virtual double temperature() {return temperature_;};
 
   /**
    * calculates the instantaneous temperature of all of the owned atoms.
    * by means of equipartition theorem, 'k = 1/2 * k_b * N_df * T'.
    * It can be defined differently, or for a subset of degree of freedoms.
    */
-  virtual double temperature_mpi_domain();
+  virtual double temperature_mpi_domain() {return temperature_mpi_domain_;};
+
+  /**
+   * add pair-wise part without coefficient.
+   * 'type' is used to pass a flag
+   */
+  virtual void add_to_temperature(double v, int type);
+  
+  /**
+   * calculate the temperature
+   */
+  virtual void finalize_temperature();
+
+  /**
+   * calculate the domains temperature via kinetic energy of local particles
+   */
+  virtual void finalize_temperature_mpi_domain();
+
+  /**
+   * calculate the total temperature via kinetic energy of all the particles 
+   */
+  virtual void finalize_temperature_total();
+
+  /**
+   * set temperature to zero for a new time-step
+   */
+  virtual void reset_temperature() {temperature_ = 0; temperature_mpi_domain_ = 0;}
+
 
   /**
    * returns the instantaneous pressure of all of the owned atoms.
@@ -332,29 +359,24 @@ public:
   virtual void add_to_pressure(double v, int type);
   
   /**
-   * add temperature part
+   * calculate the pressure
    */
   virtual void finalize_pressure();
 
   /**
-   * add temperature part
+   * calculate the domains pressure via accelerations of local particles and local temperature
    */
   virtual void finalize_pressure_mpi_domain();
 
-    /**
-   * add temperature part
+  /**
+   * calculate the total pressure via accelerations of all the particles and total temperature
    */
   virtual void finalize_pressure_total();
 
   /**
    * set pressure to zero for a new time-step
    */
-  virtual void reset_pressure(); 
-
-  bool pressure_process = false;
-
-  double pressure_ = 0;
-  double pressure_mpi_domain_ = 0;
+  virtual void reset_pressure() {pressure_ = 0; pressure_mpi_domain_ = 0;}
 
 
   /**
@@ -642,6 +664,17 @@ public:
    * it turns the process of recording owned data in the releated std::vector
    */
   bool record_owned_position_old, record_owned_velocity_old, record_owned_acceleration_old;
+
+
+  bool pressure_process = false;
+
+  double pressure_ = 0;
+  double pressure_mpi_domain_ = 0;
+
+  bool temperature_process = true;
+
+  double temperature_ = 0;
+  double temperature_mpi_domain_ = 0;
 
   /**
    * It stores the info about location of the owned Atom_struct data inside the MPI packets.
