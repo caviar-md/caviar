@@ -382,7 +382,7 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long) // timestep
 
   if (send_num[i][j][k] == 0)
     continue;  
-   MPI_Request request;
+
   //MPI_Send(send_data[i][j][k].data(), mpinf.total * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], MPI::COMM_WORLD); // TAG 1
   MPI_Isend(send_data[i][j][k].data(), mpinf.total * send_num[i][j][k], MPI_DOUBLE, all[i][j][k], send_mpi_tag[i][j][k], MPI::COMM_WORLD, &mpi_requests[i][j][k]); // TAG 1
   

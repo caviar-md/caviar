@@ -231,7 +231,7 @@ void Atom_data::finalize_pressure_mpi_domain()
   p2 = p2 / (3.0 * volume);
 
   
-  double p1 = (Num_active * k_b * temperature()) / volume;
+  double p1 = (Num_active * k_b * temperature_mpi_domain()) / volume;
 
   pressure_mpi_domain_ = p1 + p2;
 
@@ -240,7 +240,7 @@ void Atom_data::finalize_pressure_mpi_domain()
 void Atom_data::finalize_pressure_total()
 {
 
-  auto d_diff = (domain->upper_local - domain->lower_local);
+  auto d_diff = (domain->upper_global - domain->lower_global);
   double volume = d_diff.x * d_diff.y * d_diff.z;
 
   double p2 = 0;
@@ -274,7 +274,7 @@ void Atom_data::finalize_pressure_total()
   p2_total = p2_total / (3.0 * volume);
 
 
-  pressure_mpi_domain_ = p1 + p2_total;
+  pressure_ = p1 + p2_total;
 }
 
 
