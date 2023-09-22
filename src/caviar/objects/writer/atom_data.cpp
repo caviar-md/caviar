@@ -41,11 +41,11 @@ namespace writer
     if (ofs_xyz.is_open())
       ofs_xyz.close();
 
-    if (ofs_xyz_ghost.is_open())
-      ofs_xyz_ghost.close();
-
     if (ofs_xyz_mpi.is_open())
       ofs_xyz_mpi.close();
+
+    if (ofs_xyz_ghost.is_open())
+      ofs_xyz_ghost.close();
 
     if (ofs_xyz_ghost_mpi.is_open())
       ofs_xyz_ghost_mpi.close();
@@ -53,17 +53,38 @@ namespace writer
     if (ofs_energy.is_open())
       ofs_energy.close();
 
+    if (ofs_energy_mpi.is_open())
+      ofs_energy_mpi.close();
+
     if (ofs_temperature.is_open())
       ofs_temperature.close();
+
+    if (ofs_temperature_mpi.is_open())
+      ofs_temperature_mpi.close();
 
     if (ofs_pressure.is_open())
       ofs_pressure.close();
 
+    if (ofs_pressure_mpi.is_open())
+      ofs_pressure_mpi.close();
+
     if (ofs_povray.is_open())
       ofs_povray.close();
 
+    if (ofs_povray_mpi.is_open())
+      ofs_povray_mpi.close();
+
     if (ofs_msd.is_open())
       ofs_msd.close();
+
+    if (ofs_msd_mpi.is_open())
+      ofs_msd_mpi.close();
+
+    if (ofs_volume.is_open())
+      ofs_volume.close();
+
+    if (ofs_volume_mpi.is_open())
+      ofs_volume_mpi.close();
   }
 
   bool Atom_data::read(caviar::interpreter::Parser *parser)
@@ -84,39 +105,114 @@ namespace writer
         FIND_OBJECT_BY_NAME(domain, it)
         domain = object_container->domain[it->second.index];
       }
-      else if (string_cmp(t, "mpi_separate_files"))
+      else if (string_cmp(t, "xyz_mpi_per_process"))
       {
-        mpi_separate_files = true;
+        xyz_mpi_per_process = true;
       }
-      else if (string_cmp(t, "mpi_single_file"))
+      else if (string_cmp(t, "xyz_ghost_mpi_per_process"))
       {
-        mpi_single_file = true;
+        xyz_ghost_mpi_per_process = true;
+      }
+      else if (string_cmp(t, "energy_mpi_per_process"))
+      {
+        energy_mpi_per_process = true;
+      }
+      else if (string_cmp(t, "temperature_mpi_per_process"))
+      {
+        temperature_mpi_per_process = true;
+      }
+      else if (string_cmp(t, "pressure_mpi_per_process"))
+      {
+        pressure_mpi_per_process = true;
+      }
+      else if (string_cmp(t, "povray_mpi_per_process"))
+      {
+        povray_mpi_per_process = true;
+      }
+      else if (string_cmp(t, "msd_mpi_per_process"))
+      {
+        msd_mpi_per_process = true;
+      }
+      else if (string_cmp(t, "volume_mpi_per_process"))
+      {
+        volume_mpi_per_process = true;
+      }
+      else if (string_cmp(t, "xyz_mpi_rank0"))
+      {
+        xyz_mpi_rank0 = true;
+      }
+      else if (string_cmp(t, "xyz_ghost_mpi_rank0"))
+      {
+        xyz_ghost_mpi_rank0 = true;
+      }
+      else if (string_cmp(t, "energy_mpi_rank0"))
+      {
+        energy_mpi_rank0 = true;
+      }
+      else if (string_cmp(t, "temperature_mpi_rank0"))
+      {
+        temperature_mpi_rank0 = true;
+      }
+      else if (string_cmp(t, "pressure_mpi_rank0"))
+      {
+        pressure_mpi_rank0 = true;
+      }
+      else if (string_cmp(t, "povray_mpi_rank0"))
+      {
+        povray_mpi_rank0 = true;
+      }
+      else if (string_cmp(t, "msd_mpi_rank0"))
+      {
+        msd_mpi_rank0 = true;
+      }
+      else if (string_cmp(t, "volume_mpi_rank0"))
+      {
+        volume_mpi_rank0 = true;
       }
       else if (string_cmp(t, "xyz_ghost_step"))
       {
         GET_OR_CHOOSE_A_INT(xyz_ghost_step, "", "")
         output_xyz_ghost = true;
+        if (xyz_ghost_step <= 0)
+        {
+          output_xyz_ghost = false;
+        }
       }
       else if (string_cmp(t, "xyz_step"))
       {
         GET_OR_CHOOSE_A_INT(xyz_step, "", "")
         output_xyz = true;
-        xyz_ghost_step = xyz_step;
+        if (xyz_step <= 0)
+        {
+          output_xyz = false;
+        }
       }
       else if (string_cmp(t, "povray_step"))
       {
         GET_OR_CHOOSE_A_INT(povray_step, "", "")
         output_povray = true;
+        if (povray_step <= 0)
+        {
+          output_povray = false;
+        }
       }
       else if (string_cmp(t, "energy_step"))
       {
         GET_OR_CHOOSE_A_INT(energy_step, "", "")
         output_energy = true;
+        if (energy_step <= 0)
+        {
+          output_energy = false;
+        }
       }
       else if (string_cmp(t, "temperature_step"))
       {
         GET_OR_CHOOSE_A_INT(temperature_step, "", "")
         output_temperature = true;
+        if (temperature_step <= 0)
+        {
+          output_temperature = false;
+        }
       }
       else if (string_cmp(t, "pressure_step"))
       {
@@ -131,11 +227,24 @@ namespace writer
       {
         GET_OR_CHOOSE_A_INT(msd_step, "", "")
         output_msd = true;
+        if (msd_step <= 0)
+        {
+          output_msd = false;
+        }
       }
       else if (string_cmp(t, "msd_initial_step"))
       {
         GET_OR_CHOOSE_A_INT(msd_initial_step, "", "")
-        output_msd = true;
+        // output_msd = true;
+      }
+      else if (string_cmp(t, "volume_step"))
+      {
+        GET_OR_CHOOSE_A_INT(volume_step, "", "")
+        output_volume = true;
+        if (pressure_step <= 0)
+        {
+          output_pressure = false;
+        }
       }
       else if (string_cmp(t, "file_name_xyz"))
       {
@@ -165,6 +274,10 @@ namespace writer
       {
         file_name_msd = parser->get_val_token().string_value;
       }
+      else if (string_cmp(t, "file_name_volume"))
+      {
+        file_name_volume = parser->get_val_token().string_value;
+      }
       else if (string_cmp(t, "open_files"))
       {
         open_files();
@@ -173,24 +286,24 @@ namespace writer
       {
         close_files();
       }
-      else if (string_cmp(t, "output_id"))
+      else if (string_cmp(t, "xyz_output_id"))
       {
-        output_id = true;
+        xyz_output_id = true;
       }
-      else if (string_cmp(t, "output_velocity"))
+      else if (string_cmp(t, "xyz_output_velocity"))
       {
-        output_velocity = true;
+        xyz_output_velocity = true;
       }
-      else if (string_cmp(t, "output_acceleration"))
+      else if (string_cmp(t, "xyz_output_acceleration"))
       {
-        // output_acceleration = true;
-        std::ofstream ofs("o_acc");
-        const auto &pos = atom_data->atom_struct_owned.position;
-        const auto &acc = atom_data->atom_struct_owned.acceleration;
-        for (unsigned int i = 0; i < pos.size(); ++i)
-        {
-          ofs << i << " " << acc[i].x << "\t" << acc[i].y << "\t" << acc[i].z << "\n";
-        }
+        xyz_output_acceleration = true;
+        // std::ofstream ofs("o_acc");
+        // const auto &pos = atom_data->atom_struct_owned.position;
+        // const auto &acc = atom_data->atom_struct_owned.acceleration;
+        // for (unsigned int i = 0; i < pos.size(); ++i)
+        // {
+        //   ofs << i << " " << acc[i].x << "\t" << acc[i].y << "\t" << acc[i].z << "\n";
+        // }
       }
       else if (string_cmp(t, "set_position_offset"))
       {
@@ -218,6 +331,10 @@ namespace writer
         error->all(FC_FILE_LINE_FUNC, "In order to have 'output_msd' in writer::Atom_data, 'msd_process' must be activated in atom_data::Atom_data");
     }
 
+    if (output_volume)
+    {
+      FC_NULLPTR_CHECK(domain)
+    }
     // --- just to make povray outpuy folder ---
     if (my_mpi_rank == 0)
     {
@@ -266,30 +383,56 @@ namespace writer
       if (output_msd)
         if (!ofs_msd.is_open())
           ofs_msd.open((file_name_msd + ".txt").c_str());
+
+      if (output_volume)
+        if (!ofs_volume.is_open())
+          ofs_volume.open((file_name_volume + ".txt").c_str());
     }
 #elif defined(CAVIAR_WITH_MPI)
-    if (mpi_separate_files)
-    {
-      if (output_xyz)
-        if (!ofs_xyz_mpi.is_open())
-          ofs_xyz_mpi.open((file_name_xyz + "_mpi" + std::to_string(my_mpi_rank) + ".xyz").c_str());
 
-      if (output_xyz_ghost)
-        if (!ofs_xyz_ghost_mpi.is_open())
-          ofs_xyz_ghost_mpi.open((file_name_xyz_ghost + "_mpi" + std::to_string(my_mpi_rank) + ".xyz").c_str());
-    }
+    if (output_xyz && xyz_mpi_per_process)
+      if (!ofs_xyz_mpi.is_open())
+        ofs_xyz_mpi.open((file_name_xyz + "_mpi" + std::to_string(my_mpi_rank) + ".xyz").c_str());
+
+    if (output_xyz_ghost && xyz_ghost_mpi_per_process)
+      if (!ofs_xyz_ghost_mpi.is_open())
+        ofs_xyz_ghost_mpi.open((file_name_xyz_ghost + "_mpi" + std::to_string(my_mpi_rank) + ".xyz").c_str());
+
+    if (output_povray && povray_mpi_per_process)
+      if (!ofs_povray_mpi.is_open())
+        ofs_povray_mpi.open((file_name_povray + "_mpi" + std::to_string(my_mpi_rank) + ".pov").c_str());
+
+    if (output_energy && energy_mpi_per_process)
+      if (!ofs_energy_mpi.is_open())
+        ofs_energy_mpi.open((file_name_energy + "_mpi" + std::to_string(my_mpi_rank) + ".txt").c_str());
+
+    if (output_temperature && temperature_mpi_per_process)
+      if (!ofs_temperature_mpi.is_open())
+        ofs_temperature_mpi.open((file_name_temperature + "_mpi" + std::to_string(my_mpi_rank) + ".txt").c_str());
+
+    if (output_pressure && pressure_mpi_per_process)
+      if (!ofs_pressure_mpi.is_open())
+        ofs_pressure_mpi.open((file_name_pressure + "_mpi" + std::to_string(my_mpi_rank) + ".txt").c_str());
+
+    if (output_msd && msd_mpi_per_process)
+      if (!ofs_msd_mpi.is_open())
+        ofs_msd_mpi.open((file_name_msd + "_mpi" + std::to_string(my_mpi_rank) + ".txt").c_str());
+
+    if (output_volume && volume_mpi_per_process)
+      if (!ofs_volume_mpi.is_open())
+        ofs_volume_mpi.open((file_name_volume + "_mpi" + std::to_string(my_mpi_rank) + ".txt").c_str());
+
     if (my_mpi_rank == 0)
     {
-      if (mpi_single_file)
-      {
-        if (output_xyz)
-          if (!ofs_xyz.is_open())
-            ofs_xyz.open((file_name_xyz + ".xyz").c_str());
 
-        if (output_xyz_ghost)
-          if (!ofs_xyz_ghost.is_open())
-            ofs_xyz_ghost.open((file_name_xyz_ghost + ".xyz").c_str());
-      }
+      if (output_xyz)
+        if (!ofs_xyz.is_open())
+          ofs_xyz.open((file_name_xyz + ".xyz").c_str());
+
+      if (output_xyz_ghost)
+        if (!ofs_xyz_ghost.is_open())
+          ofs_xyz_ghost.open((file_name_xyz_ghost + ".xyz").c_str());
+
       if (output_povray)
         if (!ofs_povray.is_open())
           ofs_povray.open((file_name_povray + ".pov").c_str());
@@ -309,7 +452,11 @@ namespace writer
       if (output_msd)
         if (!ofs_msd.is_open())
           ofs_msd.open((file_name_msd + ".txt").c_str());
-    } 
+
+      if (output_volume)
+        if (!ofs_volume.is_open())
+          ofs_volume.open((file_name_volume + ".txt").c_str());
+    }
 #else
 
     if (output_xyz)
@@ -339,6 +486,10 @@ namespace writer
     if (output_msd)
       if (!ofs_msd.is_open())
         ofs_msd.open((file_name_msd + ".txt").c_str());
+
+    if (output_volume)
+      if (!ofs_volume.is_open())
+        ofs_volume.open((file_name_volume + ".txt").c_str());
 #endif
   }
 
@@ -346,8 +497,11 @@ namespace writer
   void Atom_data::close_files() {}
   void Atom_data::generate() {}
 
-  void Atom_data::report_xyz_dump(int64_t i, double )
+  void Atom_data::report_xyz_dump(int64_t i, double)
   {
+    if (my_mpi_rank != 0)
+      return;
+
     double wallTimeXyzDump2 = get_wall_time();
 
     double dtstart = wallTimeXyzDump2 - wallTimeXyzDump1;
@@ -363,7 +517,6 @@ namespace writer
     if (!initialized)
       initialize();
 
-
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
 
     if (my_mpi_rank == 0)
@@ -374,28 +527,16 @@ namespace writer
 
     if (comm->nprocs > 1)
     {
-      if (mpi_single_file)
-      {
-        write_mpi_shared_atoms(i, t);
-        // write_mpi(i);
-      }
-      if (mpi_separate_files)
-        write_serial(i, t, true);
+      write_mpi_shared_atoms(i, t);
     }
-    else
-    {
-      write_serial(i, t);
-    }
+
+    write_serial(i, t);
 
 #else
 
     write_serial(i, t);
 
 #endif
-
-
-
-
   }
 
   void Atom_data::write_mpi(int64_t i, double t)
@@ -430,6 +571,10 @@ namespace writer
     if (output_msd)
       if (i % msd_step == 0)
         dump_msd_mpi(i, t);
+
+    if (output_volume)
+      if (i % volume_step == 0)
+        dump_volume_mpi(i, t);
   }
 
   void Atom_data::write_mpi_shared_atoms(int64_t i, double t)
@@ -464,40 +609,48 @@ namespace writer
     if (output_msd)
       if (i % msd_step == 0)
         dump_msd_mpi_shared_atoms(i, t);
+
+    if (output_volume)
+      if (i % volume_step == 0)
+        dump_volume_mpi_shared_atoms(i, t);
   }
 
-  void Atom_data::write_serial(int64_t i, double t, bool mpi_files)
+  void Atom_data::write_serial(int64_t i, double t)
   {
     if (output_xyz)
       if (i % xyz_step == 0)
       {
-        dump_xyz_serial(i, t, mpi_files);
+        dump_xyz_serial(i, t);
         report_xyz_dump(i, t);
       }
 
     if (output_xyz_ghost)
       if (i % xyz_ghost_step == 0)
-        dump_xyz_ghost_serial(i, t, mpi_files);
+        dump_xyz_ghost_serial(i, t);
 
     if (output_energy)
       if (i % energy_step == 0)
-        dump_energy_serial(i, t, mpi_files);
+        dump_energy_serial(i, t);
 
     if (output_temperature)
       if (i % temperature_step == 0)
-        dump_temperature_serial(i, t, mpi_files);
+        dump_temperature_serial(i, t);
 
     if (output_pressure)
       if (i % pressure_step == 0)
-        dump_pressure_serial(i, t, mpi_files);
+        dump_pressure_serial(i, t);
 
     if (output_povray)
       if (i % povray_step == 0)
-        dump_povray_serial(i, t, mpi_files);
+        dump_povray_serial(i, t);
 
     if (output_msd)
       if (i % msd_step == 0)
-        dump_msd_serial(i, t, mpi_files);
+        dump_msd_serial(i, t);
+
+    if (output_volume)
+      if (i % volume_step == 0)
+        dump_volume_serial(i, t);
   }
 
   void Atom_data::start_new_files() {}              // add_time_to_previous

@@ -33,7 +33,7 @@ namespace writer
     
   }
 
-  void Atom_data::dump_povray_serial(int64_t, double, bool)
+  void Atom_data::dump_povray_serial(int64_t, double)
   {
     /*
     #ifdef CAVIAR_WITH_MPI

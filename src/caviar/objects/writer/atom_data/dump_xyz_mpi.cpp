@@ -28,7 +28,6 @@ CAVIAR_NAMESPACE_OPEN
 namespace writer
 {
 
-
   //================================================
   //                                              ||
   //================================================
@@ -68,7 +67,7 @@ namespace writer
     {
       mpinf.initialized = true;
       mpinf.total = 0;
-      if (output_id)
+      if (xyz_output_id)
       {
         mpinf.id = mpinf.total;
         mpinf.total += 1;
@@ -79,12 +78,12 @@ namespace writer
       mpinf.pos = mpinf.total;
       mpinf.total += 3;
 
-      if (output_velocity)
+      if (xyz_output_velocity)
       {
         mpinf.vel = mpinf.total;
         mpinf.total += 3;
       }
-      if (output_acceleration)
+      if (xyz_output_acceleration)
       {
         mpinf.acc = mpinf.total;
         mpinf.total += 3;
@@ -116,7 +115,7 @@ namespace writer
 
       for (unsigned int i = 0; i < send_num; ++i)
       {
-        if (output_id)
+        if (xyz_output_id)
           send_data[mpinf.id * N + i] = id[i];
 
         send_data[mpinf.type * N + i] = type[i];
@@ -125,14 +124,14 @@ namespace writer
         send_data[(mpinf.pos * N) + (3 * i) + 1] = pos[i].y;
         send_data[(mpinf.pos * N) + (3 * i) + 2] = pos[i].z;
 
-        if (output_velocity)
+        if (xyz_output_velocity)
         {
           send_data[(mpinf.vel * N) + (3 * i) + 0] = vel[i].x;
           send_data[(mpinf.vel * N) + (3 * i) + 1] = vel[i].y;
           send_data[(mpinf.vel * N) + (3 * i) + 2] = vel[i].z;
         }
 
-        if (output_acceleration)
+        if (xyz_output_acceleration)
         {
           send_data[(mpinf.acc * N) + (3 * i) + 0] = acc[i].x;
           send_data[(mpinf.acc * N) + (3 * i) + 1] = acc[i].y;
@@ -166,7 +165,7 @@ namespace writer
     for (unsigned int i = 0; i < send_num; ++i)
     {
       ofs_xyz << type[i];
-      if (output_id)
+      if (xyz_output_id)
       {
 
         ofs_xyz << " " << id[i];
@@ -174,9 +173,9 @@ namespace writer
 
       ofs_xyz << " " << pos[i].x + p_o.x << " " << pos[i].y + p_o.y << " " << pos[i].z + p_o.z;
 
-      if (output_velocity)
+      if (xyz_output_velocity)
         ofs_xyz << " " << vel[i].x << " " << vel[i].y << " " << vel[i].z;
-      if (output_acceleration)
+      if (xyz_output_acceleration)
         ofs_xyz << " " << acc[i].x << " " << acc[i].y << " " << acc[i].z;
       ofs_xyz << "\n";
     }
@@ -197,7 +196,7 @@ namespace writer
 
         ofs_xyz << type_j;
 
-        if (output_id)
+        if (xyz_output_id)
         {
           auto id_j = recv_data[i][mpinf.id * N + j];
 
@@ -206,7 +205,7 @@ namespace writer
 
         ofs_xyz << " " << pos_x + p_o.x << " " << pos_y + p_o.y << " " << pos_z + p_o.z;
 
-        if (output_velocity)
+        if (xyz_output_velocity)
         {
           auto vel_x = recv_data[i][(mpinf.vel * N) + (3 * j) + 0];
           auto vel_y = recv_data[i][(mpinf.vel * N) + (3 * j) + 1];
@@ -214,7 +213,7 @@ namespace writer
           ofs_xyz << " " << vel_x << " " << vel_y << " " << vel_z;
         }
 
-        if (output_acceleration)
+        if (xyz_output_acceleration)
         {
           auto acc_x = recv_data[i][(mpinf.acc * N) + (3 * j) + 0];
           auto acc_y = recv_data[i][(mpinf.acc * N) + (3 * j) + 1];
@@ -269,10 +268,10 @@ namespace writer
       mpinf.initialized = true;
       mpinf.total = 0;
 
-        if (output_id)
-    {  
-      mpinf.id = mpinf.total;
-      mpinf.total += 1;
+      if (xyz_output_id)
+      {
+        mpinf.id = mpinf.total;
+        mpinf.total += 1;
       }
       mpinf.type = mpinf.total;
       mpinf.total += 1;
@@ -280,12 +279,12 @@ namespace writer
       mpinf.pos = mpinf.total;
       mpinf.total += 3;
 
-      if (output_velocity)
+      if (xyz_output_velocity)
       {
         mpinf.vel = mpinf.total;
         mpinf.total += 3;
       }
-      if (output_acceleration)
+      if (xyz_output_acceleration)
       {
         mpinf.acc = mpinf.total;
         mpinf.total += 3;
@@ -310,7 +309,7 @@ namespace writer
 
       for (unsigned int i = 0; i < send_num; ++i)
       {
-        if (output_id)
+        if (xyz_output_id)
           send_data[mpinf.id * N + i] = id[i];
 
         send_data[mpinf.type * N + i] = type[i];
@@ -319,14 +318,14 @@ namespace writer
         send_data[(mpinf.pos * N) + (3 * i) + 1] = pos[i].y;
         send_data[(mpinf.pos * N) + (3 * i) + 2] = pos[i].z;
 
-        if (output_velocity)
+        if (xyz_output_velocity)
         {
           send_data[(mpinf.vel * N) + (3 * i) + 0] = vel[i].x;
           send_data[(mpinf.vel * N) + (3 * i) + 1] = vel[i].y;
           send_data[(mpinf.vel * N) + (3 * i) + 2] = vel[i].z;
         }
 
-        if (output_acceleration)
+        if (xyz_output_acceleration)
         {
           send_data[(mpinf.acc * N) + (3 * i) + 0] = acc[i].x;
           send_data[(mpinf.acc * N) + (3 * i) + 1] = acc[i].y;
@@ -359,14 +358,14 @@ namespace writer
 
     for (unsigned int i = 0; i < send_num; ++i)
     {
-      ofs_xyz_ghost << type[i] ;
-      if (output_id)
-            ofs_xyz_ghost << " " << id[i] ;
+      ofs_xyz_ghost << type[i];
+      if (xyz_output_id)
+        ofs_xyz_ghost << " " << id[i];
 
       ofs_xyz_ghost << " " << pos[i].x + p_o.x << " " << pos[i].y + p_o.y << " " << pos[i].z + p_o.z;
-      if (output_velocity)
+      if (xyz_output_velocity)
         ofs_xyz_ghost << " " << vel[i].x << " " << vel[i].y << " " << vel[i].z;
-      if (output_acceleration)
+      if (xyz_output_acceleration)
         ofs_xyz_ghost << " " << acc[i].x << " " << acc[i].y << " " << acc[i].z;
       ofs_xyz_ghost << "\n";
     }
@@ -377,22 +376,21 @@ namespace writer
       for (unsigned int j = 0; j < recv_num[i]; ++j)
       {
 
-
         auto type_j = recv_data[i][mpinf.type * N + j];
 
         auto pos_x = recv_data[i][(mpinf.pos * N) + (3 * j) + 0];
         auto pos_y = recv_data[i][(mpinf.pos * N) + (3 * j) + 1];
         auto pos_z = recv_data[i][(mpinf.pos * N) + (3 * j) + 2];
-        ofs_xyz_ghost << type_j ;
-        if (output_id)
+        ofs_xyz_ghost << type_j;
+        if (xyz_output_id)
         {
           auto id_j = recv_data[i][mpinf.id * N + j];
 
-        ofs_xyz_ghost << " " << id_j ;
-}
+          ofs_xyz_ghost << " " << id_j;
+        }
         ofs_xyz_ghost << " " << pos_x + p_o.x << " " << pos_y + p_o.y << " " << pos_z + p_o.z;
 
-        if (output_velocity)
+        if (xyz_output_velocity)
         {
           auto vel_x = recv_data[i][(mpinf.vel * N) + (3 * j) + 0];
           auto vel_y = recv_data[i][(mpinf.vel * N) + (3 * j) + 1];
@@ -400,7 +398,7 @@ namespace writer
           ofs_xyz_ghost << " " << vel_x << " " << vel_y << " " << vel_z;
         }
 
-        if (output_acceleration)
+        if (xyz_output_acceleration)
         {
           auto acc_x = recv_data[i][(mpinf.acc * N) + (3 * j) + 0];
           auto acc_y = recv_data[i][(mpinf.acc * N) + (3 * j) + 1];
@@ -416,7 +414,6 @@ namespace writer
 #endif
   }
 
-  
 } // writer
 
 CAVIAR_NAMESPACE_CLOSE

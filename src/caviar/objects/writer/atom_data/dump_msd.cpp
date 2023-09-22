@@ -33,7 +33,7 @@ namespace writer
 
   }
 
-  void Atom_data::dump_msd_serial(int64_t i, double t, bool)
+  void Atom_data::dump_msd_serial(int64_t i, double t)
   {
 
     const auto &pos = atom_data->atom_struct_owned.position;

@@ -85,12 +85,12 @@ namespace writer
       mpinf.pos = mpinf.total;
       mpinf.total += 3;
 
-      if (output_velocity)
+      if (xyz_output_velocity)
       {
         mpinf.vel = mpinf.total;
         mpinf.total += 3;
       }
-      if (output_acceleration)
+      if (xyz_output_acceleration)
       {
         mpinf.acc = mpinf.total;
         mpinf.total += 3;
@@ -134,14 +134,14 @@ namespace writer
         send_data[(mpinf.pos * N) + (3 * i) + 1] = pos[j].y;
         send_data[(mpinf.pos * N) + (3 * i) + 2] = pos[j].z;
 
-        if (output_velocity)
+        if (xyz_output_velocity)
         {
           send_data[(mpinf.vel * N) + (3 * i) + 0] = vel[j].x;
           send_data[(mpinf.vel * N) + (3 * i) + 1] = vel[j].y;
           send_data[(mpinf.vel * N) + (3 * i) + 2] = vel[j].z;
         }
 
-        if (output_acceleration)
+        if (xyz_output_acceleration)
         {
           send_data[(mpinf.acc * N) + (3 * i) + 0] = acc[j].x;
           send_data[(mpinf.acc * N) + (3 * i) + 1] = acc[j].y;
@@ -187,14 +187,14 @@ namespace writer
         pos[k].y = recv_data[i][(mpinf.pos * N) + (3 * j) + 1];
         pos[k].z = recv_data[i][(mpinf.pos * N) + (3 * j) + 2];
 
-        if (output_velocity)
+        if (xyz_output_velocity)
         {
           vel[k].x = recv_data[i][(mpinf.vel * N) + (3 * j) + 0];
           vel[k].y = recv_data[i][(mpinf.vel * N) + (3 * j) + 1];
           vel[k].z = recv_data[i][(mpinf.vel * N) + (3 * j) + 2];
         }
 
-        if (output_acceleration)
+        if (xyz_output_acceleration)
         {
           acc[k].x = recv_data[i][(mpinf.acc * N) + (3 * j) + 0];
           acc[k].y = recv_data[i][(mpinf.acc * N) + (3 * j) + 1];
@@ -221,9 +221,9 @@ namespace writer
 
       ofs_xyz << " " << pos[i].x + p_o.x << " " << pos[i].y + p_o.y << " " << pos[i].z + p_o.z;
 
-      if (output_velocity)
+      if (xyz_output_velocity)
         ofs_xyz << " " << vel[i].x << " " << vel[i].y << " " << vel[i].z;
-      if (output_acceleration)
+      if (xyz_output_acceleration)
         ofs_xyz << " " << acc[i].x << " " << acc[i].y << " " << acc[i].z;
       ofs_xyz << "\n";
     }
@@ -253,7 +253,7 @@ namespace writer
 
         ofs_xyz << " " << pos_x + p_o.x << " " << pos_y + p_o.y << " " << pos_z + p_o.z;
 
-        if (output_velocity)
+        if (xyz_output_velocity)
         {
           auto vel_x = recv_data[i][(mpinf.vel * N) + (3 * j) + 0];
           auto vel_y = recv_data[i][(mpinf.vel * N) + (3 * j) + 1];
@@ -261,7 +261,7 @@ namespace writer
           ofs_xyz << " " << vel_x << " " << vel_y << " " << vel_z;
         }
 
-        if (output_acceleration)
+        if (xyz_output_acceleration)
         {
           auto acc_x = recv_data[i][(mpinf.acc * N) + (3 * j) + 0];
           auto acc_y = recv_data[i][(mpinf.acc * N) + (3 * j) + 1];

@@ -32,7 +32,7 @@ namespace writer
   //================================================
   //                                              ||
   //================================================
-  void Atom_data::dump_xyz_serial(int64_t, double, bool mpi_files)
+  void Atom_data::dump_xyz_serial(int64_t, double)
   {
     auto &pos = atom_data->atom_struct_owned.position;
     auto &type = atom_data->atom_struct_owned.type;
@@ -46,19 +46,19 @@ namespace writer
     if (position_offset != nullptr)
       p_o = position_offset->current_value;
 
-    if (!mpi_files)
+    if (!xyz_mpi_per_process)
     {
       ofs_xyz << nta << "\nAtom\n";
 
       for (unsigned int i = 0; i < nta; ++i)
       {
         ofs_xyz << type[i];
-        if (output_id)
+        if (xyz_output_id)
           ofs_xyz << " " << id[i];
         ofs_xyz << " " << pos[i].x + p_o.x << " " << pos[i].y + p_o.y << " " << pos[i].z + p_o.z;
-        if (output_velocity)
+        if (xyz_output_velocity)
           ofs_xyz << " " << vel[i].x << " " << vel[i].y << " " << vel[i].z;
-        if (output_acceleration)
+        if (xyz_output_acceleration)
           ofs_xyz << " " << acc[i].x << " " << acc[i].y << " " << acc[i].z;
         ofs_xyz << "\n";
       }
@@ -80,13 +80,13 @@ namespace writer
         if ( atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank) continue;
 
         ofs_xyz_mpi << type[i];
-        if (output_id)
+        if (xyz_output_id)
           ofs_xyz_mpi << " " << id[i];
 
         ofs_xyz_mpi << " " << pos[i].x + p_o.x << " " << pos[i].y + p_o.y << " " << pos[i].z + p_o.z;
-        if (output_velocity)
+        if (xyz_output_velocity)
           ofs_xyz_mpi << " " << vel[i].x << " " << vel[i].y << " " << vel[i].z;
-        if (output_acceleration)
+        if (xyz_output_acceleration)
           ofs_xyz_mpi << " " << acc[i].x << " " << acc[i].y << " " << acc[i].z;
         ofs_xyz_mpi << "\n";
       }
@@ -98,7 +98,7 @@ namespace writer
   //================================================
   //                                              ||
   //================================================
-  void Atom_data::dump_xyz_ghost_serial(int64_t, double, bool mpi_files)
+  void Atom_data::dump_xyz_ghost_serial(int64_t, double)
   {
     auto &pos = atom_data->atom_struct_ghost.position;
     auto &type = atom_data->atom_struct_ghost.type;
@@ -111,19 +111,19 @@ namespace writer
     if (position_offset != nullptr)
       p_o = position_offset->current_value;
 
-    if (!mpi_files)
+    if (!xyz_ghost_mpi_per_process)
     {
       ofs_xyz_ghost << nta << "\nAtom\n";
 
       for (unsigned int i = 0; i < nta; ++i)
       {
         ofs_xyz_ghost << type[i];
-        if (output_id)
+        if (xyz_output_id)
           ofs_xyz_ghost << " " << id[i];
         ofs_xyz_ghost << " " << pos[i].x + p_o.x << " " << pos[i].y + p_o.y << " " << pos[i].z + p_o.z;
-        if (output_velocity)
+        if (xyz_output_velocity)
           ofs_xyz_ghost << " " << vel[i].x << " " << vel[i].y << " " << vel[i].z;
-        if (output_acceleration)
+        if (xyz_output_acceleration)
           ofs_xyz_ghost << " " << acc[i].x << " " << acc[i].y << " " << acc[i].z;
         ofs_xyz_ghost << "\n";
       }
@@ -137,13 +137,13 @@ namespace writer
       for (unsigned int i = 0; i < nta; ++i)
       {
         ofs_xyz_ghost_mpi << type[i];
-        if (output_id)
+        if (xyz_output_id)
           ofs_xyz_ghost_mpi << " " << id[i];
 
         ofs_xyz_ghost_mpi << " " << pos[i].x + p_o.x << " " << pos[i].y + p_o.y << " " << pos[i].z + p_o.z;
-        if (output_velocity)
+        if (xyz_output_velocity)
           ofs_xyz_ghost_mpi << " " << vel[i].x << " " << vel[i].y << " " << vel[i].z;
-        if (output_acceleration)
+        if (xyz_output_acceleration)
           ofs_xyz_ghost_mpi << " " << acc[i].x << " " << acc[i].y << " " << acc[i].z;
         ofs_xyz_ghost_mpi << "\n";
       }
