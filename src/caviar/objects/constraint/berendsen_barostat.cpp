@@ -114,7 +114,7 @@ namespace constraint
 
     if (dt < 0.0)
       error->all(FC_FILE_LINE_FUNC, "dt is not set.");
-    if (tp < 0.0)
+    if (tp <= 0.0)
       error->all(FC_FILE_LINE_FUNC, "tp is not set.");
     if (kappa < 0.0)
       error->all(FC_FILE_LINE_FUNC, "kappa is not set.");

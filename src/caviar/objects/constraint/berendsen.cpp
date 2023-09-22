@@ -108,6 +108,11 @@ namespace constraint
     FC_OBJECT_VERIFY_SETTINGS
 
     auto t = atom_data->temperature();
+    
+    if (t == 0)
+    {
+      output->warning("Temperature = 0. Berendsen thermostat step is ignored at "+ std::to_string (timestep));
+    }
 
     auto &vel = atom_data->atom_struct_owned.velocity;
 

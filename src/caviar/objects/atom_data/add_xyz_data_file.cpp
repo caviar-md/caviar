@@ -17,6 +17,7 @@
 #include "caviar/objects/atom_data.h"
 #include "caviar/utility/interpreter_io_headers.h"
 #include "caviar/interpreter/object_handler/preprocessors_new.h"
+#include "caviar/utility/file_utility.h"
 
 #include <string>
 
@@ -59,13 +60,16 @@ bool Atom_data::add_xyz_data_file(caviar::interpreter::Parser *parser)
   }
 
   int start_line = 1;
+  std::string xyz_file_name_full = join_path(fptr->input_file_directory, xyz_file_name);
+  if (!file_exists_1(xyz_file_name_full))
+    error->all(FC_FILE_LINE_FUNC_PARSE, "file does not exist : " + xyz_file_name_full);
 
   if (last_frame)
   {
     int i = 1;
     int num_xyz_frames = 0;
     //    Parser *pf (xyz_file_name);
-    caviar::interpreter::Parser pf(fptr, xyz_file_name);
+    caviar::interpreter::Parser pf(fptr, xyz_file_name_full);
     auto t = pf.get_val_token();
     while (t.kind != caviar::interpreter::Kind::eof)
     {
@@ -90,7 +94,7 @@ bool Atom_data::add_xyz_data_file(caviar::interpreter::Parser *parser)
     output->info(st2);
   }
 
-  caviar::interpreter::Parser pf(fptr, xyz_file_name);
+  caviar::interpreter::Parser pf(fptr, xyz_file_name_full);
   for (int i = 1; i < start_line; ++i)
   {
     pf.end_of_line();

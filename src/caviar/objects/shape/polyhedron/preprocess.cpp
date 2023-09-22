@@ -73,11 +73,13 @@ namespace shape
       int start_face = 0;
 
       face_list.push_back(start_face);
+      std::cout << "Polyhedron specifications: " << "\n";
+
       std::cout << "edges.size: " << edges.size() << "\n";
       std::cout << "face_list.size: " << face_list.size() << "\n";
       std::cout << "face.size: " << face.size() << "\n";
       std::cout << "edge_list.size: " << edge_list.size() << "\n";
-      std::cout << "XXX HEY 1 " << std::endl;
+      //std::cout << "XXX HEY 1 " << std::endl;
       //   while (face_list.size() != face.size())
       {
         for (unsigned int i = 0; i < face_list.size(); ++i)

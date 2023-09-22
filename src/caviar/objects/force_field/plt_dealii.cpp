@@ -24,6 +24,7 @@
 #include "caviar/objects/neighborlist.h"
 #include "caviar/utility/macro_constants.h"
 #include "caviar/utility/time_utility.h"
+#include "caviar/utility/file_utility.h"
 #include "caviar/objects/unique/time_function.h"
 #include "caviar/objects/unique/time_function_3d.h"
 #include "caviar/objects/unique/grid_1d.h"
@@ -226,7 +227,10 @@ namespace force_field
       {
         auto token = parser->get_val_token();
         auto file_name = token.string_value;
-        unv_mesh_filename.push_back(file_name);
+        std::string file_name_full = join_path(fptr->input_file_directory, file_name);
+        if (!file_exists_1(file_name_full))
+          error->all(FC_FILE_LINE_FUNC_PARSE, "file does not exist : " + file_name_full);
+        unv_mesh_filename.push_back(file_name_full);
       }
       else if (string_cmp(t, "read_unv_mesh"))
       {

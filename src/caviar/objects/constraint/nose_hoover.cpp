@@ -123,7 +123,7 @@ namespace constraint
     settings_verified = true;
   }
 
-  void Nose_hoover::apply_on_acceleration(int64_t)
+  void Nose_hoover::apply_on_acceleration(int64_t timestep)
   { // step I
     if (!settings_verified)
       verify_settings();
@@ -137,6 +137,11 @@ namespace constraint
     // auto g = n_df + 1;
 
     auto temp_inst = atom_data->temperature();
+
+    if (temp_inst == 0)
+    {
+      output->warning("Temperature = 0. Nose_hoover thermostat step is ignored at "+ std::to_string (timestep));
+    }
 
     switch (type)
     {

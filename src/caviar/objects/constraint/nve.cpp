@@ -124,7 +124,7 @@ namespace constraint
     }
   }
 
-  void Nve::apply_on_velocity(int64_t)
+  void Nve::apply_on_velocity(int64_t timestep)
   {
 
     FC_OBJECT_VERIFY_SETTINGS
@@ -132,6 +132,11 @@ namespace constraint
     auto energy_now = atom_data->kinetic_energy();
 
     double lambda = 1.0; // conversion coefficient
+
+    if (energy_now == 0)
+    {
+      output->warning("energy = 0. NVE thermostat step is ignored at "+ std::to_string (timestep));
+    }
 
     if (energy_per_dof > 0.0)
     {

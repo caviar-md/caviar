@@ -27,6 +27,8 @@
 #include "caviar/objects/shape/polyhedron/format_vtk_reader.h"
 #include "caviar/objects/shape/polyhedron/format_unv_reader.h"
 
+#include "caviar/utility/file_utility.h"
+
 #include <string>
 #include <cmath>
 #include <fstream>
@@ -83,7 +85,12 @@ namespace shape
         {
           const auto token = parser->get_val_token();
           const auto file_name = token.string_value;
-          polyhedron_input->read_vtk(polyhedron, file_name);
+
+          std::string file_name_full = join_path(fptr->input_file_directory, file_name);
+          if (!file_exists_1(file_name_full))
+            error->all(FC_FILE_LINE_FUNC_PARSE, "file does not exist : " + file_name_full);
+
+          polyhedron_input->read_vtk(polyhedron, file_name_full);
           polyhedron_read = true;
           if (polyhedron.face.size() == 0)
             error->all(FC_FILE_LINE_FUNC, "The imported file's face is empty. Maybe the command or format is incorrect.");
@@ -92,7 +99,12 @@ namespace shape
         {
           const auto token = parser->get_val_token();
           const auto file_name = token.string_value;
-          polyhedron_input->read_stl(polyhedron, file_name);
+
+          std::string file_name_full = join_path(fptr->input_file_directory, file_name);
+          if (!file_exists_1(file_name_full))
+            error->all(FC_FILE_LINE_FUNC_PARSE, "file does not exist : " + file_name_full);
+
+          polyhedron_input->read_stl(polyhedron, file_name_full);
           polyhedron_read = true;
           if (polyhedron.face.size() == 0)
             error->all(FC_FILE_LINE_FUNC, "The imported file's face is empty. Maybe the command or format is incorrect.");
@@ -101,7 +113,12 @@ namespace shape
         {
           const auto token = parser->get_val_token();
           const auto file_name = token.string_value;
-          polyhedron_input->read_unv(polyhedron, file_name);
+
+          std::string file_name_full = join_path(fptr->input_file_directory, file_name);
+          if (!file_exists_1(file_name_full))
+            error->all(FC_FILE_LINE_FUNC_PARSE, "file does not exist : " + file_name_full);
+
+          polyhedron_input->read_unv(polyhedron, file_name_full);
           polyhedron_read = true;
           if (polyhedron.face.size() == 0)
             error->all(FC_FILE_LINE_FUNC, "The imported file's face is empty. Maybe the command or format is incorrect.");
