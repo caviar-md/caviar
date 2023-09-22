@@ -59,6 +59,24 @@ namespace constraint
         if (dt <= 0.0)
           error->all(FC_FILE_LINE_FUNC_PARSE, "dt have to non-negative.");
       }
+      else if (string_cmp(t, "step"))
+      {
+        GET_OR_CHOOSE_A_INT(step, "", "")
+        if (step <= 0)
+          error->all(FC_FILE_LINE_FUNC_PARSE, "step have to non-negative.");
+      }
+      else if (string_cmp(t, "lambda_min"))
+      {
+        GET_OR_CHOOSE_A_REAL(lambda_min, "", "")
+        if (lambda_min <= 0.0)
+          error->all(FC_FILE_LINE_FUNC_PARSE, "lambda_min have to non-negative.");
+      }
+      else if (string_cmp(t, "lambda_max"))
+      {
+        GET_OR_CHOOSE_A_REAL(lambda_max, "", "")
+        if (lambda_max <= 0.0)
+          error->all(FC_FILE_LINE_FUNC_PARSE, "lambda_max have to non-negative.");
+      }
       else if (string_cmp(t, "set_atom_data") || string_cmp(t, "atom_data"))
       {
         FIND_OBJECT_BY_NAME(atom_data, it)
@@ -82,8 +100,10 @@ namespace constraint
       error->all(FC_FILE_LINE_FUNC, "coupling is not set.");
   }
 
-  void Berendsen::apply_on_velocity(int64_t)
+  void Berendsen::apply_on_velocity(int64_t timestep)
   { // step I
+
+    if (timestep % step != 0) return;
 
     FC_OBJECT_VERIFY_SETTINGS
 
@@ -92,6 +112,10 @@ namespace constraint
     auto &vel = atom_data->atom_struct_owned.velocity;
 
     double lambda = std::sqrt(1.0 + (dt / coupling) * ((temperature / t) - 1.0));
+
+    // to avoid crashes due to large or small scalings
+    if (lambda < lambda_min) lambda = lambda_min;
+    if (lambda > lambda_max) lambda = lambda_max;
 
     for (auto &&v : vel)
       v *= lambda;

@@ -67,6 +67,18 @@ namespace constraint
         if (dt <= 0.0)
           error->all(FC_FILE_LINE_FUNC_PARSE, "dt have to non-negative.");
       }
+      else if (string_cmp(t, "step"))
+      {
+        GET_OR_CHOOSE_A_INT(step, "", "")
+        if (step <= 0)
+          error->all(FC_FILE_LINE_FUNC_PARSE, "step have to non-negative.");
+      }
+      else if (string_cmp(t, "xi_max"))
+      {
+        GET_OR_CHOOSE_A_REAL(xi_max, "", "")
+        if (xi_max <= 0.0)
+          error->all(FC_FILE_LINE_FUNC_PARSE, "xi_max have to non-negative.");
+      }
       else if (string_cmp(t, "set_atom_data") || string_cmp(t, "atom_data"))
       {
         FIND_OBJECT_BY_NAME(atom_data, it)
@@ -110,20 +122,25 @@ namespace constraint
       error->all(FC_FILE_LINE_FUNC, "pressure is not set.");
   }
 
-  void Berendsen_barostat::apply_on_velocity(int64_t)
+  void Berendsen_barostat::apply_on_velocity(int64_t timestep)
   {     
+    if (timestep % step != 0) return;
 
     FC_OBJECT_VERIFY_SETTINGS
 
     auto p = atom_data->pressure();
     
 
-    double xi = std::pow( 1.0 - kappa * (dt / tp) * (pressure - p), 0.33333333333333 );
+    double xi = std::pow( 1.0 - kappa * (dt / tp) * (pressure - p), 0.333333333333333 );
     
 
     domain-> scale_position(xi, scale_axis);
 
     atom_data->scale_position(xi, scale_axis);
+
+    // to avoid crashes due to large or small scalings
+    if (xi < -xi_max) xi = -xi_max;
+    if (xi > xi_max) xi = xi_max;
 
     for (unsigned int i = 0; i < force_field.size(); ++i)
       force_field[i]->scale_position(xi, scale_axis);

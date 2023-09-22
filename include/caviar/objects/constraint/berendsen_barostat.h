@@ -59,6 +59,17 @@ namespace constraint
         double pressure;
 
         /**
+         * Apply after each 'step' of timesteps passed
+        */
+        int step = 1;
+
+        /**
+         * Maximum value of scaling
+        */
+        double xi_max = 0.0001;
+
+
+        /**
          * The direction of scaling simulation box. It will be done on periodic direction of the domain.
         */
         caviar::Vector<int> scale_axis;

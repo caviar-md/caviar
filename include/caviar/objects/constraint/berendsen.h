@@ -41,8 +41,23 @@ namespace constraint
 
         void verify_settings();
 
-        double coupling, dt, temperature;
+        double coupling;
+        double dt;
+        double temperature;
+        /**
+         * Apply after each 'step' of timesteps passed
+        */
+        int step = 1;
 
+        /**
+         * minimum value of lambda
+        */
+        double lambda_min = 0.8;
+
+        /**
+         * maximum value of lambda
+        */
+        double lambda_max = 1.25;
     public:
     };
 
