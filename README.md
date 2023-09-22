@@ -1,75 +1,51 @@
+## Introduction
 
+**CAVIAR** is a versatile molecular dynamics (MD) package meticulously crafted by the skilled hands of Morad Biagooi and Ehsan Nedaaee Oskoee. While its primary mission is the simulation of soft materials at the nano scale, it boasts a broader range of capabilities. CAVIAR excels in the realm of handling intricate geometries for MD simulations.
 
-## INTRODUCTION
-CAVIAR is a molecular dynamics (MD) package developed by Morad Biagooi and 
-Ehsan Nedaaee Oskoee. CAVIAR main goal is the simulation of soft materials at nano scale. However,
-it can do much more. Handling complex geometries for MD is its speciallity.
+The heart and soul of CAVIAR are coded in C++, adhering to the C++14 standard. Compilation configurations are orchestrated seamlessly with the aid of CMake. To complement its functionality, a selection of bash shell scripts has been devised for pre and post-processing tasks.
 
-The core is written in C++ with C++11 standard. The configurations for compile
-is done using CMake. Some bash shell script are also used as tools for pre and
-post processing. 
+## CAVIAR Scripting Language (CASL)
 
-## CAVIAR SCRIPTING LANGUAGE (CASL)
-CAVIAR has a built-in scripting language. It is one command per line. 
-It is easy to learn and understand. See documentations and 
-examples.
+Within CAVIAR resides a built-in scripting language, known as **CASL** (CAVIAR Scripting Language). It follows a simple and intuitive one-command-per-line structure, making it accessible to both novices and experts. Comprehensive documentation and practical examples are at your disposal to grasp the intricacies of CASL.
 
+## Getting Started
 
-## HOW TO START?
-The easiest way is to develop your simulation script from a working example.
-Read the documentations and try to run your scripts accordingly.
+Embarking on your CAVIAR journey is as straightforward as it gets. Begin by crafting your simulation script based on a working example. Dive into the documentation, explore the provided resources, and embark on the path of scripting your simulations with confidence.
 
+## OS and Library Compatibility
 
-## OS and LIBRARIES COMPATIBILITY
-We have developed CAVIAR with g++ compiler on ubuntu OS:
-  (g++ (Ubuntu 5.4.0-6ubuntu1~16.04.11) 5.4.0 20160609)
-In addition to that, a deal.II (Version 8.5.1 ) library with for finite element 
-calculations is used. 
-Any lower version of these compilers or libraries may not work with CAVIAR,
-specially if it does not support C++11 standards completely.
-Higher versions may-or-maynot work depending on deprecations of the commands
-that we have used. If you find any information about this, we gladly accept and
-add it to our documentations.
+CAVIAR flourishes in the Debian-based Linux ecosystem. Its list of dependencies is concise and includes:
 
+- deal.II (Versions 8.5.1, 9.2, 9.4) library for finite element support, with adherence to C++17 standards.
+- muparser, maintaining compatibility with the corresponding version used in deal.II.
 
-## LICENSE
-GNU Lesser General Public License as published by the Free Software Foundation.
-Either version 3.0 or (at your option) any later version.
-Note that:
-THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW.
-EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER 
-PARTIES PROVIDE THE PROGRAM “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER 
-EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS TO THE 
-QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU. SHOULD THE PROGRAM PROVE
-DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+It is essential to note that deviating from these specific compiler or library versions might lead to compatibility issues. Versions lower than the specified ones may not function seamlessly, especially if they lack comprehensive support for C++17 standards. On the other hand, higher versions may or may not work, depending on potential deprecations of the utilized commands. We warmly welcome any insights or information regarding these aspects for inclusion in our documentation.
 
-## Contact Information.
-Morad Biagooi (m.biagooi .at. gmail.com)
-Ehsan Nedaaee Oskoee (nedaaee .at. iasbs.ac.ir - nedaaee .at. gmail.com)
+## License
 
+CAVIAR operates under the GNU Lesser General Public License as promulgated by the Free Software Foundation. This license provides you with the freedom to choose either version 3.0 or any subsequent version at your discretion. It is vital to bear in mind that:
 
+*The program is distributed without warranty, as permitted by applicable law. Except as expressly provided otherwise in writing, the copyright holders and other parties offer the program "as is" without any warranties, whether expressed or implied, including but not limited to implied warranties of merchantability and fitness for a particular purpose. The entire risk as to the quality and performance of the program rests with you. In the event the program proves to be defective, you are responsible for all necessary servicing, repair, or correction.*
 
-## Bug report
-If you have encountered any problem while building or using CAVIAR, please
-report it to 'm.biagooi .at. gmail.com'. We will have fix it as soon as possible.
-There are three kind of bugs one can encounter:
+## Contact Information
 
-1- Compile time bug: There should not have to be bug or error while building any
- realease version of CAVIAR. If something like that happened, there might be a problem
-in compiler or library versions. 
+For inquiries, assistance, or collaboration, please feel free to reach out to us:
 
-2- Run time bug: If it is reported by an 'ERROR' massage of CAVIAR's
- interperter, please double check the script. If there's a segmentation fault,
-you can use gdb to check the core file and find the problem. After that, contact
-us and send your script to fix the problem.
-Another type of bug is when the system freezes during an MPI run. 
+- Morad Biagooi (m.biagooi .at. gmail.com)
+- Ehsan Nedaaee Oskoee (nedaaee .at. iasbs.ac.ir - nedaaee .at. gmail.com)
 
-3- Result bug: If your simulation result was not as it should be in a standard 
-test simulation, there may be a problem in the parameters settings in the 
-scripts. Also, there's a small possibility that the implemented algorithm is not
-complete enough to support the physics of your problem. 
+## Reporting Bugs
 
+In the event that you encounter any challenges during the installation or utilization of CAVIAR, we encourage you to report your concerns to 'm.biagooi .at. gmail.com.' We are committed to swiftly resolving any issues you encounter. There are three primary categories of bugs you might encounter:
 
+1. **Compile Time Bugs**: Ideally, no errors or bugs should surface during the compilation of any release version of CAVIAR. If such issues arise, it is likely tied to discrepancies in compiler or library versions.
 
+2. **Run Time Bugs**: If CAVIAR's interpreter reports an 'ERROR' message, please review your script for potential errors. In the case of a segmentation fault, you can employ gdb to investigate the core file and pinpoint the issue. Once identified, don't hesitate to contact us, providing your script for assistance. Another type of bug may manifest as system freezes during an MPI run.
 
+3. **Result Bugs**: Should your simulation results deviate from expectations in a standard test simulation, there may be parameter configuration issues in your scripts. Additionally, there's a slim possibility that the implemented algorithm might not fully support the physics of your specific problem.
+
+## Citation
+
+If you use CAVIAR in your research or work, please consider citing the following publication:
+
+Biagooi, M., Samanipour, M., Ghasemi, S. A., & Nedaaee Oskoee, S. (2020). CAVIAR: A simulation package for charged particles in environments surrounded by conductive boundaries. AIP Advances, 10(3).

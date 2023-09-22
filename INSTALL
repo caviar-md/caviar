@@ -1,20 +1,37 @@
+# CAVIAR Package Installation Guide
 
+Building the CAVIAR package is a straightforward process with minimal requirements. Follow these simple steps:
 
-CAVIAR Package
+1. **Navigate to the Build Directory**:
 
+   ```bash
+   $ cd ${BUILD_DIRECTORY}
+   ```
 
-how to build:
+   If you don't have a designated build directory, create one.
 
-It is pretty easy with minimum requirements.
-Go to build directory or make one.
+2. **Execute CMake**:
 
-  $ cd ${BUILD_DIRECTORY}
-  $ cmake ${PATH_TO_CAVIAR}
-  $ make
+   Use the CMake tool to configure the build process by providing the path to the CAVIAR source code:
 
-After that, a file with the name 'CAVIAR' will be generated.
-You can run an example using this command:
+   ```bash
+   $ cmake ${PATH_TO_CAVIAR}
+   ```
 
-  $ ./CAVIAR < ${PATH_TO_CAVIAR}/examples/e1-two-atoms/e1-two-atoms.fcpp
+3. **Compile the Package**:
 
-For more info see 'doc' directory.
+   Once CMake configuration is complete, proceed with the compilation:
+
+   ```bash
+   $ make
+   ```
+
+Upon successful compilation, a file named 'CAVIAR' will be generated.
+
+To test the installation, you can run an example using the following command:
+
+```bash
+$ ./CAVIAR < ${PATH_TO_CAVIAR}/examples/e1-two-atoms/e1-two-atoms.fcpp
+```
+
+For more detailed information and documentation, please refer to the 'doc' directory.
