@@ -19,12 +19,14 @@
 #include "caviar/interpreter/input/commands_map.h"
 #include "caviar/interpreter/object_handler.h"
 #include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/utility/file_utility.h"
 
 #include <map>
 #include <cmath>
 #include <algorithm>
+#include <cstring>
 
-// #define DEBUG_ME
+//#define DEBUG_ME
 
 CAVIAR_NAMESPACE_OPEN
 namespace interpreter
@@ -40,6 +42,51 @@ namespace interpreter
     return str.substr(i);
   }
   */
+  //0     1     2
+  //cav  -i  /dsaads/das
+  Input::Input(CAVIAR *fptr, int argc, char **argv) : Pointers{fptr}, fptr{fptr}
+  {
+    fptr->interpreter_num_Input_class++;
+
+    bool input_file_found = false;
+    std::string input_file;
+
+    for (int i = 0; i < argc; ++i)
+    {
+      //std::cout << "argv " << i << " " << argv[i] << " " << std::endl;
+      if (std::strcmp(argv[i],"-i") == 0)
+      {
+        if (argc > i + 1)
+        {
+          input_file = argv[i+1];
+          if (file_exists_1(input_file))
+          {
+            input_file_found = true;
+            input_file_directory = directory_of_file(input_file);
+          }
+          else
+          {
+            std::cout << "Error: File doesn't exist " << input_file << std::endl;
+            exit(1);
+          }
+        }
+        else
+        {
+          std::cout << "Error: Expected input file after '-i' argument" << std::endl;
+          exit(1);
+        }
+      }
+    }
+
+    if (input_file_found)
+      parser = new Parser{fptr, input_file};
+    else
+      parser = new Parser{fptr};
+
+#ifdef DEBUG_ME
+    std::cout << "DEBUG_ME: INPUT constructor t0" << std::endl;
+#endif
+  }
 
   Input::Input(CAVIAR *fptr) : Pointers{fptr}, parser{new Parser{fptr}},
                                fptr{fptr}

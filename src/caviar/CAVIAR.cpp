@@ -31,7 +31,7 @@ CAVIAR::CAVIAR(int argc, char **argv) :
                                         comm{new interpreter::Communicator{this}},
                                         error{new interpreter::Error{this}},
                                         output{new interpreter::Output{this}},
-                                        input{new interpreter::Input{this}},
+                                        input{new interpreter::Input{this, argc, argv}},
                                         object_handler{new interpreter::Object_handler{this}},
                                         object_container{new interpreter::Object_container{this}},
                                         object_creator{new interpreter::Object_creator{this}},
@@ -52,6 +52,8 @@ CAVIAR::CAVIAR(int argc, char **argv) :
 
   interpreter_break_called = false;
   interpreter_continue_called = false;
+  input_file_directory = input->input_file_directory;
+
 }
 
 CAVIAR::~CAVIAR()

@@ -75,6 +75,7 @@ public:
   std::ofstream log;
   std::istream in;
   std::ostream out, err;
+  std::string input_file_directory = "";
   bool log_flag, out_flag, err_flag;
   int argc;
   char **argv;

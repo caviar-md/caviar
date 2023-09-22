@@ -43,6 +43,11 @@ namespace interpreter
     Input(class CAVIAR *);
 
     /**
+     * Constructor.
+     */
+    Input(class CAVIAR *, int argc, char **argv);
+
+    /**
      * Constructor with a input file name @p filename
      */
     Input(class CAVIAR *, const std::string &filename);
@@ -63,6 +68,8 @@ namespace interpreter
     class CAVIAR *fptr;
 
     const static std::map<std::string, InputCommandFunc> commands_map;
+
+    std::string input_file_directory = "";
 
     bool read(caviar::interpreter::Parser *);
 
