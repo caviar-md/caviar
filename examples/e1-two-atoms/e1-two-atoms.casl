@@ -45,6 +45,8 @@ adata add_atom a1
 adata add_atom a2
 adata add_type_mass   0 1.0
 adata add_type_charge 0 0.0
+adata k_b 1.0
+adata temperature_process 1
 
 #===== Neighborlist
 
@@ -72,6 +74,8 @@ f_lj set_atom_data adata
 writer atom_data w1
 w1 set_atom_data adata
 w1 xyz_step 200
+w1 xyz_mpi_rank0 1
+w1 xyz_mpi_per_process 1
 
 #=====  simulator
 
