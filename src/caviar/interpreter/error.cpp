@@ -26,8 +26,7 @@ namespace interpreter
   // All procs must call this else there would be a deadlock
   void Error::all(const std::string &str)
   {
-    err << "  - ERROR occured!" << std::endl;
-    err << "  - ERROR massage: " << str << std::endl;
+    err << "  - ERROR: " << str << std::endl;
     exit(1);
   }
 
@@ -38,13 +37,12 @@ namespace interpreter
     MPI_Comm_rank(MPI_COMM_WORLD, &me);
     MPI_Barrier(MPI_COMM_WORLD);
 #endif
-    std::cout << "  - ERROR occured!" << std::endl;
     if (me == 0)
     {
       if (err_flag)
       {
-        err << "  - ERROR massage: " << str << std::endl;
-        err << "  - ERROR call: at '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+        err << "  - ERROR: " << str << std::endl;
+        err << "  - '" << file << ':' << line << "' in '" << func << "'." << std::endl;
         err << parsing_line << std::endl;
         for (unsigned int i = 0; i < col; ++i)
           err << ' ';
@@ -52,8 +50,8 @@ namespace interpreter
       }
       if (log_flag)
       {
-        log << "  - ERROR massage: " << str << std::endl;
-        log << "  - ERROR call: at " << file << ':' << line << " in '" << func << "'." << std::endl;
+        log << "  - ERROR: " << str << std::endl;
+        log << "  - '" << file << ':' << line << " in '" << func << "'." << std::endl;
         log << parsing_line << std::endl;
         for (unsigned int i = 0; i < col; ++i)
           log << ' ';
@@ -75,12 +73,13 @@ namespace interpreter
 #ifdef CAVIAR_WITH_MPI
     int me;
     MPI_Comm_rank(MPI_COMM_WORLD, &me);
-    std::cout << "  - ERROR occured!" << std::endl;
     if (err_flag)
     {
-      err << "  - ERROR on proc " << me << std::endl;
-      err << "  - ERROR massage: " << str << std::endl;
-      err << "  - ERROR call: at '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+      err << "  - ERROR: " << str << std::endl;
+      err << "  - MPI rank " << me << std::endl;
+      err << "  - '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+      
+
       err << parsing_line << std::endl;
       for (unsigned i = 0; i < col; ++i)
         err << ' ';
@@ -88,9 +87,9 @@ namespace interpreter
     }
     if (log_flag)
     {
-      log << "  - ERROR on proc " << me << std::endl;
-      log << "  - ERROR massage: " << str << std::endl;
-      log << "  - ERROR call: at '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+      log << "  - ERROR: " << str << std::endl;
+      err << "  - MPI rank " << me << std::endl;
+      log << "  - '" << file << ':' << line << "' in '" << func << "'." << std::endl;
       log << parsing_line << std::endl;
       for (unsigned i = 0; i < col; ++i)
         log << ' ';
@@ -109,14 +108,14 @@ namespace interpreter
     MPI_Comm_rank(MPI_COMM_WORLD, &me);
     MPI_Barrier(MPI_COMM_WORLD);
 #endif
-    std::cout << "ERROR occured!" << std::endl;
     //  /*
     if (me == 0)
     {
       if (err_flag)
       {
-        err << "  - ERROR massage: " << str << std::endl;
-        err << "  - ERROR call: at '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+        err << "  - ERROR: " << str << std::endl;
+        err << "  - MPI rank " << me << std::endl;
+        err << "  - '" << file << ':' << line << "' in '" << func << "'." << std::endl;
         err << parsing_line << std::endl;
         for (unsigned int i = 0; i < col; ++i)
           err << ' ';
@@ -124,8 +123,9 @@ namespace interpreter
       }
       if (log_flag)
       {
-        log << "  - ERROR massage: " << str << std::endl;
-        log << "  - ERROR call: at '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+        log << "  - ERROR: " << str << std::endl;
+        err << "  - MPI rank " << me << std::endl;
+        log << "  - '" << file << ':' << line << "' in '" << func << "'." << std::endl;
         log << parsing_line << std::endl;
         for (unsigned int i = 0; i < col; ++i)
           log << ' ';
@@ -146,12 +146,11 @@ namespace interpreter
 #ifdef CAVIAR_WITH_MPI
     int me;
     MPI_Comm_rank(MPI_COMM_WORLD, &me);
-    std::cout << "  - ERROR occured!" << std::endl;
     if (err_flag)
     {
-      err << "  - ERROR on proc " << me << std::endl;
-      err << "  - ERROR massage: " << str << std::endl;
-      err << "  - ERROR call: at '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+      err << "  - ERROR: " << str << std::endl;
+      err << "  - MPI rank " << me << std::endl;
+      err << "  - '" << file << ':' << line << "' in '" << func << "'." << std::endl;
       err << parsing_line << std::endl;
       for (unsigned i = 0; i < col; ++i)
         err << ' ';
@@ -159,9 +158,9 @@ namespace interpreter
     }
     if (log_flag)
     {
-      log << "  - ERROR on proc " << me << std::endl;
-      log << "  - ERROR massage: " << str << std::endl;
-      log << "  - ERROR call: at '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+      log << "  - ERROR: " << str << std::endl;
+      err << "  - MPI rank " << me << std::endl;
+      log << "  - '" << file << ':' << line << "' in '" << func << "'." << std::endl;
       log << parsing_line << std::endl;
       for (unsigned i = 0; i < col; ++i)
         log << ' ';
@@ -180,19 +179,18 @@ namespace interpreter
     MPI_Comm_rank(MPI_COMM_WORLD, &me);
     MPI_Barrier(MPI_COMM_WORLD);
 #endif
-    std::cout << "  - ERROR occured!" << std::endl;
 
     if (me == 0)
     {
       if (err_flag)
       {
-        err << "  - ERROR massage: " << str << std::endl;
-        err << "  - ERROR call: at '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+        err << "  - ERROR: " << str << std::endl;
+        err << "  - '" << file << ':' << line << "' in '" << func << "'." << std::endl;
       }
       if (log_flag)
       {
-        log << "  - ERROR massage: " << str << std::endl;
-        log << "  - ERROR call: at '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+        log << "  - ERROR: " << str << std::endl;
+        log << "  - '" << file << ':' << line << "' in '" << func << "'." << std::endl;
       }
       if (log_flag)
         log.close();
@@ -209,18 +207,17 @@ namespace interpreter
 #ifdef CAVIAR_WITH_MPI
     int me;
     MPI_Comm_rank(MPI_COMM_WORLD, &me);
-    std::cout << "  - ERROR occured!" << std::endl;
     if (err_flag)
     {
-      err << "  - ERROR on proc " << me << std::endl;
-      err << "  - ERROR massage: " << str << std::endl;
-      err << "  - ERROR call: at '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+      err << "  - ERROR: " << str << std::endl;
+      err << "  - MPI rank " << me << std::endl;
+      err << "  - '" << file << ':' << line << "' in '" << func << "'." << std::endl;
     }
     if (log_flag)
     {
-      log << "  - ERROR on proc " << me << std::endl;
-      log << "  - ERROR massage: " << str << std::endl;
-      log << "  - ERROR call: at '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+      log << "  - ERROR: " << str << std::endl;
+      log << "  - MPI rank " << me << std::endl;
+      log << "  - '" << file << ':' << line << "' in '" << func << "'." << std::endl;
     }
     MPI_Abort(MPI_COMM_WORLD, 1);
 #else

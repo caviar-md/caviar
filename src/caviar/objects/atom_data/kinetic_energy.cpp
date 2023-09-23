@@ -17,6 +17,7 @@
 #include "caviar/objects/atom_data.h"
 #include "caviar/interpreter/communicator.h"
 #include "caviar/interpreter/error.h"
+#include "caviar/interpreter/output.h"
 #include "caviar/objects/domain.h"
 #include "caviar/utility/common_template_functions.h"
 #include "caviar/objects/unique/time_function_3d.h"
@@ -87,10 +88,12 @@ double Atom_data::kinetic_energy_mpi_domain(const int t)
       bool correct_result = false;
       if (matrix_inverse_3d(I_cm, I_cm_inverse) != 0)
       {
-        if (matrix_Vector_product_3d(I_cm_inverse, L_cm, I_i_L) != 0)
-        {
-          correct_result = true;
-        }
+        matrix_Vector_product_3d(I_cm_inverse, L_cm, I_i_L);
+      }
+      else
+      {
+        output->warning("Error in matrix_inverse_3d for Atom_data::kinetic_energy.");
+        //error->all(FC_FILE_LINE_FUNC, "Error in Inertia Tensor Inverse Calculations for Atom_data::kinetic_energy.");
       }
 
       if (correct_result)
@@ -107,10 +110,7 @@ double Atom_data::kinetic_energy_mpi_domain(const int t)
           e_owned += atom_type_params.mass[atom_struct_owned.type[i]] * (v_i * v_i);
         }
       }
-      else
-      {
-        error->all(FC_FILE_LINE_FUNC, "Error in Inertia Tensor Inverse Calculations for Kinetic Energy...");
-      }
+
     }
     break;
     }

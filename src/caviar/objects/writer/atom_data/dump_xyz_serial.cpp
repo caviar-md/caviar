@@ -28,7 +28,6 @@ CAVIAR_NAMESPACE_OPEN
 namespace writer
 {
 
-  
   //================================================
   //                                              ||
   //================================================
@@ -45,8 +44,9 @@ namespace writer
     Vector<double> p_o{0, 0, 0};
     if (position_offset != nullptr)
       p_o = position_offset->current_value;
-
-    if (!xyz_mpi_per_process)
+#if defined(CAVIAR_WITH_MPI)
+    if (xyz_mpi_rank0)
+#endif
     {
       ofs_xyz << nta << "\nAtom\n";
 
@@ -65,19 +65,23 @@ namespace writer
 
       ofs_xyz << std::flush;
     }
-    else
+
+#if defined(CAVIAR_WITH_MPI)
+    if (xyz_mpi_per_process)
     {
       unsigned int num_active_atoms = 0;
       for (unsigned int i = 0; i < nta; ++i)
-      {    
-        if ( atom_data->atom_struct_owned.mpi_rank[i] == my_mpi_rank) num_active_atoms++;
+      {
+        if (atom_data->atom_struct_owned.mpi_rank[i] == my_mpi_rank)
+          num_active_atoms++;
       }
 
       ofs_xyz_mpi << num_active_atoms << "\nAtom\n";
 
       for (unsigned int i = 0; i < nta; ++i)
       {
-        if ( atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank) continue;
+        if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+          continue;
 
         ofs_xyz_mpi << type[i];
         if (xyz_output_id)
@@ -93,6 +97,8 @@ namespace writer
 
       ofs_xyz_mpi << std::flush;
     }
+#endif
+
   }
 
   //================================================
@@ -111,7 +117,7 @@ namespace writer
     if (position_offset != nullptr)
       p_o = position_offset->current_value;
 
-    if (!xyz_ghost_mpi_per_process)
+    if (xyz_ghost_mpi_rank0)
     {
       ofs_xyz_ghost << nta << "\nAtom\n";
 
@@ -130,7 +136,8 @@ namespace writer
 
       ofs_xyz_ghost << std::flush;
     }
-    else
+
+    if (xyz_ghost_mpi_per_process)
     {
       ofs_xyz_ghost_mpi << nta << "\nAtom\n";
 

@@ -107,67 +107,67 @@ namespace writer
       }
       else if (string_cmp(t, "xyz_mpi_per_process"))
       {
-        xyz_mpi_per_process = true;
+        GET_OR_CHOOSE_A_INT(xyz_mpi_per_process, "", "")
       }
       else if (string_cmp(t, "xyz_ghost_mpi_per_process"))
       {
-        xyz_ghost_mpi_per_process = true;
+        GET_OR_CHOOSE_A_INT(xyz_ghost_mpi_per_process, "", "")
       }
       else if (string_cmp(t, "energy_mpi_per_process"))
       {
-        energy_mpi_per_process = true;
+        GET_OR_CHOOSE_A_INT(energy_mpi_per_process, "", "")
       }
       else if (string_cmp(t, "temperature_mpi_per_process"))
       {
-        temperature_mpi_per_process = true;
+        GET_OR_CHOOSE_A_INT(temperature_mpi_per_process, "", "")
       }
       else if (string_cmp(t, "pressure_mpi_per_process"))
       {
-        pressure_mpi_per_process = true;
+        GET_OR_CHOOSE_A_INT(pressure_mpi_per_process, "", "")
       }
       else if (string_cmp(t, "povray_mpi_per_process"))
       {
-        povray_mpi_per_process = true;
+        GET_OR_CHOOSE_A_INT(povray_mpi_per_process, "", "")
       }
       else if (string_cmp(t, "msd_mpi_per_process"))
       {
-        msd_mpi_per_process = true;
+        GET_OR_CHOOSE_A_INT(msd_mpi_per_process, "", "")
       }
       else if (string_cmp(t, "volume_mpi_per_process"))
       {
-        volume_mpi_per_process = true;
+        GET_OR_CHOOSE_A_INT(volume_mpi_per_process, "", "")
       }
       else if (string_cmp(t, "xyz_mpi_rank0"))
       {
-        xyz_mpi_rank0 = true;
+        GET_OR_CHOOSE_A_INT(xyz_mpi_rank0, "", "")
       }
       else if (string_cmp(t, "xyz_ghost_mpi_rank0"))
       {
-        xyz_ghost_mpi_rank0 = true;
+        GET_OR_CHOOSE_A_INT(xyz_ghost_mpi_rank0, "", "")
       }
       else if (string_cmp(t, "energy_mpi_rank0"))
       {
-        energy_mpi_rank0 = true;
+        GET_OR_CHOOSE_A_INT(energy_mpi_rank0, "", "")
       }
       else if (string_cmp(t, "temperature_mpi_rank0"))
       {
-        temperature_mpi_rank0 = true;
+        GET_OR_CHOOSE_A_INT(temperature_mpi_rank0, "", "")
       }
       else if (string_cmp(t, "pressure_mpi_rank0"))
       {
-        pressure_mpi_rank0 = true;
+        GET_OR_CHOOSE_A_INT(pressure_mpi_rank0, "", "")
       }
       else if (string_cmp(t, "povray_mpi_rank0"))
       {
-        povray_mpi_rank0 = true;
+        GET_OR_CHOOSE_A_INT(povray_mpi_rank0, "", "")
       }
       else if (string_cmp(t, "msd_mpi_rank0"))
       {
-        msd_mpi_rank0 = true;
+        GET_OR_CHOOSE_A_INT(msd_mpi_rank0, "", "")
       }
       else if (string_cmp(t, "volume_mpi_rank0"))
       {
-        volume_mpi_rank0 = true;
+        GET_OR_CHOOSE_A_INT(volume_mpi_rank0, "", "")
       }
       else if (string_cmp(t, "xyz_ghost_step"))
       {
@@ -288,15 +288,16 @@ namespace writer
       }
       else if (string_cmp(t, "xyz_output_id"))
       {
-        xyz_output_id = true;
+        GET_OR_CHOOSE_A_INT(xyz_output_id, "", "")
       }
       else if (string_cmp(t, "xyz_output_velocity"))
       {
-        xyz_output_velocity = true;
+        GET_OR_CHOOSE_A_INT(xyz_output_velocity, "", "")
       }
       else if (string_cmp(t, "xyz_output_acceleration"))
       {
-        xyz_output_acceleration = true;
+        GET_OR_CHOOSE_A_INT(xyz_output_acceleration, "", "")
+
         // std::ofstream ofs("o_acc");
         // const auto &pos = atom_data->atom_struct_owned.position;
         // const auto &acc = atom_data->atom_struct_owned.acceleration;

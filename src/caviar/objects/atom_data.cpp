@@ -125,13 +125,19 @@ bool Atom_data::read(caviar::interpreter::Parser *parser)
     }
     else if (string_cmp(t, "msd_process"))
     {
-      msd_process = true;
-      atom_struct_owned.msd_domain_cross.resize(atom_struct_owned.position.size(), caviar::Vector<int>{0, 0, 0});
+      GET_OR_CHOOSE_A_INT(msd_process, "", "")
+      if(msd_process)
+        atom_struct_owned.msd_domain_cross.resize(atom_struct_owned.position.size(), caviar::Vector<int>{0, 0, 0});
     }
     else if (string_cmp(t, "pressure_process"))
     {
-      pressure_process = true;
+      GET_OR_CHOOSE_A_INT(pressure_process, "", "")
       reset_pressure();
+    }
+    else if (string_cmp(t, "temperature_process"))
+    {
+      GET_OR_CHOOSE_A_INT(temperature_process, "", "")
+      reset_temperature();
     }
     else if (string_cmp(t, "add_atom"))
     {
@@ -263,9 +269,12 @@ bool Atom_data::read(caviar::interpreter::Parser *parser)
     }
     else if (string_cmp(t, "add_random_velocity"))
     {
-      unsigned int seed = parser->get_int();
-
-      add_random_velocity(seed);
+      unsigned int seed = 0 ;
+      GET_OR_CHOOSE_A_INT(seed, "", "")
+      double amplitude = 1.0; 
+      GET_OR_CHOOSE_A_REAL(amplitude, "", "")
+      if (amplitude<0) amplitude = -amplitude;
+      add_random_velocity(seed, amplitude);
       return true;
     }
     else if (string_cmp(t, "n_r_df"))
@@ -572,12 +581,12 @@ bool Atom_data::add_charges(unsigned int type, Real_t c)
   return true; // WARNING
 }
 
-void Atom_data::add_random_velocity(unsigned int seed)
+void Atom_data::add_random_velocity(unsigned int seed, double amplitude)
 {
 
   // setting random velocity to all the particles
   std::mt19937 mt(seed);
-  std::uniform_real_distribution<double> dist(-1.0, 1.0);
+  std::uniform_real_distribution<double> dist(-amplitude, amplitude);
   for (auto &&v : atom_struct_owned.velocity)
   {
     v.x = dist(mt);

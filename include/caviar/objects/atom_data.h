@@ -392,7 +392,7 @@ public:
   /**
    * a simple adding a random velocity to all of the atoms. The argument is the seed for random initialization.
    */
-  virtual void add_random_velocity(unsigned int seed);
+  virtual void add_random_velocity(unsigned int seed, double amplitude);
 
   /**
    * find and exchange owned atoms between domain or do periodic boundary condition movement.

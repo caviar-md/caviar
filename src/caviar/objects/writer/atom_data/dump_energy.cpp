@@ -24,7 +24,7 @@ CAVIAR_NAMESPACE_OPEN
 namespace writer
 {
 
-  void Atom_data::dump_energy_mpi(int64_t , double )
+  void Atom_data::dump_energy_mpi(int64_t, double)
   {
     // double k_e = atom_data->kinetic_energy();
 
@@ -44,21 +44,25 @@ namespace writer
   void Atom_data::dump_energy_serial(int64_t i, double t)
   {
 
-    if (!energy_mpi_per_process)
+#if defined(CAVIAR_WITH_MPI)
+    if (energy_mpi_rank0)
+#endif
     {
       double k_e = atom_data->kinetic_energy();
 
       ofs_energy << i << " " << t << " " << k_e << std::endl;
     }
-    else
+#if defined(CAVIAR_WITH_MPI)
+    if (energy_mpi_per_process)
     {
       double k_e = atom_data->kinetic_energy_mpi_domain();
 
       ofs_energy_mpi << i << " " << t << " " << k_e << std::endl;
     }
+#endif
   }
 
-  void Atom_data::dump_temperature_mpi(int64_t , double )
+  void Atom_data::dump_temperature_mpi(int64_t, double)
   {
     // double k_e = atom_data->temperature();
 
@@ -78,21 +82,25 @@ namespace writer
   void Atom_data::dump_temperature_serial(int64_t i, double t)
   {
 
-    if (!temperature_mpi_per_process)
+#if defined(CAVIAR_WITH_MPI)
+    if (temperature_mpi_rank0)
+#endif
     {
       double k_e = atom_data->temperature();
 
       ofs_temperature << i << " " << t << " " << k_e << std::endl;
     }
-    else
+#if defined(CAVIAR_WITH_MPI)
+    if (temperature_mpi_per_process)
     {
       double k_e = atom_data->temperature_mpi_domain();
 
       ofs_temperature_mpi << i << " " << t << " " << k_e << std::endl;
     }
+#endif
   }
 
-  void Atom_data::dump_pressure_mpi(int64_t , double )
+  void Atom_data::dump_pressure_mpi(int64_t, double)
   {
     // double p = atom_data->pressure();
 
@@ -113,21 +121,26 @@ namespace writer
   void Atom_data::dump_pressure_serial(int64_t i, double t)
   {
 
-    if (!pressure_mpi_per_process)
+#if defined(CAVIAR_WITH_MPI)
+    if (pressure_mpi_rank0)
+#endif
     {
       double p = atom_data->pressure();
 
       ofs_pressure << i << " " << t << " " << p << std::endl;
     }
-    else
+#if defined(CAVIAR_WITH_MPI)
+    if (pressure_mpi_per_process)
+
     {
       double p = atom_data->pressure_mpi_domain();
 
       ofs_pressure_mpi << i << " " << t << " " << p << std::endl;
     }
+#endif
   }
 
-  void Atom_data::dump_volume_mpi(int64_t , double )
+  void Atom_data::dump_volume_mpi(int64_t, double)
   {
     // double p = atom_data->pressure();
 
@@ -145,20 +158,25 @@ namespace writer
   }
 
   void Atom_data::dump_volume_serial(int64_t i, double t)
-  {    
-    
-    if (!volume_mpi_per_process)
+  {
+
+#if defined(CAVIAR_WITH_MPI)
+    if (volume_mpi_rank0)
+#endif
     {
       double v = domain->volume_global();
 
       ofs_pressure << i << " " << t << " " << v << std::endl;
     }
-    else
+
+#if defined(CAVIAR_WITH_MPI)
+    if (volume_mpi_per_process)
     {
       double v = domain->volume_local();
 
       ofs_pressure_mpi << i << " " << t << " " << v << std::endl;
     }
+#endif
   }
 
 } // writer
