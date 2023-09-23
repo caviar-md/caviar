@@ -14,6 +14,11 @@
 # 
 #=======================================================================
 
+#===== global variables
+
+
+real dt_all 0.001
+
 
 #===== Domain
 
@@ -48,6 +53,7 @@ tf_3 export_file_name "tf_3.txt"
 
 atom_data basic adata
 adata set_domain dom
+adata k_b 1.0
 
 #=====  simulator
 
@@ -59,7 +65,7 @@ sim add_time_function tf_2
 sim add_time_function tf_3
 sim initial_step 0
 sim final_step 1000
-sim dt 0.01 
+sim dt dt_all 
 sim run
 
 

@@ -14,7 +14,12 @@
 # 
 #=======================================================================
 
-real all_cutoff 3
+#===== global variables
+
+real cutoff_max 3.5
+
+real dt_all 0.001
+
 
 #===== Atom definition =====
 
@@ -78,8 +83,8 @@ dom generate
 #========== Atom_data
 
 atom_data  basic adata
-adata ghost_cutoff all_cutoff
-adata cutoff_extra 0.0
+adata ghost_cutoff cutoff_max
+
 adata set_domain dom
 adata add_atom_group ag1
 adata add_atom_group ag2
@@ -94,9 +99,9 @@ adata k_b 1.0
 neighborlist basic neigh 
 neigh set_atom_data adata
 neigh set_domain dom
-neigh cutoff all_cutoff
-neigh cutoff_extra_coef 1.321
-neigh dt 0.001
+neigh cutoff cutoff_max
+neigh cutoff_extra_coef 1.0523
+neigh dt dt_all
 neigh make_verlet_list_from_cell_list
 neigh build_cell_list
 
@@ -105,7 +110,7 @@ neigh build_cell_list
 
 force_field  lj f_lj
 
-f_lj cutoff all_cutoff
+f_lj cutoff 3
 f_lj epsilon 0 0 1.0
 f_lj sigma 0 0 1.0
 f_lj set_neighborlist neigh
@@ -131,7 +136,7 @@ sim add_neighborlist neigh
 sim add_writer w1
 sim initial_step 0
 sim final_step 100000
-sim dt 0.001 
+sim dt dt_all 
 sim run
 
 

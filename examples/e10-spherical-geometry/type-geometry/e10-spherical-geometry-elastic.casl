@@ -19,7 +19,9 @@
 
 #===== global variables
 
-real global_dt 0.001
+real cutoff_max 10
+
+real dt_all 0.001
 
 
 #===== Atom definition =====
@@ -74,8 +76,8 @@ d distribute_grid_3d
 #========== Atom_data
 
 atom_data basic adata
-adata ghost_cutoff 10
-adata cutoff_extra 0.01
+adata ghost_cutoff cutoff_max
+
 adata k_b 1.0
 adata set_domain dom
 adata add_type_mass   0 1.0
@@ -83,18 +85,18 @@ adata add_type_charge 0 0.0  # oxygen
 adata add_type_radius 0 0.5  # oxygen 
 
 adata add_atom_group ag
-adata add_random_velocity
-
-
-
+adata add_random_velocity 1 1.0
 
 #===== Neighborlist
 
-neighborlist verlet_list neigh_verlet 
-neigh_verlet set_atom_data adata
-neigh_verlet cutoff 5
-neigh_verlet dt global_dt
-
+neighborlist basic neigh 
+neigh set_atom_data adata
+neigh set_domain dom
+neigh cutoff cutoff_max
+neigh cutoff_extra_coef 1.0523
+neigh dt dt_all
+#neigh make_verlet_list_from_cell_list
+#neigh build_cell_list
 
 #===== force_field
 
@@ -108,7 +110,7 @@ f_gr dissip_coef 0 1
 
 f_gr gravity 0 0 -10.0
 
-f_gr set_neighborlist neigh_verlet
+f_gr set_neighborlist neigh
 
 f_gr set_atom_data adata
 f_gr set_domain dom
@@ -124,7 +126,7 @@ f_ge radius 10
 
 
 f_ge set_atom_data adata
-f_ge set_neighborlist neigh_verlet
+f_ge set_neighborlist neigh
 
 
 
@@ -134,7 +136,9 @@ w1 set_atom_data adata
 w1 set_domain dom
 w1 xyz_step 50
 #w1 energy_step 100
-w1 output_velocity
+#w1 xyz_output_velocity 1
+w1 xyz_mpi_rank0 1
+w1 xyz_mpi_per_process 1
 
 #=====  simulator
 
@@ -148,7 +152,7 @@ sim set_atom_data adata
 sim add_force_field f_ge
 sim add_force_field f_gr
 
-sim add_neighborlist neigh_verlet
+sim add_neighborlist neigh
 
 
 sim add_writer w1
@@ -157,7 +161,7 @@ sim add_writer w1
 
 sim initial_step 0
 sim final_step 10000
-sim dt global_dt
+sim dt dt_all
 sim run
 
 #exit

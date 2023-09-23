@@ -19,7 +19,9 @@
 
 #===== global variables
 
-real global_dt 0.001
+real cutoff_max 12
+
+real dt_all 0.001
 
 
 #===== Atom definition =====
@@ -74,7 +76,7 @@ d distribute_grid_3d
 #========== Atom_data
 
 atom_data basic adata
-adata ghost_cutoff 10
+adata ghost_cutoff cutoff_max
 adata cutoff_extra 0.01
 adata k_b 1.0
 adata set_domain dom
@@ -83,17 +85,21 @@ adata add_type_charge 0 0.0
 adata add_type_radius 0 0.5 
 
 adata add_atom_group ag
-adata add_random_velocity
+adata add_random_velocity 1 1.0
 
 
 
 
 #===== Neighborlist
 
-neighborlist verlet_list neigh_verlet 
-neigh_verlet set_atom_data adata
-neigh_verlet cutoff 5
-neigh_verlet dt global_dt
+neighborlist basic neigh 
+neigh set_atom_data adata
+neigh set_domain dom
+neigh cutoff cutoff_max
+neigh cutoff_extra_coef 1.0523
+neigh dt dt_all
+#neigh make_verlet_list_from_cell_list
+#neigh build_cell_list
 
 
 
@@ -104,8 +110,7 @@ force_field  lj f_lj
 f_lj cutoff 10.0
 f_lj epsilon 0 0 1.0
 f_lj sigma 0 0 0.5
-f_lj set_neighborlist neigh_verlet
-#f_lj set_neighborlist neigh_cell
+f_lj set_neighborlist neigh
 f_lj set_atom_data adata
 
 
@@ -126,7 +131,7 @@ c_nh tau 0.0001 # used in type 2 Nose_hoover
 # c_nh mass 1.0 # used in type 1 Nose_hoover
 c_nh temperature 5.0
 
-c_nh dt global_dt
+c_nh dt dt_all
 c_nh set_atom_data adata
 
 #==== Constraint
@@ -134,7 +139,7 @@ c_nh set_atom_data adata
 constraint  Berendsen c_ber
 c_ber coupling 0.01 
 c_ber temperature 5.0
-c_ber dt global_dt
+c_ber dt dt_all
 c_ber set_atom_data adata
 
 
@@ -145,7 +150,11 @@ w1 set_domain dom
 w1 xyz_step 50
 w1 temperature_step 500
 w1 energy_step 50
-w1 output_velocity
+w1 xyz_output_velocity 1
+w1 xyz_mpi_rank0 1
+w1 xyz_mpi_per_process 1
+w1 temperature_mpi_rank0 1
+w1 temperature_mpi_per_process 1
 
 #=====  simulator
 
@@ -158,12 +167,12 @@ sim set_atom_data adata
 
 sim add_force_field f_lj
 
-sim add_neighborlist neigh_verlet
+sim add_neighborlist neigh
 
 
 sim add_writer w1
 
-sim dt global_dt
+sim dt dt_all
 
 sim add_constraint c_nve
 

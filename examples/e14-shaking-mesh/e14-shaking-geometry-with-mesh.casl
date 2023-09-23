@@ -14,11 +14,14 @@
 # 
 #=======================================================================
 
-real k_elec_all   24.3736
 
 #===== global variables
 
-real global_dt 0.001
+real k_elec_all   24.3736
+
+real cutoff_max 10
+
+real dt_all 0.001
 
 #===== Atom definition =====
 
@@ -151,8 +154,8 @@ tf_pos set_formula_z "0"
 #========== Atom_data
 
 atom_data basic adata
-adata ghost_cutoff 9.5
-adata cutoff_extra 0.0
+adata ghost_cutoff cutoff_max
+
 adata k_b 1.0
 adata set_domain dom
 adata add_type_mass   0 15.999   # oxygen
@@ -164,16 +167,18 @@ adata add_type_charge 1 0.4238   # hydrogen
 adata add_type_radius 1 0.0836   # hydrogen
 
 adata add_molecule_group mg
-adata add_random_velocity
+adata add_random_velocity 1 1.0
 
 #===== Neighborlist
 
-neighborlist cell_list  neigh_cell
-neigh_cell set_atom_data adata
-neigh_cell cutoff 9.5
-neigh_cell set_domain dom
-neigh_cell make_neighlist
-neigh_cell cutoff_neighlist 9.5
+neighborlist basic neigh 
+neigh set_atom_data adata
+neigh set_domain dom
+neigh cutoff cutoff_max
+neigh cutoff_extra_coef 1.0523
+neigh dt dt_all
+neigh make_verlet_list_from_cell_list
+neigh build_cell_list
 
 #===== force_field
 
@@ -193,8 +198,7 @@ f_lj sigma_atom 2 2.35     # Na
 f_lj sigma_atom 3 4.40      # Cl
 
 
-#f_lj set_neighborlist neigh_verlet
-f_lj set_neighborlist neigh_cell
+f_lj set_neighborlist neigh
 
 f_lj set_atom_data adata
 f_lj set_domain dom
@@ -228,7 +232,7 @@ f_gelj set_position_offset tf_pos
 #===== force_field
 
 force_field  electrostatic_ewald1d f_ee
-f_ee set_neighborlist neigh_cell
+f_ee set_neighborlist neigh
 f_ee set_atom_data adata
 f_ee set_domain dom
 f_ee sigma 1.0
@@ -253,7 +257,7 @@ f_plt boundary_id_value 6 0.0 #set to zero
 
 #f_plt output_induced_charge 500
 
-#f_plt set_solve_type faster_adaptive # deal 8.5
+#f_plt set_solve_type simple_global # deal 8.5
 
 f_plt set_solve_type simple_global # deal 9
 
@@ -265,7 +269,7 @@ f_plt set_position_offset tf_pos
 #==== Constraint
 
 constraint shake c_shake 
-c_shake dt global_dt
+c_shake dt dt_all
 c_shake set_atom_data adata
 c_shake set_domain dom
 #c_mshake error_tolerance 0.01
@@ -283,9 +287,12 @@ w1 set_atom_data adata
 w1 set_domain dom
 w1 xyz_step 500
 w1 energy_step 500
-#w1 output_velocity
+#w1 xyz_output_velocity 1
 w1 temperature_step 500
-
+w1 xyz_mpi_rank0 1
+w1 xyz_mpi_per_process 1
+w1 temperature_mpi_rank0 1
+w1 temperature_mpi_per_process 1
 #=====  simulator
 
 
@@ -302,7 +309,7 @@ sim add_force_field f_gelj
 sim add_force_field f_ee
 sim add_force_field f_plt
 
-sim add_neighborlist neigh_cell
+sim add_neighborlist neigh
 
 sim add_writer w1
  
@@ -312,7 +319,7 @@ sim add_constraint c_nve
 
 sim initial_step 0
 sim final_step 1000000
-sim dt global_dt
+sim dt dt_all
 sim run
 
 #exit

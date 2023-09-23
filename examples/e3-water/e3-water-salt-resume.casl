@@ -16,10 +16,11 @@
 # 
 # This script script is made with the contributions of Mr Amin Karim Abadi
 # 
-
 #===== global variables
 
-real global_dt 0.001
+real cutoff_max 12
+
+real dt_all 0.001
 
 #===== Atom definition =====
 
@@ -137,8 +138,8 @@ d2 distribute_grid_3d
 #========== Atom_data
 
 atom_data basic adata
-adata ghost_cutoff 5
-adata cutoff_extra 0.01
+adata ghost_cutoff cutoff_max
+
 adata k_b 1.0
 adata set_domain dom
 adata add_type_mass   0 15.999   # oxygen
@@ -161,9 +162,9 @@ adata msd_process 1
 neighborlist basic neigh 
 neigh set_atom_data adata
 neigh set_domain dom
-neigh cutoff 12
-neigh cutoff_extra_coef 1.321
-neigh dt 0.001
+neigh cutoff cutoff_max
+neigh cutoff_extra_coef 1.0523
+neigh dt dt_all
 #neigh make_verlet_list_from_cell_list
 #neigh build_cell_list
 
@@ -206,21 +207,21 @@ f_elsh set_neighborlist neigh
 
 #==== Constraint
 constraint m_shake c_mshake 
-c_mshake dt global_dt
+c_mshake dt dt_all
 c_mshake set_atom_data adata
 c_mshake set_domain dom
 #c_mshake error_tolerance 0.01
 
 #==== Constraint
 constraint shake c_shake 
-c_shake dt global_dt
+c_shake dt dt_all
 c_shake set_atom_data adata
 c_shake set_domain dom
 #c_mshake error_tolerance 0.01
 
 #==== Constraint
 constraint rattle c_rattle 
-c_rattle dt global_dt
+c_rattle dt dt_all
 c_rattle set_atom_data adata
 c_rattle set_domain dom
 #c_mshake error_tolerance 0.01
@@ -269,7 +270,7 @@ sim add_constraint c_nve
 
 sim initial_step 0
 sim final_step 100000000
-sim dt global_dt
+sim dt dt_all
 sim run
 
 #exit

@@ -14,6 +14,12 @@
 # 
 #=======================================================================
 
+#===== global variables
+
+real cutoff_max 5
+
+real dt_all 0.001
+
 
 #===== Atom definition =====
 
@@ -122,9 +128,10 @@ d distribute_grid_3d
 #========== Atom_data
 
 atom_data basic adata
-adata ghost_cutoff 5
-adata cutoff_extra 0.01
+adata ghost_cutoff cutoff_max
+
 adata set_domain dom
+adata k_b 1.0
 
 adata add_type_mass   0 15.999   # oxygen
 adata add_type_charge 0 -0.8476  # oxygen
@@ -142,23 +149,21 @@ adata add_type_radius 2 0.5      # poly
 #adata add_molecule m_water
 adata add_molecule m_poly
 
-adata add_random_velocity
+adata add_random_velocity 1 1.0
 
 #===== Neighborlist
 
-neighborlist verlet_list neigh_verlet 
-neigh_verlet set_atom_data adata
-neigh_verlet cutoff 15
-neigh_verlet dt 0.001
+neighborlist basic neigh 
+neigh set_atom_data adata
+neigh set_domain dom
+neigh cutoff cutoff_max
+neigh cutoff_extra_coef 1.0523
+neigh dt dt_all
+#neigh make_verlet_list_from_cell_list
+#neigh build_cell_list
 
-#===== Neighborlist
 
-neighborlist cell_list neigh_cell 
-neigh_cell set_atom_data adata
-neigh_cell cutoff 15
-neigh_cell set_domain dom
-neigh_cell make_neighlist
-neigh_cell cutoff_neighlist 10
+
 #===== force_field
 
 force_field  lj f_lj
@@ -199,8 +204,8 @@ f_lj sigma 3 1 1.0
 f_lj sigma 3 2 1.0
 f_lj sigma 3 3 1.0
 
-f_lj set_neighborlist neigh_verlet
-#f_lj set_neighborlist neigh_cell
+f_lj set_neighborlist neigh
+
 f_lj set_atom_data adata
 f_lj set_domain dom
 
@@ -241,6 +246,8 @@ w1 set_atom_data adata
 w1 set_domain dom
 w1 xyz_step 200
 w1 energy_step 200
+w1 xyz_mpi_rank0 1
+w1 xyz_mpi_per_process 1
 
 #=====  simulator
 
@@ -259,15 +266,15 @@ sim friction 1.0
 #sim add_force_field f_el
 sim add_force_field f_sb
 
-#sim add_neighborlist neigh_verlet
-#sim add_neighborlist neigh_cell
+#sim add_neighborlist neigh
+#sim add_neighborlist neigh
 
 sim add_writer w1
 
 
 sim initial_step 0
 sim final_step 100000
-sim dt 0.001 
+sim dt dt_all 
 sim run
 
 #exit

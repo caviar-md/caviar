@@ -19,7 +19,9 @@
 
 #===== global variables
 
-real global_dt 0.005
+real cutoff_max 9.5
+
+real dt_all 0.005
 
 #===== Atom definition =====
 unique atom a_base
@@ -57,8 +59,8 @@ gz generate
 #========== Atom_data
 
 atom_data basic adata
-adata ghost_cutoff 9.5
-adata cutoff_extra 0.0
+adata ghost_cutoff cutoff_max
+
 adata k_b 1.0
 adata set_domain dom
 
@@ -69,36 +71,21 @@ adata add_type_radius 0 1
 adata add_atom a_base
 #===== Neighborlist
 
-#neighborlist verlet_list neigh_verlet 
-#neigh_verlet set_atom_data adata
-#neigh_verlet cutoff 9.5
-#neigh_verlet dt global_dt
+neighborlist basic neigh 
+neigh set_atom_data adata
+neigh set_domain dom
+neigh cutoff cutoff_max
+neigh cutoff_extra_coef 1.0523
+neigh dt dt_all
+neigh make_verlet_list_from_cell_list
+neigh build_cell_list
 
 
-#===== Neighborlist
-
-neighborlist cell_list  neigh_cell
-neigh_cell set_atom_data adata
-neigh_cell cutoff 9.5
-neigh_cell set_domain dom
-neigh_cell make_neighlist
-neigh_cell cutoff_neighlist 9.5
-
-
-
-#===== Neighborlist
-
-#neighborlist cell_list neigh_cell 
-#neigh_cell set_atom_data adata
-#neigh_cell cutoff 12
-#neigh_cell set_domain dom
-#neigh_cell make_neighlist
-#neigh_cell cutoff_neighlist 10
 
 #===== force_field
 
 force_field  electrostatic_ewald1d f_ee
-f_ee set_neighborlist neigh_cell
+f_ee set_neighborlist neigh
 f_ee set_atom_data adata
 f_ee set_domain dom
 f_ee sigma 1.0
@@ -111,7 +98,7 @@ f_ewr set_atom_data adata
 f_ewr k_electrostatic 1389.38550539
 f_ewr cutoff 9.72  
 f_ewr alpha 0.288065844  # 2.8/cutoff
-f_ewr set_neighborlist neigh_cell
+f_ewr set_neighborlist neigh
 
 
 #===============================
@@ -144,10 +131,10 @@ f_plt boundary_id_value 4 120
 
 f_plt output_induced_charge 500
 
-f_plt set_solve_type faster_adaptive
+f_plt set_solve_type simple_global
 
 f_plt refine_global 1
 
-f_plt generate_ml_training_data grid_1d_x gx grid_1d_y gy grid_1d_z gz neighborlist neigh_cell
+f_plt generate_ml_training_data grid_1d_x gx grid_1d_y gy grid_1d_z gz neighborlist neigh
 
 

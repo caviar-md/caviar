@@ -14,6 +14,11 @@
 # 
 #=======================================================================
 
+#===== global variables
+
+real cutoff_max 5
+
+real dt_all 0.001
 
 #===== Atom definition =====
 
@@ -38,8 +43,8 @@ dom generate
 #========== Atom_data
 
 atom_data basic adata
-adata ghost_cutoff 5
-adata cutoff_extra 0.01
+adata ghost_cutoff cutoff_max
+
 adata set_domain dom
 adata add_atom a1
 adata add_atom a2
@@ -53,9 +58,9 @@ adata temperature_process 1
 neighborlist basic neigh 
 neigh set_atom_data adata
 neigh set_domain dom
-neigh cutoff 15
-neigh cutoff_extra_coef 1.321
-neigh dt 0.001
+neigh cutoff cutoff_max
+neigh cutoff_extra_coef 1.0523
+neigh dt dt_all
 #neigh make_verlet_list_from_cell_list
 #neigh build_cell_list
 
@@ -88,7 +93,7 @@ sim add_neighborlist neigh
 sim add_writer w1
 sim initial_step 0
 sim final_step 20000
-sim dt 0.001 
+sim dt dt_all 
 sim run
 
 
