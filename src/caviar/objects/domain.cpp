@@ -69,7 +69,7 @@ void Domain::calculate_procs_grid()
   neighborlist_domains.push_back(me); // don't know if it's neccesary
   find_best_grid();
   if (me == 0)
-    std::cout << "info: Number of processes:\n\tnpx:" << nprocs_x << " npy:"
+    std::cout << "[INF] Number of processes:\n\tnpx:" << nprocs_x << " npy:"
               << nprocs_y << " npz:" << nprocs_z << std::endl;
 
   grid_index_x = me % nprocs_x;

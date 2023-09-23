@@ -31,7 +31,7 @@ set (CMAKE_CXX_STANDARD_REQUIRED ON)
 #set (CAVIAR_MINOR_VERSION 0)
 #set (CAVIAR_PATCH_VERSION 1)
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-cast-function-type") # -Wcast-function-type comes in openmpi compilation
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 

@@ -46,7 +46,7 @@ namespace interpreter
       if (me == 0)
       {
 #endif
-        std::cout << "info: ";
+        std::cout << "[INF] ";
         std::cout << str;
         if (endline)
           std::cout << std::endl;
@@ -64,7 +64,7 @@ namespace interpreter
   }
   void Output::info_create(const std::string &str, int level, bool endline)
   {
-    std::string s = "A " + str + " is created.";
+    std::string s = "(Create) " + str ;
     info(s, level, endline);
   }
 
@@ -74,7 +74,7 @@ namespace interpreter
   }
   void Output::info_read(const std::string &str, int level, bool endline)
   {
-    std::string s = str + ".read(parser) is called.";
+    std::string s = "(Call) "+ str + ".read()";
     info(s, level, endline);
   }
 
@@ -92,7 +92,7 @@ namespace interpreter
       if (me == 0)
       {
 #endif
-        std::cout << "WARNING: ";
+        std::cout << "[WRN] ";
         std::cout << str;
         if (endline)
           std::cout << std::endl;

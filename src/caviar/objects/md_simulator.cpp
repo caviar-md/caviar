@@ -743,7 +743,7 @@ void Md_simulator::integrate_leap_frog()
       error->all(FC_FILE_LINE_FUNC,
                  "(MPI_RANK: " + std::to_string(my_mpi_rank) +
                      ", timestep:"+ std::to_string(current_step) +"): The atom with id "+ std::to_string(atom_data->atom_struct_owned.id[i]) + " and index "+ std::to_string(i) + " at position (" + std::to_string(pos[i].x) +
-                     " , " + std::to_string(pos[i].y) + " , " + std::to_string(pos[i].z) + ") is has NaN acceleration.");
+                     " , " + std::to_string(pos[i].y) + " , " + std::to_string(pos[i].z) + ") has NaN acceleration.");
     }
     vel[i] += 0.5 * dt * acc[i]; // v (t + dt/2) = v (t) + (dt/2) a (t)
     pos[i] += dt * vel[i];       // r (t + dt) = r (t) + dt * v (t + dt/2)

@@ -33,7 +33,7 @@ namespace shape
     void Format_vtk_reader::read_polyhedron(shape::polyhedron::Polyhedron &p_object, const std::string &file)
     {
       class caviar::interpreter::Parser *parser = new caviar::interpreter::Parser{fptr, file};
-      std::cout << "info: Vtk_file: reading a Vtk_file vtk file: " << file << std::endl;
+      std::cout << "[INF] Vtk_file: reading a Vtk_file vtk file: " << file << std::endl;
 
       auto &vertex = p_object.vertex;
       auto &face = p_object.face;
@@ -46,7 +46,7 @@ namespace shape
         error->all(FC_FILE_LINE_FUNC, "face.size() != face_id.size()");
       }
 
-      std::cout << "info: Vtk_file: recording vtk file as a 3D shape with index "
+      std::cout << "[INF] Vtk_file: recording vtk file as a 3D shape with index "
                 << " ? " << std::endl;
 
       while (true)

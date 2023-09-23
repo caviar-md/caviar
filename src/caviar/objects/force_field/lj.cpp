@@ -269,7 +269,7 @@ namespace force_field
         for (unsigned int j = 0; j < max_size; ++j)
         {
           auto cut = cut_coef * sigma[i][j];
-          std::cout << "info: lj wca cutoff " << i << "," << j << " : " << cut << "\n";
+          std::cout << "[INF] lj wca cutoff " << i << "," << j << " : " << cut << "\n";
           cutoff_list[i][j] = cut;
         }
       }

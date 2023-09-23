@@ -153,7 +153,6 @@ namespace shape
       // std::cout << "face_list.size: "<< face_list.size() << "\n";
       // std::cout << "face.size: "<< face.size() << "\n";
       // std::cout << "edge_list.size: "<< edge_list.size() << "\n";
-      std::cout << "XXX HEY 2 " << std::endl;
       for (unsigned int i = 0; i < edge_list.size(); ++i)
       {
 

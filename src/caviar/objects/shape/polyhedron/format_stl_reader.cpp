@@ -33,7 +33,7 @@ namespace shape
     void Format_stl_reader::read_polyhedron(shape::polyhedron::Polyhedron &p_object, const std::string &file)
     {
       class caviar::interpreter::Parser *parser = new caviar::interpreter::Parser{fptr, file};
-      std::cout << "info: Stl_file: reading a Stl_file Stl file: " << file << std::endl;
+      std::cout << "[INF] Stl_file: reading a Stl_file Stl file: " << file << std::endl;
 
       auto &vertex = p_object.vertex;
       auto &face = p_object.face;
@@ -46,7 +46,7 @@ namespace shape
       }
 
       // auto & vertex_map = p_object.vertex_map;
-      std::cout << "info: Stl_file: recording Stl file as a 3D shape with index "
+      std::cout << "[INF] Stl_file: recording Stl file as a 3D shape with index "
                 << " ? " << std::endl;
 
       bool endsolid_found = false;

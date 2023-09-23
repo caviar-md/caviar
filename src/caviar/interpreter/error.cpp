@@ -26,7 +26,7 @@ namespace interpreter
   // All procs must call this else there would be a deadlock
   void Error::all(const std::string &str)
   {
-    err << "  - ERROR: " << str << std::endl;
+    err << "[ERR] " << str << std::endl;
     exit(1);
   }
 
@@ -41,8 +41,8 @@ namespace interpreter
     {
       if (err_flag)
       {
-        err << "  - ERROR: " << str << std::endl;
-        err << "  - '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+        err << "[ERR] " << str << std::endl;
+        err << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
         err << parsing_line << std::endl;
         for (unsigned int i = 0; i < col; ++i)
           err << ' ';
@@ -50,8 +50,8 @@ namespace interpreter
       }
       if (log_flag)
       {
-        log << "  - ERROR: " << str << std::endl;
-        log << "  - '" << file << ':' << line << " in '" << func << "'." << std::endl;
+        log << "[ERR] " << str << std::endl;
+        log << " '" << file << ':' << line << " in '" << func << "'." << std::endl;
         log << parsing_line << std::endl;
         for (unsigned int i = 0; i < col; ++i)
           log << ' ';
@@ -75,9 +75,9 @@ namespace interpreter
     MPI_Comm_rank(MPI_COMM_WORLD, &me);
     if (err_flag)
     {
-      err << "  - ERROR: " << str << std::endl;
-      err << "  - MPI rank " << me << std::endl;
-      err << "  - '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+      err << "[ERR] " << str << std::endl;
+      err << " MPI rank " << me << std::endl;
+      err << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
       
 
       err << parsing_line << std::endl;
@@ -87,9 +87,9 @@ namespace interpreter
     }
     if (log_flag)
     {
-      log << "  - ERROR: " << str << std::endl;
-      err << "  - MPI rank " << me << std::endl;
-      log << "  - '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+      log << "[ERR] " << str << std::endl;
+      err << " MPI rank " << me << std::endl;
+      log << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
       log << parsing_line << std::endl;
       for (unsigned i = 0; i < col; ++i)
         log << ' ';
@@ -113,9 +113,9 @@ namespace interpreter
     {
       if (err_flag)
       {
-        err << "  - ERROR: " << str << std::endl;
-        err << "  - MPI rank " << me << std::endl;
-        err << "  - '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+        err << "[ERR] " << str << std::endl;
+        err << " MPI rank " << me << std::endl;
+        err << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
         err << parsing_line << std::endl;
         for (unsigned int i = 0; i < col; ++i)
           err << ' ';
@@ -123,9 +123,9 @@ namespace interpreter
       }
       if (log_flag)
       {
-        log << "  - ERROR: " << str << std::endl;
-        err << "  - MPI rank " << me << std::endl;
-        log << "  - '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+        log << "[ERR] " << str << std::endl;
+        err << " MPI rank " << me << std::endl;
+        log << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
         log << parsing_line << std::endl;
         for (unsigned int i = 0; i < col; ++i)
           log << ' ';
@@ -148,9 +148,9 @@ namespace interpreter
     MPI_Comm_rank(MPI_COMM_WORLD, &me);
     if (err_flag)
     {
-      err << "  - ERROR: " << str << std::endl;
-      err << "  - MPI rank " << me << std::endl;
-      err << "  - '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+      err << "[ERR] " << str << std::endl;
+      err << " MPI rank " << me << std::endl;
+      err << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
       err << parsing_line << std::endl;
       for (unsigned i = 0; i < col; ++i)
         err << ' ';
@@ -158,9 +158,9 @@ namespace interpreter
     }
     if (log_flag)
     {
-      log << "  - ERROR: " << str << std::endl;
-      err << "  - MPI rank " << me << std::endl;
-      log << "  - '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+      log << "[ERR] " << str << std::endl;
+      err << " MPI rank " << me << std::endl;
+      log << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
       log << parsing_line << std::endl;
       for (unsigned i = 0; i < col; ++i)
         log << ' ';
@@ -184,13 +184,13 @@ namespace interpreter
     {
       if (err_flag)
       {
-        err << "  - ERROR: " << str << std::endl;
-        err << "  - '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+        err << "[ERR] " << str << std::endl;
+        err << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
       }
       if (log_flag)
       {
-        log << "  - ERROR: " << str << std::endl;
-        log << "  - '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+        log << "[ERR] " << str << std::endl;
+        log << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
       }
       if (log_flag)
         log.close();
@@ -209,15 +209,15 @@ namespace interpreter
     MPI_Comm_rank(MPI_COMM_WORLD, &me);
     if (err_flag)
     {
-      err << "  - ERROR: " << str << std::endl;
-      err << "  - MPI rank " << me << std::endl;
-      err << "  - '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+      err << "[ERR] " << str << std::endl;
+      err << " MPI rank " << me << std::endl;
+      err << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
     }
     if (log_flag)
     {
-      log << "  - ERROR: " << str << std::endl;
-      log << "  - MPI rank " << me << std::endl;
-      log << "  - '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+      log << "[ERR] " << str << std::endl;
+      log << " MPI rank " << me << std::endl;
+      log << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
     }
     MPI_Abort(MPI_COMM_WORLD, 1);
 #else

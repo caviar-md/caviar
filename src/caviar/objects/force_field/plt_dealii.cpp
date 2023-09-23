@@ -1996,7 +1996,7 @@ namespace force_field
       }
 
   
-      for (int i = 0; i < face_center.size(); ++i)
+      for (unsigned int i = 0; i < face_center.size(); ++i)
       {
         if (x_axis)
           face_center[i][0] *= scale_ratio; 

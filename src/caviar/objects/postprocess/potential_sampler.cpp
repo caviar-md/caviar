@@ -109,7 +109,7 @@ namespace postprocess
 
   void Potential_sampler::run()
   {
-    std::cout << "info: Potential_sampler::run () " << std::endl;
+    std::cout << "[INF] Potential_sampler::run () " << std::endl;
 
     FC_NULLPTR_CHECK(atom_data)
     FC_NULLPTR_CHECK(md_simulator)
@@ -139,7 +139,7 @@ namespace postprocess
 
       if (set_step)
       {
-        std::cout << "info: Potential_sampler::run: processing step " << step_current << std::endl;
+        std::cout << "[INF] Potential_sampler::run: processing step " << step_current << std::endl;
 
         md_simulator->step(step_current); // check the position of water after applying bond constraints
 
