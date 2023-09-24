@@ -33,6 +33,8 @@ namespace writer
   //================================================
   void Atom_data::dump_xyz_serial(int64_t, double)
   {
+
+
     auto &pos = atom_data->atom_struct_owned.position;
     auto &type = atom_data->atom_struct_owned.type;
     auto &vel = atom_data->atom_struct_owned.velocity;
@@ -65,8 +67,24 @@ namespace writer
 
       ofs_xyz << std::flush;
     }
+  }
+
+  void Atom_data::dump_xyz_mpi_per_process(int64_t, double)
+  {
 
 #if defined(CAVIAR_WITH_MPI)
+
+    auto &pos = atom_data->atom_struct_owned.position;
+    auto &type = atom_data->atom_struct_owned.type;
+    auto &vel = atom_data->atom_struct_owned.velocity;
+    auto &acc = atom_data->atom_struct_owned.acceleration;
+    auto &id = atom_data->atom_struct_owned.id;
+
+    auto nta = atom_data->atom_struct_owned.position.size();
+
+    Vector<double> p_o{0, 0, 0};
+    if (position_offset != nullptr)
+      p_o = position_offset->current_value;
     if (xyz_mpi_per_process)
     {
       unsigned int num_active_atoms = 0;
@@ -136,6 +154,19 @@ namespace writer
 
       ofs_xyz_ghost << std::flush;
     }
+  }
+  void Atom_data::dump_xyz_ghost_mpi_per_process(int64_t, double)
+  {
+    auto &pos = atom_data->atom_struct_ghost.position;
+    auto &type = atom_data->atom_struct_ghost.type;
+    auto &vel = atom_data->atom_struct_ghost.velocity;
+    auto &acc = atom_data->atom_struct_ghost.acceleration;
+    auto &id = atom_data->atom_struct_ghost.id;
+    auto nta = atom_data->atom_struct_ghost.position.size();
+
+    Vector<double> p_o{0, 0, 0};
+    if (position_offset != nullptr)
+      p_o = position_offset->current_value;
 
     if (xyz_ghost_mpi_per_process)
     {

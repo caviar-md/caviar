@@ -31,21 +31,24 @@ double Atom_data::kinetic_energy_mpi_domain(const int t)
 {
 
   double e_owned = 0.0;
-
   if (velocity_offset == nullptr)
   {
+
     switch (get_n_r_df())
     {
     case 0:
     {
+
       for (unsigned int i = 0; i < atom_struct_owned.position.size(); ++i)
       {
+
         if (atom_struct_owned.mpi_rank[i] != my_mpi_rank)
           continue;
 
         if (t > -1 && t != static_cast<int>(atom_struct_owned.type[i]))
           continue; // KINETIC ENERGY OF A TYPE
         e_owned += atom_type_params.mass[atom_struct_owned.type[i]] * (atom_struct_owned.velocity[i] * atom_struct_owned.velocity[i]);
+
       }
     }
     break;
@@ -54,9 +57,11 @@ double Atom_data::kinetic_energy_mpi_domain(const int t)
     case (2):
     case (3):
     {
+
       auto v_cm = owned_velocity_cm();
       for (unsigned int i = 0; i < atom_struct_owned.position.size(); ++i)
       {
+
         if (atom_struct_owned.mpi_rank[i] != my_mpi_rank)
           continue;
 
@@ -64,6 +69,7 @@ double Atom_data::kinetic_energy_mpi_domain(const int t)
           continue; // KINETIC ENERGY OF A TYPE
         auto v_i = atom_struct_owned.velocity[i] - v_cm;
         e_owned += atom_type_params.mass[atom_struct_owned.type[i]] * (v_i * v_i);
+
       }
     }
     break;
@@ -89,6 +95,7 @@ double Atom_data::kinetic_energy_mpi_domain(const int t)
       if (matrix_inverse_3d(I_cm, I_cm_inverse) != 0)
       {
         matrix_Vector_product_3d(I_cm_inverse, L_cm, I_i_L);
+        correct_result = true;
       }
       else
       {
@@ -98,8 +105,10 @@ double Atom_data::kinetic_energy_mpi_domain(const int t)
 
       if (correct_result)
       {
+
         for (unsigned int i = 0; i < atom_struct_owned.position.size(); ++i)
         {
+
           if (atom_struct_owned.mpi_rank[i] != my_mpi_rank)
             continue;
 
@@ -108,12 +117,15 @@ double Atom_data::kinetic_energy_mpi_domain(const int t)
 
           auto v_i = atom_struct_owned.velocity[i] - v_cm - (cross_product(I_i_L, atom_struct_owned.position[i] - p_cm));
           e_owned += atom_type_params.mass[atom_struct_owned.type[i]] * (v_i * v_i);
+
+
         }
       }
 
     }
     break;
     }
+
   }
   else
   { // TODO: mix this block into ' switch (get_n_r_df())' cases
@@ -127,8 +139,8 @@ double Atom_data::kinetic_energy_mpi_domain(const int t)
       auto fixed_vel = atom_struct_owned.velocity[i] + velocity_offset->current_value;
       e_owned += atom_type_params.mass[atom_struct_owned.type[i]] * (fixed_vel * fixed_vel);
     }
-  }
 
+  }
   e_owned *= 0.5;
 
   return e_owned;
@@ -147,7 +159,6 @@ double Atom_data::kinetic_energy(const int t)
 #else
   e_total = e_local;
 #endif
-
   return e_total;
 }
 

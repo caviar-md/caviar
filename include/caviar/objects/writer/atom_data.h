@@ -46,6 +46,7 @@ namespace writer
 
     void write(int64_t, double);         // time_step and time
     void write_mpi(int64_t, double);         // time_step and time
+    void write_mpi_per_process(int64_t, double);         // time_step and time
     void write_mpi_shared_atoms(int64_t, double);         // time_step and time
     void write_serial(int64_t, double);  // time_step and time
 
@@ -66,40 +67,50 @@ namespace writer
     Domain *domain = nullptr;
 
     void dump_energy_mpi(int64_t, double); // dump energy to file
+    void dump_energy_mpi_per_process(int64_t, double); // dump energy to file
     void dump_energy_mpi_shared_atoms(int64_t, double); // dump energy to file
     void dump_energy_serial(int64_t, double); // dump energy to file
 
     void dump_temperature_mpi(int64_t, double); // dump temperature to file
+    void dump_temperature_mpi_per_process(int64_t, double); // dump temperature to file
     void dump_temperature_mpi_shared_atoms(int64_t, double); // dump temperature to file
     void dump_temperature_serial(int64_t, double); // dump temperature to file
 
     void dump_pressure_mpi(int64_t, double); // dump pressure to file
+    void dump_pressure_mpi_per_process(int64_t, double); // dump pressure to file
     void dump_pressure_mpi_shared_atoms(int64_t, double); // dump pressure to file
     void dump_pressure_serial(int64_t, double); // dump pressure to file
 
-    void dump_xyz_serial(int64_t, double);   // dump positions to file in xyz format.
     void dump_xyz_mpi(int64_t, double);             // dump positions to file in xyz format. Number of atoms are different in mpi domains
+    void dump_xyz_mpi_per_process(int64_t, double);             // dump positions to file in xyz format. Number of atoms are different in mpi domains
     void dump_xyz_mpi_shared_atoms(int64_t, double);  // dump positions to file in xyz format. Number of atoms are the same in mpi domains
+    void dump_xyz_serial(int64_t, double);   // dump positions to file in xyz format.
 
     void dump_xyz_ghost_mpi(int64_t, double );        // dump positions to file in xyz format. Number of atoms are different in mpi domains
+    void dump_xyz_ghost_mpi_per_process(int64_t, double );        // dump positions to file in xyz format. Number of atoms are different in mpi domains
     void dump_xyz_ghost_mpi_shared_atoms(int64_t, double );    // dump positions to file in xyz format. Number of atoms are different in mpi domains
     void dump_xyz_ghost_serial(int64_t, double);      // dump positions to file in xyz format
 
     void dump_povray_mpi(int64_t, double); // dump positions to snapshot files in povray format
+    void dump_povray_mpi_per_process(int64_t, double); // dump positions to snapshot files in povray format
     void dump_povray_mpi_shared_atoms(int64_t, double); // dump positions to snapshot files in povray format
     void dump_povray_serial(int64_t, double); // dump positions to snapshot files in povray format
 
     void dump_msd_mpi(int64_t, double); //
+    void dump_msd_mpi_per_process(int64_t, double); //
     void dump_msd_mpi_shared_atoms(int64_t, double); //
     void dump_msd_serial(int64_t, double); //
 
 
     void dump_volume_mpi(int64_t, double); // dump volume to file
+    void dump_volume_mpi_per_process(int64_t, double); // dump volume to file
     void dump_volume_mpi_shared_atoms(int64_t, double); // dump volume to file
     void dump_volume_serial(int64_t, double); // dump volume to file
 
     void report_xyz_dump(int64_t, double);
 
+    bool report_xyz_this_time_step = false;
+    
     int64_t energy_step = 100;
     int64_t temperature_step = 100;
     int64_t pressure_step = 100;

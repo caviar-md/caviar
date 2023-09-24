@@ -28,6 +28,11 @@ namespace writer
 
   }
 
+  void Atom_data::dump_msd_mpi_per_process(int64_t , double )
+  {
+
+  }
+  
   void Atom_data::dump_msd_mpi_shared_atoms(int64_t , double )
   {
 

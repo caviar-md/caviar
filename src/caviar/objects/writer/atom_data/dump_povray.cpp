@@ -28,6 +28,10 @@ namespace writer
 
   }
 
+  void Atom_data::dump_povray_mpi_per_process(int64_t, double)
+  {
+
+  }
   void Atom_data::dump_povray_mpi_shared_atoms(int64_t, double)
   {
     

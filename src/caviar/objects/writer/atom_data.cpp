@@ -500,15 +500,18 @@ namespace writer
 
   void Atom_data::report_xyz_dump(int64_t i, double)
   {
-    if (my_mpi_rank != 0)
-      return;
+
+    // if (my_mpi_rank != 0)
+    //   return;
 
     double wallTimeXyzDump2 = get_wall_time();
 
     double dtstart = wallTimeXyzDump2 - wallTimeXyzDump1;
     std::string s = "dump_xyz [" + std::to_string(i) +
                     +"] (" + std::to_string(dtstart) + " S)";
+
     output->info(s, 2);
+
     wallTimeXyzDump1 = wallTimeXyzDump2;
   }
 
@@ -518,6 +521,8 @@ namespace writer
     if (!initialized)
       initialize();
 
+    report_xyz_this_time_step = false;
+
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
 
     if (my_mpi_rank == 0)
@@ -526,18 +531,18 @@ namespace writer
     }
 #elif defined(CAVIAR_WITH_MPI)
 
-    if (comm->nprocs > 1)
-    {
-      write_mpi_shared_atoms(i, t);
-    }
+    write_mpi_shared_atoms(i, t);    
 
-    write_serial(i, t);
+    write_mpi_per_process(i, t);
 
 #else
 
     write_serial(i, t);
 
 #endif
+    if (report_xyz_this_time_step)
+      report_xyz_dump(i, t);
+
   }
 
   void Atom_data::write_mpi(int64_t i, double t)
@@ -546,7 +551,7 @@ namespace writer
       if (i % xyz_step == 0)
       {
         dump_xyz_mpi(i, t);
-        report_xyz_dump(i, t);
+        report_xyz_this_time_step = true;
       }
 
     if (output_xyz_ghost)
@@ -578,42 +583,84 @@ namespace writer
         dump_volume_mpi(i, t);
   }
 
+  // All MPI processes work on this but only rank0 outputs to a file
   void Atom_data::write_mpi_shared_atoms(int64_t i, double t)
   {
-    if (output_xyz)
+    if (output_xyz && xyz_mpi_rank0)
       if (i % xyz_step == 0)
       {
         dump_xyz_mpi_shared_atoms(i, t);
-        report_xyz_dump(i, t);
+        report_xyz_this_time_step = true;
       }
 
-    if (output_xyz_ghost)
+    if (output_xyz_ghost && xyz_ghost_mpi_rank0)
       if (i % xyz_ghost_step == 0)
         dump_xyz_ghost_mpi_shared_atoms(i, t);
 
-    if (output_energy)
+    if (output_energy && energy_mpi_rank0)
       if (i % energy_step == 0)
         dump_energy_mpi_shared_atoms(i, t);
 
-    if (output_temperature)
+    if (output_temperature && temperature_mpi_rank0)
       if (i % temperature_step == 0)
         dump_temperature_mpi_shared_atoms(i, t);
 
-    if (output_pressure)
+    if (output_pressure && pressure_mpi_rank0)
       if (i % pressure_step == 0)
         dump_pressure_mpi_shared_atoms(i, t);
 
-    if (output_povray)
+    if (output_povray && povray_mpi_rank0)
       if (i % povray_step == 0)
         dump_povray_mpi_shared_atoms(i, t);
 
-    if (output_msd)
+    if (output_msd && msd_mpi_rank0)
       if (i % msd_step == 0)
         dump_msd_mpi_shared_atoms(i, t);
 
-    if (output_volume)
+    if (output_volume && volume_mpi_rank0)
       if (i % volume_step == 0)
         dump_volume_mpi_shared_atoms(i, t);
+
+  }
+
+  // All MPI processes work on this but only rank0 outputs to a file
+  void Atom_data::write_mpi_per_process(int64_t i, double t)
+  {
+    if (output_xyz && xyz_mpi_per_process)
+      if (i % xyz_step == 0)
+      {
+        dump_xyz_mpi_per_process(i, t);
+        report_xyz_this_time_step = true;
+      }
+
+    if (output_xyz_ghost && xyz_ghost_mpi_per_process)
+      if (i % xyz_ghost_step == 0)
+        dump_xyz_ghost_mpi_per_process(i, t);
+
+    if (output_energy && energy_mpi_rank0)
+      if (i % energy_step == 0)
+        dump_energy_mpi_per_process(i, t);
+
+    if (output_temperature && temperature_mpi_per_process)
+      if (i % temperature_step == 0)
+        dump_temperature_mpi_per_process(i, t);
+
+    if (output_pressure && pressure_mpi_per_process)
+      if (i % pressure_step == 0)
+        dump_pressure_mpi_per_process(i, t);
+
+    if (output_povray && povray_mpi_per_process)
+      if (i % povray_step == 0)
+        dump_povray_mpi_per_process(i, t);
+
+    if (output_msd && msd_mpi_per_process)
+      if (i % msd_step == 0)
+        dump_msd_mpi_per_process(i, t);
+
+    if (output_volume && volume_mpi_per_process)
+      if (i % volume_step == 0)
+        dump_volume_mpi_per_process(i, t);
+
   }
 
   void Atom_data::write_serial(int64_t i, double t)
@@ -621,8 +668,8 @@ namespace writer
     if (output_xyz)
       if (i % xyz_step == 0)
       {
-        dump_xyz_serial(i, t);
         report_xyz_dump(i, t);
+        report_xyz_this_time_step = true;
       }
 
     if (output_xyz_ghost)
