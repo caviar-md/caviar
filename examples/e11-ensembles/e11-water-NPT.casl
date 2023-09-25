@@ -16,11 +16,10 @@
 # 
 # This script script is made with the contributions of Mr Amin Karim Abadi
 # 
+
 #===== global variables
 
 real cutoff_max 12
-
-#===== global variables
 
 real dt_all 0.001
 
@@ -41,14 +40,6 @@ a_O type 0
 a_O position 0 .5794 0
 
 
-unique atom a_Na
-a_Na type 2
-a_Na position 0 0 0
-
-unique atom a_Cl
-a_Cl type 3
-a_Cl position 1 1 0
-
 #===== Molecule definition =====
 
 unique molecule m_water
@@ -64,20 +55,10 @@ m_water atomic_bond 1 2 0 1.0
 m_water atomic_bond 2 0 0 1.0
 
 
-#===== Molecule definition =====
-
-unique molecule m_nacl
-
-m_nacl add_atom a_Na  #0
-m_nacl add_atom a_Cl  #1
-
 #===== Molecule_group definition =====
 
 unique molecule_group mg
 
-#===== Atom_group definition =====
-
-unique molecule_group mg_nacl
 
 #===== Domain
 
@@ -96,21 +77,21 @@ unique grid_1d gy
 unique grid_1d gz
 
 # compact distribution
-gx min -14 max 14 segment 9
-gy min -14 max 14 segment 8
-gz min -14 max 14 segment 8
+#gx min -14 max 14 segment 9
+#gy min -14 max 14 segment 8
+#gz min -14 max 14 segment 8
 
 
 # A few number of molecules
-#gx min -5 max 5 segment 2
-#gy min -5 max 5 segment 2
-#gz min -5 max 5 segment 2
+gx min -5 max 5 segment 2
+gy min -5 max 5 segment 2
+gz min -5 max 5 segment 2
 
 gx generate
 gy generate
 gz generate
 
-#==== Distribution ===== Water
+#==== Distribution =====
 
 unique distribution d
 d molecule_group mg
@@ -120,22 +101,6 @@ d grid_1d_y gy
 d grid_1d_z gz
 d distribute_grid_3d
 
-#==== Distribution ===== NaCL
-
-gx min -12 max 12 segment 4
-gy min -12 max 12 segment 5
-gz min 2 max 5 segment 0
-
-unique distribution d2
-
-d2 grid_1d_x gx 
-d2 grid_1d_y gy 
-d2 grid_1d_z gz
-
-d2 molecule_group mg_nacl
-d2 molecule m_nacl
-
-d2 distribute_grid_3d
 
 #========== Atom_data
 
@@ -153,13 +118,13 @@ adata add_type_charge 1 0.4238   # hydrogen
 adata add_type_radius 1 0.0836   # hydrogen
 
 adata add_molecule_group mg
-adata add_molecule_group mg_nacl
 adata add_random_velocity 1 1.0
+
 adata msd_process 1
-adata pressure_process 0
+adata pressure_process 1
+adata n_r_df 0
 
 #===== Neighborlist
-
 
 neighborlist basic neigh 
 neigh set_atom_data adata
@@ -169,6 +134,7 @@ neigh cutoff_extra_coef 1.0523
 neigh dt dt_all
 #neigh make_verlet_list_from_cell_list
 #neigh build_cell_list
+
 
 #===== force_field
 
@@ -198,7 +164,7 @@ f_lj set_domain dom
 
 force_field electrostatic_short_range f_elsh 
 f_elsh set_atom_data adata
-f_elsh set_domain dom
+#f_elsh set_domain dom
 f_elsh k_electrostatic 1389.38550539
 f_elsh cutoff 12
 f_elsh beta 2.0 # a number between 1.0 to 6.0
@@ -226,11 +192,43 @@ c_rattle set_atom_data adata
 c_rattle set_domain dom
 #c_mshake error_tolerance 0.01
 
+
+
 #==== Constraint
+
 constraint  nve c_nve
-c_nve kbt 2.477758377 # 298K / 120.27
+c_nve kb 1.0
+c_nve temperature 5.0
 c_nve set_atom_data adata
 
+#==== Constraint
+
+constraint  Nose_hoover c_nh
+c_nh kb 1.0
+c_nh type 2
+c_nh tau 0.0001 # used in type 2 Nose_hoover
+# c_nh mass 1.0 # used in type 1 Nose_hoover
+c_nh temperature 5.0
+
+c_nh dt dt_all
+c_nh set_atom_data adata
+
+#==== Constraint
+
+constraint  Berendsen c_ber
+c_ber coupling 0.01 
+c_ber temperature 5.0
+c_ber dt dt_all
+c_ber set_atom_data adata
+
+
+constraint  Berendsen_barostat c_ber_bar
+c_ber_bar tp 0.01 
+c_ber_bar kappa 3.0 
+c_ber_bar pressure 0.0239
+c_ber_bar dt dt_all
+c_ber_bar set_atom_data adata
+c_ber_bar set_domain dom
 
 #====== writer 
 writer atom_data w1
@@ -257,8 +255,10 @@ w1 energy_mpi_per_process 1
 
 
 md_simulator basic sim 
+sim dt dt_all
 
 sim set_atom_data adata
+
 
 #sim integrator_type velocity_verlet
 sim integrator_type leap_frog
@@ -268,7 +268,6 @@ sim add_force_field f_lj
 sim add_force_field f_elsh 
 
 sim add_neighborlist neigh
-#integ2 add_neighborlist neigh
 
 sim add_writer w1
 
@@ -276,13 +275,29 @@ sim add_writer w1
 #sim add_constraint c_mshake   
 sim add_constraint c_shake     
 
-sim add_constraint c_nve      
+sim dt dt_all
 
+sim add_constraint c_nve
 
 sim initial_step 0
-sim final_step 100000000
-sim dt dt_all
+sim final_step 10000
 sim run
+
+sim remove_constraint c_nve
+sim add_constraint c_ber
+
+sim initial_step 10001
+sim final_step 20000
+sim run
+
+sim add_constraint c_ber_bar
+ 
+sim initial_step 20001
+sim final_step 30000
+sim run
+
+
+
 
 #exit
 

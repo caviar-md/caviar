@@ -128,7 +128,7 @@ constraint  Nose_hoover c_nh
 c_nh kb 1.0
 c_nh type 2
 c_nh tau 0.0001 # used in type 2 Nose_hoover
-# c_nh mass 1.0 # used in type 1 Nose_hoover
+#c_nh mass 1000.0 # used in type 1 Nose_hoover
 c_nh temperature 5.0
 
 c_nh dt dt_all
@@ -187,12 +187,13 @@ sim initial_step 10001
 sim final_step 20000
 sim run
 
-sim remove_constraint c_ber
-sim add_constraint c_nh
-
-sim initial_step 20001
-sim final_step 70000
-sim run
+# Debug needed
+# sim remove_constraint c_ber
+# sim add_constraint c_nh
+ 
+# sim initial_step 20001
+# sim final_step 70000
+# sim run
 
 
 #exit
