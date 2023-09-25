@@ -153,6 +153,7 @@ namespace force_field
     FC_OBJECT_VERIFY_SETTINGS
 
     initialize();
+    double virialLocal = 0;
 
     /* XXX working scheme but of order N^2
       const auto &pos = atom_data -> atom_struct_owned.position;
@@ -272,6 +273,7 @@ namespace force_field
      }
 
     */
+   atom_data->virialForce += virialLocal;
   }
 
 } // force_field

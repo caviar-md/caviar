@@ -198,8 +198,8 @@ public:
   // virtual void verify_settings ();
   virtual void re_calculate_acc();
 
-  class Atom_data *atom_data;
-  // class Integrator *integrator;
+  class Atom_data *atom_data = nullptr;
+
   std::vector<class Neighborlist *> neighborlist;
   std::vector<Force_field *> force_field;
   std::vector<Constraint *> constraint;

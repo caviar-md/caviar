@@ -308,6 +308,9 @@ namespace force_field
     auto cutoff_sq = cutoff * cutoff;
     auto c = cutoff_sq;
     const auto &nlist = neighborlist->neighlist;
+
+    double virialLocal = 0;
+
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
 #endif
@@ -374,7 +377,11 @@ namespace force_field
         auto rho_6_inv = rho_sq_inv * rho_sq_inv * rho_sq_inv;
         auto rho_12_inv = rho_6_inv * rho_6_inv;
 
-        auto force = 4 * eps_ij * (-12 * rho_12_inv * dr_sq_inv + 6 * rho_6_inv * dr_sq_inv + +12 * rho_c_12_inv * r_c_sq_inv - 6 * rho_c_6_inv * r_c_sq_inv) * dr;
+        auto forceCoef = 4 * eps_ij * (-12 * rho_12_inv * dr_sq_inv + 6 * rho_6_inv * dr_sq_inv + 12 * rho_c_12_inv * r_c_sq_inv - 6 * rho_c_6_inv * r_c_sq_inv);
+        
+        virialLocal +=  -forceCoef * dr_sq;
+
+        auto force = forceCoef * dr;
 
         atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
         
@@ -397,6 +404,9 @@ namespace force_field
         }
       }
     }
+
+    atom_data->virialForce += virialLocal;
+
   }
 
 } // force_field

@@ -668,7 +668,7 @@ namespace writer
     if (output_xyz)
       if (i % xyz_step == 0)
       {
-        report_xyz_dump(i, t);
+        dump_xyz_serial(i, t);
         report_xyz_this_time_step = true;
       }
 

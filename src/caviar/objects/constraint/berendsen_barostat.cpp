@@ -31,6 +31,7 @@ namespace constraint
     tp = -1.0;
     dt = -1.0;
     constraint_type = Constraint_t::Berendsen;
+    domain = nullptr;
   }
 
   Berendsen_barostat::~Berendsen_barostat() {}

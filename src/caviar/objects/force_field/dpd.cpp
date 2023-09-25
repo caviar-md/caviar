@@ -113,7 +113,7 @@ namespace force_field
   void Dpd::calculate_acceleration()
   {
     FC_OBJECT_VERIFY_SETTINGS
-
+    double virialLocal = 0;
     auto cutoff_sq = cutoff * cutoff;
     auto dt_sq_inv = 1.0 / std::sqrt(dt);
     const auto &nlist = neighborlist->neighlist;
@@ -181,6 +181,7 @@ namespace force_field
         }
       }
     }
+    atom_data->virialForce += virialLocal;
   }
 
 } // force_field

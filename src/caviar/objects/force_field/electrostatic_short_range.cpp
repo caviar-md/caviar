@@ -115,6 +115,10 @@ namespace force_field
     const auto &pos = atom_data->atom_struct_owned.position;
 
     const auto &nlist = neighborlist->neighlist;
+
+    double virialLocal = 0;
+    double virialExternalForceLocal = 0;
+
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
 #endif
@@ -153,9 +157,16 @@ namespace force_field
         if (dr_sq >= cutoff_sq)
           continue;
         const auto dr_norm = std::sqrt(dr_sq);
-        const auto force = k_electrostatic * charge_i * charge_j * dr / (dr_sq * dr_norm);
-        const auto force_shifted = force * (1.0 - std::pow(dr_norm / cutoff, beta + 1));
-        atom_data->atom_struct_owned.acceleration[i] -= force_shifted * mass_inv_i;
+
+        auto forceCoef = - k_electrostatic * charge_i * charge_j / (dr_sq * dr_norm) * (1.0 - std::pow(dr_norm / cutoff, beta + 1));;
+        const auto force_shifted = forceCoef * dr;
+
+        //const auto force = k_electrostatic * charge_i * charge_j * dr / (dr_sq * dr_norm);
+        //const auto force_shifted = force * (1.0 - std::pow(dr_norm / cutoff, beta + 1));
+
+        virialLocal += - forceCoef * dr_sq;
+
+        atom_data->atom_struct_owned.acceleration[i] = force_shifted * mass_inv_i;
 
         if (!is_ghost)
         {
@@ -172,9 +183,15 @@ namespace force_field
         }
       }
 
+      virialExternalForceLocal += -external_field * charge_i * pos[i];
+
       const auto force = external_field * charge_i;
       atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
     }
+
+    atom_data->virialForce += virialLocal;
+    atom_data->virialExternalForce += virialExternalForceLocal;
+
   }
 
 } // force_field

@@ -89,7 +89,7 @@ namespace force_field
 
     const auto &pos = atom_data->atom_struct_owned.position;
     const auto &vel = atom_data->atom_struct_owned.position;
-
+    double virialLocal = 0;
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
 #endif
@@ -106,6 +106,7 @@ namespace force_field
       const auto a = charge_i * (amplitude_E * direction_E + amplitude_B * cross_product(vel[i], direction_B)) * mass_inv_i;
       atom_data->atom_struct_owned.acceleration[i] += a;
     }
+    atom_data->virialForce += virialLocal;
   }
 
 } // force_field

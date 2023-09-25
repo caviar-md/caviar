@@ -74,7 +74,7 @@ namespace force_field
   void Electrostatic_external::calculate_acceleration()
   {
     FC_OBJECT_VERIFY_SETTINGS
-
+    double virialLocal = 0;
     const auto &pos = atom_data->atom_struct_owned.position;
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
@@ -92,6 +92,7 @@ namespace force_field
       const auto a = charge_i * amplitude * direction * mass_inv_i;
       atom_data->atom_struct_owned.acceleration[i] += a;
     }
+    atom_data->virialForce += virialLocal;
   }
 
 } // force_field

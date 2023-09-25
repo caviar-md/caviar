@@ -100,7 +100,7 @@ namespace force_field
     // calculate_image_charges(); called in initialize
 
     // force-field calculations
-
+    double virialLocal = 0;
     const auto &pos = atom_data->atom_struct_owned.position;
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
@@ -145,6 +145,7 @@ namespace force_field
         atom_data->atom_struct_owned.acceleration[i] -= force * mass_inv_i;
       }
     }
+    atom_data->virialForce += virialLocal;
   }
 
 } // force_field

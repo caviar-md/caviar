@@ -51,7 +51,7 @@ namespace constraint
         */        
         std::vector<Force_field *> force_field;
 
-        Domain *domain;
+        Domain *domain = nullptr;
 
         double tp;
         double dt;

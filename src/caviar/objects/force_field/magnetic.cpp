@@ -74,7 +74,7 @@ namespace force_field
   void Magnetic::calculate_acceleration()
   {
     FC_OBJECT_VERIFY_SETTINGS
-
+    double virialLocal = 0;
     const auto &pos = atom_data->atom_struct_owned.position;
     const auto &vel = atom_data->atom_struct_owned.velocity;
 
@@ -96,6 +96,8 @@ namespace force_field
 
       atom_data->atom_struct_owned.acceleration[i] += a;
     }
+    atom_data->virialForce += virialLocal;
+
   }
 
 } // force_field

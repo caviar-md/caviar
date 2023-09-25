@@ -79,7 +79,7 @@ namespace constraint
   void Shake::verify_settings()
   {
     FC_NULLPTR_CHECK(atom_data)
-    atom_data->set_record_owned_position_old(true) ;
+    atom_data->set_record_owned_position_old(true);
 
     FC_NULLPTR_CHECK(domain)
 
@@ -92,8 +92,15 @@ namespace constraint
 
     FC_OBJECT_VERIFY_SETTINGS
 
+    double virialConstraintLocal = 0;
     auto &pos = atom_data->atom_struct_owned.position;
-    auto &pos_old = atom_data->atom_struct_owned.position_old;
+
+    int pos_size = pos.size();
+    pos_old.resize(pos.size());
+    for (int i = 0; i < pos_size; ++i)
+    {
+      pos_old[i] = pos[i];
+    }
 
     for (unsigned int i = 0; i < atom_data->molecule_struct_owned.size(); i++)
     {
@@ -156,7 +163,26 @@ namespace constraint
         }
         sum_err = abs(sum_err);
       }
+
+      for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
+      {
+        int id_1 = atomic_bond_vector[j].id_1, id_2 = atomic_bond_vector[j].id_2;
+        int k1 = atom_data->atom_id_to_index[id_1], k2 = atom_data->atom_id_to_index[id_2];
+
+        double d = atomic_bond_vector[j].length;
+
+        auto dr = domain->fix_distance(pos[k1] - pos[k2]);
+
+        auto r2 = dr * dr;
+
+        auto dr_old = domain->fix_distance(pos_old[k1] - pos_old[k2]);
+
+        auto dot = dr * dr_old;
+
+        virialConstraintLocal += -2.0 * l[j] * d; // ????? or sqrt (r2)
+      }
     }
+    atom_data->virialConstraint += virialConstraintLocal;
   }
 
   void Shake::apply_on_velocity(int64_t)
@@ -167,6 +193,7 @@ namespace constraint
     auto &vel = atom_data->atom_struct_owned.velocity;
     auto &pos = atom_data->atom_struct_owned.position;
     auto &pos_old = atom_data->atom_struct_owned.position_old;
+
     for (unsigned int i = 0; i < atom_data->molecule_struct_owned.size(); i++)
     {
       auto &atomic_bond_vector = atom_data->molecule_struct_owned[i].atomic_bond_vector;

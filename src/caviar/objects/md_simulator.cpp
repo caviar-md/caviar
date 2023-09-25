@@ -375,11 +375,17 @@ void Md_simulator::step(int64_t i)
 void Md_simulator::step()
 {
 
+
   FC_OBJECT_VERIFY_SETTINGS
+
 
   if (!initialized)
   {
+    
+
     initialize();
+
+    atom_data->reset_virial();
 
     for (auto &&c : constraint)
       c->verify_settings();
@@ -394,6 +400,8 @@ void Md_simulator::step()
 
     setup();
   }
+  
+  atom_data->reset_virial();
 
   atom_data->record_owned_old_data();
 
@@ -516,6 +524,8 @@ void Md_simulator::setup()
   for (auto &&n : neighborlist)
     n->init();
 
+
+
   atom_data->exchange_owned(current_step);
 
   atom_data->exchange_ghost(current_step);
@@ -527,6 +537,18 @@ void Md_simulator::setup()
 
   for (auto &&f : force_field)
     f->calculate_acceleration();
+
+  {
+
+    auto &pos = atom_data->atom_struct_owned.position;
+    auto &pos_noc = atom_data->atom_struct_owned.position_no_constraint;
+    auto &acc_noc = atom_data->atom_struct_owned.acceleration_no_constraint;
+    auto psize = pos.size();
+    pos_noc.resize(psize, caviar::Vector<double>{0,0,0});
+    acc_noc.resize(psize, caviar::Vector<double>{0,0,0});
+  }
+
+
 
   atom_data->finalize_temperature();
 
@@ -718,8 +740,11 @@ void Md_simulator::integrate_velocity_verlet_langevin()
 void Md_simulator::integrate_leap_frog()
 {
   auto &pos = atom_data->atom_struct_owned.position;
+  auto &pos_noc = atom_data->atom_struct_owned.position_no_constraint;
   auto &vel = atom_data->atom_struct_owned.velocity;
   auto &acc = atom_data->atom_struct_owned.acceleration;
+  auto &acc_noc = atom_data->atom_struct_owned.acceleration_no_constraint;
+
   // auto &acc_old = atom_data -> atom_struct_owned.acceleration_old; //velocity verlet
   // auto &pos_old = atom_data -> atom_struct_owned.position_old; //verlet - also shake and m_shake uses this
   // const auto two_dt_inv = 1.0/(2.0*dt);//verlet
@@ -728,6 +753,8 @@ void Md_simulator::integrate_leap_frog()
   // re_calculate_acc(); // use r(t) to calculate a(t). The forces has to be velocity independent
   // It has been calculated in previous step
   auto psize = pos.size();
+  pos_noc.resize(psize);
+  acc_noc.resize(psize);
 
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
@@ -747,11 +774,29 @@ void Md_simulator::integrate_leap_frog()
     }
     vel[i] += 0.5 * dt * acc[i]; // v (t + dt/2) = v (t) + (dt/2) a (t)
     pos[i] += dt * vel[i];       // r (t + dt) = r (t) + dt * v (t + dt/2)
+
+    pos_noc[i] = pos[i];
+
+    acc_noc[i].x = 0;
+    acc_noc[i].y = 0;
+    acc_noc[i].z = 0;
   }
 
   for (auto &&c : constraint)
     c->apply_on_position(current_step);
 
+  double dtcoef = 2.0 / (dt * dt);
+  for (unsigned int i = 0; i < psize; i++)
+  {
+#ifdef CAVIAR_WITH_MPI
+    if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+      continue;
+#endif
+
+    acc_noc[i] = dtcoef *( pos[i] - pos_noc[i] ) +  acc[i];
+    //std::cout << "acc_noc" << acc_noc[i] << " acc " << acc[i] << std::endl;
+
+  }
   re_calculate_acc(); // use r(t+dt) to calculate a(t+dt)
 
   for (auto &&c : constraint)

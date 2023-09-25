@@ -637,7 +637,7 @@ namespace force_field
 
   void Plt_dealii_mpi::calculate_all_particles_mesh_force_acc()
   {
-
+    double virialLocal = 0;
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
 
     /* // DATA check
@@ -765,6 +765,8 @@ namespace force_field
 #else
 
 #endif
+    atom_data->virialForce += virialLocal;
+
   }
 
   //==================================================

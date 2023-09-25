@@ -88,7 +88,13 @@ namespace constraint
 
     auto &vel = atom_data->atom_struct_owned.velocity;
     auto &pos = atom_data->atom_struct_owned.position;
-    auto &pos_old = atom_data->atom_struct_owned.position_old;
+
+    int pos_size = pos.size();
+    pos_old.resize(pos.size());
+    for (int i = 0; i < pos_size; ++i)
+    {
+      pos_old[i] = pos[i];
+    }
 
     for (unsigned int i = 0; i < atom_data->molecule_struct_owned.size(); i++)
     {

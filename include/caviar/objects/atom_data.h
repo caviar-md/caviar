@@ -213,6 +213,29 @@ public:
    */
   virtual void reserve_owned_vectors();
 
+
+  virtual void reset_virial()
+  {
+    virialExternalForce = 0;
+    virialForce = 0;
+    virialConstraint = 0;
+  }
+
+  /**
+   * virial due to all of the External force, like external electric fields (pltDealii)
+   */
+  double virialExternalForce = 0.0;
+
+  /**
+   * virial due to all of the pair-wise force
+   */
+  double virialForce = 0.0;
+
+  /**
+   * virial due to all of the constraints force like Shake, MShake,...
+   */
+  double virialConstraint = 0.0;
+
   /**
    * gets the data and add it to the owned if it should be owned.
    */
@@ -600,7 +623,7 @@ public:
   /**
    * usage
    */
-  class Domain *domain;
+  class Domain *domain = nullptr;
 
   bool get_msd_process()
   {

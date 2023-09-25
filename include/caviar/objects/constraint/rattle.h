@@ -53,7 +53,9 @@ namespace constraint
         return 0;
     }
 
-    class Domain *domain;
+    class Domain *domain = nullptr;
+
+    std::vector<Vector<double>> pos_old;
 
     double dt;
     double error_tolerance;

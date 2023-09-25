@@ -114,7 +114,7 @@ namespace force_field
     // const auto &g_id = atom_data -> atom_struct_ghost.id;
 
     auto a_radius = atom_data->atom_type_params.radius;
-
+    double virialLocal = 0;
     auto cutoff_sq = cutoff * cutoff;
     const auto &nlist = neighborlist->neighlist;
 #ifdef CAVIAR_WITH_OPENMP
@@ -226,6 +226,7 @@ namespace force_field
           }
         }
       }
+      atom_data->virialForce += virialLocal;
     }
   }
 

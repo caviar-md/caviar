@@ -1886,6 +1886,7 @@ namespace force_field
 
   void Plt_dealii::calculate_all_particles_mesh_force_acc()
   {
+    double virialLocal = 0;
     const auto &pos = atom_data->atom_struct_owned.position;
     Vector<double> po{0, 0, 0};
     if (position_offset != nullptr)
@@ -1928,6 +1929,8 @@ namespace force_field
       //if (atom_data->pressure_process)
       //  atom_data->add_to_pressure(force*pos[i]);
     }
+    atom_data->virialForce += virialLocal;
+
   }
 
   //==================================================

@@ -132,7 +132,7 @@ namespace force_field
 
     const auto lattice_vec_size = lattice_vec.size();
     const auto sigma_sq = sigma * sigma;
-
+    double virialLocal = 0;
     const auto &nlist = neighborlist->neighlist;
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
@@ -248,6 +248,8 @@ namespace force_field
 
       }
     */
+
+   atom_data->virialForce += virialLocal;
   }
 
 } // force_field

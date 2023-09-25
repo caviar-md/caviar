@@ -118,7 +118,7 @@ namespace force_field
     auto &vel = atom_data->atom_struct_owned.velocity;
     auto &type = atom_data->atom_struct_owned.type;
     auto &mass_inv = atom_data->atom_type_params.mass_inv;
-
+    double virialLocal = 0;
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
 #endif
@@ -176,6 +176,7 @@ namespace force_field
 #endif
       }
     }
+    atom_data->virialForce += virialLocal;
   }
 
 } // force_field

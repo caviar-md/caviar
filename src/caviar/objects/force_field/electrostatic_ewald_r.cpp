@@ -95,7 +95,7 @@ namespace force_field
     const auto &pos = atom_data->atom_struct_owned.position;
     const unsigned pos_size = pos.size();
     const auto alpha_sq = alpha * alpha;
-
+    double virialLocal = 0;
     const auto &nlist = neighborlist->neighlist;
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
@@ -160,6 +160,7 @@ namespace force_field
 #endif
         }
       }
+      
     }
     //*/
 
@@ -249,6 +250,7 @@ namespace force_field
      }
 
     */
+   atom_data->virialForce += virialLocal;
   }
 
 } // force_field

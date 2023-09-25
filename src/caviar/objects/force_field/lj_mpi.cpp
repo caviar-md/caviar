@@ -92,7 +92,7 @@ namespace force_field
   void Lj_mpi::calculate_acceleration()
   { // this scheme may make you to only send ghosts with higher ID even in Atom_data class
     FC_OBJECT_VERIFY_SETTINGS
-
+    double virialLocal = 0;
 #ifdef CAVIAR_WITH_MPI
     auto neighborlist_domains = domain->neighborlist_domains;
     std::vector<int> g_num_recv, g_num_send;
@@ -256,6 +256,7 @@ namespace force_field
       atom_data->atom_struct_owned.acceleration[k] += g_send_accel[j];
     }
 #endif
+    atom_data->virialForce += virialLocal;
   }
 
 } // force_field

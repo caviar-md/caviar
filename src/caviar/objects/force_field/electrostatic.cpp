@@ -92,6 +92,9 @@ namespace force_field
   {
     FC_OBJECT_VERIFY_SETTINGS
 
+    double virialLocal = 0;
+    double virialExternalForceLocal = 0;
+
     const auto &pos = atom_data->atom_struct_owned.position;
     {
 #ifdef CAVIAR_WITH_OPENMP
@@ -123,8 +126,14 @@ namespace force_field
 
           const auto dr_sq = dr * dr;
           const auto dr_norm = std::sqrt(dr_sq);
-          const auto force = k_electrostatic * charge_i * charge_j * dr / (dr_sq * dr_norm);
-          atom_data->atom_struct_owned.acceleration[i] -= force * mass_inv_i;
+          auto forceCoef = - k_electrostatic * charge_i * charge_j / (dr_sq * dr_norm);
+          const auto force = forceCoef * dr;
+          //const auto force = k_electrostatic * charge_i * charge_j * dr / (dr_sq * dr_norm);
+
+          virialLocal +=  -forceCoef * dr_sq;
+          //std::cout << "force: " << force << std::endl; 
+          atom_data->atom_struct_owned.acceleration[i] = force * mass_inv_i;
+          //std::cout << "acci: " << atom_data->atom_struct_owned.acceleration[i] << std::endl; 
 
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp atomic
@@ -136,12 +145,17 @@ namespace force_field
 #else
           atom_data->atom_struct_owned.acceleration[j] -= force * mass_inv_j;
 #endif
+          //std::cout << "accj: " << atom_data->atom_struct_owned.acceleration[j] << std::endl; 
+
         }
+        virialExternalForceLocal += -external_field * charge_i * pos[i];
 
         const auto force = external_field * charge_i;
         atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
       }
     }
+    atom_data->virialForce += virialLocal;
+    atom_data->virialExternalForce += virialExternalForceLocal;
   }
 
 } // force_field

@@ -82,7 +82,7 @@ namespace force_field
   void Gravity_external::calculate_acceleration()
   {
     FC_OBJECT_VERIFY_SETTINGS
-
+    double virialLocal = 0;
     const auto &pos = atom_data->atom_struct_owned.position;
 
 #ifdef CAVIAR_WITH_OPENMP
@@ -113,6 +113,7 @@ namespace force_field
         atom_data->atom_struct_owned.acceleration[i] += non_inertia_reference_frame_acc->current_value;
       }
     }
+    atom_data->virialForce += virialLocal;
   }
 
 } // force_field

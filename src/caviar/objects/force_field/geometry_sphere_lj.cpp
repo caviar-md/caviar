@@ -199,7 +199,7 @@ namespace force_field
     Vector<double> p_o{0, 0, 0};
     if (position_offset != nullptr)
       p_o = position_offset->current_value;
-
+    double virialLocal = 0;
     const auto &pos = atom_data->atom_struct_owned.position;
     auto &acc = atom_data->atom_struct_owned.acceleration;
 
@@ -263,6 +263,7 @@ namespace force_field
         acc[i] += force * mass_inv_i;
       }
     }
+    atom_data->virialForce += virialLocal;
   }
 
 } // force_field

@@ -63,7 +63,7 @@ public:
   // it should be used after calculating acceleration to fix it
   virtual void apply_on_acceleration(int64_t); // Nose_hoover
 
-  class Atom_data *atom_data;
+  class Atom_data *atom_data = nullptr;
 
   Constraint_t constraint_type;
 

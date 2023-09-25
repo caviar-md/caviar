@@ -50,9 +50,9 @@ public:
   virtual void scale_position(double scale_ratio, caviar::Vector<int> scale_axis);
 
   double cutoff;
-  class Atom_data *atom_data;
-  class Domain *domain;
-  class Neighborlist *neighborlist;
+  class Atom_data *atom_data = nullptr;
+  class Domain *domain = nullptr;
+  class Neighborlist *neighborlist = nullptr;
   /**
    * MPI rank of the classs
   */

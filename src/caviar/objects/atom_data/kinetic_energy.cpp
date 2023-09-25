@@ -243,12 +243,16 @@ void Atom_data::finalize_pressure()
 
 void Atom_data::finalize_pressure_mpi_domain()
 {
+  auto &acc = atom_struct_owned.acceleration;
+  auto &acc_noc = atom_struct_owned.acceleration_no_constraint;
+
   auto d_diff = (domain->upper_local - domain->lower_local);
   double volume = d_diff.x * d_diff.y * d_diff.z;
 
   double p2 = 0;
   int64_t pos_size = atom_struct_owned.position.size();
 
+  double p2_old = 0;
   double Num_active = 0;
   for (int i = 0; i < pos_size; ++i)
   {
@@ -257,19 +261,25 @@ void Atom_data::finalize_pressure_mpi_domain()
       continue;
 #endif
     Num_active++;
-
+    
     int type = atom_struct_owned.type[i];
     double mass = atom_type_params.mass[type];
-    auto f = atom_struct_owned.acceleration[i] * mass;
-    p2 += f * atom_struct_owned.position[i];
-  }
-  p2 = p2 / (3.0 * volume);
+    auto f2 = acc[i] * mass;
+    //auto f2 = acc_noc[i] * mass;
 
+    p2_old += (f2) * atom_struct_owned.position[i];
+  }
+  p2_old = p2_old / (3.0 * volume);
   
+  p2 = (virialConstraint + virialExternalForce + virialForce) / (3.0 * volume);
+
+  //std::cout << "Constraint: " << virialConstraint/ (3.0 * volume) << " ExternalForce:" << virialExternalForce/ (3.0 * volume) << " Force: "<< virialForce/ (3.0 * volume)<< std::endl;
+
+
   double p1 = (Num_active * k_b * temperature_mpi_domain()) / volume;
 
   pressure_mpi_domain_ = p1 + p2;
-
+  //std::cout << "p1: " << p1 << " p2:" << p2 << " p2_old: "<<  p2_old << std::endl;
 }
 
 void Atom_data::finalize_pressure_total()
@@ -692,7 +702,9 @@ int Atom_data::degree_of_freedoms_mpi_domain()
 
     if (molecule_selected[mi]==1)
       continue;
-    
+
+    molecule_selected [mi] = 1;
+
     sum_of_bonds += molecule_struct_owned[mi].atomic_bond_vector.size();
 
     sum_of_angles += molecule_struct_owned[mi].atomic_angle_vector.size();
