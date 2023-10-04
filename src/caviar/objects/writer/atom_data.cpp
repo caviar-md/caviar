@@ -105,6 +105,14 @@ namespace writer
         FIND_OBJECT_BY_NAME(domain, it)
         domain = object_container->domain[it->second.index];
       }
+      else if (string_cmp(t, "write") )
+      {
+        int step;
+        double time;
+        GET_OR_CHOOSE_A_INT(step, "", "")
+        GET_OR_CHOOSE_A_REAL(time, "", "")
+        write(step, time);
+      }
       else if (string_cmp(t, "xyz_mpi_per_process"))
       {
         GET_OR_CHOOSE_A_INT(xyz_mpi_per_process, "", "")
