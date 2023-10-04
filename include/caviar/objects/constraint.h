@@ -51,17 +51,29 @@ public:
   virtual ~Constraint();
   virtual bool read(class caviar::interpreter::Parser *) = 0;
 
-  // it will be applied at the start of each time step
+/**
+*   it will be applied at the end of each time step
+*/
   virtual void apply(int64_t);
 
-  // it should be used after calculating new position to fix it before using it for acceleration calculation
-  virtual void apply_on_position(int64_t); // shake, m-shake, rattle
+/**
+ * it should be used after calculating new position to fix it before using it for acceleration calculation.
+ * for example, shake, m-shake, rattle use it
+*/
+  virtual void apply_on_position(int64_t); 
 
-  // it should be used after calculating velocity to fix it
-  virtual void apply_on_velocity(int64_t); // shake, m-shake, rattle, nve,
+/**
+ * it should be used after calculating velocity to fix it such as NVE and NPT ensembles.
+ * NPT ensemble also uses this function, but it changes the position of the atoms
+ * 'fix_position_needed' means you need to call constraints which fix position such as shake (for barostat case)
+*/
+  virtual void apply_on_velocity(int64_t, bool &fix_position_needed); // shake, m-shake, rattle, nve,
 
-  // it should be used after calculating acceleration to fix it
-  virtual void apply_on_acceleration(int64_t); // Nose_hoover
+  /**
+   * it should be used after calculating acceleration to fix it.
+   * Nose-Hoover ?
+  */  
+  virtual void apply_on_acceleration(int64_t); 
 
   class Atom_data *atom_data = nullptr;
 

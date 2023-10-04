@@ -47,7 +47,7 @@ namespace constraint
     ~Nve();
     bool read(class caviar::interpreter::Parser *);
 
-    void apply_on_velocity(int64_t);
+    void apply_on_velocity(int64_t, bool &fix_position_needed);
 
     void verify_settings();
 

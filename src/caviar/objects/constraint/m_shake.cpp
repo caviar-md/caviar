@@ -55,6 +55,10 @@ namespace constraint
       {
         GET_OR_CHOOSE_A_REAL(dt, "", "")
       }
+      else if (string_cmp(t, "iteration_max"))
+      {
+        GET_OR_CHOOSE_A_INT(iteration_max, "", "")
+      }
       else if (string_cmp(t, "error_tolerance"))
       {
         GET_OR_CHOOSE_A_REAL(error_tolerance, "", "")
@@ -73,7 +77,7 @@ namespace constraint
   void M_shake::verify_settings()
   {
     FC_NULLPTR_CHECK(atom_data)
-    atom_data->set_record_owned_position_old(true) ;
+    atom_data->set_record_owned_position_old(true);
 
     FC_NULLPTR_CHECK(domain)
     if (dt <= 0.0)
@@ -86,17 +90,18 @@ namespace constraint
     FC_OBJECT_VERIFY_SETTINGS
 
     auto &pos = atom_data->atom_struct_owned.position;
+    auto &atom_data_pos_old = atom_data->atom_struct_owned.position_old;
 
-    int pos_size = pos.size();
-    pos_old.resize(pos.size());
-    for (int i = 0; i < pos_size; ++i)
-    {
-      pos_old[i] = pos[i];
-    }
+    double dt2 = dt * dt;
 
+    double virialConstraintLocal = 0;
 
     for (unsigned int i = 0; i < atom_data->molecule_struct_owned.size(); i++)
     {
+
+      if (atom_data->molecule_struct_owned[i].ghost)
+        continue;
+
       auto &atomic_bond_vector = atom_data->molecule_struct_owned[i].atomic_bond_vector;
 
       auto Nc = atomic_bond_vector.size();
@@ -107,10 +112,17 @@ namespace constraint
 
       std::vector<double> C(Nc, 0);
 
-      double sum_err = 1.0;
+      // lagrange multipliers
+      std::vector<double> l(Nc, 0);
 
-      while (sum_err > error_tolerance)
+      int counter = -1;
+      double error_max = 1.0;
+
+      while (error_max > error_tolerance)
       {
+        counter++;
+        if (counter > iteration_max)
+          error->all (FC_FILE_LINE_FUNC, "Iteration didn't converge in " + std::to_string(counter) + " iterations");
 
         for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
         {
@@ -149,8 +161,9 @@ namespace constraint
         if (mi_err != 0)
           error->all(FC_FILE_LINE_FUNC, "unknown error in matrix inverse");
 
-        // lagrange multipliers
-        std::vector<double> l(Nc, 0);
+
+        for (unsigned int i1 = 0; i1 <Nc; ++i1  )
+          l[i1] = 0;
 
         for (unsigned int t1 = 0; t1 < Nc; t1++)
           for (unsigned int t2 = 0; t2 < Nc; t2++)
@@ -158,52 +171,92 @@ namespace constraint
 
         for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
         {
-          int k1 = atomic_bond_vector[j].id_1, k2 = atomic_bond_vector[j].id_2;
+          int k1 = atomic_bond_vector[j].id_1;
+          int k2 = atomic_bond_vector[j].id_2;
 
           double mass_inv_k1 = atom_data->atom_type_params.mass_inv[atom_data->atom_struct_owned.type[k1]];
           double mass_inv_k2 = atom_data->atom_type_params.mass_inv[atom_data->atom_struct_owned.type[k2]];
 
-          auto dr_old = domain->fix_distance(pos_old[k1] - pos_old[k2]);
+          auto dr_old = domain->fix_distance(atom_data_pos_old[k1] - atom_data_pos_old[k2]);
 
-          auto f_coef = -2.0 * dt * dt * l[j];
+          auto f_coef = -2.0 * dt2 * l[j];
 
           auto fc = -f_coef * dr_old;
 
           pos[k1] -= fc * mass_inv_k1;
           pos[k2] += fc * mass_inv_k2;
+
         }
 
-        sum_err = 0.0;
+        error_max = 0.0;
         for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
         {
-          int k1 = atomic_bond_vector[j].id_1, k2 = atomic_bond_vector[j].id_2;
+          int k1 = atomic_bond_vector[j].id_1;
+          int k2 = atomic_bond_vector[j].id_2;
 
           auto d = atomic_bond_vector[j].length;
+
+          auto d2 = d * d;
 
           auto dr = domain->fix_distance(pos[k1] - pos[k2]);
 
           auto r2 = dr * dr;
 
-          C[j] = (r2 - d * d) / (2 * d * d);
+          double err = (r2 - d2) / (2 * d2);
 
-          sum_err += C[j];
+          double abs_err = (err < 0) ? -err : err;
+
+          if (error_max < abs_err)
+            error_max = abs_err;
         }
-        sum_err = abs(sum_err);
+      }
+
+      // =====================
+      // Virial Calculations
+      // =====================
+      if (atom_data->get_pressure_process())
+      {
+        for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
+        {
+          int id_1 = atomic_bond_vector[j].id_1, id_2 = atomic_bond_vector[j].id_2;
+          int k1 = atom_data->atom_id_to_index[id_1], k2 = atom_data->atom_id_to_index[id_2];
+
+          // double d = atomic_bond_vector[j].length;
+          // auto dr = domain->fix_distance(pos[k1] - pos[k2]);
+          // auto r2 = dr * dr;
+          // auto dot = dr * dr_old;
+          // double bond_length_deviation = std::sqrt(r2) - d;
+
+          auto dr_old = domain->fix_distance(atom_data_pos_old[k1] - atom_data_pos_old[k2]);
+          auto dr_old2 = dr_old * dr_old;
+
+          virialConstraintLocal += -2.0 * l[j] * dr_old2; //
+        }
       }
     }
+
+    atom_data->virialConstraint += virialConstraintLocal;
+
+    // =====================
+    //
+    // =====================
+    fix_velocity(-1);
   }
 
-  void M_shake::apply_on_velocity(int64_t)
+  void M_shake::fix_velocity(int64_t)
   { // step III
     // velocity_fix part
     // this fix has to be done only on the M-Shake molecules. If not, the normal
     // leap-frog step has to be enough.
     auto &vel = atom_data->atom_struct_owned.velocity;
     auto &pos = atom_data->atom_struct_owned.position;
-    auto &pos_old = atom_data->atom_struct_owned.position_old;
-
+    auto &atom_data_pos_old = atom_data->atom_struct_owned.position_old;
+    double dtinv = 1.0 / dt;
     for (unsigned int i = 0; i < atom_data->molecule_struct_owned.size(); i++)
     {
+      if (atom_data->molecule_struct_owned[i].ghost)
+        continue;
+
       auto &atomic_bond_vector = atom_data->molecule_struct_owned[i].atomic_bond_vector;
 
       for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
@@ -212,8 +265,8 @@ namespace constraint
         auto id_2 = atomic_bond_vector[j].id_2;
         int k1 = atom_data->atom_id_to_index[id_1], k2 = atom_data->atom_id_to_index[id_2];
 
-        vel[k1] = domain->fix_distance(pos[k1] - pos_old[k1]) / dt;
-        vel[k2] = domain->fix_distance(pos[k2] - pos_old[k2]) / dt;
+        vel[k1] = domain->fix_distance(pos[k1] - atom_data_pos_old[k1]) * dtinv;
+        vel[k2] = domain->fix_distance(pos[k2] - atom_data_pos_old[k2]) * dtinv;
       }
     }
   }

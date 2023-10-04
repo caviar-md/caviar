@@ -31,7 +31,7 @@ void Constraint::verify_settings()
 
 void Constraint::apply(int64_t) {}
 void Constraint::apply_on_position(int64_t) {}
-void Constraint::apply_on_velocity(int64_t) {}
+void Constraint::apply_on_velocity(int64_t, bool &) {}
 void Constraint::apply_on_acceleration(int64_t) {}
 
 CAVIAR_NAMESPACE_CLOSE

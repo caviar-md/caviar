@@ -96,8 +96,6 @@ namespace constraint
 
     FC_OBJECT_VERIFY_SETTINGS
 
-    //auto d_diff = (domain->upper_local - domain->lower_local);
-    //double volume = d_diff.x * d_diff.y * d_diff.z;
 
     double virialConstraintLocal = 0;
     auto &pos = atom_data->atom_struct_owned.position;
@@ -108,14 +106,7 @@ namespace constraint
     //double test1 = 0;
     //double test2 = 0;
     double test3 = 0;
-    //double test4 = 0;
-    //double test5 = 0;
-    //double test6 = 0;
-    //double test7 = 0;
-    //double test8 = 0;
-    //double test9 = 0;
-    //double test10 = 0;
-    //double sum_of_sum = 0;
+
 
     for (unsigned int i = 0; i < atom_data->molecule_struct_owned.size(); i++)
     {
@@ -168,15 +159,6 @@ namespace constraint
           //test1+= (force_val) * std::sqrt(r2);
           //test2+= (force_val) * std::sqrt(dot);
           test3+= (force_val) * std::sqrt(dr_old*dr_old);
-          //test4+= (force_val) * std::sqrt(std::abs(r2-(d*d)));
-          //test5+= (force_val) * std::sqrt(std::abs(dr_old*dr_old -(d*d)));
-          //test6+= (force_val) * std::sqrt(dr_old*dr_old) -d;
-          //test7+= (force_val) * std::abs(std::sqrt(dr_old*dr_old) - d);
-          //test8+= (force_val) * (std::sqrt(dr_old*dr_old) - d);
-          //test9+= (force_val) * (std::sqrt(r2) - d);
-          //std::cout << "xxx " << (force_val) * std::sqrt(dr_old*dr_old)/(3.0*volume) << std::endl;
-          //sum_of_sum += std::abs((force_val) * std::sqrt(dr_old*dr_old));
-          //std::cout << "sum_of_sum " << sum_of_sum/(3.0*volume) << std::endl;
 
           pos[k1] -= fc * mass_inv_k1;
           pos[k2] += fc * mass_inv_k2;
@@ -207,34 +189,26 @@ namespace constraint
       // =====================
       // Virial Calculations
       // =====================
-      if (atom_data->get_pressure_process())
-      {
-        for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
-        {
-          int id_1 = atomic_bond_vector[j].id_1, id_2 = atomic_bond_vector[j].id_2;
-          int k1 = atom_data->atom_id_to_index[id_1], k2 = atom_data->atom_id_to_index[id_2];
+      // if (atom_data->get_pressure_process())
+      // {
+      //   for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
+      //   {
+      //     int id_1 = atomic_bond_vector[j].id_1, id_2 = atomic_bond_vector[j].id_2;
+      //     int k1 = atom_data->atom_id_to_index[id_1], k2 = atom_data->atom_id_to_index[id_2];
 
-          auto dr_old = domain->fix_distance(atom_data_pos_old[k1] - atom_data_pos_old[k2]);
-          auto dr_old2 = dr_old * dr_old;
+      //     auto dr_old = domain->fix_distance(atom_data_pos_old[k1] - atom_data_pos_old[k2]);
+      //     auto dr_old2 = dr_old * dr_old;
           
-          virialConstraintLocal += -2.0 * l[j] * dr_old2; //
-        }
-      }
+      //     virialConstraintLocal += -2.0 * l[j] * dr_old2; //
+      //   }
+      // }
     }
     //atom_data->virialConstraint += virialConstraintLocal;
     atom_data->virialConstraint += test3;
 
 
 
-    //std::cout << "test1: " << test1/(3.0*volume) << std::endl;
-    //std::cout << "test2: " << test2/(3.0*volume) << std::endl;
-    //std::cout << "test3: " << test3/(3.0*volume) << std::endl;
-    //std::cout << "test4: " << test4/(3.0*volume) << std::endl;
-    //std::cout << "test5: " << test5/(3.0*volume) << std::endl;
-    //std::cout << "test6: " << test6/(3.0*volume) << std::endl;
-    //std::cout << "test7: " << test7/(3.0*volume) << std::endl;    
-    //std::cout << "test8: " << test8/(3.0*volume) << std::endl;
-    //std::cout << "test9: " << test9/(3.0*volume) << std::endl;    
+
 
 
     // =====================

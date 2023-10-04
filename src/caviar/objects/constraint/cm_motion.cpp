@@ -66,7 +66,7 @@ namespace constraint
     return in_file;
   }
 
-  void Cm_motion::apply_on_velocity(int64_t steps)
+  void Cm_motion::apply_on_velocity(int64_t steps, bool &)
   { // step I
     // XXX there may be two cases. 1: all of particles, 2: a particle of a type
 

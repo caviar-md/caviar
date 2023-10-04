@@ -39,7 +39,7 @@ namespace constraint
     ~Cm_motion();
     bool read(class caviar::interpreter::Parser *);
 
-    void apply_on_velocity(int64_t);
+    void apply_on_velocity(int64_t, bool &fix_position_needed);
 
     void fix_velocity();
     void fix_angular_momentum();

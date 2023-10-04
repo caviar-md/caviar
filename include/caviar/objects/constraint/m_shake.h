@@ -43,7 +43,7 @@ namespace constraint
 
     void apply_on_position(int64_t);
 
-    void apply_on_velocity(int64_t);
+    void fix_velocity(int64_t);
 
     void bond_fix();
 
@@ -60,11 +60,12 @@ namespace constraint
     }
 
     class Domain *domain = nullptr;
-    std::vector<Vector<double>> pos_old;
 
     double dt;
     double error_tolerance;
     bool initialized;
+    int iteration_max = 100;
+
   };
 
 } // constraint

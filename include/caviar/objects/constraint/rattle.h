@@ -54,8 +54,7 @@ namespace constraint
     }
 
     class Domain *domain = nullptr;
-
-    std::vector<Vector<double>> pos_old;
+    int iteration_max = 100;
 
     double dt;
     double error_tolerance;

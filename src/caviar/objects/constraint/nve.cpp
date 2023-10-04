@@ -124,7 +124,7 @@ namespace constraint
     }
   }
 
-  void Nve::apply_on_velocity(int64_t timestep)
+  void Nve::apply_on_velocity(int64_t timestep, bool &)
   {
 
     FC_OBJECT_VERIFY_SETTINGS

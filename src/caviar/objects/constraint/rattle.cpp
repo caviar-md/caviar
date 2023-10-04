@@ -56,6 +56,10 @@ namespace constraint
       {
         GET_OR_CHOOSE_A_REAL(dt, "", "")
       }
+      else if (string_cmp(t, "iteration_max"))
+      {
+        GET_OR_CHOOSE_A_INT(iteration_max, "", "")
+      }
       else if (string_cmp(t, "error_tolerance"))
       {
         GET_OR_CHOOSE_A_REAL(error_tolerance, "", "")
@@ -76,7 +80,7 @@ namespace constraint
   void Rattle::verify_settings()
   {
     FC_NULLPTR_CHECK(atom_data)
-    atom_data->set_record_owned_position_old(true) ;
+    atom_data->set_record_owned_position_old(true);
     FC_NULLPTR_CHECK(domain)
     if (dt <= 0.0)
       error->all(FC_FILE_LINE_FUNC, "dt have to be a positive number");
@@ -88,35 +92,39 @@ namespace constraint
 
     auto &vel = atom_data->atom_struct_owned.velocity;
     auto &pos = atom_data->atom_struct_owned.position;
-
-    int pos_size = pos.size();
-    pos_old.resize(pos.size());
-    for (int i = 0; i < pos_size; ++i)
-    {
-      pos_old[i] = pos[i];
-    }
+    auto &atom_data_pos_old = atom_data->atom_struct_owned.position_old;
 
     for (unsigned int i = 0; i < atom_data->molecule_struct_owned.size(); i++)
     {
+
+      if (atom_data->molecule_struct_owned[i].ghost)
+        continue;
+
       auto &atomic_bond_vector = atom_data->molecule_struct_owned[i].atomic_bond_vector;
 
       auto Nc = atomic_bond_vector.size();
       if (Nc == 0)
         continue;
-      std::vector<double> C(Nc, 0);
+      //std::vector<double> C(Nc, 0);
 
-      double sum_err = 1.0;
+      double error_max = 1.0;
+      int counter = -1;
 
-      while (sum_err > error_tolerance)
+      while (error_max > error_tolerance)
       {
+
+        counter++;
+        if (counter > iteration_max)
+          error->all (FC_FILE_LINE_FUNC, "Iteration didn't converge in " + std::to_string(counter) + " iterations");
 
         for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
         {
 
 
-
-          auto id_1 = atomic_bond_vector[j].id_1, id_2 = atomic_bond_vector[j].id_2;
-          int k1 = atom_data->atom_id_to_index[id_1], k2 = atom_data->atom_id_to_index[id_2];
+          auto id_1 = atomic_bond_vector[j].id_1;
+          auto id_2 = atomic_bond_vector[j].id_2;
+          int k1 = atom_data->atom_id_to_index[id_1];
+          int k2 = atom_data->atom_id_to_index[id_2];
 
           auto d = atomic_bond_vector[j].length;
 
@@ -125,13 +133,14 @@ namespace constraint
 
           auto dr = domain->fix_distance(pos[k1] - pos[k2]);
 
-          auto dr_old = domain->fix_distance(pos_old[k1] - pos_old[k2]);
+          auto dr_old = domain->fix_distance(atom_data_pos_old[k1] - atom_data_pos_old[k2]);
 
           auto lambda = (dr * dr - (d * d)) / (2.0 * (mass_inv_k1 + mass_inv_k2) * (dr * dr_old));
 
           pos[k1] -= mass_inv_k1 * lambda * dr_old;
 
-          dr_old = domain->fix_distance(pos_old[k2] - pos_old[k1]); // Note (k2 - k1)
+          //dr_old = domain->fix_distance(atom_data_pos_old[k2] - atom_data_pos_old[k1]); // Note (k2 - k1)
+          dr_old = - dr_old; // ??????????? Check the paper
 
           pos[k2] -= mass_inv_k2 * lambda * dr_old;
 
@@ -146,22 +155,34 @@ namespace constraint
           vel[k2] += mass_inv_k2 * etha * dr; // Note the Plus sign
         }
 
-        sum_err = 0.0;
+        error_max = 0.0;
         for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
         {
           int k1 = atomic_bond_vector[j].id_1, k2 = atomic_bond_vector[j].id_2;
 
           auto d = atomic_bond_vector[j].length;
 
+          auto d2 = d*d;
+
           auto dr = domain->fix_distance(pos[k1] - pos[k2]);
 
           auto r2 = dr * dr;
 
-          C[j] = (r2 - d * d) / (2 * d * d);
+          double err = (r2 - d2) / (2 * d2);
 
-          sum_err += C[j];
+          double abs_err = (err < 0) ? -err : err;
+
+          if (error_max < abs_err)
+            error_max = abs_err;
         }
-        sum_err = abs(sum_err);
+
+      }
+      // =====================
+      // Virial Calculations
+      // =====================
+      if (atom_data->get_pressure_process())
+      {
+        error->all(FC_FILE_LINE_FUNC,"Pressure (Virial) calculation is Not implemented for this constraint");
       }
     }
   }

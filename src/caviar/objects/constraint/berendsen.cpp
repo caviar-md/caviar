@@ -100,7 +100,7 @@ namespace constraint
       error->all(FC_FILE_LINE_FUNC, "coupling is not set.");
   }
 
-  void Berendsen::apply_on_velocity(int64_t timestep)
+  void Berendsen::apply_on_velocity(int64_t timestep, bool &)
   { // step I
 
     if (timestep % step != 0) return;
