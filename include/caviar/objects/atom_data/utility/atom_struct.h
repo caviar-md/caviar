@@ -78,10 +78,10 @@ namespace atom_data
     std::vector<Vector<Real_t>> position_old, velocity_old, acceleration_old;
 
     /**
-     * Coordinates before applying any constraints. It is used to calculate constraint forces which is needed 
+     * Coordinates before applying any constraints. It can be used to calculate constraint forces which is needed 
      * in pressure calculations.
      */
-    std::vector<Vector<Real_t>> position_no_constraint, velocity_no_constraint, acceleration_no_constraint;
+    // std::vector<Vector<Real_t>> position_no_constraint, velocity_no_constraint, acceleration_no_constraint;
 
     /**
      * this vector is meaningful when there's one domain. We can calculate MSD

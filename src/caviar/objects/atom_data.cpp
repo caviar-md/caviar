@@ -126,7 +126,7 @@ bool Atom_data::read(caviar::interpreter::Parser *parser)
     else if (string_cmp(t, "msd_process"))
     {
       GET_OR_CHOOSE_A_INT(msd_process, "", "")
-      if(msd_process)
+      if (msd_process)
         atom_struct_owned.msd_domain_cross.resize(atom_struct_owned.position.size(), caviar::Vector<int>{0, 0, 0});
     }
     else if (string_cmp(t, "pressure_process"))
@@ -269,11 +269,12 @@ bool Atom_data::read(caviar::interpreter::Parser *parser)
     }
     else if (string_cmp(t, "add_random_velocity"))
     {
-      unsigned int seed = 0 ;
+      unsigned int seed = 0;
       GET_OR_CHOOSE_A_INT(seed, "", "")
-      double amplitude = 1.0; 
+      double amplitude = 1.0;
       GET_OR_CHOOSE_A_REAL(amplitude, "", "")
-      if (amplitude<0) amplitude = -amplitude;
+      if (amplitude < 0)
+        amplitude = -amplitude;
       add_random_velocity(seed, amplitude);
       return true;
     }
@@ -340,12 +341,14 @@ int Atom_data::get_n_r_df()
 
 void Atom_data::record_owned_old_data()
 {
-  if (record_owned_position_old)
-    atom_struct_owned.position_old = atom_struct_owned.position;
-  if (record_owned_velocity_old)
-    atom_struct_owned.velocity_old = atom_struct_owned.velocity;
-  if (record_owned_acceleration_old)
-    atom_struct_owned.acceleration_old = atom_struct_owned.acceleration;
+  error->all(FC_FILE_LINE_FUNC, "Why you need this function??");
+
+  // if (record_owned_position_old)
+  //   atom_struct_owned.position_old = atom_struct_owned.position;
+  // if (record_owned_velocity_old)
+  //   atom_struct_owned.velocity_old = atom_struct_owned.velocity;
+  // if (record_owned_acceleration_old)
+  //   atom_struct_owned.acceleration_old = atom_struct_owned.acceleration;
 }
 
 long Atom_data::get_num_of_atoms_local()
@@ -389,17 +392,17 @@ bool Atom_data::position_inside_local_domain(const Vector<double> &pos)
   if (domain == nullptr)
     error->all(FC_FILE_LINE_FUNC, "domain = nullptr");
 
-  #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
-    const auto me = domain->me;
-    if (me == 0)
-    {
-      if (pos.x >= domain->lower_local.x && pos.x < domain->upper_local.x &&
-          pos.y >= domain->lower_local.y && pos.y < domain->upper_local.y &&
-          pos.z >= domain->lower_local.z && pos.z < domain->upper_local.z)
-        return true;
-    }
-    return false;
-  #endif
+#if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
+  const auto me = domain->me;
+  if (me == 0)
+  {
+    if (pos.x >= domain->lower_local.x && pos.x < domain->upper_local.x &&
+        pos.y >= domain->lower_local.y && pos.y < domain->upper_local.y &&
+        pos.z >= domain->lower_local.z && pos.z < domain->upper_local.z)
+      return true;
+  }
+  return false;
+#endif
 
   // if (pos.x >= domain->lower_local.x && pos.x < domain->upper_local.x &&
   //     pos.y >= domain->lower_local.y && pos.y < domain->upper_local.y &&
@@ -726,21 +729,128 @@ void Atom_data::set_atoms_mpi_rank()
 
 void Atom_data::scale_position(double xi, caviar::Vector<int> scale_axis)
 {
-  int num_atoms = atom_struct_owned.position.size();
-  bool x_axis = (scale_axis.x == 1 ? true: false);
-  bool y_axis = (scale_axis.x == 1 ? true: false);
-  bool z_axis = (scale_axis.x == 1 ? true: false);
 
-  for (int i = 0; i < num_atoms; ++i)
+  // for (unsigned m = 0; m < molecule_struct_owned.size(); ++m)
+  // {
+
+  //   if (molecule_struct_owned[m].ghost)
+  //     continue;
+
+  //   auto &atomic_bond_vector = molecule_struct_owned[m].atomic_bond_vector;
+  //   for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
+  //   {
+  //     int id_1 = atomic_bond_vector[j].id_1, id_2 = atomic_bond_vector[j].id_2;
+  //     if (id_1 > 2 && id_2 > 2) continue;
+  //     int k1 = atom_id_to_index[id_1], k2 = atom_id_to_index[id_2];
+
+  //     double d = atomic_bond_vector[j].length;
+
+  //     auto dr = domain->fix_distance(atom_struct_owned.position[k1] - atom_struct_owned.position[k2]);
+  //     std::cout << "B id_1: " << id_1 << " id_2: " <<  id_2 << " dr:" <<  std::sqrt(dr*dr)<< std::endl;
+  //   }
+  // }
+
+  int num_atoms = atom_struct_owned.position.size();
+  bool x_axis = (scale_axis.x == 1 ? true : false);
+  bool y_axis = (scale_axis.x == 1 ? true : false);
+  bool z_axis = (scale_axis.x == 1 ? true : false);
+  bool atomic_scale = true;
+  if (atomic_scale)
   {
+    for (int i = 0; i < num_atoms; ++i)
+    {
 #ifdef CAVIAR_WITH_MPI
       if (atom_struct_owned.mpi_rank[i] != my_mpi_rank)
         continue;
 #endif
-    if (x_axis) atom_struct_owned.position[i].x *= xi;
-    if (y_axis) atom_struct_owned.position[i].y *= xi;
-    if (z_axis) atom_struct_owned.position[i].z *= xi;
+      if (x_axis)
+        atom_struct_owned.position[i].x *= xi;
+      if (y_axis)
+        atom_struct_owned.position[i].y *= xi;
+      if (z_axis)
+        atom_struct_owned.position[i].z *= xi;
+    }
   }
+  else
+  {
+
+    for (int i = 0; i < num_atoms; ++i)
+    {
+#ifdef CAVIAR_WITH_MPI
+      if (atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+        continue;
+#endif
+      if (atom_struct_owned.molecule_index[i] > -1)
+        continue; // excluding molecules
+
+      if (x_axis)
+        atom_struct_owned.position[i].x *= xi;
+      if (y_axis)
+        atom_struct_owned.position[i].y *= xi;
+      if (z_axis)
+        atom_struct_owned.position[i].z *= xi;
+    }
+
+    unsigned num_local_molecules = molecule_struct_owned.size();
+    for (unsigned m = 0; m < num_local_molecules; ++m)
+    {
+
+      if (molecule_struct_owned[m].ghost)
+        continue;
+
+      Vector<double> cm{0, 0, 0}; // center of molecule
+      int molecule_size = molecule_struct_owned[m].atom_list.size();
+      for (int n = 0; n < molecule_size; ++n)
+      {
+        int atom_id = molecule_struct_owned[m].atom_list[n];
+        cm += atom_struct_owned.position[atom_id_to_index[atom_id]];
+      }
+      cm /= molecule_size;
+
+      Vector<double> cm_new{cm.x, cm.y, cm.z};
+      if (x_axis)
+        cm_new.x *= xi;
+      if (y_axis)
+        cm_new.y *= xi;
+      if (z_axis)
+        cm_new.z *= xi;
+
+      auto cm_diff = cm_new - cm;
+
+      for (int n = 0; n < molecule_size; ++n)
+      {
+        int atom_id = molecule_struct_owned[m].atom_list[n];
+        int ix = atom_id_to_index[atom_id];
+
+        if (x_axis)
+          atom_struct_owned.position[ix].x += cm_diff.x;
+        if (y_axis)
+          atom_struct_owned.position[ix].y += cm_diff.y;
+        if (z_axis)
+          atom_struct_owned.position[ix].z += cm_diff.z;
+      }
+    }
+  }
+
+  // for (unsigned m = 0; m < molecule_struct_owned.size(); ++m)
+  // {
+
+  //   if (molecule_struct_owned[m].ghost)
+  //     continue;
+
+  //   auto &atomic_bond_vector = molecule_struct_owned[m].atomic_bond_vector;
+  //   for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
+  //   {
+  //     int id_1 = atomic_bond_vector[j].id_1, id_2 = atomic_bond_vector[j].id_2;
+  //     if (id_1 > 2 && id_2 > 2) continue;
+  //     int k1 = atom_id_to_index[id_1], k2 = atom_id_to_index[id_2];
+
+  //     double d = atomic_bond_vector[j].length;
+
+  //     auto dr = domain->fix_distance(atom_struct_owned.position[k1] - atom_struct_owned.position[k2]);
+  //     std::cout << "A id_1: " << id_1 << " id_2: " <<  id_2 << " dr:" <<  std::sqrt(dr*dr)<< std::endl;
+  //   }
+  // }
 }
 
 CAVIAR_NAMESPACE_CLOSE

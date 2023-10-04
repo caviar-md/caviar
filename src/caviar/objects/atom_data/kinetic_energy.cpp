@@ -48,7 +48,6 @@ double Atom_data::kinetic_energy_mpi_domain(const int t)
         if (t > -1 && t != static_cast<int>(atom_struct_owned.type[i]))
           continue; // KINETIC ENERGY OF A TYPE
         e_owned += atom_type_params.mass[atom_struct_owned.type[i]] * (atom_struct_owned.velocity[i] * atom_struct_owned.velocity[i]);
-
       }
     }
     break;
@@ -69,7 +68,6 @@ double Atom_data::kinetic_energy_mpi_domain(const int t)
           continue; // KINETIC ENERGY OF A TYPE
         auto v_i = atom_struct_owned.velocity[i] - v_cm;
         e_owned += atom_type_params.mass[atom_struct_owned.type[i]] * (v_i * v_i);
-
       }
     }
     break;
@@ -85,11 +83,9 @@ double Atom_data::kinetic_energy_mpi_domain(const int t)
       auto L_cm = owned_angular_momentum_cm_mpi_domain();
       auto I_cm = owned_inertia_tensor_cm_mpi_domain();
 
-      std::array<std::array<double, 3>, 3> I_cm_inverse = {{
-        {0.0, 0.0, 0.0},
-        {0.0, 0.0, 0.0},
-        {0.0, 0.0, 0.0}
-        }};
+      std::array<std::array<double, 3>, 3> I_cm_inverse = {{{0.0, 0.0, 0.0},
+                                                            {0.0, 0.0, 0.0},
+                                                            {0.0, 0.0, 0.0}}};
       Vector<Real_t> I_i_L(0, 0, 0);
       bool correct_result = false;
       if (matrix_inverse_3d(I_cm, I_cm_inverse) != 0)
@@ -100,7 +96,7 @@ double Atom_data::kinetic_energy_mpi_domain(const int t)
       else
       {
         output->warning("Error in matrix_inverse_3d for Atom_data::kinetic_energy.");
-        //error->all(FC_FILE_LINE_FUNC, "Error in Inertia Tensor Inverse Calculations for Atom_data::kinetic_energy.");
+        // error->all(FC_FILE_LINE_FUNC, "Error in Inertia Tensor Inverse Calculations for Atom_data::kinetic_energy.");
       }
 
       if (correct_result)
@@ -117,15 +113,11 @@ double Atom_data::kinetic_energy_mpi_domain(const int t)
 
           auto v_i = atom_struct_owned.velocity[i] - v_cm - (cross_product(I_i_L, atom_struct_owned.position[i] - p_cm));
           e_owned += atom_type_params.mass[atom_struct_owned.type[i]] * (v_i * v_i);
-
-
         }
       }
-
     }
     break;
     }
-
   }
   else
   { // TODO: mix this block into ' switch (get_n_r_df())' cases
@@ -139,7 +131,6 @@ double Atom_data::kinetic_energy_mpi_domain(const int t)
       auto fixed_vel = atom_struct_owned.velocity[i] + velocity_offset->current_value;
       e_owned += atom_type_params.mass[atom_struct_owned.type[i]] * (fixed_vel * fixed_vel);
     }
-
   }
   e_owned *= 0.5;
 
@@ -162,9 +153,9 @@ double Atom_data::kinetic_energy(const int t)
   return e_total;
 }
 
-void Atom_data::add_to_temperature(double , int ) 
+void Atom_data::add_to_temperature(double, int)
 {
-  //pressure_mpi_domain_ += v;
+  // pressure_mpi_domain_ += v;
   error->all(FC_FILE_LINE_FUNC, "Not implemented");
 }
 
@@ -186,9 +177,7 @@ void Atom_data::finalize_temperature()
   finalize_temperature_mpi_domain();
   temperature_ = temperature_mpi_domain_;
 #endif
-
 }
-
 
 void Atom_data::finalize_temperature_total()
 {
@@ -201,7 +190,6 @@ void Atom_data::finalize_temperature_total()
   temperature_ = 2.0 * kinetic_energy() / (k_b * degree_of_freedoms());
 }
 
-
 void Atom_data::finalize_temperature_mpi_domain()
 {
   if (k_b < 0)
@@ -213,10 +201,9 @@ void Atom_data::finalize_temperature_mpi_domain()
   temperature_mpi_domain_ = 2.0 * kinetic_energy_mpi_domain() / (k_b * degree_of_freedoms_mpi_domain());
 }
 
-
-void Atom_data::add_to_pressure(double , int ) 
+void Atom_data::add_to_pressure(double, int)
 {
-  //pressure_mpi_domain_ += v;
+  // pressure_mpi_domain_ += v;
   error->all(FC_FILE_LINE_FUNC, "Not implemented");
 }
 
@@ -225,7 +212,7 @@ void Atom_data::finalize_pressure()
 
   if (!pressure_process)
     return;
-    
+
   reset_pressure();
 
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
@@ -238,13 +225,11 @@ void Atom_data::finalize_pressure()
   finalize_pressure_mpi_domain();
   pressure_ = pressure_mpi_domain_;
 #endif
-
 }
 
 void Atom_data::finalize_pressure_mpi_domain()
 {
   auto &acc = atom_struct_owned.acceleration;
-  auto &acc_noc = atom_struct_owned.acceleration_no_constraint;
 
   auto d_diff = (domain->upper_local - domain->lower_local);
   double volume = d_diff.x * d_diff.y * d_diff.z;
@@ -254,6 +239,13 @@ void Atom_data::finalize_pressure_mpi_domain()
 
   double p2_old = 0;
   double Num_active = 0;
+
+  // XXX note that this STATIC value may affect NPT ensembles
+  caviar::Vector<double> domain_dx = {(domain->upper_global.x - domain->lower_global.x),
+                                      (domain->upper_global.y - domain->lower_global.y),
+                                      (domain->upper_global.z - domain->lower_global.z)};
+
+  bool finish = false;
   for (int i = 0; i < pos_size; ++i)
   {
 #ifdef CAVIAR_WITH_MPI
@@ -261,25 +253,45 @@ void Atom_data::finalize_pressure_mpi_domain()
       continue;
 #endif
     Num_active++;
-    
+
     int type = atom_struct_owned.type[i];
     double mass = atom_type_params.mass[type];
     auto f2 = acc[i] * mass;
-    //auto f2 = acc_noc[i] * mass;
 
-    p2_old += (f2) * atom_struct_owned.position[i];
+
+    double fix_x =atom_struct_owned.msd_domain_cross[i].x * domain_dx.x;
+    double fix_y =atom_struct_owned.msd_domain_cross[i].y * domain_dx.y;
+    double fix_z =atom_struct_owned.msd_domain_cross[i].z * domain_dx.z; 
+
+    Vector<double> pos_msd_i = {atom_struct_owned.position[i].x + fix_x,
+                                atom_struct_owned.position[i].y + fix_y,
+                                atom_struct_owned.position[i].z + fix_z};
+    if (fix_x >0 || fix_y>0 || fix_z >0)
+    {
+      std::cout << "i: " << i <<" fix: "<< fix_x <<" , " << fix_y << " , " << fix_z << std::endl;
+      finish = true;
+    }
+    // p2_old += (f2) * atom_struct_owned.position[i];
+    p2_old += (f2)*pos_msd_i;
   }
   p2_old = p2_old / (3.0 * volume);
-  
+
   p2 = (virialConstraint + virialExternalForce + virialForce) / (3.0 * volume);
+  //p2 = (0 + virialExternalForce + virialForce) / (3.0 * volume); // XXXXXXXX
 
-  //std::cout << "Constraint: " << virialConstraint/ (3.0 * volume) << " ExternalForce:" << virialExternalForce/ (3.0 * volume) << " Force: "<< virialForce/ (3.0 * volume)<< std::endl;
-
+  //std::cout << "Constraint: " << virialConstraint / (3.0 * volume) << " ExternalForce:" << virialExternalForce / (3.0 * volume) << " Force: " << virialForce / (3.0 * volume) << std::endl;
 
   double p1 = (Num_active * k_b * temperature_mpi_domain()) / volume;
+    // std::cout << "x p2_old: " << p2_old << std::endl;
 
   pressure_mpi_domain_ = p1 + p2;
-  //std::cout << "p1: " << p1 << " p2:" << p2 << " p2_old: "<<  p2_old << std::endl;
+  //pressure_mpi_domain_ = p1 + p2_old;
+  //std::cout << "p1: " << p1 << " p2:" << p2 << " p2_old: " << p2_old << std::endl;
+  // std::cout << "pressure: " << pressure_mpi_domain_ << std::endl;
+  if (pressure_mpi_domain_ < 0)
+    output->warning("Negative pressure");
+  if (finish)
+    error->all(FC_FILE_LINE_FUNC, "finish");
 }
 
 void Atom_data::finalize_pressure_total()
@@ -305,24 +317,21 @@ void Atom_data::finalize_pressure_total()
     auto f = atom_struct_owned.acceleration[i] * mass;
     p2 += f * atom_struct_owned.position[i];
   }
-  
+
   double p2_total = 0;
-  #ifdef CAVIAR_WITH_MPI
+#ifdef CAVIAR_WITH_MPI
 
   MPI_Allreduce(&p2, &p2_total, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-  #else
+#else
   p2_total = p2;
-  #endif
+#endif
 
   double p1 = (Num_active * k_b * temperature()) / volume;
 
   p2_total = p2_total / (3.0 * volume);
 
-
   pressure_ = p1 + p2_total;
 }
-
-
 
 Vector<Real_t> Atom_data::owned_position_cm()
 {
@@ -346,9 +355,7 @@ Vector<Real_t> Atom_data::owned_position_cm()
     p_cm_f[0] += atom_struct_owned.position[i].x * mass_i;
     p_cm_f[1] += atom_struct_owned.position[i].y * mass_i;
     p_cm_f[2] += atom_struct_owned.position[i].z * mass_i;
-
   }
-
 
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
 
@@ -416,7 +423,6 @@ Vector<Real_t> Atom_data::owned_velocity_cm()
     v_cm_f[0] += atom_struct_owned.velocity[i].x * mass_i;
     v_cm_f[1] += atom_struct_owned.velocity[i].y * mass_i;
     v_cm_f[2] += atom_struct_owned.velocity[i].z * mass_i;
-
   }
 
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
@@ -480,7 +486,6 @@ Vector<double> Atom_data::owned_angular_momentum_cm(const Vector<double> &p_cm)
     L_cm_f[0] += res.x;
     L_cm_f[1] += res.y;
     L_cm_f[2] += res.z;
-
   }
 
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
@@ -523,15 +528,13 @@ Vector<double> Atom_data::owned_angular_momentum_cm_mpi_domain(const Vector<doub
   return L_cm;
 }
 
-std::array<std::array<double, 3>, 3>  Atom_data::owned_inertia_tensor_cm(const Vector<double> &p_cm)
+std::array<std::array<double, 3>, 3> Atom_data::owned_inertia_tensor_cm(const Vector<double> &p_cm)
 {
 
-
-
   double I_cm_flat[9] = {
-        0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0} ;
+      0.0, 0.0, 0.0,
+      0.0, 0.0, 0.0,
+      0.0, 0.0, 0.0};
 
   auto p_size = atom_struct_owned.position.size(); // MPI check
 #ifdef CAVIAR_WITH_OPENMP
@@ -544,66 +547,61 @@ std::array<std::array<double, 3>, 3>  Atom_data::owned_inertia_tensor_cm(const V
 
     auto type_i = atom_struct_owned.type[i];
     auto mass_i = atom_type_params.mass[type_i];
-    auto p = atom_struct_owned.position[i] - p_cm; // relative position
-    I_cm_flat [0] += mass_i * (p.y * p.y + p.z * p.z); //=I_cm[0][0]
-    I_cm_flat [1] += mass_i * (p.x * p.x + p.z * p.z);//=I_cm[1][1]
-    I_cm_flat [2] += mass_i * (p.x * p.x + p.y * p.y);//=I_cm[2][2]
+    auto p = atom_struct_owned.position[i] - p_cm;    // relative position
+    I_cm_flat[0] += mass_i * (p.y * p.y + p.z * p.z); //=I_cm[0][0]
+    I_cm_flat[1] += mass_i * (p.x * p.x + p.z * p.z); //=I_cm[1][1]
+    I_cm_flat[2] += mass_i * (p.x * p.x + p.y * p.y); //=I_cm[2][2]
 
-    I_cm_flat [3] -= mass_i * (p.x * p.y);//=I_cm[0][1]
-    I_cm_flat [4] -= mass_i * (p.y * p.z);//=I_cm[1][2]
-    I_cm_flat [5] -= mass_i * (p.z * p.x);//=I_cm[2][0]
-
-
+    I_cm_flat[3] -= mass_i * (p.x * p.y); //=I_cm[0][1]
+    I_cm_flat[4] -= mass_i * (p.y * p.z); //=I_cm[1][2]
+    I_cm_flat[5] -= mass_i * (p.z * p.x); //=I_cm[2][0]
   }
-  I_cm_flat [6] = I_cm_flat [3];// I_cm[0][1]=I_cm[1][0]
-  I_cm_flat [7] = I_cm_flat [4];// I_cm[1][2]=I_cm[2][1]
-  I_cm_flat [8] = I_cm_flat [5];// I_cm[2][0]=I_cm[0][2]
+  I_cm_flat[6] = I_cm_flat[3]; // I_cm[0][1]=I_cm[1][0]
+  I_cm_flat[7] = I_cm_flat[4]; // I_cm[1][2]=I_cm[2][1]
+  I_cm_flat[8] = I_cm_flat[5]; // I_cm[2][0]=I_cm[0][2]
 
-
-  std::array<std::array<double, 3>, 3>  I_cm ;
+  std::array<std::array<double, 3>, 3> I_cm;
 
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
 
 #elif defined(CAVIAR_WITH_MPI)
   double I_cm_flat_total[9] = {
-        0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0,
-        0.0, 0.0, 0.0} ;
+      0.0, 0.0, 0.0,
+      0.0, 0.0, 0.0,
+      0.0, 0.0, 0.0};
   MPI_Allreduce(&I_cm_flat, &I_cm_flat_total, 9, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-  I_cm_flat [0] = I_cm_flat_total [0];
-  I_cm_flat [1] = I_cm_flat_total [1];
-  I_cm_flat [2] = I_cm_flat_total [2];
-  I_cm_flat [3] = I_cm_flat_total [3];
-  I_cm_flat [4] = I_cm_flat_total [4];
-  I_cm_flat [5] = I_cm_flat_total [5];
-  I_cm_flat [6] = I_cm_flat_total [6];
-  I_cm_flat [7] = I_cm_flat_total [7];
-  I_cm_flat [8] = I_cm_flat_total [8];
+  I_cm_flat[0] = I_cm_flat_total[0];
+  I_cm_flat[1] = I_cm_flat_total[1];
+  I_cm_flat[2] = I_cm_flat_total[2];
+  I_cm_flat[3] = I_cm_flat_total[3];
+  I_cm_flat[4] = I_cm_flat_total[4];
+  I_cm_flat[5] = I_cm_flat_total[5];
+  I_cm_flat[6] = I_cm_flat_total[6];
+  I_cm_flat[7] = I_cm_flat_total[7];
+  I_cm_flat[8] = I_cm_flat_total[8];
 
 #else
 
 #endif
-  I_cm[0][0] = I_cm_flat [0];
-  I_cm[1][1] = I_cm_flat [1];
-  I_cm[2][2] = I_cm_flat [2];
-  I_cm[0][1] = I_cm_flat [3];
-  I_cm[1][2] = I_cm_flat [4];
-  I_cm[2][0] = I_cm_flat [5];
-  I_cm[1][0] = I_cm_flat [6];
-  I_cm[2][1] = I_cm_flat [7];
-  I_cm[0][2] = I_cm_flat [8];
+  I_cm[0][0] = I_cm_flat[0];
+  I_cm[1][1] = I_cm_flat[1];
+  I_cm[2][2] = I_cm_flat[2];
+  I_cm[0][1] = I_cm_flat[3];
+  I_cm[1][2] = I_cm_flat[4];
+  I_cm[2][0] = I_cm_flat[5];
+  I_cm[1][0] = I_cm_flat[6];
+  I_cm[2][1] = I_cm_flat[7];
+  I_cm[0][2] = I_cm_flat[8];
 
   return I_cm;
 }
 
-std::array<std::array<double, 3>, 3>  Atom_data::owned_inertia_tensor_cm_mpi_domain(const Vector<double> &p_cm)
+std::array<std::array<double, 3>, 3> Atom_data::owned_inertia_tensor_cm_mpi_domain(const Vector<double> &p_cm)
 {
 
-  std::array<std::array<double, 3>, 3>  I_cm = {{
-        {0.0, 0.0, 0.0},
-        {0.0, 0.0, 0.0},
-        {0.0, 0.0, 0.0}
-    }};
+  std::array<std::array<double, 3>, 3> I_cm = {{{0.0, 0.0, 0.0},
+                                                {0.0, 0.0, 0.0},
+                                                {0.0, 0.0, 0.0}}};
 
   auto p_size = atom_struct_owned.position.size(); // MPI check
 #ifdef CAVIAR_WITH_OPENMP
@@ -624,8 +622,6 @@ std::array<std::array<double, 3>, 3>  Atom_data::owned_inertia_tensor_cm_mpi_dom
     I_cm[0][1] -= mass_i * (p.x * p.y);
     I_cm[1][2] -= mass_i * (p.y * p.z);
     I_cm[2][0] -= mass_i * (p.z * p.x);
-
-
   }
 
   I_cm[1][0] = I_cm[0][1];
@@ -634,8 +630,6 @@ std::array<std::array<double, 3>, 3>  Atom_data::owned_inertia_tensor_cm_mpi_dom
 
   return I_cm;
 }
-
-
 
 int Atom_data::degree_of_freedoms()
 {
@@ -669,9 +663,6 @@ int Atom_data::degree_of_freedoms()
   }
 
   return df - sum_of_bonds - sum_of_angles - sum_of_dihedrals - get_n_r_df();
-
-
-
 }
 
 int Atom_data::degree_of_freedoms_mpi_domain()
@@ -679,31 +670,31 @@ int Atom_data::degree_of_freedoms_mpi_domain()
 
   int pos_size = atom_struct_owned.position.size();
 
-  size_t df  = 0;
+  size_t df = 0;
   size_t sum_of_bonds = 0;
   size_t sum_of_angles = 0;
   size_t sum_of_dihedrals = 0;
 
-  std::vector<uint8_t> molecule_selected (molecule_struct_owned.size() + 1, 0);
+  std::vector<uint8_t> molecule_selected(molecule_struct_owned.size() + 1, 0);
 
   for (int i = 0; i < pos_size; ++i)
   {
-  #ifdef CAVIAR_WITH_MPI
-      if (atom_struct_owned.mpi_rank[i] != my_mpi_rank)
-        continue;
-  #endif
+#ifdef CAVIAR_WITH_MPI
+    if (atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+      continue;
+#endif
 
-    df +=3;
+    df += 3;
 
     auto mi = atom_struct_owned.molecule_index[i];
 
     if (mi == -1)
       continue;
 
-    if (molecule_selected[mi]==1)
+    if (molecule_selected[mi] == 1)
       continue;
 
-    molecule_selected [mi] = 1;
+    molecule_selected[mi] = 1;
 
     sum_of_bonds += molecule_struct_owned[mi].atomic_bond_vector.size();
 

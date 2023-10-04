@@ -625,6 +625,26 @@ public:
    */
   class Domain *domain = nullptr;
 
+  bool get_pressure_process()
+  {
+    return pressure_process;
+  }
+
+  bool get_temperature_process()
+  {
+    return temperature_process;
+  }
+
+  void set_pressure_process(bool stat)
+  {
+    pressure_process= stat;
+  }
+
+  void set_temperature_process(bool stat)
+  {
+    temperature_process= stat;
+  }
+
   bool get_msd_process()
   {
     return msd_process;

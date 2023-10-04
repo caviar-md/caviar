@@ -79,12 +79,14 @@ bool Atom_data::exchange_owned_single_md_domain(long) // timestep
     { 
       if (pos[i].x < x_llow) // while or if
       {
+        update_verlet_list = true;
         pos[i].x += x_width;
         if (msd_process)
           atom_struct_owned.msd_domain_cross[i].x -= 1;
       }
       else if (pos[i].x > x_lupp)
       {
+        update_verlet_list = true;
         pos[i].x -= x_width;
         if (msd_process)
           atom_struct_owned.msd_domain_cross[i].x += 1;
@@ -94,6 +96,7 @@ bool Atom_data::exchange_owned_single_md_domain(long) // timestep
     {
       if (pos[i].y < y_llow)
       {
+        update_verlet_list = true;
         pos[i].y += y_width;
         if (msd_process)
 
@@ -101,6 +104,7 @@ bool Atom_data::exchange_owned_single_md_domain(long) // timestep
       }
       else if (pos[i].y > y_lupp)
       {
+        update_verlet_list = true;
         pos[i].y -= y_width;
         if (msd_process)
 
@@ -111,6 +115,7 @@ bool Atom_data::exchange_owned_single_md_domain(long) // timestep
     {
       if (pos[i].z < z_llow)
       {
+        update_verlet_list = true;
         pos[i].z += z_width;
         if (msd_process)
 
@@ -119,6 +124,7 @@ bool Atom_data::exchange_owned_single_md_domain(long) // timestep
       else if (pos[i].z > z_lupp)
       {
         pos[i].z -= z_width;
+        update_verlet_list = true;
         if (msd_process)
 
           atom_struct_owned.msd_domain_cross[i].z += 1;
