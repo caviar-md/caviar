@@ -148,10 +148,11 @@ c_ber set_atom_data adata
 constraint  Berendsen_barostat c_ber_bar
 c_ber_bar tp 0.01 
 c_ber_bar kappa 3.0 
-c_ber_bar pressure 0.02
+c_ber_bar pressure 0.03
 c_ber_bar dt dt_all
 c_ber_bar set_atom_data adata
 c_ber_bar set_domain dom
+c_ber_bar xi_max 0.2
 
 #====== writer 
 writer atom_data w1

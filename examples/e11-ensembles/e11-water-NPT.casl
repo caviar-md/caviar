@@ -63,9 +63,9 @@ unique molecule_group mg
 #===== Domain
 
 domain box dom
-dom xmin -15 xmax 15
-dom ymin -15 ymax 15
-dom zmin -15 zmax 15
+dom xmin -25 xmax 25
+dom ymin -25 ymax 25
+dom zmin -25 zmax 25
 dom boundary_condition 1 1 1
  
 dom generate
@@ -122,7 +122,7 @@ adata add_random_velocity 1 1.0
 
 adata msd_process 1
 adata pressure_process 1
-adata n_r_df 0
+#adata n_r_df 0
 
 #===== Neighborlist
 
@@ -134,7 +134,8 @@ neigh cutoff_extra_coef 1.0523
 neigh dt dt_all
 #neigh make_verlet_list_from_cell_list
 #neigh build_cell_list
-
+neigh rebuild_test
+neigh all_atom_test
 
 #===== force_field
 
@@ -183,7 +184,8 @@ constraint shake c_shake
 c_shake dt dt_all
 c_shake set_atom_data adata
 c_shake set_domain dom
-#c_mshake error_tolerance 0.01
+#c_shake error_tolerance 0.01
+#c_shake iteration_max 1000
 
 #==== Constraint
 constraint rattle c_rattle 
@@ -198,7 +200,7 @@ c_rattle set_domain dom
 
 constraint  nve c_nve
 c_nve kb 1.0
-c_nve temperature 5.0
+c_nve temperature 100.0
 c_nve set_atom_data adata
 
 #==== Constraint
@@ -217,15 +219,17 @@ c_nh set_atom_data adata
 
 constraint  Berendsen c_ber
 c_ber coupling 0.01 
-c_ber temperature 5.0
+c_ber temperature 10.0
 c_ber dt dt_all
 c_ber set_atom_data adata
 
 
 constraint  Berendsen_barostat c_ber_bar
-c_ber_bar tp 0.01 
+c_ber_bar tp 0.1 
 c_ber_bar kappa 3.0 
-c_ber_bar pressure 0.0239
+c_ber_bar pressure 0.0136
+c_ber_bar xi_max 0.01
+c_ber_bar step 10
 c_ber_bar dt dt_all
 c_ber_bar set_atom_data adata
 c_ber_bar set_domain dom
@@ -280,20 +284,29 @@ sim dt dt_all
 sim add_constraint c_nve
 
 sim initial_step 0
-sim final_step 10000
+sim final_step 1000
 sim run
 
-sim remove_constraint c_nve
-sim add_constraint c_ber
+#sim remove_constraint c_nve
+#sim add_constraint c_ber
 
-sim initial_step 10001
-sim final_step 20000
-sim run
+#sim initial_step 1000
+#sim final_step 11400
+#sim final_step 2000
 
-sim add_constraint c_ber_bar
- 
-sim initial_step 20001
-sim final_step 30000
+#sim run
+
+w1 xyz_step 100
+w1 temperature_step 100
+w1 pressure_step 100
+w1 volume_step 100
+
+#sim add_constraint c_ber_bar
+# 
+#sim initial_step 2000
+#sim final_step 5000
+#sim final_step 3000
+
 sim run
 
 
