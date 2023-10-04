@@ -403,7 +403,7 @@ void Md_simulator::step()
   
   atom_data->reset_virial();
 
-  atom_data->record_owned_old_data();
+  //atom_data->record_owned_old_data();
 
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
 
@@ -508,7 +508,7 @@ void Md_simulator::setup()
   }
 
   FC_NULLPTR_CHECK(atom_data)
-  atom_data->record_owned_old_data();
+  //atom_data->record_owned_old_data();
 
   if (neighborlist.size() == 0)
     output->warning("Md_simulator::setup: neighborlist.size() = 0");
@@ -538,21 +538,9 @@ void Md_simulator::setup()
   for (auto &&f : force_field)
     f->calculate_acceleration();
 
-  {
-
-    auto &pos = atom_data->atom_struct_owned.position;
-    auto &pos_noc = atom_data->atom_struct_owned.position_no_constraint;
-    auto &acc_noc = atom_data->atom_struct_owned.acceleration_no_constraint;
-    auto psize = pos.size();
-    pos_noc.resize(psize, caviar::Vector<double>{0,0,0});
-    acc_noc.resize(psize, caviar::Vector<double>{0,0,0});
-  }
-
-
-
   atom_data->finalize_temperature();
 
-  atom_data->finalize_pressure();
+  //atom_data->finalize_pressure();
   
   for (auto &&w : writer)
     w->write(0, 0.0);
@@ -568,7 +556,9 @@ void Md_simulator::integrate_velocity_verlet()
   auto &pos = atom_data->atom_struct_owned.position;
   auto &vel = atom_data->atom_struct_owned.velocity;
   auto &acc = atom_data->atom_struct_owned.acceleration;
-  auto &acc_old = atom_data->atom_struct_owned.acceleration_old; // velocity verlet
+  auto &pos_old = atom_data->atom_struct_owned.position;
+  auto &acc_old = atom_data -> atom_struct_owned.acceleration_old; //velocity verlet
+  
   // auto &pos_old = atom_data -> atom_struct_owned.position_old; //verlet - also shake and m_shake uses this
   // const auto two_dt_inv = 1.0/(2.0*dt);//verlet
   //-------------------------------
@@ -578,7 +568,8 @@ void Md_simulator::integrate_velocity_verlet()
   //  It has been calculated in previous step
 
   auto psize = pos.size();
-
+  acc_old.resize(psize);
+  
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
 #endif
@@ -595,8 +586,9 @@ void Md_simulator::integrate_velocity_verlet()
                      ", timestep:"+ std::to_string(current_step) +"): The atom with id "+ std::to_string(atom_data->atom_struct_owned.id[i]) + " and index "+ std::to_string(i) + " at position (" + std::to_string(pos[i].x) +
                      " , " + std::to_string(pos[i].y) + " , " + std::to_string(pos[i].z) + ") is has NaN acceleration.");
     }
+    pos_old[i] = pos[i];
     pos[i] += vel[i] * dt + 0.5 * acc[i] * dt * dt; // r(t+dt) = r(t) + v(t)*dt + 1/2 * a(t) * dt^2
-    acc_old[i] = acc[i];                            // XXX check it
+    acc_old[i] = acc[i]; // calculate before 
   }
 
   for (auto &&c : constraint)
@@ -623,8 +615,16 @@ void Md_simulator::integrate_velocity_verlet()
 
   atom_data->finalize_pressure();
 
+  bool fix_position_needed = false;
+ 
   for (auto &&c : constraint)
-    c->apply_on_velocity(current_step);
+    c->apply_on_velocity(current_step, fix_position_needed);
+
+  if (fix_position_needed)
+  {
+    for (auto &&c : constraint)
+      c->apply_on_position(current_step);
+  }
 
   for (auto &&c : constraint)
     c->apply(current_step);
@@ -638,7 +638,6 @@ void Md_simulator::integrate_velocity_verlet_langevin()
   auto &pos = atom_data->atom_struct_owned.position;
   auto &vel = atom_data->atom_struct_owned.velocity;
   auto &acc = atom_data->atom_struct_owned.acceleration;
-  // auto &acc_old = atom_data -> atom_struct_owned.acceleration_old; //velocity verlet
   // auto &pos_old = atom_data -> atom_struct_owned.position_old; //verlet - also shake and m_shake uses this
   // const auto two_dt_inv = 1.0/(2.0*dt);//verlet
 
@@ -689,10 +688,16 @@ void Md_simulator::integrate_velocity_verlet_langevin()
 
   atom_data->finalize_pressure();
 
+  bool fix_position_needed = false;
+
   for (auto &&c : constraint)
-    c->apply_on_velocity(current_step);
+    c->apply_on_velocity(current_step, fix_position_needed);
 
-
+  if (fix_position_needed)
+  {
+    for (auto &&c : constraint)
+      c->apply_on_position(current_step);
+  }
 
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
@@ -740,10 +745,9 @@ void Md_simulator::integrate_velocity_verlet_langevin()
 void Md_simulator::integrate_leap_frog()
 {
   auto &pos = atom_data->atom_struct_owned.position;
-  auto &pos_noc = atom_data->atom_struct_owned.position_no_constraint;
+  auto &pos_old = atom_data->atom_struct_owned.position_old;
   auto &vel = atom_data->atom_struct_owned.velocity;
   auto &acc = atom_data->atom_struct_owned.acceleration;
-  auto &acc_noc = atom_data->atom_struct_owned.acceleration_no_constraint;
 
   // auto &acc_old = atom_data -> atom_struct_owned.acceleration_old; //velocity verlet
   // auto &pos_old = atom_data -> atom_struct_owned.position_old; //verlet - also shake and m_shake uses this
@@ -753,8 +757,7 @@ void Md_simulator::integrate_leap_frog()
   // re_calculate_acc(); // use r(t) to calculate a(t). The forces has to be velocity independent
   // It has been calculated in previous step
   auto psize = pos.size();
-  pos_noc.resize(psize);
-  acc_noc.resize(psize);
+  pos_old.resize(psize);
 
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
@@ -773,30 +776,14 @@ void Md_simulator::integrate_leap_frog()
                      " , " + std::to_string(pos[i].y) + " , " + std::to_string(pos[i].z) + ") has NaN acceleration.");
     }
     vel[i] += 0.5 * dt * acc[i]; // v (t + dt/2) = v (t) + (dt/2) a (t)
+    pos_old[i] = pos[i];
     pos[i] += dt * vel[i];       // r (t + dt) = r (t) + dt * v (t + dt/2)
 
-    pos_noc[i] = pos[i];
-
-    acc_noc[i].x = 0;
-    acc_noc[i].y = 0;
-    acc_noc[i].z = 0;
   }
 
   for (auto &&c : constraint)
     c->apply_on_position(current_step);
 
-  double dtcoef = 2.0 / (dt * dt);
-  for (unsigned int i = 0; i < psize; i++)
-  {
-#ifdef CAVIAR_WITH_MPI
-    if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
-      continue;
-#endif
-
-    acc_noc[i] = dtcoef *( pos[i] - pos_noc[i] ) +  acc[i];
-    //std::cout << "acc_noc" << acc_noc[i] << " acc " << acc[i] << std::endl;
-
-  }
   re_calculate_acc(); // use r(t+dt) to calculate a(t+dt)
 
   for (auto &&c : constraint)
@@ -818,11 +805,25 @@ void Md_simulator::integrate_leap_frog()
 
   atom_data->finalize_pressure();
 
+
+  bool fix_position_needed = false;
   for (auto &&c : constraint)
-    c->apply_on_velocity(current_step);
+    c->apply_on_velocity(current_step, fix_position_needed);
+
+  if (fix_position_needed)
+  {
+    for (auto &&c : constraint)
+      c->apply_on_position(current_step);
+  }
 
   for (auto &&c : constraint)
     c->apply(current_step);
+
+  if (atom_data->get_pressure_process())
+  {
+    for (auto &&c : constraint)
+      c->apply_on_position(current_step);
+  }
 
   for (auto &&w : writer)
     w->write(current_step, time); // pos = r(t+dt) , vel = v(t+dt)
