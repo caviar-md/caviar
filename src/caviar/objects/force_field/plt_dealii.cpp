@@ -29,6 +29,10 @@
 #include "caviar/objects/unique/time_function_3d.h"
 #include "caviar/objects/unique/grid_1d.h"
 
+#ifdef CAVIAR_WITH_MPI
+#include <mpi.h>
+#endif
+
 #ifdef CAVIAR_WITH_DEALII
 
 #include <deal.II/grid/tria.h>

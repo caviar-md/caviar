@@ -305,11 +305,14 @@ namespace force_field
   {
     FC_OBJECT_VERIFY_SETTINGS
 
+
     auto cutoff_sq = cutoff * cutoff;
     auto c = cutoff_sq;
     const auto &nlist = neighborlist->neighlist;
 
     double virialLocal = 0;
+
+    auto &mol_index = atom_data->atom_struct_owned.molecule_index;
 
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
@@ -324,23 +327,32 @@ namespace force_field
       const auto &pos_i = atom_data->atom_struct_owned.position[i];
       const auto type_i = atom_data->atom_struct_owned.type[i];
       const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
+      const auto mol_index_i = mol_index[i];
+      int id_i = atom_data->atom_struct_owned.id[i];
+
       for (auto j : nlist[i])
       {
         bool is_ghost = j >= nlist.size();
         Vector<Real_t> pos_j;
         Real_t type_j, mass_inv_j;
+        int id_j;
+
         if (is_ghost)
         {
           j -= nlist.size();
           pos_j = atom_data->atom_struct_ghost.position[j];
           type_j = atom_data->atom_struct_ghost.type[j];
+          id_j = atom_data->atom_struct_ghost.id[j];
         }
         else
         {
           pos_j = atom_data->atom_struct_owned.position[j];
           type_j = atom_data->atom_struct_owned.type[j];
+          id_j = atom_data->atom_struct_owned.id[j];
         }
         mass_inv_j = atom_data->atom_type_params.mass_inv[type_j];
+
+        const auto mol_index_j = mol_index[j];
 
         const auto dr = pos_j - pos_i;
 
@@ -378,9 +390,12 @@ namespace force_field
         auto rho_12_inv = rho_6_inv * rho_6_inv;
 
         auto forceCoef = 4 * eps_ij * (-12 * rho_12_inv * dr_sq_inv + 6 * rho_6_inv * dr_sq_inv + 12 * rho_c_12_inv * r_c_sq_inv - 6 * rho_c_6_inv * r_c_sq_inv);
-        
-        virialLocal +=  -forceCoef * dr_sq;
-
+        //if (i < j)
+        //if ((mol_index_i == -1) || (mol_index_i != mol_index_j))
+        if (id_i < id_j)
+        {
+          virialLocal +=  -forceCoef * dr_sq;
+        }
         auto force = forceCoef * dr;
 
         atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
@@ -404,7 +419,7 @@ namespace force_field
         }
       }
     }
-
+    //std::cout << "lj virialLocal " << virialLocal << std::endl;
     atom_data->virialForce += virialLocal;
 
   }

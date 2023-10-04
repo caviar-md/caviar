@@ -112,61 +112,177 @@ namespace force_field
     if (!initialized)
       initialize();
 
+    // auto p18 = atom_data->atom_struct_owned.position[18];
+    // auto p19 = atom_data->atom_struct_owned.position[19];
+    // auto p20 = atom_data->atom_struct_owned.position[20];
+        // std::cout << "==================== " << std::endl;
+
+    // std::cout << "p18:" << p18.x << " " << p18.y << " " << p18.z << std::endl;
+    // std::cout << "p19:" << p19.x << " " << p19.y << " " << p19.z << std::endl;
+    // std::cout << "p20:" << p20.x << " " << p20.y << " " << p20.z << std::endl;
+        // std::cout <<"--------------------- " << std::endl;
+
+    for (int i = 0; i < atom_data->atom_struct_ghost.position.size(); ++i)
+    {
+      if (atom_data->atom_struct_ghost.id[i] == 18)
+      {
+        auto g18 = atom_data->atom_struct_ghost.position[i];
+        // std::cout << "g18:" << g18.x << " " << g18.y << " " << g18.z << std::endl;
+      }
+      if (atom_data->atom_struct_ghost.id[i] == 19)
+      {
+        auto g19 = atom_data->atom_struct_ghost.position[i];
+        // std::cout << "g19:" << g19.x << " " << g19.y << " " << g19.z << std::endl;
+      }
+      if (atom_data->atom_struct_ghost.id[i] == 20)
+      {
+        auto g20 = atom_data->atom_struct_ghost.position[i];
+        // std::cout << "g20:" << g20.x << " " << g20.y << " " << g20.z << std::endl;
+      }
+    }
+            // std::cout << "==================== " << std::endl;
+
     const auto &pos = atom_data->atom_struct_owned.position;
 
     const auto &nlist = neighborlist->neighlist;
+    auto &mol_index = atom_data->atom_struct_owned.molecule_index;
 
     double virialLocal = 0;
     double virialExternalForceLocal = 0;
+
+    int virial_count = 0;
+    double r_max = 0;
+    double f_max = 0;
 
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
 #endif
     for (unsigned int i = 0; i < nlist.size(); ++i)
     {
-      #ifdef CAVIAR_WITH_MPI
-    if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
-      continue;
+#ifdef CAVIAR_WITH_MPI
+      if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+        continue;
 #endif
       const auto type_i = atom_data->atom_struct_owned.type[i];
       const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
       const auto charge_i = atom_data->atom_type_params.charge[type_i];
+      const auto mol_index_i = mol_index[i];
+      int id_i = atom_data->atom_struct_owned.id[i];
 
       for (auto j : nlist[i])
       {
         bool is_ghost = j >= nlist.size();
         Vector<Real_t> pos_j;
         Real_t type_j, mass_inv_j, charge_j;
+        int id_j;
         if (is_ghost)
         {
           j -= nlist.size();
           pos_j = atom_data->atom_struct_ghost.position[j];
           type_j = atom_data->atom_struct_ghost.type[j];
+          id_j = atom_data->atom_struct_ghost.id[j];
         }
         else
         {
           pos_j = atom_data->atom_struct_owned.position[j];
           type_j = atom_data->atom_struct_owned.type[j];
+          id_j = atom_data->atom_struct_owned.id[j];
         }
         charge_j = atom_data->atom_type_params.charge[type_j];
         mass_inv_j = atom_data->atom_type_params.mass_inv[type_j];
 
+        const auto mol_index_j = mol_index[j];
+
         const auto dr = pos_j - pos[i];
 
         const auto dr_sq = dr * dr;
+
+        if ((mol_index_i == -1) || (mol_index_i != mol_index_j))
+        {
+          double forceCoef = 0;
+          // virialLocal += - forceCoef * dr_sq;
+          // virial_count++;
+          // if (r_max < dr_sq) r_max = dr_sq;
+          // if (f_max < std::abs(forceCoef)) f_max = std::abs(forceCoef);
+          //  if (i == 19)
+          //  {
+          //    std::cout << "A i=19 , j=" << j<< " dr:" << dr << " drsq: " << dr_sq << " forceCoef: " << forceCoef << " jghost:" <<is_ghost << std::endl;
+          //  }
+          if (i == 19)
+          {
+            // std::cout << "XA i=19 , j=" << j<< " dr:" << dr << " drsq: " << dr_sq << " forceCoef: " << forceCoef << " jghost:" <<is_ghost << std::endl;
+          }
+          if (j == 19)
+          {
+            // std::cout << "XB i=" << i << " , j=19" << " dr:" << dr.x << " " << dr.y << " " << dr.z << " drsq: " << dr_sq << " forceCoef: " << forceCoef << " jghost:" <<is_ghost << "\n";
+            // std::cout << "Xpos_i= " << pos[i].x <<" " << pos[i] << " " << pos[i] <<"\n";
+            // std::cout << "Xpos_i= " << pos[i].x <<" " << pos[i] << " " << pos[i] <<"\n";
+          }
+        }
+        else
+        {
+          double forceCoef = 0;
+
+          if (id_i == 19)
+          {
+
+            // std::cout << "SA id_i=19 , id_j=" << id_j<< " dr:" << dr << " drsq: " << dr_sq << " forceCoef: " << forceCoef << " jghost:" <<is_ghost << std::endl;
+          }
+          if (id_j == 19)
+          {
+            // std::cout << "SB id_i=" << id_i << " , id_j=19" << " dr:" << dr.x << " " << dr.y << " " << dr.z << " drsq: " << dr_sq << " forceCoef: " << forceCoef << " jghost:" <<is_ghost << "\n";
+
+            // std::cout << "pos_i= " << pos[i] <<"\n";
+            // std::cout << "pos_j= " << pos_j <<std::endl;
+          }
+        }
         if (dr_sq >= cutoff_sq)
           continue;
         const auto dr_norm = std::sqrt(dr_sq);
 
-        auto forceCoef = - k_electrostatic * charge_i * charge_j / (dr_sq * dr_norm) * (1.0 - std::pow(dr_norm / cutoff, beta + 1));;
+        auto forceCoef = -k_electrostatic * charge_i * charge_j / (dr_sq * dr_norm) * (1.0 - std::pow(dr_norm / cutoff, beta + 1));
+        ;
         const auto force_shifted = forceCoef * dr;
 
-        //const auto force = k_electrostatic * charge_i * charge_j * dr / (dr_sq * dr_norm);
-        //const auto force_shifted = force * (1.0 - std::pow(dr_norm / cutoff, beta + 1));
+        // const auto force = k_electrostatic * charge_i * charge_j * dr / (dr_sq * dr_norm);
+        // const auto force_shifted = force * (1.0 - std::pow(dr_norm / cutoff, beta + 1));
+        // if (i < j)
+        // virialLocal += - forceCoef * dr_sq;
+        //if ((mol_index_i == -1) || (mol_index_i != mol_index_j))
+        {
+          if (id_i < id_j)
+          {
+            virialLocal += -forceCoef * dr_sq;
+            virial_count++;
 
-        virialLocal += - forceCoef * dr_sq;
+            if (id_i == 19 && id_j == 20)
+            {
+              // std::cout << "SA i: " << i << " j: " << j << " id_i=" << id_i << " , id_j=" << id_j << " dr:" << dr << " drsq: " << dr_sq << " forceCoef: " << forceCoef << " jghost:" << is_ghost << std::endl;
+              // std::cout << "SA pi:19: " << pos[i] << std::endl;
+              // std::cout << "SA pj:20: " << pos_j << std::endl;
+              // std::cout << "ZA i: " << i << " j: " << j << " id_i=" << id_i << " id_j=" << id_j << " drsq: " << dr_sq << " forceCoef: " << forceCoef << " jghost:" << is_ghost << std::endl;
 
-        atom_data->atom_struct_owned.acceleration[i] = force_shifted * mass_inv_i;
+            }
+            if (id_i == 20 && id_j == 19)
+            {
+              // std::cout << "SB i: " << i << " j: " << j << " id_i=" << id_i << " , id_j=" << id_j << " dr:" << dr << " drsq: " << dr_sq << " forceCoef: " << forceCoef << " jghost:" << is_ghost << std::endl;
+              // std::cout << "SB pi:19: " << pos[i] << std::endl;
+              // std::cout << "SB pj:20: " << pos_j << std::endl;
+              // std::cout << "ZB i: " << i << " j: " << j << " id_i=" << id_i << " id_j=" << id_j << " drsq: " << dr_sq << " forceCoef: " << forceCoef << " jghost:" << is_ghost << std::endl;
+
+            }
+
+            if (std::abs(forceCoef) > 498.0 && std::abs(forceCoef) < 499.0)
+            {
+            }
+            if (r_max < dr_sq)
+              r_max = dr_sq;
+            if (f_max < std::abs(forceCoef))
+              f_max = std::abs(forceCoef);
+          }
+        }
+
+        atom_data->atom_struct_owned.acceleration[i] += force_shifted * mass_inv_i;
 
         if (!is_ghost)
         {
@@ -191,7 +307,10 @@ namespace force_field
 
     atom_data->virialForce += virialLocal;
     atom_data->virialExternalForce += virialExternalForceLocal;
-
+    // std::cout << "el virialLocal " << virialLocal << std::endl;
+    // std::cout << "el r_max " << r_max << std::endl;
+    // std::cout << "el f_max " << f_max << std::endl;
+    // std::cout << "el virial_count " << virial_count << std::endl;
   }
 
 } // force_field
