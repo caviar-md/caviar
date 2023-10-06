@@ -66,19 +66,26 @@ namespace constraint
     return in_file;
   }
 
-  void Cm_motion::apply_on_velocity(int64_t steps, bool &)
+  void Cm_motion::fix_velocity(int64_t steps, bool &recalculate_temperature)
   { // step I
     // XXX there may be two cases. 1: all of particles, 2: a particle of a type
 
     FC_NULLPTR_CHECK(atom_data)
 
     if (steps % velocity_steps == 0)
-      fix_velocity();
+    {
+      recalculate_temperature = true;
+      fix_linear_momentum();
+    }
+
     if (steps % angular_momentum_steps == 0)
+    {
+      recalculate_temperature = true;
       fix_angular_momentum();
+    }
   }
 
-  void Cm_motion::fix_velocity()
+  void Cm_motion::fix_linear_momentum()
   {
     auto v_cm = atom_data->owned_velocity_cm();
     for (auto &&v : atom_data->atom_struct_owned.velocity)

@@ -268,7 +268,7 @@ sim remove_constraint c_ber
 #sim add_constraint c_nh
 
 sim initial_step 2001
-sim final_step 10000
+sim final_step 100000
 sim run
 
 

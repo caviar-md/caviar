@@ -200,20 +200,8 @@ c_rattle set_domain dom
 
 constraint  nve c_nve
 c_nve kb 1.0
-c_nve temperature 100.0
+c_nve temperature 10.0
 c_nve set_atom_data adata
-
-#==== Constraint
-
-constraint  Nose_hoover c_nh
-c_nh kb 1.0
-c_nh type 2
-c_nh tau 0.0001 # used in type 2 Nose_hoover
-# c_nh mass 1.0 # used in type 1 Nose_hoover
-c_nh temperature 5.0
-
-c_nh dt dt_all
-c_nh set_atom_data adata
 
 #==== Constraint
 
@@ -227,9 +215,9 @@ c_ber set_atom_data adata
 constraint  Berendsen_barostat c_ber_bar
 c_ber_bar tp 0.1 
 c_ber_bar kappa 3.0 
-c_ber_bar pressure 0.0136
-c_ber_bar xi_max 0.01
-c_ber_bar step 10
+c_ber_bar pressure 0.008
+c_ber_bar xi_max 0.2
+c_ber_bar step 5
 c_ber_bar dt dt_all
 c_ber_bar set_atom_data adata
 c_ber_bar set_domain dom
@@ -284,28 +272,26 @@ sim dt dt_all
 sim add_constraint c_nve
 
 sim initial_step 0
-sim final_step 1000
+sim final_step 10000
 sim run
 
-#sim remove_constraint c_nve
-#sim add_constraint c_ber
+sim remove_constraint c_nve
+sim add_constraint c_ber
 
-#sim initial_step 1000
-#sim final_step 11400
-#sim final_step 2000
+sim initial_step 10000
+sim final_step 11400
+sim final_step 20000
 
-#sim run
+sim run
 
 w1 xyz_step 100
 w1 temperature_step 100
 w1 pressure_step 100
 w1 volume_step 100
 
-#sim add_constraint c_ber_bar
-# 
-#sim initial_step 2000
-#sim final_step 5000
-#sim final_step 3000
+sim add_constraint c_ber_bar
+sim initial_step 20000
+sim final_step 200000
 
 sim run
 

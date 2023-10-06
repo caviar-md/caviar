@@ -37,7 +37,7 @@ namespace constraint
         ~Berendsen();
         bool read(class caviar::interpreter::Parser *);
 
-        void apply_on_velocity(int64_t, bool &fix_position_needed);
+        void apply_thermostat(int64_t, bool &recalculate_temperature);
 
         void verify_settings();
 

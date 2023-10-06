@@ -39,7 +39,7 @@ namespace constraint
     ~Rattle();
     bool read(class caviar::interpreter::Parser *);
 
-    void apply_on_position(int64_t);
+    void apply_shake(int64_t);
 
     void bond_fix();
 

@@ -41,7 +41,7 @@ namespace constraint
         ~Berendsen_barostat();
         bool read(class caviar::interpreter::Parser *);
 
-        void apply_on_velocity(int64_t, bool &fix_position_needed);
+        void apply_barostat(int64_t, bool &fix_position_needed);
 
         void verify_settings();
         
@@ -61,12 +61,12 @@ namespace constraint
         /**
          * Apply after each 'step' of timesteps passed
         */
-        int step = 1;
+        int step = 5;
 
         /**
          * Maximum value of scaling
         */
-        double xi_max = 0.0001;
+        double xi_max = 0.1;
 
 
         /**

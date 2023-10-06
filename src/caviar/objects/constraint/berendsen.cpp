@@ -100,11 +100,13 @@ namespace constraint
       error->all(FC_FILE_LINE_FUNC, "coupling is not set.");
   }
 
-  void Berendsen::apply_on_velocity(int64_t timestep, bool &)
+  void Berendsen::apply_thermostat(int64_t timestep, bool &recalculate_temperature)
   { // step I
 
     if (timestep % step != 0) return;
 
+    recalculate_temperature = true;
+    
     FC_OBJECT_VERIFY_SETTINGS
 
     auto t = atom_data->temperature();

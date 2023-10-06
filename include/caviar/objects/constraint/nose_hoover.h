@@ -37,7 +37,7 @@ namespace constraint
         ~Nose_hoover();
         bool read(class caviar::interpreter::Parser *);
 
-        void apply_on_acceleration(int64_t);
+        void apply_thermostat(int64_t, bool &recalculate_temperature);
 
         void verify_settings();
 

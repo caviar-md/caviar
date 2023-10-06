@@ -123,11 +123,11 @@ namespace constraint
     settings_verified = true;
   }
 
-  void Nose_hoover::apply_on_acceleration(int64_t timestep)
+  void Nose_hoover::apply_thermostat(int64_t timestep,  bool &recalculate_temperature)
   { // step I
     if (!settings_verified)
       verify_settings();
-
+    recalculate_temperature = true;
     auto n_df = atom_data->degree_of_freedoms();
 
     // Nose formalism (real-time)

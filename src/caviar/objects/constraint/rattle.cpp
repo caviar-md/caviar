@@ -86,7 +86,7 @@ namespace constraint
       error->all(FC_FILE_LINE_FUNC, "dt have to be a positive number");
   }
 
-  void Rattle::apply_on_position(int64_t)
+  void Rattle::apply_shake(int64_t)
   {
     FC_OBJECT_VERIFY_SETTINGS
 

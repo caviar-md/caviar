@@ -84,7 +84,7 @@ namespace constraint
       error->all(FC_FILE_LINE_FUNC, "dt have to be a positive number");
   }
 
-  void M_shake::apply_on_position(int64_t)
+  void M_shake::apply_shake(int64_t)
   { // step III
 
     FC_OBJECT_VERIFY_SETTINGS
@@ -240,10 +240,10 @@ namespace constraint
     // =====================
     //
     // =====================
-    fix_velocity(-1);
+    update_velocity_after_shake(-1);
   }
 
-  void M_shake::fix_velocity(int64_t)
+  void M_shake::update_velocity_after_shake(int64_t)
   { // step III
     // velocity_fix part
     // this fix has to be done only on the M-Shake molecules. If not, the normal

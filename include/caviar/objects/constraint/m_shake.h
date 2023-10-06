@@ -41,9 +41,9 @@ namespace constraint
     ~M_shake();
     bool read(class caviar::interpreter::Parser *);
 
-    void apply_on_position(int64_t);
+    void apply_shake(int64_t);
 
-    void fix_velocity(int64_t);
+    void update_velocity_after_shake(int64_t);
 
     void bond_fix();
 

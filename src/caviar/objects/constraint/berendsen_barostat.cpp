@@ -123,17 +123,17 @@ namespace constraint
       error->all(FC_FILE_LINE_FUNC, "pressure is not set.");
   }
 
-  void Berendsen_barostat::apply_on_velocity(int64_t timestep, bool &fix_position_needed)
+  void Berendsen_barostat::apply_barostat(int64_t timestep, bool &fix_position_needed)
   {     
     if (timestep % step != 0) return;
     FC_OBJECT_VERIFY_SETTINGS
 
     auto p = atom_data->pressure();
-    std::cout << "p: " << p << std::endl;
+    //std::cout << "p: " << p << std::endl;
 
     double xi = std::pow( 1.0 - kappa * (dt / tp) * (pressure - p), 0.333333333333333 );
     
-    std::cout << "xi_calc: " << xi << std::endl;
+    //std::cout << "xi_calc: " << xi << std::endl;
 
     double xi_low = 1 - xi_max;
     double xi_high = 1 + xi_max;
@@ -142,7 +142,7 @@ namespace constraint
     if (xi < xi_low) xi = xi_low ;
     if (xi > xi_high) xi = xi_high;
 
-    std::cout << "xi_fix: " << xi << std::endl;
+    //std::cout << "xi_fix: " << xi << std::endl;
 
     domain-> scale_position(xi, scale_axis);
 

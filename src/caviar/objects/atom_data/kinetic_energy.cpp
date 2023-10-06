@@ -229,7 +229,7 @@ void Atom_data::finalize_pressure()
 
 void Atom_data::finalize_pressure_mpi_domain()
 {
-  auto &acc = atom_struct_owned.acceleration;
+  //auto &acc = atom_struct_owned.acceleration;
 
   auto d_diff = (domain->upper_local - domain->lower_local);
   double volume = d_diff.x * d_diff.y * d_diff.z;
@@ -237,15 +237,15 @@ void Atom_data::finalize_pressure_mpi_domain()
   double p2 = 0;
   int64_t pos_size = atom_struct_owned.position.size();
 
-  double p2_old = 0;
+  // double p2_old = 0;
   double Num_active = 0;
 
   // XXX note that this STATIC value may affect NPT ensembles
-  caviar::Vector<double> domain_dx = {(domain->upper_global.x - domain->lower_global.x),
-                                      (domain->upper_global.y - domain->lower_global.y),
-                                      (domain->upper_global.z - domain->lower_global.z)};
+  // caviar::Vector<double> domain_dx = {(domain->upper_global.x - domain->lower_global.x),
+  //                                     (domain->upper_global.y - domain->lower_global.y),
+  //                                     (domain->upper_global.z - domain->lower_global.z)};
 
-  bool finish = false;
+  //bool finish = false;
   for (int i = 0; i < pos_size; ++i)
   {
 #ifdef CAVIAR_WITH_MPI
@@ -254,28 +254,28 @@ void Atom_data::finalize_pressure_mpi_domain()
 #endif
     Num_active++;
 
-    int type = atom_struct_owned.type[i];
-    double mass = atom_type_params.mass[type];
-    auto f2 = acc[i] * mass;
+    // int type = atom_struct_owned.type[i];
+    // double mass = atom_type_params.mass[type];
+    // auto f2 = acc[i] * mass;
 
 
-    double fix_x =atom_struct_owned.msd_domain_cross[i].x * domain_dx.x;
-    double fix_y =atom_struct_owned.msd_domain_cross[i].y * domain_dx.y;
-    double fix_z =atom_struct_owned.msd_domain_cross[i].z * domain_dx.z; 
+    // double fix_x =atom_struct_owned.msd_domain_cross[i].x * domain_dx.x;
+    // double fix_y =atom_struct_owned.msd_domain_cross[i].y * domain_dx.y;
+    // double fix_z =atom_struct_owned.msd_domain_cross[i].z * domain_dx.z; 
 
-    Vector<double> pos_msd_i = {atom_struct_owned.position[i].x + fix_x,
-                                atom_struct_owned.position[i].y + fix_y,
-                                atom_struct_owned.position[i].z + fix_z};
-    if (fix_x >0 || fix_y>0 || fix_z >0)
-    {
-      std::cout << "i: " << i <<" fix: "<< fix_x <<" , " << fix_y << " , " << fix_z << std::endl;
-      finish = true;
-    }
-    // p2_old += (f2) * atom_struct_owned.position[i];
-    p2_old += (f2)*pos_msd_i;
+    // Vector<double> pos_msd_i = {atom_struct_owned.position[i].x + fix_x,
+    //                             atom_struct_owned.position[i].y + fix_y,
+    //                             atom_struct_owned.position[i].z + fix_z};
+    // if (fix_x >0 || fix_y>0 || fix_z >0)
+    // {
+    //   std::cout << "i: " << i <<" fix: "<< fix_x <<" , " << fix_y << " , " << fix_z << std::endl;
+    //   finish = true;
+    // }
+    // // p2_old += (f2) * atom_struct_owned.position[i];
+    // p2_old += (f2)*pos_msd_i;
   }
-  p2_old = p2_old / (3.0 * volume);
-
+  // p2_old = p2_old / (3.0 * volume);
+  
   p2 = (virialConstraint + virialExternalForce + virialForce) / (3.0 * volume);
   //p2 = (0 + virialExternalForce + virialForce) / (3.0 * volume); // XXXXXXXX
 
@@ -288,10 +288,12 @@ void Atom_data::finalize_pressure_mpi_domain()
   //pressure_mpi_domain_ = p1 + p2_old;
   //std::cout << "p1: " << p1 << " p2:" << p2 << " p2_old: " << p2_old << std::endl;
   // std::cout << "pressure: " << pressure_mpi_domain_ << std::endl;
-  if (pressure_mpi_domain_ < 0)
-    output->warning("Negative pressure");
-  if (finish)
-    error->all(FC_FILE_LINE_FUNC, "finish");
+  //std::cout << "p1: " << p1 << " p2:" << p2 << " pressure_mpi_domain_: " << pressure_mpi_domain_ << std::endl;
+
+  //if (pressure_mpi_domain_ < 0)
+  //  output->warning("Negative pressure");
+  //if (finish)
+  //  error->all(FC_FILE_LINE_FUNC, "finish");
 }
 
 void Atom_data::finalize_pressure_total()

@@ -59,6 +59,12 @@ namespace constraint
         if (energy_tot <= 0.0)
           error->all(FC_FILE_LINE_FUNC_PARSE, "energy_tot have to non-negative.");
       }
+      else if (string_cmp(t, "step"))
+      {
+        GET_OR_CHOOSE_A_INT(step, "", "")
+        if (step <= 0)
+          error->all(FC_FILE_LINE_FUNC_PARSE, "step have to non-negative.");
+      }
       else if (string_cmp(t, "kb"))
       {
         GET_OR_CHOOSE_A_REAL(kb, "", "")
@@ -124,10 +130,14 @@ namespace constraint
     }
   }
 
-  void Nve::apply_on_velocity(int64_t timestep, bool &)
+  void Nve::apply_thermostat(int64_t timestep, bool &recalculate_temperature)
   {
 
     FC_OBJECT_VERIFY_SETTINGS
+
+    if (timestep % step != 0) return;
+
+    recalculate_temperature = true;
 
     auto energy_now = atom_data->kinetic_energy();
 

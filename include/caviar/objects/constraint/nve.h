@@ -47,7 +47,7 @@ namespace constraint
     ~Nve();
     bool read(class caviar::interpreter::Parser *);
 
-    void apply_on_velocity(int64_t, bool &fix_position_needed);
+    void apply_thermostat(int64_t, bool &recalculate_temperature);
 
     void verify_settings();
 
@@ -55,6 +55,11 @@ namespace constraint
 
     // if one has set_the temperature, it will use it a
     double temperature, kb, kbt;
+
+    /**
+     * Apply after each 'step' of timesteps passed
+     */
+    int step = 1;
   };
 
 } // constraint
