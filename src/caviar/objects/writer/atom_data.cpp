@@ -107,8 +107,8 @@ namespace writer
       }
       else if (string_cmp(t, "write") )
       {
-        int step;
-        double time;
+        int step=0;
+        double time=0;
         GET_OR_CHOOSE_A_INT(step, "", "")
         GET_OR_CHOOSE_A_REAL(time, "", "")
         write(step, time);

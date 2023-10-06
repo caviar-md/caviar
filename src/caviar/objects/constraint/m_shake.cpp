@@ -183,6 +183,14 @@ namespace constraint
 
           auto fc = -f_coef * dr_old;
 
+
+          auto force_val = -2.0 * l[j]* std::sqrt(dr_old*dr_old);
+
+          //test1+= (force_val) * std::sqrt(r2);
+          //test2+= (force_val) * std::sqrt(dot);
+          virialConstraintLocal+= (force_val) * std::sqrt(dr_old*dr_old);
+          
+
           pos[k1] -= fc * mass_inv_k1;
           pos[k2] += fc * mass_inv_k2;
 
@@ -214,25 +222,25 @@ namespace constraint
       // =====================
       // Virial Calculations
       // =====================
-      if (atom_data->get_pressure_process())
-      {
-        for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
-        {
-          int id_1 = atomic_bond_vector[j].id_1, id_2 = atomic_bond_vector[j].id_2;
-          int k1 = atom_data->atom_id_to_index[id_1], k2 = atom_data->atom_id_to_index[id_2];
+      // if (atom_data->get_pressure_process())
+      // {
+      //   for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
+      //   {
+      //     int id_1 = atomic_bond_vector[j].id_1, id_2 = atomic_bond_vector[j].id_2;
+      //     int k1 = atom_data->atom_id_to_index[id_1], k2 = atom_data->atom_id_to_index[id_2];
 
-          // double d = atomic_bond_vector[j].length;
-          // auto dr = domain->fix_distance(pos[k1] - pos[k2]);
-          // auto r2 = dr * dr;
-          // auto dot = dr * dr_old;
-          // double bond_length_deviation = std::sqrt(r2) - d;
+      //     // double d = atomic_bond_vector[j].length;
+      //     // auto dr = domain->fix_distance(pos[k1] - pos[k2]);
+      //     // auto r2 = dr * dr;
+      //     // auto dot = dr * dr_old;
+      //     // double bond_length_deviation = std::sqrt(r2) - d;
 
-          auto dr_old = domain->fix_distance(atom_data_pos_old[k1] - atom_data_pos_old[k2]);
-          auto dr_old2 = dr_old * dr_old;
+      //     auto dr_old = domain->fix_distance(atom_data_pos_old[k1] - atom_data_pos_old[k2]);
+      //     auto dr_old2 = dr_old * dr_old;
 
-          virialConstraintLocal += -2.0 * l[j] * dr_old2; //
-        }
-      }
+      //     virialConstraintLocal += -2.0 * l[j] * dr_old2; //
+      //   }
+      // }
     }
 
     atom_data->virialConstraint += virialConstraintLocal;

@@ -97,7 +97,7 @@ namespace constraint
     FC_OBJECT_VERIFY_SETTINGS
 
 
-    double virialConstraintLocal = 0;
+
     auto &pos = atom_data->atom_struct_owned.position;
     auto &atom_data_pos_old = atom_data->atom_struct_owned.position_old;
 
@@ -105,7 +105,7 @@ namespace constraint
 
     //double test1 = 0;
     //double test2 = 0;
-    double test3 = 0;
+    double virialConstraintLocal = 0;
 
 
     for (unsigned int i = 0; i < atom_data->molecule_struct_owned.size(); i++)
@@ -158,7 +158,7 @@ namespace constraint
 
           //test1+= (force_val) * std::sqrt(r2);
           //test2+= (force_val) * std::sqrt(dot);
-          test3+= (force_val) * std::sqrt(dr_old*dr_old);
+          virialConstraintLocal+= (force_val) * std::sqrt(dr_old*dr_old);
 
           pos[k1] -= fc * mass_inv_k1;
           pos[k2] += fc * mass_inv_k2;
@@ -203,8 +203,8 @@ namespace constraint
       //   }
       // }
     }
-    //atom_data->virialConstraint += virialConstraintLocal;
-    atom_data->virialConstraint += test3;
+
+    atom_data->virialConstraint += virialConstraintLocal;
 
 
 

@@ -327,7 +327,7 @@ namespace force_field
       const auto &pos_i = atom_data->atom_struct_owned.position[i];
       const auto type_i = atom_data->atom_struct_owned.type[i];
       const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
-      const auto mol_index_i = mol_index[i];
+      //const auto mol_index_i = mol_index[i];
       int id_i = atom_data->atom_struct_owned.id[i];
 
       for (auto j : nlist[i])
@@ -352,7 +352,7 @@ namespace force_field
         }
         mass_inv_j = atom_data->atom_type_params.mass_inv[type_j];
 
-        const auto mol_index_j = mol_index[j];
+        //const auto mol_index_j = mol_index[j];
 
         const auto dr = pos_j - pos_i;
 
