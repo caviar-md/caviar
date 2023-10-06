@@ -40,96 +40,20 @@ bool Atom_data::exchange_owned_single_md_domain(long) // timestep
 
   bool update_verlet_list = false;
 
-  const auto bc = domain->boundary_condition;
-
-  // cutoff extra may make problem for induced_charge mesh.
-  // in the situations that the mesh size is exactly equal to the domain
-  // measurements, cutoff_extra may makes the particles go outside of the mesh.
-  // that throws an exception when calculating the force or accelerations on
-  // the particle. in order to avoid that, one can fix it by setting cutoff_extra
-  // to zero, or by fixing particle position in the forcefield calculations.
-  // const auto x_llow = domain->lower_global.x - cutoff_extra;
-  // const auto x_lupp = domain->upper_global.x + cutoff_extra;
-  // const auto y_llow = domain->lower_global.y - cutoff_extra;
-  // const auto y_lupp = domain->upper_global.y + cutoff_extra;
-  // const auto z_llow = domain->lower_global.z - cutoff_extra;
-  // const auto z_lupp = domain->upper_global.z + cutoff_extra;
-
-  const auto x_llow = domain->lower_global.x;
-  const auto x_lupp = domain->upper_global.x;
-  const auto y_llow = domain->lower_global.y;
-  const auto y_lupp = domain->upper_global.y;
-  const auto z_llow = domain->lower_global.z;
-  const auto z_lupp = domain->upper_global.z;
-
-  const auto x_width = domain->upper_global.x - domain->lower_global.x;
-  const auto y_width = domain->upper_global.y - domain->lower_global.y;
-  const auto z_width = domain->upper_global.z - domain->lower_global.z;
-
   auto &pos = atom_struct_owned.position;
 
-  unsigned int num_local_atoms = atom_struct_owned.id.size();
+  auto pos_size = pos.size();
 
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
 #endif
-  for (unsigned int i = 0; i < num_local_atoms; ++i)
+  for (unsigned int i = 0; i < pos_size; ++i)
   {
-    if (bc.x == 1)
-    { 
-      if (pos[i].x < x_llow) // while or if
-      {
-        update_verlet_list = true;
-        pos[i].x += x_width;
-        if (msd_process)
-          atom_struct_owned.msd_domain_cross[i].x -= 1;
-      }
-      else if (pos[i].x > x_lupp)
-      {
-        update_verlet_list = true;
-        pos[i].x -= x_width;
-        if (msd_process)
-          atom_struct_owned.msd_domain_cross[i].x += 1;
-      }
-    }
-    if (bc.y == 1)
-    {
-      if (pos[i].y < y_llow)
-      {
-        update_verlet_list = true;
-        pos[i].y += y_width;
-        if (msd_process)
+    caviar::Vector<int> msd {0,0,0};
+    pos[i] = domain->fix_position(pos[i], msd, update_verlet_list);
 
-          atom_struct_owned.msd_domain_cross[i].y -= 1;
-      }
-      else if (pos[i].y > y_lupp)
-      {
-        update_verlet_list = true;
-        pos[i].y -= y_width;
-        if (msd_process)
-
-          atom_struct_owned.msd_domain_cross[i].y += 1;
-      }
-    }
-    if (bc.z == 1)
-    {
-      if (pos[i].z < z_llow)
-      {
-        update_verlet_list = true;
-        pos[i].z += z_width;
-        if (msd_process)
-
-          atom_struct_owned.msd_domain_cross[i].z -= 1;
-      }
-      else if (pos[i].z > z_lupp)
-      {
-        pos[i].z -= z_width;
-        update_verlet_list = true;
-        if (msd_process)
-
-          atom_struct_owned.msd_domain_cross[i].z += 1;
-      }
-    }
+    if (msd_process)
+      atom_struct_owned.msd_domain_cross[i] +=  msd;
   }
   return update_verlet_list;
 }

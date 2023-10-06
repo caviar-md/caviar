@@ -1893,6 +1893,8 @@ namespace force_field
     double virialLocal = 0;
     const auto &pos = atom_data->atom_struct_owned.position;
     Vector<double> po{0, 0, 0};
+    Vector<double> msd_dummy{0, 0, 0};
+    bool bool_dummy = false;
     if (position_offset != nullptr)
       po += position_offset->current_value;
 #ifdef CAVIAR_WITH_OPENMP
@@ -1908,7 +1910,12 @@ namespace force_field
       const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
       const auto charge_i = atom_data->atom_type_params.charge[type_i];
 
-      const dealii::Point<3> r = {pos[i].x - po.x, pos[i].y - po.y, pos[i].z - po.z};
+      caviar::Vector<double> p_i = pos[i] - po;
+      if (atom_data->atom_struct_owned.molecule_index != 0)
+        p_i = domain->fix_position(p_i, msd_dummy, bool_dummy); // bool_dummy and msd_dummy are not used; 
+
+      const dealii::Point<3> r = {p_i.x, p_i.y, p_i.z};
+
       dealii::Tensor<1, 3, double> field;
       if (ignore_point_out_of_mesh)
       {
