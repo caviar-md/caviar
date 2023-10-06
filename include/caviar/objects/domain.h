@@ -32,18 +32,23 @@ public:
   Domain(class CAVIAR *);
   virtual ~Domain();
 
-  virtual bool read(class caviar::interpreter::Parser *) = 0;
+  virtual bool read(class caviar::interpreter::Parser *);
 
   virtual void calculate_local_domain();
-  virtual void generate() = 0;
+  virtual void generate();
   virtual void calculate_procs_grid();
 
   /**
+   * It must be called after the changes in the domain
+  */
+  virtual void update_after_domain_change();
+
+  /**
    * Used in barostat scaling for geometrical forces.
-   * 
-  */   
+   *
+   */
   virtual void scale_position(double scale_ratio, caviar::Vector<int> scale_axis);
-  
+
   /**
    * calculates process rank from it grid index
    */
@@ -54,22 +59,30 @@ public:
    */
   virtual void find_best_grid();
 
-  virtual double fix_distance_x(double d) = 0;
-  virtual double fix_distance_y(double d) = 0;
-  virtual double fix_distance_z(double d) = 0;
+  virtual double fix_distance_x(double d);
+  virtual double fix_distance_y(double d);
+  virtual double fix_distance_z(double d);
 
-  virtual caviar::Vector<double> fix_distance(caviar::Vector<double> v) = 0;
+  virtual caviar::Vector<double> fix_distance(caviar::Vector<double> v);
+
+  /**
+   * Gives the corrected position in periodic boundary condition. Use case: if an atom of a molecule crossed the  global boundary
+   * in periodic condition, its actual location is on the other side of the boundary, but since exchanging just one atom of a molecule
+   * between domain is MPI expensive, we use fix_position to get the correct location of the atoms in cases it is needed, such as
+   * when using the dealii force_field and we need all the particles remain inside mesh.
+   */
+  virtual caviar::Vector<double> fix_position(caviar::Vector<double> v, caviar::Vector<int> &msd_value, bool &update_verlet_list);
 
   virtual Vector<Real_t> periodic_distance(const Vector<Real_t>);
 
   /**
    * Total volume of (mpi) local domain. In non-mpi simulations, local == global
-  */
+   */
   virtual double volume_local();
 
   /**
    * Total volume of global domain
-  */
+   */
   virtual double volume_global();
 
   Vector<int> boundary_condition;
@@ -79,6 +92,8 @@ public:
 
   Vector<Real_t> lower_global, upper_global;
   Vector<Real_t> lower_local, upper_local;
+
+  Vector<Real_t> size_local, size_global;
 
   /**
    * used in MD_MPI case:
@@ -97,6 +112,8 @@ public:
    * defined to have a faster MPI when we have less than 27 processes or when domains can have similar neigbors
    */
   std::vector<int> neighborlist_domains;
+
+  Vector<Real_t> half_edge;
 
 public:
   FC_BASE_OBJECT_COMMON_TOOLS

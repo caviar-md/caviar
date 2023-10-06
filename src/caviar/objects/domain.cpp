@@ -45,18 +45,7 @@ void Domain::verify_settings()
 {
 }
 
-void Domain::calculate_local_domain()
-{
-#if defined(CAVIAR_WITH_MPI)
-  lower_local.x = lower_global.x + (upper_global.x - lower_global.x) * grid_index_x / nprocs_x;
-  lower_local.y = lower_global.y + (upper_global.y - lower_global.y) * grid_index_y / nprocs_y;
-  lower_local.z = lower_global.z + (upper_global.z - lower_global.z) * grid_index_z / nprocs_z;
 
-  upper_local.x = lower_global.x + (upper_global.x - lower_global.x) * (grid_index_x + 1) / nprocs_x;
-  upper_local.y = lower_global.y + (upper_global.y - lower_global.y) * (grid_index_y + 1) / nprocs_y;
-  upper_local.z = lower_global.z + (upper_global.z - lower_global.z) * (grid_index_z + 1) / nprocs_z;
-#endif
-}
 
 int Domain::grid2rank(int x, int y, int z)
 {
@@ -126,8 +115,8 @@ static std::vector<std::array<int, 3>> possible_grids(int nprocs)
     {
       if (nprocs_yz % nprocs_y)
         continue;
-      //std::array<int, 3> grid = {nprocs_x, nprocs_y, nprocs_yz / nprocs_y};
-      //grids.push_back(grid);
+      // std::array<int, 3> grid = {nprocs_x, nprocs_y, nprocs_yz / nprocs_y};
+      // grids.push_back(grid);
       grids.push_back({nprocs_x, nprocs_y, nprocs_yz / nprocs_y});
     }
   }
@@ -213,21 +202,273 @@ Vector<Real_t> Domain::periodic_distance(const Vector<Real_t> v)
   return vf;
 }
 
-void Domain::scale_position(double, caviar::Vector<int> )
+
+bool Domain::read(caviar::interpreter::Parser *parser)
 {
-  error->all(FC_FILE_LINE_FUNC, "The scale_position of this domain is not implemented");
+  FC_OBJECT_READ_INFO
+  bool in_file = true;
+  while (true)
+  {
+    GET_A_TOKEN_FOR_CREATION
+    auto t = token.string_value;
+    if (string_cmp(t, "lower_global.x") || string_cmp(t, "xmin"))
+    {
+      GET_OR_CHOOSE_A_REAL(lower_global.x, "", "")
+    }
+    else if (string_cmp(t, "upper_global.x") || string_cmp(t, "xmax"))
+    {
+      GET_OR_CHOOSE_A_REAL(upper_global.x, "", "")
+    }
+    else if (string_cmp(t, "lower_global.y") || string_cmp(t, "ymin"))
+    {
+      GET_OR_CHOOSE_A_REAL(lower_global.y, "", "")
+    }
+    else if (string_cmp(t, "upper_global.y") || string_cmp(t, "ymax"))
+    {
+      GET_OR_CHOOSE_A_REAL(upper_global.y, "", "")
+    }
+    else if (string_cmp(t, "lower_global.z") || string_cmp(t, "zmin"))
+    {
+      GET_OR_CHOOSE_A_REAL(lower_global.z, "", "")
+    }
+    else if (string_cmp(t, "upper_global.z") || string_cmp(t, "zmax"))
+    {
+      GET_OR_CHOOSE_A_REAL(upper_global.z, "", "")
+    }
+    else if (string_cmp(t, "boundary_condition") || string_cmp(t, "bc"))
+    {
+      GET_OR_CHOOSE_A_INT_3D_VECTOR(boundary_condition, "", "")
+    }
+    else if (string_cmp(t, "me"))
+    {
+      std::cout << "ME: " << me << std::endl;
+    }
+    else if (string_cmp(t, "info"))
+    {
+      std::cout << "MPI Rank: " << me
+                << " local.x [" << lower_local.x << " , " << upper_local.x << "]"
+                << " local.y [" << lower_local.y << " , " << upper_local.y << "]"
+                << " local.z [" << lower_local.z << " , " << upper_local.z << "]"
+                << " global.x [" << lower_global.x << " , " << upper_global.x << "]"
+                << " global.y [" << lower_global.y << " , " << upper_global.y << "]"
+                << " global.z [" << lower_global.z << " , " << upper_global.z << "]"
+                << std::endl;
+    }
+    else if (string_cmp(t, "generate"))
+    {
+      generate();
+    }
+    else
+      error->all(FC_FILE_LINE_FUNC_PARSE, "Unknown variable or command");
+  }
+  return in_file;
+}
+
+void Domain::generate()
+{
+#if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
+  calculate_local_domain();
+#else
+  calculate_procs_grid();
+  calculate_local_domain();
+  std::string s = "boundary condition: ";
+  s += std::to_string(boundary_condition.x) + " " + std::to_string(boundary_condition.y) + " " + std::to_string(boundary_condition.z);
+  output->info(s);
+#endif
+  update_after_domain_change();
+}
+
+void Domain::calculate_local_domain()
+{
+#if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
+  lower_local.x = lower_global.x;
+  lower_local.y = lower_global.y;
+  lower_local.z = lower_global.z;
+
+  upper_local.x = upper_global.x;
+  upper_local.y = upper_global.y;
+  upper_local.z = upper_global.z;
+#else
+  lower_local.x = lower_global.x + (upper_global.x - lower_global.x) * grid_index_x / nprocs_x;
+  lower_local.y = lower_global.y + (upper_global.y - lower_global.y) * grid_index_y / nprocs_y;
+  lower_local.z = lower_global.z + (upper_global.z - lower_global.z) * grid_index_z / nprocs_z;
+
+  upper_local.x = lower_global.x + (upper_global.x - lower_global.x) * (grid_index_x + 1) / nprocs_x;
+  upper_local.y = lower_global.y + (upper_global.y - lower_global.y) * (grid_index_y + 1) / nprocs_y;
+  upper_local.z = lower_global.z + (upper_global.z - lower_global.z) * (grid_index_z + 1) / nprocs_z;
+#endif
+}
+
+
+double Domain::fix_distance_x(double d)
+{
+#if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
+
+#elif defined(CAVIAR_WITH_MPI)
+  return d;
+#endif
+  if (boundary_condition.x == 1)
+  {
+    if (d > +half_edge.x)
+    {
+      d -= half_edge.x * 2.0;
+    }
+    if (d < -half_edge.x)
+    {
+      d += half_edge.x * 2.0;
+    }
+  }
+  return d;
+}
+
+double Domain::fix_distance_y(double d)
+{
+#if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
+
+#elif defined(CAVIAR_WITH_MPI)
+  return d;
+#endif
+  if (boundary_condition.y == 1)
+  {
+    if (d > +half_edge.y)
+    {
+      d -= half_edge.y * 2.0;
+    }
+    if (d < -half_edge.y)
+    {
+      d += half_edge.y * 2.0;
+    }
+  }
+  return d;
+}
+
+double Domain::fix_distance_z(double d)
+{
+#if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
+
+#elif defined(CAVIAR_WITH_MPI)
+  return d;
+#endif
+  if (boundary_condition.z == 1)
+  {
+    if (d > +half_edge.z)
+    {
+      d -= half_edge.z * 2.0;
+    }
+    if (d < -half_edge.z)
+    {
+      d += half_edge.z * 2.0;
+    }
+  }
+  return d;
+}
+
+caviar::Vector<double> Domain::fix_distance(caviar::Vector<double> v)
+{
+  return caviar::Vector<double>{fix_distance_x(v.x),
+                                fix_distance_y(v.y),
+                                fix_distance_z(v.z)};
+}
+
+void Domain::scale_position(double xi, caviar::Vector<int> scale_axis)
+{
+  bool x_axis = (scale_axis.x == 1 ? true : false);
+  bool y_axis = (scale_axis.x == 1 ? true : false);
+  bool z_axis = (scale_axis.x == 1 ? true : false);
+
+  if (x_axis)
+  {
+    lower_global.x *= xi;
+    upper_global.x *= xi;
+  }
+
+  if (y_axis)
+  {
+    lower_global.y *= xi;
+    upper_global.y *= xi;
+  }
+
+  if (z_axis)
+  {
+    lower_global.z *= xi;
+    upper_global.z *= xi;
+  }
+
+  calculate_local_domain();
+
+  update_after_domain_change();
+
 }
 
 double Domain::volume_local()
 {
-  error->all(FC_FILE_LINE_FUNC, "Not implemented");
-  return 0.0;
+  return size_local.x * size_local.y * size_local.z;
 }
 
 double Domain::volume_global()
 {
-  error->all(FC_FILE_LINE_FUNC, "Not implemented");
-  return 0.0;
+  return size_global.x * size_global.y * size_global.z;
+}
+
+caviar::Vector<double> Domain::fix_position(caviar::Vector<double> p, caviar::Vector<int> &msd, bool &update_verlet_list)
+{
+
+  if (boundary_condition.x == 1)
+  {
+    if (p.x < lower_global.x) // while or if
+    {
+      update_verlet_list = true;
+      p.x += size_global.x;
+      msd.x -= 1;
+    }
+    else if (p.x > upper_global.x)
+    {
+      update_verlet_list = true;
+      p.x -= size_global.x;
+      msd.x += 1;
+    }
+  }
+  if (boundary_condition.y == 1)
+  {
+    if (p.y < lower_global.y)
+    {
+      update_verlet_list = true;
+      p.y += size_global.y;
+      msd.y -= 1;
+    }
+    else if (p.y > upper_global.y)
+    {
+      update_verlet_list = true;
+      p.y -= size_global.y;
+      msd.y += 1;
+    }
+  }
+  if (boundary_condition.z == 1)
+  {
+    if (p.z < lower_global.z)
+    {
+      update_verlet_list = true;
+      p.z += size_global.z;
+      msd.z -= 1;
+    }
+    else if (p.z > upper_global.z)
+    {
+      p.z -= size_global.z;
+      update_verlet_list = true;
+      msd.z += 1;
+    }
+  }
+
+  return p;
+}
+
+void Domain::update_after_domain_change()
+{
+  size_local = upper_local - lower_local;
+  size_global = upper_global - lower_global;
+  
+  // it is defined for one-domain case.
+  half_edge = 0.5 * (upper_global - lower_global); // XXX
 }
 
 CAVIAR_NAMESPACE_CLOSE

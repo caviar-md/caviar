@@ -25,42 +25,13 @@ namespace domain
 {
 
   /**
-   * This class emulates a 3D box for a simulation domain
-   *
-   *
+   * This class creates a 3D box for a simulation domain
    */
   class Box : public Domain
   {
   public:
     Box(class CAVIAR *);
-    bool read(class caviar::interpreter::Parser *);
-    void calculate_local_domain();
-    void generate();
-
-    double fix_distance_x(double d);
-    double fix_distance_y(double d);
-    double fix_distance_z(double d);
-
-    /**
-     * Total volume of (mpi) local domain. In non-mpi simulations, local == global
-    */
-    virtual double volume_local();
-
-    /**
-     * Total volume of global domain
-    */
-    virtual double volume_global();
-
-    /**
-     * Used in barostat scaling for geometrical forces.
-     * 
-    */   
-    void scale_position(double scale_ratio, caviar::Vector<int> scale_axis);
-    
-    caviar::Vector<double> fix_distance(caviar::Vector<double> v);
-
-    Vector<Real_t> half_edge;
-
+    ~Box();
   public:
   };
 
