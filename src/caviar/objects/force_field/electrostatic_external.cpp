@@ -75,6 +75,8 @@ namespace force_field
   {
     FC_OBJECT_VERIFY_SETTINGS
     double virialLocal = 0;
+    bool get_pressure_process = atom_data->get_pressure_process();
+
     const auto &pos = atom_data->atom_struct_owned.position;
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
@@ -89,8 +91,16 @@ namespace force_field
       const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
       const auto charge_i = atom_data->atom_type_params.mass_inv[type_i];
 
-      const auto a = charge_i * amplitude * direction * mass_inv_i;
-      atom_data->atom_struct_owned.acceleration[i] += a;
+      const auto force = charge_i * amplitude * direction;
+
+      if (get_pressure_process)
+      {
+        atom_data->add_to_external_virial(force, i);
+        // or ???
+        // atom_data->add_to_external_virial(force, i, p_i);
+      }
+
+      atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
     }
     atom_data->virialForce += virialLocal;
   }

@@ -119,6 +119,7 @@ namespace force_field
 
     double virialLocal = 0;
     double virialExternalForceLocal = 0;
+    bool get_pressure_process = atom_data->get_pressure_process();
 
 
 #ifdef CAVIAR_WITH_OPENMP

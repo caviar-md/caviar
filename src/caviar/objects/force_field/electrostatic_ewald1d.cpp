@@ -133,6 +133,9 @@ namespace force_field
     const auto lattice_vec_size = lattice_vec.size();
     const auto sigma_sq = sigma * sigma;
     double virialLocal = 0;
+    double virialExternalForceLocal = 0;
+    bool get_pressure_process = atom_data->get_pressure_process();
+
     const auto &nlist = neighborlist->neighlist;
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
@@ -147,6 +150,7 @@ namespace force_field
       const auto type_i = atom_data->atom_struct_owned.type[i];
       const auto charge_i = atom_data->atom_type_params.charge[type_i];
       const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
+      int id_i = atom_data->atom_struct_owned.id[i];
 
       // short range part
       for (auto j : nlist[i])
@@ -154,21 +158,25 @@ namespace force_field
         bool is_ghost = j >= pos_size;
         Vector<Real_t> pos_j;
         Real_t type_j;
+        int id_j;
         if (is_ghost)
         {
           j -= pos_size;
           pos_j = atom_data->atom_struct_ghost.position[j];
           type_j = atom_data->atom_struct_ghost.type[j];
+          id_j = atom_data->atom_struct_ghost.id[j];
+
         }
         else
         {
           pos_j = atom_data->atom_struct_owned.position[j];
           type_j = atom_data->atom_struct_owned.type[j];
+          id_j = atom_data->atom_struct_owned.id[j];
         }
 
         const auto charge_j = atom_data->atom_type_params.charge[type_j];
         const auto mass_inv_j = atom_data->atom_type_params.mass_inv[type_j];
-        const auto r_ij = pos_i - pos_j;
+        const auto r_ij = pos_j - pos_i;
 
         if (r_ij.x == 0 && r_ij.y == 0 && r_ij.z == 0)
           continue;
@@ -177,9 +185,21 @@ namespace force_field
         const auto d1 = 1.0 / std::sqrt(r_ij_sq);
         const auto d2 = 1.0 / std::sqrt(r_ij_sq + sigma_sq);
 
-        const auto sum_r = r_ij * ((d1 * d1 * d1) - (d2 * d2 * d2));
+        // const auto sum_r = r_ij * ((d1 * d1 * d1) - (d2 * d2 * d2));
 
-        const auto force = k_electrostatic * charge_i * charge_j * sum_r;
+        // const auto force = - k_electrostatic * charge_i * charge_j * sum_r;
+
+        const auto sum_r_x =  ((d1 * d1 * d1) - (d2 * d2 * d2));
+
+        const auto forceCoef = - k_electrostatic * charge_i * charge_j * sum_r_x;
+
+
+        if (id_i < id_j)
+        {
+          virialLocal +=  -forceCoef * r_ij_sq;
+        }
+        auto force = forceCoef * r_ij;
+        
 
         atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
         if (!is_ghost)
@@ -223,6 +243,13 @@ namespace force_field
       }
 
       auto force = k_electrostatic * charge_i * field;
+
+      if (get_pressure_process)
+      {
+        atom_data->add_to_external_virial(force, i);
+        // or ???
+        // atom_data->add_to_external_virial(force, i, p_i);
+      }
 
       atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
 

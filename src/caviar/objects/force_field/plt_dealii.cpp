@@ -22,6 +22,7 @@
 #include "caviar/interpreter/communicator.h"
 #include "caviar/objects/atom_data.h"
 #include "caviar/objects/neighborlist.h"
+#include "caviar/objects/domain.h"
 #include "caviar/utility/macro_constants.h"
 #include "caviar/utility/time_utility.h"
 #include "caviar/utility/file_utility.h"
@@ -239,6 +240,11 @@ namespace force_field
       else if (string_cmp(t, "read_unv_mesh"))
       {
         dealii_functions::read_domain(triangulation, tria_reserve, unv_mesh_filename);
+      }
+      else if (string_cmp(t, "set_domain") || string_cmp(t, "domain"))
+      {
+        FIND_OBJECT_BY_NAME(domain, it)
+        domain = object_container->domain[it->second.index];
       }
       else if (string_cmp(t, "time_step_solve"))
       {
@@ -1508,6 +1514,9 @@ namespace force_field
     {
       initialized = true;
 
+      FC_NULLPTR_CHECK(atom_data)
+      domain = atom_data->domain;
+
       for (unsigned int i = 0; i < refine_sequence_type.size(); ++i)
       {
         if (refine_sequence_type[i] == 0)
@@ -1764,7 +1773,9 @@ namespace force_field
   void Plt_dealii::verify_settings()
   {
     FC_NULLPTR_CHECK(atom_data)
+    domain = atom_data->domain;
     my_mpi_rank = atom_data->get_mpi_rank();
+
   }
 
   //==================================================
@@ -1892,9 +1903,12 @@ namespace force_field
   {
     double virialLocal = 0;
     const auto &pos = atom_data->atom_struct_owned.position;
-    Vector<double> po{0, 0, 0};
-    Vector<double> msd_dummy{0, 0, 0};
+    caviar::Vector<double> po{0, 0, 0};
+    caviar::Vector<int> msd_dummy{0, 0, 0};
     bool bool_dummy = false;
+
+    bool get_pressure_process = atom_data->get_pressure_process();
+    
     if (position_offset != nullptr)
       po += position_offset->current_value;
 #ifdef CAVIAR_WITH_OPENMP
@@ -1911,7 +1925,7 @@ namespace force_field
       const auto charge_i = atom_data->atom_type_params.charge[type_i];
 
       caviar::Vector<double> p_i = pos[i] - po;
-      if (atom_data->atom_struct_owned.molecule_index != 0)
+      if (atom_data->atom_struct_owned.molecule_index[i] != 0)
         p_i = domain->fix_position(p_i, msd_dummy, bool_dummy); // bool_dummy and msd_dummy are not used; 
 
       const dealii::Point<3> r = {p_i.x, p_i.y, p_i.z};
@@ -1934,6 +1948,13 @@ namespace force_field
       }
       auto frc = field * charge_i;
       auto force = caviar::Vector<double>{frc[0], frc[1], frc[2]};
+
+      if (get_pressure_process)
+      {
+        atom_data->add_to_external_virial(force, i);
+        // or ???
+        // atom_data->add_to_external_virial(force, i, p_i);
+      }
 
       atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
 

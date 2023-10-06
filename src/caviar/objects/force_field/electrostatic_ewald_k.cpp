@@ -153,7 +153,7 @@ namespace force_field
     FC_OBJECT_VERIFY_SETTINGS
 
     initialize();
-    double virialLocal = 0;
+
 
     /* XXX working scheme but of order N^2
       const auto &pos = atom_data -> atom_struct_owned.position;
@@ -183,6 +183,8 @@ namespace force_field
     const auto &pos = atom_data->atom_struct_owned.position;
     static std::complex<double> ii(0.0, 1.0);
 
+    bool get_pressure_process = atom_data->get_pressure_process();
+
     for (int k = 0; k < n_k_vectors; ++k)
     {
 
@@ -209,6 +211,13 @@ namespace force_field
         if (dipole)
         {
           force += charge_i * dipole_field_vector;
+        }
+
+        if (get_pressure_process)
+        {
+          atom_data->add_to_external_virial(force, i);
+          // or ???
+          // atom_data->add_to_external_virial(force, i, p_i);
         }
 
         atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
@@ -273,7 +282,7 @@ namespace force_field
      }
 
     */
-   atom_data->virialForce += virialLocal;
+
   }
 
 } // force_field

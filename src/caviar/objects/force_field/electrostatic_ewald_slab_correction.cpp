@@ -143,7 +143,9 @@ namespace force_field
     // /*
     const auto &pos = atom_data->atom_struct_owned.position;
     const unsigned pos_size = pos.size();
-    double virialLocal = 0;
+
+    bool get_pressure_process = atom_data->get_pressure_process();
+
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
 #endif
@@ -161,10 +163,18 @@ namespace force_field
 
       const auto force = charge_i * field(pos_i); //
                                                   //    const auto force = charge_i * field (i);  //
+
+      if (get_pressure_process)
+      {
+        atom_data->add_to_external_virial(force, i);
+        // or ???
+        // atom_data->add_to_external_virial(force, i, p_i);
+      }
+
       atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
     }
 
-    atom_data->virialForce += virialLocal;
+
 
     // */
   }

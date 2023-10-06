@@ -110,26 +110,31 @@ namespace force_field
       const auto type_i = atom_data->atom_struct_owned.type[i];
       const auto charge_i = atom_data->atom_type_params.charge[type_i];
       const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
+      int id_i = atom_data->atom_struct_owned.id[i];
+
       for (auto j : nlist[i])
       {
         bool is_ghost = j >= pos_size;
         Vector<Real_t> pos_j;
         Real_t type_j;
+        int id_j;
         if (is_ghost)
         {
           j -= pos_size;
           pos_j = atom_data->atom_struct_ghost.position[j];
           type_j = atom_data->atom_struct_ghost.type[j];
+          id_j = atom_data->atom_struct_ghost.id[j];
         }
         else
         {
           pos_j = atom_data->atom_struct_owned.position[j];
           type_j = atom_data->atom_struct_owned.type[j];
+          id_j = atom_data->atom_struct_owned.id[j];
         }
 
         const auto charge_j = atom_data->atom_type_params.charge[type_j];
         const auto mass_inv_j = atom_data->atom_type_params.mass_inv[type_j];
-        const auto r_ij = pos_i - pos_j;
+        const auto r_ij = pos_j - pos_i;
 
         if (r_ij.x == 0 && r_ij.y == 0 && r_ij.z == 0)
           continue;
@@ -141,9 +146,25 @@ namespace force_field
 
         // if (erfc_arg > erfc_cutoff) continue;
 
-        const auto sum_r = (2 * alpha * FC_PIS_INV * std::exp(-alpha_sq * rijml_sq) + std::erfc(erfc_arg) / rijml_norm) * (rijml / rijml_sq);
+        //const auto sum_r = (2 * alpha * FC_PIS_INV * std::exp(-alpha_sq * rijml_sq) + std::erfc(erfc_arg) / rijml_norm) * (rijml / rijml_sq);
 
-        const auto force = k_electrostatic * charge_i * charge_j * sum_r;
+        //const auto force = - k_electrostatic * charge_i * charge_j * sum_r;
+
+        const auto sum_r_x = (2 * alpha * FC_PIS_INV * std::exp(-alpha_sq * rijml_sq) + std::erfc(erfc_arg) / rijml_norm) * ( 1.0 / rijml_sq);
+
+        const auto forceCoef = - k_electrostatic * charge_i * charge_j * sum_r_x;
+
+////
+
+        if (id_i < id_j)
+        {
+          virialLocal +=  -forceCoef * rijml_sq;
+        }
+        auto force = forceCoef * rijml;
+
+////
+
+
 
         atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
         if (!is_ghost)
