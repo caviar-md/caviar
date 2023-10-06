@@ -129,9 +129,18 @@ bool Atom_data::read(caviar::interpreter::Parser *parser)
       if (msd_process)
         atom_struct_owned.msd_domain_cross.resize(atom_struct_owned.position.size(), caviar::Vector<int>{0, 0, 0});
     }
+    else if (string_cmp(t, "debug_virial"))
+    {
+      GET_OR_CHOOSE_A_INT(debug_virial, "", "")
+    }
     else if (string_cmp(t, "pressure_process"))
     {
       GET_OR_CHOOSE_A_INT(pressure_process, "", "")
+      if (pressure_process) 
+      {
+        msd_process = true;
+        atom_struct_owned.msd_domain_cross.resize(atom_struct_owned.position.size(), caviar::Vector<int>{0, 0, 0});
+      }
       reset_pressure();
     }
     else if (string_cmp(t, "temperature_process"))

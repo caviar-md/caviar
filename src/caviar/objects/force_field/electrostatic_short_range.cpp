@@ -118,7 +118,7 @@ namespace force_field
     //auto &mol_index = atom_data->atom_struct_owned.molecule_index;
 
     double virialLocal = 0;
-    double virialExternalForceLocal = 0;
+
     bool get_pressure_process = atom_data->get_pressure_process();
 
 
@@ -200,15 +200,19 @@ namespace force_field
         }
       }
 
-      virialExternalForceLocal += -external_field * charge_i * pos[i];
-
       const auto force = external_field * charge_i;
+
+      if (get_pressure_process)
+      {
+        atom_data->add_to_external_virial(force, i);
+        // or ???
+        // atom_data->add_to_external_virial(force, i, p_i);
+      }
+
       atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
     }
 
     atom_data->virialForce += virialLocal;
-    atom_data->virialExternalForce += virialExternalForceLocal;
-
 
   }
 

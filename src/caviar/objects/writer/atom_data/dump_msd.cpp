@@ -65,10 +65,6 @@ namespace writer
     if (pos_size != msd_initial_position.size())
       error->all(FC_FILE_LINE_FUNC, "  (pos.size != msd_initial_position.size())");
 
-    // XXX note that this STATIC value may affect NPT ensembles
-    static caviar::Vector<double> domain_dx = {(domain->upper_global.x - domain->lower_global.x),
-                                               (domain->upper_global.y - domain->lower_global.y),
-                                               (domain->upper_global.z - domain->lower_global.z)};
 
     double sum_dr_sq = 0.0;
     for (unsigned int j = 0; j < pos_size; ++j)
@@ -77,9 +73,9 @@ namespace writer
         continue;
       auto dr = msd_initial_position[j] - pos[j];
 
-      dr.x += atom_data->atom_struct_owned.msd_domain_cross[j].x * domain_dx.x;
-      dr.y += atom_data->atom_struct_owned.msd_domain_cross[j].y * domain_dx.y;
-      dr.z += atom_data->atom_struct_owned.msd_domain_cross[j].z * domain_dx.z;
+      dr.x += atom_data->atom_struct_owned.msd_domain_cross[j].x * domain->size_global.x;
+      dr.y += atom_data->atom_struct_owned.msd_domain_cross[j].y * domain->size_global.y;
+      dr.z += atom_data->atom_struct_owned.msd_domain_cross[j].z * domain->size_global.z;
 
       // domain-> periodic_distance(dr);
 

@@ -46,9 +46,9 @@ namespace force_field
                         "correct results when there's two dim. periodic boundary condition.");
       }
 
-      lx = domain->upper_global.x - domain->lower_global.x;
-      ly = domain->upper_global.y - domain->lower_global.y;
-      lz = domain->upper_global.z - domain->lower_global.z;
+      lx = domain->size_global.x;
+      ly = domain->size_global.y;
+      lz = domain->size_global.z;
 
       if (slab_geometry)
       {

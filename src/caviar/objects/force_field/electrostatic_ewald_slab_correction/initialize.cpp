@@ -41,9 +41,9 @@ namespace force_field
       //   error->all(FC_FILE_LINE_FUNC, " only two "
       //             "dimensional periodic boundary condition is allowed.");
 
-      const auto glx = domain->upper_global.x - domain->lower_global.x;
-      const auto gly = domain->upper_global.y - domain->lower_global.y;
-      const auto glz = domain->upper_global.z - domain->lower_global.z;
+      const auto glx = domain->size_global.x;
+      const auto gly = domain->size_global.y;
+      const auto glz = domain->size_global.z;
 
       if (slab_normal_axis == 0)
       {

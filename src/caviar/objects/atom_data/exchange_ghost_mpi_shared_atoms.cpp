@@ -55,14 +55,6 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long) // timestep
   const auto z_llow = domain->lower_local.z + ghost_cutoff;
   const auto z_lupp = domain->upper_local.z - ghost_cutoff;
 
-  const auto x_width = domain->upper_local.x - domain->lower_local.x;
-  const auto y_width = domain->upper_local.y - domain->lower_local.y;
-  const auto z_width = domain->upper_local.z - domain->lower_local.z;
-
-  const auto x_width_g = domain->upper_global.x - domain->lower_global.x;
-  const auto y_width_g = domain->upper_global.y - domain->lower_global.y;
-  const auto z_width_g = domain->upper_global.z - domain->lower_global.z;
-
   auto &pos = atom_struct_owned.position;
   auto &vel = atom_struct_owned.velocity;
   auto &id = atom_struct_owned.id;
@@ -285,12 +277,12 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long) // timestep
     {
       if ((grid_index_x == 0) && (i == 0))
       {
-        pos_tmp.x += x_width_g;
+        pos_tmp.x += domain->size_global.x;
       }
     
       if ((grid_index_x == nprocs_x - 1) && (i == 2))
       {
-        pos_tmp.x -= x_width_g;
+        pos_tmp.x -= domain->size_global.x;
       }
     }
 
@@ -298,12 +290,12 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long) // timestep
     {
       if ((grid_index_y == 0) && (j == 0))
       {
-        pos_tmp.y += y_width_g;
+        pos_tmp.y += domain->size_global.y;
       }
 
       if ((grid_index_y == nprocs_y - 1) && (j == 2))
       {
-        pos_tmp.y -= y_width_g;
+        pos_tmp.y -= domain->size_global.y;
       }
     }
 
@@ -311,12 +303,12 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long) // timestep
     {
       if ((grid_index_z == 0) && (k == 0) )
       {
-        pos_tmp.z += z_width_g;
+        pos_tmp.z += domain->size_global.z;
       }
 
       if ((grid_index_z == nprocs_z - 1) && (k == 2))
       {
-        pos_tmp.z -= z_width_g;
+        pos_tmp.z -= domain->size_global.z;
       }
     }
 
@@ -472,7 +464,7 @@ void Atom_data::exchange_ghost_mpi_shared_atoms(long) // timestep
     {
       if (make_ghost_velocity)
         g_vel.emplace_back(vel[m].x, vel[m].y, vel[m].z);
-      g_pos.emplace_back(pos[m].x - x_val * x_width, pos[m].y - y_val * y_width, pos[m].z - z_val * z_width);
+      g_pos.emplace_back(pos[m].x - x_val * domain->size_local.x, pos[m].y - y_val * domain->size_local.y, pos[m].z - z_val * domain->size_local.z);
       g_id.emplace_back(id[m]);
       g_type.emplace_back(type[m]);
     }

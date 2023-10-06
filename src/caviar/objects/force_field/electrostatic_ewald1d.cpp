@@ -133,7 +133,7 @@ namespace force_field
     const auto lattice_vec_size = lattice_vec.size();
     const auto sigma_sq = sigma * sigma;
     double virialLocal = 0;
-    double virialExternalForceLocal = 0;
+
     bool get_pressure_process = atom_data->get_pressure_process();
 
     const auto &nlist = neighborlist->neighlist;

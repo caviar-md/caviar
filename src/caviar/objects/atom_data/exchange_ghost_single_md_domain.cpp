@@ -44,9 +44,9 @@ void Atom_data::exchange_ghost_single_md_domain(long) // timestep
   const auto z_llow = domain->lower_global.z + ghost_cutoff;
   const auto z_lupp = domain->upper_global.z - ghost_cutoff;
 
-  const auto x_width = domain->upper_global.x - domain->lower_global.x;
-  const auto y_width = domain->upper_global.y - domain->lower_global.y;
-  const auto z_width = domain->upper_global.z - domain->lower_global.z;
+  const auto x_width = domain->size_global.x;
+  const auto y_width = domain->size_global.y;
+  const auto z_width = domain->size_global.z;
 
   auto &pos = atom_struct_owned.position;
   auto &vel = atom_struct_owned.velocity;

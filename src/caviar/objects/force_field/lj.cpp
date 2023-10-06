@@ -312,7 +312,7 @@ namespace force_field
 
     double virialLocal = 0;
 
-    auto &mol_index = atom_data->atom_struct_owned.molecule_index;
+    // auto &mol_index = atom_data->atom_struct_owned.molecule_index;
 
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
