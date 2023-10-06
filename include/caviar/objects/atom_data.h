@@ -214,12 +214,30 @@ public:
   virtual void reserve_owned_vectors();
 
 
+  /**
+   * add the external force to virial calculation (include MSD)
+   */
+  virtual void add_to_external_virial(caviar::Vector<double> force, int index);
+
+
+  /**
+   * add the external force to virial calculation (include MSD). If the position differs from 
+   * its absolute value (dealii and shaking mesh), this can be used
+   */
+  virtual void add_to_external_virial(caviar::Vector<double> force, int index, caviar::Vector<double> position);
+
+
   virtual void reset_virial()
   {
     virialExternalForce = 0;
     virialForce = 0;
     virialConstraint = 0;
   }
+
+  /**
+   * output virial values to the console
+   */
+  bool debug_virial = false;
 
   /**
    * virial due to all of the External force, like external electric fields (pltDealii)
