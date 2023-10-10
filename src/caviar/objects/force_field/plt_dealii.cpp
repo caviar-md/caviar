@@ -1925,7 +1925,7 @@ namespace force_field
       const auto charge_i = atom_data->atom_type_params.charge[type_i];
 
       caviar::Vector<double> p_i = pos[i] - po;
-      if (atom_data->atom_struct_owned.molecule_index[i] != 0)
+      if (atom_data->atom_struct_owned.molecule_index[i] != -1)
         p_i = domain->fix_position(p_i, msd_dummy, bool_dummy); // bool_dummy and msd_dummy are not used; 
 
       const dealii::Point<3> r = {p_i.x, p_i.y, p_i.z};

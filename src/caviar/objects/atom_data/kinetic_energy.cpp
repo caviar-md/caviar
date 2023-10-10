@@ -284,7 +284,8 @@ void Atom_data::finalize_pressure_mpi_domain()
   }
   // p2_old = p2_old / (3.0 * volume);
 
-  p2 = (virialConstraint + virialExternalForce + virialForce) / (3.0 * volume);
+  //p2 = (virialConstraint + virialExternalForce + virialForce) / (3.0 * volume);
+  p2 = (virialConstraint + 0 + virialForce) / (3.0 * volume);
 
   double p1 = (Num_active * k_b * temperature_mpi_domain()) / volume;
 

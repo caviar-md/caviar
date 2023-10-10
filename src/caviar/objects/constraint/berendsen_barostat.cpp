@@ -129,6 +129,8 @@ namespace constraint
     FC_OBJECT_VERIFY_SETTINGS
 
     auto p = atom_data->pressure();
+    if (p <= 0) return;
+
     //std::cout << "p: " << p << std::endl;
 
     double xi = std::pow( 1.0 - kappa * (dt / tp) * (pressure - p), 0.333333333333333 );
