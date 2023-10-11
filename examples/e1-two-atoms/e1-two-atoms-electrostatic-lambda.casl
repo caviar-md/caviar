@@ -72,6 +72,7 @@ neigh dt dt_all
 force_field  lj f_lj
 
 f_lj cutoff 15.0
+
 f_lj epsilon 0 0 1.0
 f_lj epsilon 0 1 1.0
 f_lj epsilon 1 0 1.0
@@ -81,6 +82,16 @@ f_lj sigma 0 0 1.0
 f_lj sigma 0 1 1.0
 f_lj sigma 1 0 1.0
 f_lj sigma 1 1 1.0
+
+f_lj lambda_e 0 0 1.0
+f_lj lambda_e 0 1 1.0
+f_lj lambda_e 1 0 1.0
+f_lj lambda_e 1 1 1.0
+
+f_lj lambda_s 0 0 1.0
+f_lj lambda_s 0 1 1.0
+f_lj lambda_s 1 0 1.0
+f_lj lambda_s 1 1 1.0
 
 f_lj set_neighborlist neigh
 f_lj set_atom_data adata
@@ -92,6 +103,11 @@ force_field  electrostatic f_el
 f_el k_electrostatic 1.0
 f_el set_atom_data adata
 f_el domain dom
+
+f_el lambda 0 0 1.0
+f_el lambda 0 1 1.0
+f_el lambda 1 0 1.0
+f_el lambda 1 1 1.0
 
 #===== force_field
 
@@ -122,7 +138,7 @@ w1 energy_mpi_per_process 1
 md_simulator basic sim
 
 sim set_atom_data adata
-sim integrator_type leap_frog
+sim integrator_type velocity_verlet
 sim add_force_field f_lj
 sim add_force_field f_el
 #sim add_force_field f_elsh

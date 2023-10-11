@@ -577,6 +577,18 @@
     vector_name[i].resize(j + 1);                           \
   vector_name[i][j] = vector_value;
 
+#define GET_A_STDVECTOR_STDVECTOR_REAL_ELEMENT_R(vector_name,resizeValue) \
+  unsigned int i = 0, j = 0;                                \
+  double vector_value = 0;                                  \
+  GET_OR_CHOOSE_A_INT(i, "", "")                            \
+  GET_OR_CHOOSE_A_INT(j, "", "")                            \
+  GET_OR_CHOOSE_A_REAL(vector_value, "", "")                \
+  if (vector_name.size() < i + 1)                           \
+    vector_name.resize(i + 1);                              \
+  if (vector_name[i].size() < j + 1)                        \
+    vector_name[i].resize(j + 1, resizeValue);                           \
+  vector_name[i][j] = vector_value;
+
 #define GET_A_STDVECTOR_REAL_ELEMENT(vector_name) \
   unsigned int i = 0;                             \
   double vector_value = 0;                        \

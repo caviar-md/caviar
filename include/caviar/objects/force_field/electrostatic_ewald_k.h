@@ -66,7 +66,9 @@ namespace force_field
     void make_k_vectors();
     void calculate_alpha();
     void calculate_dipole_sum();
-
+    
+    std::vector<std::vector<Real_t>> lambda;
+    bool lambda_is_set = false;
     double k_electrostatic, alpha;
     Vector<double> external_field;
 

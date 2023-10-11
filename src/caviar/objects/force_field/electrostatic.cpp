@@ -59,6 +59,13 @@ namespace force_field
         if (k_electrostatic < 0)
           error->all(FC_FILE_LINE_FUNC_PARSE, "k_electrostatic has to be non-negative.");
       }
+      else if (string_cmp(t, "lambda"))
+      {
+        GET_A_STDVECTOR_STDVECTOR_REAL_ELEMENT_R(lambda,1.0)
+        if (vector_value < 0)
+          error->all(FC_FILE_LINE_FUNC_PARSE, "Sigma have to be non-negative.");
+        lambda_is_set = true;
+      }
       else if (string_cmp(t, "set_neighborlist") || string_cmp(t, "neighborlist"))
       {
         FIND_OBJECT_BY_NAME(neighborlist, it)
@@ -86,6 +93,22 @@ namespace force_field
     FC_NULLPTR_CHECK(atom_data)
     FC_NULLPTR_CHECK(domain)
     my_mpi_rank = atom_data->get_mpi_rank();
+    
+    unsigned atom_data_type_max = 0;
+    for (auto &&t : atom_data->atom_struct_owned.type)
+    {
+      if (atom_data_type_max < t)
+        atom_data_type_max = t;
+    }
+
+    if(lambda_is_set)
+    {
+      if (lambda.size() <= atom_data_type_max) lambda.resize(atom_data_type_max+1);
+      for (unsigned int i = 0; i < lambda.size(); ++i)
+      {
+        if (lambda[i].size() <= atom_data_type_max) lambda[i].resize(atom_data_type_max+1, 1.0);
+      }
+    }
   }
 
   void Electrostatic::calculate_acceleration()
@@ -130,8 +153,8 @@ namespace force_field
 
           const auto dr_sq = dr * dr;
           const auto dr_norm = std::sqrt(dr_sq);
-          auto forceCoef = - k_electrostatic * charge_i * charge_j / (dr_sq * dr_norm);          
-          
+          auto forceCoef = - k_electrostatic * charge_i * charge_j / (dr_sq * dr_norm);    
+          if (lambda_is_set) forceCoef *= lambda[type_i][type_j];
           //const auto force = k_electrostatic * charge_i * charge_j * dr / (dr_sq * dr_norm);
 
           if (id_i < id_j)
@@ -141,7 +164,7 @@ namespace force_field
           auto force = forceCoef * dr;
 
           //std::cout << "force: " << force << std::endl; 
-          atom_data->atom_struct_owned.acceleration[i] = force * mass_inv_i;
+          atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
           //std::cout << "acci: " << atom_data->atom_struct_owned.acceleration[i] << std::endl; 
 
 #ifdef CAVIAR_WITH_OPENMP
@@ -158,8 +181,10 @@ namespace force_field
 
         }
 
-        const auto force = external_field * charge_i;
+        auto force = external_field * charge_i;
+        if (lambda_is_set) force *= lambda[type_i][type_i];
 
+        
         if (get_pressure_process)
         {
           atom_data->add_to_external_virial(force, i);

@@ -62,6 +62,13 @@ namespace force_field
         if (k_electrostatic < 0)
           error->all(FC_FILE_LINE_FUNC_PARSE, "k_electrostatic has to be non-negative.");
       }
+      else if (string_cmp(t, "lambda"))
+      {
+        GET_A_STDVECTOR_STDVECTOR_REAL_ELEMENT_R(lambda,1.0)
+        if (vector_value < 0)
+          error->all(FC_FILE_LINE_FUNC_PARSE, "Sigma have to be non-negative.");
+        lambda_is_set = true;
+      }
       else if (string_cmp(t, "beta"))
       {
         GET_OR_CHOOSE_A_REAL(beta, "", "")
@@ -104,6 +111,22 @@ namespace force_field
     if (cutoff < 0.0)
       error->all(FC_FILE_LINE_FUNC, "Force field cutoff have to non-negative.");
     my_mpi_rank = atom_data->get_mpi_rank();
+
+    unsigned atom_data_type_max = 0;
+    for (auto &&t : atom_data->atom_struct_owned.type)
+    {
+      if (atom_data_type_max < t)
+        atom_data_type_max = t;
+    }
+
+    if(lambda_is_set)
+    {
+      if (lambda.size() <= atom_data_type_max) lambda.resize(atom_data_type_max+1);
+      for (unsigned int i = 0; i < lambda.size(); ++i)
+      {
+        if (lambda[i].size() <= atom_data_type_max) lambda[i].resize(atom_data_type_max+1, 1.0);
+      }
+    }
   }
 
   void Electrostatic_short_range::calculate_acceleration()
@@ -170,7 +193,8 @@ namespace force_field
         const auto dr_norm = std::sqrt(dr_sq);
 
         auto forceCoef = -k_electrostatic * charge_i * charge_j / (dr_sq * dr_norm) * (1.0 - std::pow(dr_norm / cutoff, beta + 1));
-        
+        if (lambda_is_set) forceCoef *= lambda[type_i][type_j];
+
         const auto force_shifted = forceCoef * dr;
 
         // const auto force = k_electrostatic * charge_i * charge_j * dr / (dr_sq * dr_norm);
@@ -200,7 +224,8 @@ namespace force_field
         }
       }
 
-      const auto force = external_field * charge_i;
+      auto force = external_field * charge_i;
+      if (lambda_is_set) force *= lambda[type_i][type_i];
 
       if (get_pressure_process)
       {

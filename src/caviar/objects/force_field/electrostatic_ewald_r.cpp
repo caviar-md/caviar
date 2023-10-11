@@ -62,6 +62,13 @@ namespace force_field
         if (alpha < 0.0)
           error->all(FC_FILE_LINE_FUNC_PARSE, "alpha have to non-negative.");
       }
+      else if (string_cmp(t, "lambda"))
+      {
+        GET_A_STDVECTOR_STDVECTOR_REAL_ELEMENT_R(lambda,1.0)
+        if (vector_value < 0)
+          error->all(FC_FILE_LINE_FUNC_PARSE, "Sigma have to be non-negative.");
+        lambda_is_set = true;
+      }
       else if (string_cmp(t, "set_neighborlist") || string_cmp(t, "neighborlist"))
       {
         FIND_OBJECT_BY_NAME(neighborlist, it)
@@ -84,6 +91,22 @@ namespace force_field
     FC_NULLPTR_CHECK(atom_data)
     FC_NULLPTR_CHECK(neighborlist)
     my_mpi_rank = atom_data->get_mpi_rank();
+
+    unsigned atom_data_type_max = 0;
+    for (auto &&t : atom_data->atom_struct_owned.type)
+    {
+      if (atom_data_type_max < t)
+        atom_data_type_max = t;
+    }
+
+    if(lambda_is_set)
+    {
+      if (lambda.size() <= atom_data_type_max) lambda.resize(atom_data_type_max+1);
+      for (unsigned int i = 0; i < lambda.size(); ++i)
+      {
+        if (lambda[i].size() <= atom_data_type_max) lambda[i].resize(atom_data_type_max+1, 1.0);
+      }
+    }
   }
 
   void Electrostatic_ewald_r::calculate_acceleration()
@@ -152,7 +175,8 @@ namespace force_field
 
         const auto sum_r_x = (2 * alpha * FC_PIS_INV * std::exp(-alpha_sq * rijml_sq) + std::erfc(erfc_arg) / rijml_norm) * ( 1.0 / rijml_sq);
 
-        const auto forceCoef = - k_electrostatic * charge_i * charge_j * sum_r_x;
+        auto forceCoef = - k_electrostatic * charge_i * charge_j * sum_r_x;
+        if (lambda_is_set) forceCoef *= lambda[type_i][type_j];
 
 ////
 

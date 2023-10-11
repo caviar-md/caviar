@@ -56,6 +56,13 @@ namespace force_field
         if (k_electrostatic < 0)
           error->all(FC_FILE_LINE_FUNC_PARSE, "k_electrostatic has to be non-negative.");
       }
+      else if (string_cmp(t, "lambda"))
+      {
+        GET_A_STDVECTOR_STDVECTOR_REAL_ELEMENT_R(lambda,1.0)
+        if (vector_value < 0)
+          error->all(FC_FILE_LINE_FUNC_PARSE, "Sigma have to be non-negative.");
+        lambda_is_set = true;
+      }
       else if (string_cmp(t, "num_mirrors"))
       {
         GET_OR_CHOOSE_A_INT(num_mirrors, "", "")
@@ -118,6 +125,22 @@ namespace force_field
       int j = -num_mirrors + i;
       lattice_vec[i] = j * v;
       // std::cout <<lattice_vec[i] << "\n";
+    }
+
+    unsigned atom_data_type_max = 0;
+    for (auto &&t : atom_data->atom_struct_owned.type)
+    {
+      if (atom_data_type_max < t)
+        atom_data_type_max = t;
+    }
+
+    if(lambda_is_set)
+    {
+      if (lambda.size() <= atom_data_type_max) lambda.resize(atom_data_type_max+1);
+      for (unsigned int i = 0; i < lambda.size(); ++i)
+      {
+        if (lambda[i].size() <= atom_data_type_max) lambda[i].resize(atom_data_type_max+1, 1.0);
+      }
     }
   }
 
@@ -191,7 +214,8 @@ namespace force_field
 
         const auto sum_r_x =  ((d1 * d1 * d1) - (d2 * d2 * d2));
 
-        const auto forceCoef = - k_electrostatic * charge_i * charge_j * sum_r_x;
+        auto forceCoef = - k_electrostatic * charge_i * charge_j * sum_r_x;
+        if (lambda_is_set) forceCoef *= lambda[type_i][type_j];
 
 
         if (id_i < id_j)
@@ -243,6 +267,7 @@ namespace force_field
       }
 
       auto force = k_electrostatic * charge_i * field;
+      if (lambda_is_set) force *= lambda[type_i][type_i];
 
       if (get_pressure_process)
       {

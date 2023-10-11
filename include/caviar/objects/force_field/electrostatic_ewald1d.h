@@ -59,6 +59,8 @@ namespace force_field
     void calculate_acceleration();
 
   public:
+    std::vector<std::vector<Real_t>> lambda;
+    bool lambda_is_set = false;
     double k_electrostatic;
     double sigma; //   smoothing-out parameter
     std::vector<Vector<double>> lattice_vec;

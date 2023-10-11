@@ -39,6 +39,11 @@ namespace force_field
     void calculate_acceleration();
 
   public:
+    std::vector<std::vector<Real_t>> lambda_e;
+    std::vector<std::vector<Real_t>> lambda_s;
+    bool lambda_e_is_set = false;
+    bool lambda_s_is_set = false;
+
     bool input_by_array;
     std::vector<std::vector<Real_t>> epsilon, sigma;
     bool make_off_diagonal_vectors;

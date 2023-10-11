@@ -48,6 +48,9 @@ namespace force_field
     void calculate_acceleration();
 
     void initialize();
+    std::vector<std::vector<Real_t>> lambda;
+    bool lambda_is_set = false;
+
     double k_electrostatic;
     Vector<double> external_field;
 

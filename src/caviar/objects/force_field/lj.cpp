@@ -75,6 +75,20 @@ namespace force_field
           error->all(FC_FILE_LINE_FUNC_PARSE, "Sigma have to be non-negative.");
         input_by_array = true;
       }
+      else if (string_cmp(t, "lambda_s"))
+      {
+        GET_A_STDVECTOR_STDVECTOR_REAL_ELEMENT_R(lambda_s, 1.0)
+        if (vector_value < 0)
+          error->all(FC_FILE_LINE_FUNC_PARSE, "Sigma have to be non-negative.");
+        lambda_s_is_set = true;
+      }
+      else if (string_cmp(t, "lambda_e"))
+      {
+        GET_A_STDVECTOR_STDVECTOR_REAL_ELEMENT_R(lambda_e, 1.0)
+        if (vector_value < 0)
+          error->all(FC_FILE_LINE_FUNC_PARSE, "Sigma have to be non-negative.");
+        lambda_e_is_set = true;
+      }
       else if (string_cmp(t, "epsilon_atom"))
       {
         GET_A_STDVECTOR_REAL_ELEMENT(epsilon_atom)
@@ -291,6 +305,38 @@ namespace force_field
       }
     }
 
+    if (lambda_s_is_set)
+    {
+      if (lambda_s.size() <= atom_data_type_max) lambda_s.resize(atom_data_type_max+1);
+      for (unsigned int i = 0; i < lambda_s.size(); ++i)
+      {
+        if (lambda_s[i].size() <= atom_data_type_max) lambda_s[i].resize(atom_data_type_max+1, 1.0);
+      }
+
+      for (unsigned int i = 0; i < lambda_s.size(); ++i)
+      {
+        for (unsigned int j = 0; j < lambda_s[i].size(); ++j)
+        {
+          sigma[i][j] *= lambda_s[i][j];
+        }
+      }
+    }
+    if (lambda_e_is_set)
+    {
+      if (lambda_e.size() <= atom_data_type_max) lambda_e.resize(atom_data_type_max+1);
+      for (unsigned int i = 0; i < lambda_e.size(); ++i)
+      {
+        if (lambda_e[i].size() <= atom_data_type_max) lambda_e[i].resize(atom_data_type_max+1, 1.0);
+      }
+
+      for (unsigned int i = 0; i < lambda_e.size(); ++i)
+      {
+        for (unsigned int j = 0; j < lambda_e[i].size(); ++j)
+        {
+          epsilon[i][j] *= lambda_e[i][j];
+        }
+      }
+    }
     /*
     for (unsigned int i = 0; i < max_size; ++i) {
     for (unsigned int j = 0; j < max_size; ++j) {
