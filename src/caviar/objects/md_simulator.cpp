@@ -87,6 +87,12 @@ bool Md_simulator::read(caviar::interpreter::Parser *parser)
       GET_OR_CHOOSE_A_INT(final_step, "", "")
       use_step = true;
     }
+    else if (string_cmp(t, "final_step_add"))
+    {
+      int add_step = 0;
+      GET_OR_CHOOSE_A_INT(add_step, "", "")
+      final_step += add_step;
+    }
     else if (string_cmp(t, "run"))
     {
       run();

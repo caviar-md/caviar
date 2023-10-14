@@ -28,6 +28,37 @@ a_Grain0 position 0 0 0
 
 unique atom_group ag
 
+#===== Atom definition =====
+
+unique atom a_H1
+a_H1 type 1
+a_H1 position -.815 0 0
+
+
+unique atom a_H2
+a_H2 type 1
+a_H2 position .815 0 0
+
+
+unique atom a_O
+a_O type 0
+a_O position 0 .5794 0
+
+
+#===== Molecule definition =====
+
+unique molecule m_water
+
+m_water add_atom a_H1  #0
+m_water add_atom a_H2  #1
+m_water add_atom a_O   #2
+
+m_water position 0 0 0
+
+m_water atomic_bond 0 1 0 1.63
+m_water atomic_bond 1 2 0 1.0
+m_water atomic_bond 2 0 0 1.0
+
 #===== Domain
 
 domain box dom
@@ -75,11 +106,17 @@ adata ghost_cutoff cutoff_max
 adata cutoff_extra 0.01
 adata k_b 1.0
 adata set_domain dom
-adata add_type_mass   0 1.0
-adata add_type_charge 0 0.0 
-adata add_type_radius 0 0.5 
 
-adata add_atom_group ag
+adata add_type_mass   0 15.999   # oxygen
+adata add_type_charge 0 -0.8476  # oxygen
+adata add_type_radius 0 1.4146  # oxygen 
+
+adata add_type_mass   1 1.0      # hydrogen
+adata add_type_charge 1 0.4238   # hydrogen
+adata add_type_radius 1 0.0836   # hydrogen
+
+#adata add_atom_group ag
+adata add_molecule m_water
 adata add_random_velocity 1 1.0
 adata pressure_process 1
 
@@ -103,9 +140,19 @@ neigh dt dt_all
 
 force_field  lj f_lj
 
-f_lj cutoff 10.0
-f_lj epsilon 0 0 1.0
-f_lj sigma 0 0 0.5
+f_lj cutoff 9.0
+
+f_lj epsilon 0 0 .650   # o-o
+f_lj epsilon 0 1 0      # o-h
+f_lj epsilon 1 0 0      # h-o
+f_lj epsilon 1 1 0      # h h
+
+
+f_lj sigma 0 0 3.166
+f_lj sigma 0 1 0
+f_lj sigma 1 0 0
+f_lj sigma 1 1 0
+
 f_lj set_neighborlist neigh
 f_lj set_atom_data adata
 
@@ -115,6 +162,9 @@ force_field  umbrella_sampling f_us
 
 f_us elastic_coef 100.0
 f_us set_atom_data adata
+f_us set_domain dom
+f_us atom_id 0
+f_us step 2
 
 #==== Constraint
 
@@ -132,6 +182,12 @@ c_ber temperature 5.0
 c_ber dt dt_all
 c_ber set_atom_data adata
 
+#==== Constraint
+constraint shake c_shake 
+c_shake dt dt_all
+c_shake set_atom_data adata
+c_shake set_domain dom
+#c_mshake error_tolerance 0.01
 
 #====== writer 
 writer atom_data w1
@@ -162,6 +218,8 @@ sim add_force_field f_us
 
 sim add_neighborlist neigh
 
+sim add_constraint c_shake     
+
 
 sim add_writer w1
 
@@ -170,26 +228,29 @@ sim dt dt_all
 sim add_constraint c_nve
 
 sim initial_step 0
-sim final_step 10000
-sim run
-
+sim final_step 1000
+# sim run
+ 
 sim remove_constraint c_nve
 sim add_constraint c_ber
 
 
 
-real x=0.01
+real x = 0.0
+real dx = 1.0
 
-x=0.01
-
-do x < 1.0
+do x < 10.0
   echo "x = " x
   #adata set_owned_position 0 x 0.0 0.0
-  
-  sim initial_step 0
-  sim final_step 10000
+  f_us set_position x 0 0
+  sim final_step_add 1000
   sim run
 
-  x = x+dx
+  f_us init_production
+  sim final_step_add 1000
+  sim run
+  f_us finish_production
+
+  x = x + dx
 enddo
 

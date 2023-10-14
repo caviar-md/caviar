@@ -38,10 +38,16 @@ public:
   void verify_settings ();
   void calculate_acceleration ();
 public:
+  void init_production();
+
+  void production_function();
+
+  void finish_production();
+
   /**
    * If true, the data is written in the file
   */
-  bool data_production = false;
+  bool production_mode = false;
 
   /**
    * The elastic coefficient of the force

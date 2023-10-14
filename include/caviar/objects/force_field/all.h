@@ -47,3 +47,4 @@
 #include "caviar/objects/force_field/spring_angle.h"
 #include "caviar/objects/force_field/opls_proper_dihedral.h"
 #include "caviar/objects/force_field/fix_bond.h"
+#include "caviar/objects/force_field/umbrella_sampling.h"

@@ -141,7 +141,7 @@ Vector<T> &operator/=(Vector<T> &lhs, const double &rhs)
 template <typename T>
 std::ostream &operator<<(std::ostream &out, const Vector<T> &rhs)
 {
-  return out << rhs.x << '\t' << rhs.y << '\t' << rhs.z;
+  return out << rhs.x << ' ' << rhs.y << ' ' << rhs.z;
 }
 
 template <typename T>
