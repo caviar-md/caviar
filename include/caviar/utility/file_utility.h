@@ -52,7 +52,7 @@ inline bool file_exists_1(const std::string &name)
 //     return (stat(name.c_str(), &buffer) == 0);
 // }
 
-inline std::string directory_of_file(std::string file_path)
+inline std::string directory_of_file(const std::string &file_path)
 {
     // Find the last occurrence of '/' or '\' to determine the directory
     size_t found = file_path.find_last_of("/\\");
@@ -68,7 +68,7 @@ inline std::string directory_of_file(std::string file_path)
     }
 }
 
-inline std::string join_path(std::string directory, std::string fileName)
+inline std::string join_path(const std::string &directory, const std::string &fileName)
 {
     if (directory == "")
         return fileName;
@@ -82,4 +82,29 @@ inline std::string join_path(std::string directory, std::string fileName)
     {
         return directory + fileName;
     }
+}
+
+#include <unistd.h>
+#include <limits.h>
+
+inline std::string get_current_directory()
+{
+   char cwd[PATH_MAX];
+   std::string st = "";
+   if (getcwd(cwd, sizeof(cwd)) != NULL) 
+   {
+       //printf("Current working dir: %s\n", cwd);
+       st = cwd;
+   } 
+   else 
+   {
+       //perror("getcwd() error");
+       //return 1;
+   }
+   return st;
+}
+
+inline bool is_absolute_path(const std::string &path)
+{
+    return !path.empty() && path[0] == '/';
 }

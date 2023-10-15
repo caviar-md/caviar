@@ -193,9 +193,9 @@ c_shake set_domain dom
 writer atom_data w1
 w1 set_atom_data adata
 w1 set_domain dom
-w1 xyz_step 100
-w1 temperature_step 100
-w1 energy_step 100
+w1 xyz_step 1000
+w1 temperature_step 1000
+w1 energy_step 1000
 w1 xyz_output_velocity 1
 w1 xyz_mpi_rank0 1
 w1 xyz_mpi_per_process 1
@@ -237,22 +237,26 @@ sim add_constraint c_ber
 
 
 real x = 0.0
-real dx = 1.0
+real dx = .25
+real x_max = 6.0
 
 
 f_us reaction_coordinate x
+f_us file_prefix "test/"
+
 f_us init_metadata
+
 # f_us set_temperature 5.0
-# f_us file_prefix "test"
-do x < 10.0
+
+do x < x_max
   echo "x = " x
   #adata set_owned_position 0 x 0.0 0.0
   f_us set_position x 0 0
-  sim final_step_add 1000
+  sim final_step_add 2000
   sim run
 
   f_us init_production
-  sim final_step_add 1000
+  sim final_step_add 500
   sim run
   f_us finish_production
 

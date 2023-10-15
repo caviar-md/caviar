@@ -106,13 +106,27 @@ public:
   /**
    * set temperature 
   */
-   bool temperature_is_set = false;
+  bool temperature_is_set = false;
+
+  /**
+   * Make an absolute path for the metadata file
+  */
+  void fix_file_prefix();
+
+  double position_min = 0;
+  double position_mean = 0;
+  int position_mean_count = 0;
+  double position_max = 0;
+
+  std::vector<double> session_data;
 
   std::ofstream ofs_data;
   std::ofstream ofs_metadata;
+  std::ofstream ofs_stat;
 
   std::string file_name_data = "o_umbr_";
   std::string file_name_metadata = "o_umbr_metadata";
+  std::string file_name_stat = "o_umbr_stat";
   std::string file_prefix = "";
 
 };

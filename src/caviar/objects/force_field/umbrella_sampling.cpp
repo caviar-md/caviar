@@ -16,6 +16,7 @@
 
 #include "caviar/objects/force_field/umbrella_sampling.h"
 #include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/utility/file_utility.h"
 #include "caviar/objects/neighborlist.h"
 #include "caviar/objects/atom_data.h"
 #include "caviar/objects/domain.h"
@@ -31,6 +32,7 @@ namespace force_field
   Umbrella_sampling::Umbrella_sampling(CAVIAR *fptr) : Force_field{fptr}
   {
     FC_OBJECT_INITIALIZE_INFO
+    fix_file_prefix();
   }
 
   bool Umbrella_sampling::read(caviar::interpreter::Parser *parser)
@@ -98,7 +100,9 @@ namespace force_field
       }
         else if (string_cmp(t, "file_prefix"))
       {
-        //GET_A_STRING(file_prefix,"","");        
+        auto t2 = parser->get_val_token();
+        file_prefix = t2.string_value;
+        fix_file_prefix();
       }
         else if (string_cmp(t, "init_production"))
       {
@@ -133,46 +137,69 @@ namespace force_field
     return in_file;
   }
 
+  void Umbrella_sampling::fix_file_prefix()
+  {
+    if (!is_absolute_path(file_prefix))
+    {
+      if (file_prefix == "")
+        file_prefix = get_current_directory();
+      else
+        file_prefix = join_path(get_current_directory(), file_prefix);
+    }
+  }
+
   void Umbrella_sampling::init_metadata()
   {
     metadata_mode = true;
-    std::string file_name_tmp = file_prefix + file_name_metadata + ".txt";
+
+    std::string file_name_tmp = join_path(file_prefix, file_name_metadata + ".txt");
     ofs_metadata.open(file_name_tmp.c_str());
 
+    std::string file_name_stat_tmp = join_path(file_prefix, file_name_stat + ".txt");
+    ofs_stat.open(file_name_stat_tmp.c_str());
   }
 
   void Umbrella_sampling::finish_metadata()
   {
     metadata_mode = false;
     ofs_metadata.close();
+    ofs_stat.close();
   }
 
   void Umbrella_sampling::init_production()
   {
     production_mode = true;
     step_counter = -1;
-    std::string file_name_tmp = file_prefix + file_name_data + std::to_string(file_counter) + ".txt";
+    std::string file_name_tmp = join_path(file_prefix, file_name_data + std::to_string(file_counter) + ".txt");
     ofs_data.open(file_name_tmp.c_str());
     if (metadata_mode == false)
     {
       error->all(FC_FILE_LINE_FUNC,"Expected metadata activation, i.e., 'init_metadata' call");
     }
 
+    session_data.clear();
+    position_mean_count = 0;
+    position_mean = 0;
+
     ofs_metadata << file_name_tmp;
 
     if (reaction_coordinate == 'x')
     {
       ofs_metadata << " " << position.x;
-
+      position_min = position.x;
+      position_max = position.x;
     }
     else if (reaction_coordinate == 'y')
     {
       ofs_metadata << " " << position.y;
-
+      position_min = position.y;
+      position_max = position.y;
     }
     else if (reaction_coordinate == 'z')
     {
       ofs_metadata << " " << position.z;
+      position_min = position.z;
+      position_max = position.z;
     }
     else
     {
@@ -199,40 +226,69 @@ namespace force_field
       return;
 
     int i = atom_data->atom_id_to_index[atom_id];
+    auto p_i = atom_data->atom_struct_owned.position[i];
 
     ofs_data << step_counter;
 
+    
     if (reaction_coordinate == 'x')
     {
-      ofs_data << " " << atom_data->atom_struct_owned.position[i].x;
-
+      ofs_data << " " << p_i.x;
+      if (position_min > p_i.x) position_min = p_i.x;
+      if (position_max < p_i.x) position_max = p_i.x;
+      position_mean += p_i.x;
     }
     else if (reaction_coordinate == 'y')
     {
-      ofs_data << " " << atom_data->atom_struct_owned.position[i].y;
+      ofs_data << " " << p_i.y;
+      if (position_min > p_i.y) position_min = p_i.y;
+      if (position_max < p_i.y) position_max = p_i.y;
+      position_mean += p_i.y;
 
     }
     else if (reaction_coordinate == 'z')
     {
-      ofs_data << " " << atom_data->atom_struct_owned.position[i].z;
+      ofs_data << " " << p_i.z;
+      if (position_min > p_i.z) position_min = p_i.z;
+      if (position_max < p_i.z) position_max = p_i.z;
+      position_mean += p_i.z;
     }
     else
     {
       error->all(FC_FILE_LINE_FUNC,"Expected x, y or z as reaction coordinate");
     }
-
+    position_mean_count++;
     ofs_data << "\n";
-
+    
     //
     //ofs_data << atom_data->atom_struct_owned.position[i] << " " << dr << " " << 0.5 * elastic_coef * dr * dr << "\n";
   }
 
   void Umbrella_sampling::finish_production()
-  {
+  { 
+    if (position_mean_count > 0)
+      position_mean /= position_mean_count;
+    
+    ofs_stat << file_counter;
+    if (reaction_coordinate == 'x')
+    {
+      ofs_stat << " " << position.x;
+    }
+    else if (reaction_coordinate == 'y')
+    {
+      ofs_stat << " " << position.y;
+    }
+    else if (reaction_coordinate == 'z')
+    {
+      ofs_stat << " " << position.z;
+    }
+    ofs_stat << " " << position_mean << " " << position_min << " " << position_max << "\n" << std::flush;
+
     ofs_data << std::flush;
     production_mode = false;
     ofs_data.close();
     file_counter++;
+
   }
 
   void Umbrella_sampling::verify_settings()
