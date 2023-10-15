@@ -239,6 +239,11 @@ sim add_constraint c_ber
 real x = 0.0
 real dx = 1.0
 
+
+f_us reaction_coordinate x
+f_us init_metadata
+# f_us set_temperature 5.0
+# f_us file_prefix "test"
 do x < 10.0
   echo "x = " x
   #adata set_owned_position 0 x 0.0 0.0
@@ -253,4 +258,5 @@ do x < 10.0
 
   x = x + dx
 enddo
+f_us finish_metadata
 

@@ -76,9 +76,29 @@ namespace force_field
       {
         GET_OR_CHOOSE_A_REAL(position.y, "", "")
       }
+      
         else if (string_cmp(t, "set_position_z"))
       {
         GET_OR_CHOOSE_A_REAL(position.z, "", "")
+      }
+        else if (string_cmp(t, "set_temperature"))
+      {
+        GET_OR_CHOOSE_A_REAL(temperature, "", "")
+        temperature_is_set = true;
+      }
+        else if (string_cmp(t, "reaction_coordinate"))
+      {
+        std::string s = "x";
+        GET_A_STRING(s,"","");
+        if (s == "x") reaction_coordinate = 'x';
+        else if (s == "y") reaction_coordinate = 'y';
+        else if (s == "z") reaction_coordinate = 'z';
+        else
+          error->all(FC_FILE_LINE_FUNC_PARSE,"Expected x, y or z as reaction coordinate");
+      }
+        else if (string_cmp(t, "file_prefix"))
+      {
+        //GET_A_STRING(file_prefix,"","");        
       }
         else if (string_cmp(t, "init_production"))
       {
@@ -87,6 +107,14 @@ namespace force_field
         else if (string_cmp(t, "finish_production"))
       {
         finish_production();
+      }
+        else if (string_cmp(t, "init_metadata"))
+      {
+        init_metadata();
+      }
+        else if (string_cmp(t, "finish_metadata"))
+      {
+        finish_metadata();
       }
       else if (string_cmp(t, "set_atom_data") || string_cmp(t, "atom_data"))
       {
@@ -105,12 +133,59 @@ namespace force_field
     return in_file;
   }
 
+  void Umbrella_sampling::init_metadata()
+  {
+    metadata_mode = true;
+    std::string file_name_tmp = file_prefix + file_name_metadata + ".txt";
+    ofs_metadata.open(file_name_tmp.c_str());
+
+  }
+
+  void Umbrella_sampling::finish_metadata()
+  {
+    metadata_mode = false;
+    ofs_metadata.close();
+  }
+
   void Umbrella_sampling::init_production()
   {
     production_mode = true;
     step_counter = -1;
-    std::string file_name_tmp = file_name_data + std::to_string(file_counter) + ".txt";
+    std::string file_name_tmp = file_prefix + file_name_data + std::to_string(file_counter) + ".txt";
     ofs_data.open(file_name_tmp.c_str());
+    if (metadata_mode == false)
+    {
+      error->all(FC_FILE_LINE_FUNC,"Expected metadata activation, i.e., 'init_metadata' call");
+    }
+
+    ofs_metadata << file_name_tmp;
+
+    if (reaction_coordinate == 'x')
+    {
+      ofs_metadata << " " << position.x;
+
+    }
+    else if (reaction_coordinate == 'y')
+    {
+      ofs_metadata << " " << position.y;
+
+    }
+    else if (reaction_coordinate == 'z')
+    {
+      ofs_metadata << " " << position.z;
+    }
+    else
+    {
+      error->all(FC_FILE_LINE_FUNC,"Expected x, y or z as reaction coordinate");
+    }
+
+    ofs_metadata << " " << "0" ; // coecorrelation time for your time series used in monte-carlo
+
+    if (temperature_is_set)
+    {
+      ofs_metadata << " " << temperature;
+    }
+    ofs_metadata << "\n";
   }
 
   void Umbrella_sampling::production_function()
@@ -125,7 +200,31 @@ namespace force_field
 
     int i = atom_data->atom_id_to_index[atom_id];
 
-    ofs_data << atom_data->atom_struct_owned.position[i] << " " << dr << " " << 0.5 * elastic_coef * dr * dr << "\n";
+    ofs_data << step_counter;
+
+    if (reaction_coordinate == 'x')
+    {
+      ofs_data << " " << atom_data->atom_struct_owned.position[i].x;
+
+    }
+    else if (reaction_coordinate == 'y')
+    {
+      ofs_data << " " << atom_data->atom_struct_owned.position[i].y;
+
+    }
+    else if (reaction_coordinate == 'z')
+    {
+      ofs_data << " " << atom_data->atom_struct_owned.position[i].z;
+    }
+    else
+    {
+      error->all(FC_FILE_LINE_FUNC,"Expected x, y or z as reaction coordinate");
+    }
+
+    ofs_data << "\n";
+
+    //
+    //ofs_data << atom_data->atom_struct_owned.position[i] << " " << dr << " " << 0.5 * elastic_coef * dr * dr << "\n";
   }
 
   void Umbrella_sampling::finish_production()

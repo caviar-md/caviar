@@ -44,6 +44,15 @@ public:
 
   void finish_production();
 
+  void init_metadata();
+
+  void finish_metadata();
+
+  /**
+   * If true, the metadata is written in the file
+  */
+  bool metadata_mode = false;
+
   /**
    * If true, the data is written in the file
   */
@@ -80,13 +89,32 @@ public:
   int step_counter = 0;
 
   /**
+   * Count the number of steps locally in order to use in skipping frames
+  */
+  char reaction_coordinate = 'x';
+
+  /**
    * Every number of 'step' the data is written in the file
   */
   int step = 1;
 
-  std::ofstream ofs_data;
+  /**
+   * set temperature to be outputted in the file
+  */
+  double temperature = 1;
 
-  std::string file_name_data = "o_umbrella_";
+  /**
+   * set temperature 
+  */
+   bool temperature_is_set = false;
+
+  std::ofstream ofs_data;
+  std::ofstream ofs_metadata;
+
+  std::string file_name_data = "o_umbr_";
+  std::string file_name_metadata = "o_umbr_metadata";
+  std::string file_prefix = "";
+
 };
 
 } //force_field
