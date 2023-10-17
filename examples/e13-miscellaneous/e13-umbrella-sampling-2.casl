@@ -1,0 +1,429 @@
+
+#=======================================================================
+# 
+# Copyright (C) 2019 by Morad Biagooi and Ehsan Nedaaee Oskoee.
+# 
+# This file is part of the CAVIAR package.
+# 
+# The CAVIAR package is free software; you can use it, redistribute
+# it, and/or modify it under the terms of the GNU Lesser General
+# Public License as published by the Free Software Foundation; either
+# version 3.0 of the License, or (at your option) any later version.
+# The full text of the license can be found in the file LICENSE at
+# the top level of the CAVIAR distribution.
+# 
+#=======================================================================
+# 
+# This script script is made with the contributions of Mr Amin Karim Abadi
+# 
+
+#===== global variables
+
+real cutoff_max 10
+
+real dt_all 0.001
+
+#===== Atom definition =====
+
+unique atom a_H1
+a_H1 type 1
+a_H1 position -.815 0 0
+
+
+unique atom a_H2
+a_H2 type 1
+a_H2 position .815 0 0
+
+
+unique atom a_O
+a_O type 0
+a_O position 0 .5794 0
+
+#===== Atom definition =====
+
+unique atom m_H1
+m_H1 type 2
+m_H1 position 1.09 0 0
+
+
+unique atom m_H2
+m_H2 type 2
+m_H2 position  -0.36 0.99 0
+
+unique atom m_H3
+m_H3 type 2
+m_H3 position -0.36 -0.33 0.95
+
+unique atom m_H4
+m_H4 type 2
+m_H4 position -0.36 -0.33 -0.95
+
+
+unique atom m_C
+m_C type 3
+m_C position 0 0 0
+
+
+#===== Molecule definition =====
+
+unique molecule m_water
+
+m_water add_atom a_H1  #0
+m_water add_atom a_H2  #1
+m_water add_atom a_O   #2
+
+m_water position 0 0 0
+
+m_water atomic_bond 0 1 0 1.63
+m_water atomic_bond 1 2 0 1.0
+m_water atomic_bond 2 0 0 1.0
+
+
+#===== Molecule definition =====
+
+unique molecule m_methane
+
+m_methane add_atom m_H1  #0
+m_methane add_atom m_H2  #1
+m_methane add_atom m_H3  #2
+m_methane add_atom m_H4  #3
+m_methane add_atom m_C   #4
+
+m_methane atomic_bond 4 0 0 1.134
+m_methane atomic_bond 4 1 0 1.134
+m_methane atomic_bond 4 2 0 1.134
+m_methane atomic_bond 4 3 0 1.134
+
+
+#===== Molecule_group definition =====
+
+unique molecule_group mg
+
+
+#===== Domain
+
+domain box dom
+dom xmin -20 xmax 20
+dom ymin -9.72 ymax 9.72
+dom zmin -9.72 zmax 9.72
+dom boundary_condition 1 1 1
+ 
+dom generate
+
+#===== Grid definition for water =====
+
+unique grid_1d gx
+unique grid_1d gy
+unique grid_1d gz
+
+# compact distribution
+#gx min -8 max 8 segment 5
+#gy min -9 max 9 segment 5
+#gz min -9 max 9 segment 5
+
+# compact distribution
+gx min -8 max 8 segment 3
+gy min -9 max 9 segment 3
+gz min -9 max 9 segment 3
+
+gx generate
+gy generate
+gz generate
+
+#==== Distribution ===== Water
+
+unique distribution d
+d molecule_group mg
+d molecule m_water
+d grid_1d_x gx 
+d grid_1d_y gy 
+d grid_1d_z gz
+d distribute_grid_3d
+
+#===== Grid definition for water =====
+
+unique grid_1d gxw2
+unique grid_1d gyw2
+unique grid_1d gzw2
+
+# compact distribution
+gxw2 min -8 max 8 segment 3
+gyw2 min -9 max 9 segment 4
+gzw2 min -7.2 max 9 increment 100
+
+
+gxw2 generate
+gyw2 generate
+gzw2 generate
+
+#==== Distribution ===== Water
+
+unique distribution d
+d molecule_group mg
+d molecule m_water
+d grid_1d_x gxw2 
+d grid_1d_y gyw2 
+d grid_1d_z gzw2
+d distribute_grid_3d
+
+
+#========== Atom_data
+
+atom_data basic adata
+adata ghost_cutoff cutoff_max
+
+adata k_b 1.0
+adata set_domain dom
+adata add_type_mass   0 15.999   # oxygen water
+adata add_type_charge 0 -0.8476  # oxygen water
+adata add_type_radius 0 1.4146  # oxygen  water
+
+adata add_type_mass   1 1.0      # hydrogen water 
+adata add_type_charge 1 0.4238   # hydrogen water
+adata add_type_radius 1 0.0836   # hydrogen water
+
+adata add_type_mass   2 1.0      # hydrogen methane
+adata add_type_charge 2 0.045    # hydrogen methane
+adata add_type_radius 2 0.0836   # hydrogen methane
+
+adata add_type_mass   3 12.011     # C methane
+adata add_type_charge 3 -0.18        # C methane
+adata add_type_radius 3 1.61      #C methane // ??
+
+adata add_molecule  m_methane
+adata add_molecule_group mg
+adata add_random_velocity 1 1.0
+adata msd_process 1
+
+#===== Neighborlist
+
+neighborlist basic neigh 
+neigh set_atom_data adata
+neigh set_domain dom
+neigh cutoff cutoff_max
+neigh cutoff_extra_coef 1.0523
+neigh dt dt_all
+neigh make_verlet_list_from_cell_list
+neigh build_cell_list
+
+
+
+
+
+#===== force_field
+
+force_field lj f_lj 
+
+f_lj cutoff 9.0 # 
+
+
+f_lj epsilon_atom 0 .650   # oxygen  water 
+f_lj epsilon_atom 1 0     # hydrogen water 
+f_lj epsilon_atom 2 .015     # hydrogen methane
+f_lj epsilon_atom 3 .1094      # carbon methane
+
+f_lj sigma_atom 0 3.166  # oxygen water
+f_lj sigma_atom 1 0   # hydrogen water
+f_lj sigma_atom 2 2.4     # hydrogen methane
+f_lj sigma_atom 3 3.50      # carbon methane
+
+
+f_lj set_neighborlist neigh
+
+f_lj set_atom_data adata
+f_lj set_domain dom
+
+
+#===============================
+
+force_field electrostatic_ewald_r f_ewr 
+f_ewr set_atom_data adata
+f_ewr k_electrostatic 1389.38550539
+f_ewr cutoff 9.72  
+f_ewr alpha 0.288065844  # 2.8/cutoff
+f_ewr set_neighborlist neigh
+
+
+#===============================
+
+force_field electrostatic_ewald_k f_ewk
+f_ewk set_atom_data adata
+f_ewk set_domain dom
+f_ewk k_electrostatic 1389.38550539 
+f_ewk alpha 0.288065844  # 2.8/cutoff
+f_ewk k_max 5 # it has to be 5. THe value is deduced from the paper
+
+
+
+
+#===== finite element Mesh import
+
+force_field plt_dealii f_plt
+f_plt k_electrostatic 1389.38550539
+f_plt set_atom_data adata
+f_plt add_force_field f_ewr
+f_plt add_force_field f_ewk
+
+f_plt add_unv_mesh "Box.unv"
+f_plt read_unv_mesh 
+
+f_plt boundary_id_value 1 0 
+f_plt boundary_id_value 2 5000 
+
+f_plt output_induced_charge 500
+
+f_plt set_solve_type simple_global
+
+f_plt refine_global 1
+
+#===== force_field
+
+force_field geometry_slab f_geslab_x1
+
+f_geslab_x1 symmetric
+f_geslab_x1 slab_direction 1
+f_geslab_x1 slab_position -9.72
+f_geslab_x1 young_modulus 500000
+f_geslab_x1 dissip_coef 100
+f_geslab_x1 set_atom_data adata
+f_geslab_x1 radius 0 3.166
+f_geslab_x1 radius 1 1.0
+f_geslab_x1 radius 2 2.35
+f_geslab_x1 radius 3 4.40
+
+
+#===== force_field
+
+force_field geometry_slab f_geslab_x2
+
+f_geslab_x2 symmetric
+f_geslab_x2 slab_direction 1
+f_geslab_x2 slab_position 9.72
+f_geslab_x2 young_modulus 500000
+f_geslab_x2 dissip_coef 100
+f_geslab_x2 set_atom_data adata
+f_geslab_x2 radius 0 3.166
+f_geslab_x2 radius 1 1.0
+f_geslab_x2 radius 2 2.35
+f_geslab_x2 radius 3 4.40
+
+
+#===== force_field
+
+force_field  umbrella_sampling f_us
+
+f_us elastic_coef 100.0
+f_us set_atom_data adata
+f_us set_domain dom
+f_us atom_id 0
+f_us step 2
+
+
+
+
+
+#==== Constraint
+constraint shake c_shake 
+c_shake dt  dt_all
+c_shake set_atom_data adata
+c_shake set_domain dom
+#c_mshake error_tolerance 0.01
+
+#==== Constraint
+constraint  nve c_nve
+c_nve kbt 20.494387628 # 300K / 120.27
+c_nve set_atom_data adata
+
+
+
+#==== Constraint
+
+constraint  Berendsen c_ber
+c_ber coupling 0.01 
+c_ber temperature 20.494387628
+c_ber dt dt_all
+c_ber set_atom_data adata
+
+
+#====== writer 
+writer atom_data w1
+w1 set_atom_data adata
+w1 set_domain dom
+w1 xyz_step 500
+w1 energy_step 500
+w1 msd_step 500
+w1 xyz_output_velocity 1
+w1 xyz_mpi_rank0 1
+w1 xyz_mpi_per_process 1
+
+#=====  simulator
+
+
+md_simulator basic sim 
+
+sim integrator_type leap_frog
+
+sim set_atom_data adata
+
+sim add_force_field f_lj
+#sim add_force_field f_ewr 
+#sim add_force_field f_ewk
+#sim add_force_field f_plt
+#sim add_force_field f_geslab_x1
+#sim add_force_field f_geslab_x2
+
+#sim add_force_field f_us
+
+sim add_neighborlist neigh
+
+sim add_writer w1
+ 
+sim add_constraint c_shake     
+
+sim add_constraint c_nve      
+
+
+sim initial_step 0
+sim final_step 5
+sim dt  dt_all
+
+
+
+sim initial_step 0
+sim final_step 20000
+sim run
+ 
+sim remove_constraint c_nve
+sim add_constraint c_ber
+
+
+
+real x = 0.0
+real dx = .25
+real x_max = 8.5
+
+
+f_us reaction_coordinate x
+f_us file_prefix "test/"
+
+f_us init_metadata
+
+# f_us set_temperature 5.0
+
+do x < x_max
+  echo "x = " x
+  #adata set_owned_position 0 x 0.0 0.0
+  f_us set_position x 0 0
+  sim final_step_add 2000
+  sim run
+
+  f_us init_production
+  sim final_step_add 500
+  sim run
+  f_us finish_production
+
+  x = x + dx
+enddo
+f_us finish_metadata
+
+

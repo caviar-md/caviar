@@ -60,7 +60,7 @@ namespace force_field
       {
         GET_OR_CHOOSE_A_INT(step, "", "")
         if (step <= 0)
-          error->all(FC_FILE_LINE_FUNC_PARSE, "step have to be non-negative.");
+          error->all(FC_FILE_LINE_FUNC_PARSE, "step have to be a positive number.");
       }
       else if (string_cmp(t, "set_position"))
       {
