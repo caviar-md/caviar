@@ -182,30 +182,25 @@ namespace force_field
     position_mean = 0;
 
     ofs_metadata << file_name_tmp;
-
+    position_min = 1e20;
+    position_max = -1e20;
     if (reaction_coordinate == 'x')
     {
       ofs_metadata << " " << position.x;
-      position_min = position.x;
-      position_max = position.x;
     }
     else if (reaction_coordinate == 'y')
     {
       ofs_metadata << " " << position.y;
-      position_min = position.y;
-      position_max = position.y;
     }
     else if (reaction_coordinate == 'z')
     {
       ofs_metadata << " " << position.z;
-      position_min = position.z;
-      position_max = position.z;
     }
     else
     {
       error->all(FC_FILE_LINE_FUNC,"Expected x, y or z as reaction coordinate");
     }
-
+    ofs_metadata << " " << elastic_coef ;
     ofs_metadata << " " << "0" ; // coecorrelation time for your time series used in monte-carlo
 
     if (temperature_is_set)
