@@ -206,7 +206,7 @@ c_nve set_atom_data adata
 #==== Constraint
 
 constraint  Berendsen c_ber
-c_ber coupling 0.01 
+c_ber coupling 0.1 
 c_ber temperature 10.0
 c_ber dt dt_all
 c_ber set_atom_data adata
@@ -291,7 +291,7 @@ w1 volume_step 100
 
 sim add_constraint c_ber_bar
 sim initial_step 20000
-sim final_step 200000
+sim final_step 500000
 
 sim run
 

@@ -206,7 +206,7 @@ c_nh set_atom_data adata
 #==== Constraint
 
 constraint  Berendsen c_ber
-c_ber coupling 0.01 
+c_ber coupling 0.1 
 c_ber temperature 5.0
 c_ber dt dt_all
 c_ber set_atom_data adata
