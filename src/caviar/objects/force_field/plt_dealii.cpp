@@ -1775,7 +1775,6 @@ namespace force_field
     FC_NULLPTR_CHECK(atom_data)
     domain = atom_data->domain;
     my_mpi_rank = atom_data->get_mpi_rank();
-
   }
 
   //==================================================
@@ -1908,7 +1907,7 @@ namespace force_field
     bool bool_dummy = false;
 
     bool get_pressure_process = atom_data->get_pressure_process();
-    
+
     if (position_offset != nullptr)
       po += position_offset->current_value;
 #ifdef CAVIAR_WITH_OPENMP
@@ -1926,7 +1925,7 @@ namespace force_field
 
       caviar::Vector<double> p_i = pos[i] - po;
       if (atom_data->atom_struct_owned.molecule_index[i] != -1)
-        p_i = domain->fix_position(p_i, msd_dummy, bool_dummy); // bool_dummy and msd_dummy are not used; 
+        p_i = domain->fix_position(p_i, msd_dummy, bool_dummy); // bool_dummy and msd_dummy are not used;
 
       const dealii::Point<3> r = {p_i.x, p_i.y, p_i.z};
 
@@ -1958,11 +1957,10 @@ namespace force_field
 
       atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
 
-      //if (atom_data->pressure_process)
-      //  atom_data->add_to_pressure(force*pos[i]);
+      // if (atom_data->pressure_process)
+      //   atom_data->add_to_pressure(force*pos[i]);
     }
     atom_data->virialForce += virialLocal;
-
   }
 
   //==================================================
@@ -2004,46 +2002,36 @@ namespace force_field
   //==================================================
   //==================================================
 
-   void Plt_dealii::scale_position(double scale_ratio, caviar::Vector<int> scale_axis)
-   {
-      bool x_axis = (scale_axis.x == 1 ? true: false);
-      bool y_axis = (scale_axis.x == 1 ? true: false);
-      bool z_axis = (scale_axis.x == 1 ? true: false);
+  void Plt_dealii::scale_position(double scale_ratio, caviar::Vector<int> scale_axis)
+  {
+    bool x_axis = (scale_axis.x == 1 ? true : false);
+    bool y_axis = (scale_axis.x == 1 ? true : false);
+    bool z_axis = (scale_axis.x == 1 ? true : false);
 
+    caviar::Vector<double> scale_ratio_3d{1, 1, 1};
+    if (scale_axis.x == 1)
+      scale_ratio_3d.x *= scale_ratio;
+    if (scale_axis.y == 1)
+      scale_ratio_3d.y *= scale_ratio;
+    if (scale_axis.z == 1)
+      scale_ratio_3d.z *= scale_ratio;
 
-      Triangulation<3>::active_cell_iterator
-                        cell = triangulation.begin_active(),
-                        endc = triangulation.end();
-      for (; cell!=endc; ++cell)
-      {
-        for (unsigned int i=0; i<GeometryInfo<3>::vertices_per_cell; ++i)
+    GridTools::transform(
+        [scale_ratio_3d](const Point<3> &in)
         {
-          Point<3> &v = cell->vertex(i);
-          if (x_axis)
-            v(0) *= scale_ratio; 
+          return Point<3>(in[0] * scale_ratio_3d.x, in[1] * scale_ratio_3d.y, in[2] * scale_ratio_3d.z);
+        },
+        triangulation);
 
-          if (y_axis)
-            v(1) *= scale_ratio; 
+    for (unsigned int i = 0; i < face_center.size(); ++i)
+    {
+      face_center[i][0] *= scale_ratio_3d.x;
 
-          if (z_axis)
-            v(2) *= scale_ratio;
-        }
-      }
+      face_center[i][1] *= scale_ratio_3d.y;
 
-  
-      for (unsigned int i = 0; i < face_center.size(); ++i)
-      {
-        if (x_axis)
-          face_center[i][0] *= scale_ratio; 
-
-        if (y_axis)
-          face_center[i][1] *= scale_ratio; 
-
-        if (z_axis)
-          face_center[i][2] *= scale_ratio;              
-      }
-   }
-
+      face_center[i][2] *= scale_ratio_3d.z;
+    }
+  }
 
 } // force_field
 

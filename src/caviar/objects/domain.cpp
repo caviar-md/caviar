@@ -398,6 +398,10 @@ void Domain::scale_position(double xi, caviar::Vector<int> scale_axis)
 
   update_after_domain_change();
 
+  bool debug = false;
+  if (debug)
+    std::cout << "doma: [" << lower_global.x << " , " << upper_global.x << "] , ["<< lower_global.y << " , " << upper_global.y << "] , ["<< lower_global.z << " , " << upper_global.z << "]" << std::endl;
+
 }
 
 double Domain::volume_local()

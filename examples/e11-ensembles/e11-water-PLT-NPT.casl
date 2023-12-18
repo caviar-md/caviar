@@ -381,6 +381,7 @@ c_ber_bar step 5
 c_ber_bar dt dt_all
 c_ber_bar set_atom_data adata
 c_ber_bar set_domain dom
+c_ber_bar add_force_field f_plt
 
 #====== writer 
 writer atom_data w1
