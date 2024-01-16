@@ -574,7 +574,7 @@
   if (vector_name.size() < i + 1)                           \
     vector_name.resize(i + 1);                              \
   if (vector_name[i].size() < j + 1)                        \
-    vector_name[i].resize(j + 1);                           \
+    vector_name[i].resize(j + 1, 0);                           \
   vector_name[i][j] = vector_value;
 
 #define GET_A_STDVECTOR_STDVECTOR_REAL_ELEMENT_R(vector_name,resizeValue) \
@@ -595,7 +595,7 @@
   GET_OR_CHOOSE_A_INT(i, "", "")                  \
   GET_OR_CHOOSE_A_REAL(vector_value, "", "")      \
   if (vector_name.size() < i + 1)                 \
-    vector_name.resize(i + 1);                    \
+    vector_name.resize(i + 1, 0);                    \
   vector_name[i] = vector_value;
 
 #define GET_A_STDVECTOR_INT_ELEMENT(vector_name) \
@@ -604,7 +604,7 @@
   GET_OR_CHOOSE_A_INT(i, "", "")                 \
   GET_OR_CHOOSE_A_INT(vector_value, "", "")      \
   if (vector_name.size() < i + 1)                \
-    vector_name.resize(i + 1);                   \
+    vector_name.resize(i + 1, 0);                   \
   vector_name[i] = vector_value;
 
 //===========

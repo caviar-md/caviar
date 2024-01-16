@@ -81,6 +81,32 @@ namespace force_field
     FC_NULLPTR_CHECK(atom_data)
     FC_NULLPTR_CHECK(domain)
     my_mpi_rank = atom_data->get_mpi_rank();
+
+    int btypeMax = 0;
+    for (unsigned int i = 0; i < atom_data->molecule_struct_owned.size(); i++)
+    {
+      auto &atomic_bond_vector = atom_data->molecule_struct_owned[i].atomic_bond_vector;
+
+      for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
+      {
+        int btype = atomic_bond_vector[j].type;
+        if (btypeMax < btype) btypeMax = btype;
+      }
+
+    }
+
+    if (elastic_coef.size() < btypeMax + 1)  
+    {
+      elastic_coef.resize(btypeMax + 1, 0);
+      output->warning("Spring_bond::verify_settings: resizing elastic_coef");
+    }
+
+    if (dissip_coef.size() < btypeMax + 1)  
+    {
+      dissip_coef.resize(btypeMax + 1, 0);
+      output->warning("Spring_bond::dissip_coef: resizing elastic_coef");
+    }
+
   }
 
   void Spring_bond::calculate_acceleration()
@@ -107,11 +133,15 @@ namespace force_field
       for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
       {
 
+        int btype = atomic_bond_vector[j].type;
+
+        if (elastic_coef[btype] == 0 && dissip_coef[btype] == 0)
+          continue;
+
         int id_1 = atomic_bond_vector[j].id_1, id_2 = atomic_bond_vector[j].id_2;
 
         int k1 = atom_data->atom_id_to_index[id_1], k2 = atom_data->atom_id_to_index[id_2];
 
-        int btype = atomic_bond_vector[j].type;
         double d = atomic_bond_vector[j].length;
 
 #if defined(CAVIAR_WITH_MPI)
@@ -147,7 +177,6 @@ namespace force_field
       }
     }
     atom_data->virialForce += virialLocal;
-
   }
 
 } // force_field

@@ -99,6 +99,43 @@ namespace force_field
     FC_NULLPTR_CHECK(atom_data)
     FC_NULLPTR_CHECK(domain)
     my_mpi_rank = atom_data->get_mpi_rank();
+
+    int btypeMax = 0;
+    for (unsigned int i = 0; i < atom_data->molecule_struct_owned.size(); i++)
+    {
+      auto &atomic_properdihedral_vector = atom_data->molecule_struct_owned[i].atomic_properdihedral_vector;
+
+      for (unsigned int j = 0; j < atomic_properdihedral_vector.size(); j++)
+      {
+        int btype = atomic_properdihedral_vector[j].type;
+        if (btypeMax < btype)
+          btypeMax = btype;
+      }
+    }
+
+    if (dihedral_coef1.size() < btypeMax + 1)
+    {
+      dihedral_coef1.resize(btypeMax + 1, 0);
+      output->warning("Opls_proper_dihedral::verify_settings: resizing dihedral_coef1");
+    }
+
+    if (dihedral_coef2.size() < btypeMax + 1)
+    {
+      dihedral_coef2.resize(btypeMax + 1, 0);
+      output->warning("Opls_proper_dihedral::verify_settings: resizing dihedral_coef2");
+    }
+
+    if (dihedral_coef3.size() < btypeMax + 1)
+    {
+      dihedral_coef3.resize(btypeMax + 1, 0);
+      output->warning("Opls_proper_dihedral::verify_settings: resizing dihedral_coef3");
+    }
+
+    if (dihedral_coef4.size() < btypeMax + 1)
+    {
+      dihedral_coef4.resize(btypeMax + 1, 0);
+      output->warning("Opls_proper_dihedral::verify_settings: resizing dihedral_coef4");
+    }
   }
 
   void Opls_proper_dihedral::calculate_acceleration()
@@ -119,10 +156,15 @@ namespace force_field
       if (atom_data->molecule_struct_owned[i].ghost)
         continue;
 #endif
-    auto &atomic_properdihedral_vector = atom_data->molecule_struct_owned[i].atomic_properdihedral_vector;
+      auto &atomic_properdihedral_vector = atom_data->molecule_struct_owned[i].atomic_properdihedral_vector;
 
       for (unsigned int j = 0; j < atomic_properdihedral_vector.size(); j++)
       {
+        int dtype = atomic_properdihedral_vector[j].type;
+
+        if (dihedral_coef1[dtype] == 0 && dihedral_coef2[dtype] == 0 && dihedral_coef3[dtype] == 0 && dihedral_coef4[dtype] == 0)
+          continue;
+
         int id_1 = atomic_properdihedral_vector[j].id_1;
         int id_2 = atomic_properdihedral_vector[j].id_2;
         int id_3 = atomic_properdihedral_vector[j].id_3;
@@ -130,10 +172,10 @@ namespace force_field
 
         int k1 = atom_data->atom_id_to_index[id_1];
         int k2 = atom_data->atom_id_to_index[id_2];
-        int k3 = atom_data->atom_id_to_index[id_3]; 
+        int k3 = atom_data->atom_id_to_index[id_3];
         int k4 = atom_data->atom_id_to_index[id_4];
 
-        int dtype = atomic_properdihedral_vector[j].type;
+
 
 #if defined(CAVIAR_WITH_MPI)
         auto p21 = pos[k1] - pos[k2];
@@ -215,7 +257,6 @@ namespace force_field
       }
     }
     atom_data->virialForce += virialLocal;
-
   }
 
 } // force_field
