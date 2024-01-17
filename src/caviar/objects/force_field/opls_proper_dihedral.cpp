@@ -101,14 +101,14 @@ namespace force_field
     FC_NULLPTR_CHECK(domain)
     my_mpi_rank = atom_data->get_mpi_rank();
 
-    int btypeMax = 0;
+    unsigned int btypeMax = 0;
     for (unsigned int i = 0; i < atom_data->molecule_struct_owned.size(); i++)
     {
       auto &atomic_properdihedral_vector = atom_data->molecule_struct_owned[i].atomic_properdihedral_vector;
 
       for (unsigned int j = 0; j < atomic_properdihedral_vector.size(); j++)
       {
-        int btype = atomic_properdihedral_vector[j].type;
+        unsigned int btype = atomic_properdihedral_vector[j].type;
         if (btypeMax < btype)
           btypeMax = btype;
       }

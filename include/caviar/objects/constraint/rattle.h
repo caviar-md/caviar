@@ -56,6 +56,11 @@ namespace constraint
     class Domain *domain = nullptr;
     int iteration_max = 100;
 
+    /**
+     * The molecule bond types which will be included in the algorithm
+    */    
+    std::vector<int> bond_type;
+    
     double dt;
     double error_tolerance;
     caviar::Vector<double> domain_dh;

@@ -61,6 +61,12 @@ namespace constraint
       {
         GET_OR_CHOOSE_A_INT(iteration_max, "", "")
       }
+      else if (string_cmp(t, "bond_type"))
+      {
+        GET_A_STDVECTOR_REAL_ELEMENT(bond_type)
+        if (vector_value < 0)
+          error->all(FC_FILE_LINE_FUNC_PARSE, "Bond_type have to be non-negative.");
+      }
       else if (string_cmp(t, "error_tolerance"))
       {
         GET_OR_CHOOSE_A_REAL(error_tolerance, "", "")
@@ -85,6 +91,25 @@ namespace constraint
     FC_NULLPTR_CHECK(domain)
     if (dt <= 0.0)
       error->all(FC_FILE_LINE_FUNC, "dt have to be a positive number");
+
+    unsigned int btypeMax = 0;
+    for (unsigned int i = 0; i < atom_data->molecule_struct_owned.size(); i++)
+    {
+      auto &atomic_bond_vector = atom_data->molecule_struct_owned[i].atomic_bond_vector;
+
+      for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
+      {
+        unsigned int btype = atomic_bond_vector[j].type;
+        if (btypeMax < btype) btypeMax = btype;
+      }
+
+    }
+
+    if (bond_type.size() < btypeMax + 1)  
+    {
+      bond_type.resize(btypeMax + 1, 0);
+      output->warning("Shake::verify_settings: resizing bond_type");
+    }
   }
 
   void Rattle::apply_shake(int64_t)
@@ -104,12 +129,32 @@ namespace constraint
       auto &atomic_bond_vector = atom_data->molecule_struct_owned[i].atomic_bond_vector;
 
       auto Nc = atomic_bond_vector.size();
-      if (Nc == 0)
+      //------------------------------------------------------------------------------------------------
+      // Ignore all of the shake calculations of the molecule 
+      // if one of the bonds is found to be non-shake
+      //-----------------------------------------------------------------------------------------------
+      if (Nc > 0)
+      {
+        bool excludeAll = false;
+        for (unsigned int j = 0; j < Nc; j++)
+        {
+          if (bond_type[ atomic_bond_vector[j].type] == 0)
+          {
+            excludeAll = true;
+            break;
+          }
+        }
+        if (excludeAll) continue;
+      }
+      else
+      {
         continue;
+      }
       //std::vector<double> C(Nc, 0);
 
       double error_max = 1.0;
       int counter = -1;
+
 
       while (error_max > error_tolerance)
       {

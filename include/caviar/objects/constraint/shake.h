@@ -57,12 +57,16 @@ namespace constraint
 
     class Domain *domain = nullptr;
 
+    /**
+     * The molecule bond types which will be included in the algorithm
+    */    
+    std::vector<int> bond_type;
+
     double dt;
     double error_tolerance;
 
     bool initialized;
 
-    int shake_type;
     int iteration_max = 100;
   };
 
