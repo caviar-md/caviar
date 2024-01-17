@@ -108,7 +108,7 @@ namespace constraint
     if (bond_type.size() < btypeMax + 1)  
     {
       bond_type.resize(btypeMax + 1, 0);
-      output->warning("Shake::verify_settings: resizing bond_type");
+      output->warning("Rattle::verify_settings: resizing bond_type");
     }
   }
 
@@ -135,12 +135,12 @@ namespace constraint
       //-----------------------------------------------------------------------------------------------
       if (Nc > 0)
       {
-        bool excludeAll = false;
+        bool excludeAll = true;
         for (unsigned int j = 0; j < Nc; j++)
         {
-          if (bond_type[ atomic_bond_vector[j].type] == 0)
+          if (bond_type[ atomic_bond_vector[j].type] != 0)
           {
-            excludeAll = true;
+            excludeAll = false;
             break;
           }
         }
@@ -165,7 +165,7 @@ namespace constraint
 
         for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
         {
-
+          if (bond_type[ atomic_bond_vector[j].type] == 0) continue;
 
           auto id_1 = atomic_bond_vector[j].id_1;
           auto id_2 = atomic_bond_vector[j].id_2;
@@ -204,6 +204,9 @@ namespace constraint
         error_max = 0.0;
         for (unsigned int j = 0; j < atomic_bond_vector.size(); j++)
         {
+
+          if (bond_type[ atomic_bond_vector[j].type] == 0) continue;
+
           int k1 = atomic_bond_vector[j].id_1, k2 = atomic_bond_vector[j].id_2;
 
           auto d = atomic_bond_vector[j].length;

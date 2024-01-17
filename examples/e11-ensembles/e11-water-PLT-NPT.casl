@@ -340,20 +340,28 @@ f_geslab_x2 radius 3 4.40
 
 
 #==== Constraint
-#constraint m_shake c_mshake 
-#c_mshake dt  dt_all
-#c_mshake set_atom_data adata
-#c_mshake set_domain dom
+constraint m_shake c_mshake 
+c_mshake dt dt_all
+c_mshake set_atom_data adata
+c_mshake set_domain dom
 #c_mshake error_tolerance 0.01
-
-
+c_mshake bond_type 0 1
 
 #==== Constraint
 constraint shake c_shake 
-c_shake dt  dt_all
+c_shake dt dt_all
 c_shake set_atom_data adata
 c_shake set_domain dom
-#c_mshake error_tolerance 0.01
+#c_shake error_tolerance 0.01
+c_shake bond_type 0 1
+
+#==== Constraint
+constraint rattle c_rattle 
+c_rattle dt dt_all
+c_rattle set_atom_data adata
+c_rattle set_domain dom
+#c_rattle error_tolerance 0.01
+c_rattle bond_type 0 1
 
 #==== Constraint
 constraint  nve c_nve
