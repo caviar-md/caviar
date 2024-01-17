@@ -534,6 +534,7 @@ namespace force_field
     {
       GET_A_TOKEN_FOR_CREATION
       auto t = token.string_value;
+      FC_OBJECT_READ_INFO_STR
       if (string_cmp(t, "set_atom_data") || string_cmp(t, "atom_data"))
       {
         FIND_OBJECT_BY_NAME(atom_data, it)

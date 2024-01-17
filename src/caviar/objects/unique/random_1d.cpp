@@ -64,6 +64,8 @@ namespace unique
     while (true)
     {
       GET_A_TOKEN_FOR_CREATION
+      const auto t = token.string_value;
+      FC_OBJECT_READ_INFO_STR
       if (token.string_value == "GENERATE")
       {
         generate();

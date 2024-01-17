@@ -33,6 +33,8 @@ namespace shape
     while (true)
     {
       GET_A_TOKEN_FOR_CREATION
+      auto t = token.string_value;
+      FC_OBJECT_READ_INFO_STR
       ASSIGN_REAL_3D_VECTOR(center, "Plane read: ", "")
       else ASSIGN_REAL_3D_VECTOR(normal, "Plane read: ", "") else ASSIGN_REAL(radius, "Plane read:", "") else ASSIGN_REAL(flatness_tol, "Plane read:", "") else error->all(FC_FILE_LINE_FUNC_PARSE, " Plane read: Unknown variable or command");
     }

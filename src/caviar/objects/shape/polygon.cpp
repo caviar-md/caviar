@@ -56,6 +56,8 @@ namespace shape
     {
 
       GET_A_TOKEN_FOR_CREATION
+      auto t = token.string_value;
+      FC_OBJECT_READ_INFO_STR
       ++no_points;
       tmp.resize(no_points);
       // ASSIGN_REAL_3D_VECTOR(tmp[no_points-1], "Closed lines read: ","")

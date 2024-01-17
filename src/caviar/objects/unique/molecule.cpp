@@ -69,8 +69,9 @@ namespace unique
     while (true)
     {
       FC_IF_RAW_TOKEN_EOF_EOL
+      FC_OBJECT_READ_INFO_STR
       FC_IF_GET_REAL3D(position)
-      else if (string_cmp(ts, "add_atomic_bond") || string_cmp(ts, "atomic_bond"))
+      else if (string_cmp(t, "add_atomic_bond") || string_cmp(t, "atomic_bond"))
       {
         atom_data::Bond b;
         GET_OR_CHOOSE_A_INT(b.id_1, "", "")
@@ -97,7 +98,7 @@ namespace unique
         if (!index_2_exist)
           atomic_bond_index.push_back(b.id_2);
       }
-      else if (string_cmp(ts, "add_atomic_angle") || string_cmp(ts, "atomic_angle"))
+      else if (string_cmp(t, "add_atomic_angle") || string_cmp(t, "atomic_angle"))
       {
         atom_data::Angle b;
         GET_OR_CHOOSE_A_INT(b.id_1, "", "")
@@ -130,7 +131,7 @@ namespace unique
         if (!index_3_exist)
           atomic_angle_index.push_back(b.id_3);
       }
-      else if (string_cmp(ts, "add_atomic_properdihedral") || string_cmp(ts, "atomic_properdihedral"))
+      else if (string_cmp(t, "add_atomic_properdihedral") || string_cmp(t, "atomic_properdihedral"))
       {
         atom_data::Proper_dihedral b;
         GET_OR_CHOOSE_A_INT(b.id_1, "", "")
@@ -168,17 +169,17 @@ namespace unique
         if (!index_4_exist)
           atomic_properdihedral_index.push_back(b.id_4);
       }
-      else if (string_cmp(ts, "output_xyz"))
+      else if (string_cmp(t, "output_xyz"))
       {
         output_xyz();
         continue;
       }
-      else if (string_cmp(ts, "add_atom"))
+      else if (string_cmp(t, "add_atom"))
       {
         add_atom(parser);
         return true;
       }
-      else FC_ERR_UNDEFINED_VAR(ts)
+      else FC_ERR_UNDEFINED_VAR(t)
     }
 
     return true;

@@ -37,7 +37,15 @@
   output->info_create(object_full_type);
 
 #define FC_OBJECT_READ_INFO \
-  output->info_read(object_full_type);
+  //output->info_read(object_full_type);
+
+
+#define FC_OBJECT_READ_INFO_STR \
+{\
+  std::string s = "(Call) "+ object_full_type + ".read(): " + object_name + " " + t;\
+  output->info(s);\
+}
+  
 
 #define FC_BASE_OBJECT_COMMON_TOOLS                                   \
 public:                                                               \

@@ -72,6 +72,7 @@ namespace unique
     {
       GET_A_TOKEN_FOR_CREATION
       auto t = token.string_value;
+      FC_OBJECT_READ_INFO_STR
       if (string_cmp(t, "set_formula_x"))
       {
         const auto t2 = parser->get_val_token();

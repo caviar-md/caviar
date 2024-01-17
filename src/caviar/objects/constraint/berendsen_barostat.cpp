@@ -44,6 +44,7 @@ namespace constraint
     {
       GET_A_TOKEN_FOR_CREATION
       auto t = token.string_value;
+      FC_OBJECT_READ_INFO_STR
       if (string_cmp(t, "tp"))
       {
         GET_OR_CHOOSE_A_REAL(tp, "", "")

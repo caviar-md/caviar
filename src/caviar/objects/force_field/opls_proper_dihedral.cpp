@@ -45,6 +45,7 @@ namespace force_field
     {
       GET_A_TOKEN_FOR_CREATION
       auto t = token.string_value;
+      FC_OBJECT_READ_INFO_STR
       if (string_cmp(t, "dihedral_coef1"))
       {
         GET_A_STDVECTOR_REAL_ELEMENT(dihedral_coef1)

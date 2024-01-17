@@ -51,6 +51,7 @@ namespace postprocess
     {
       GET_A_TOKEN_FOR_CREATION
       auto t = token.string_value;
+      FC_OBJECT_READ_INFO_STR
 
       if (t == "run")
       {

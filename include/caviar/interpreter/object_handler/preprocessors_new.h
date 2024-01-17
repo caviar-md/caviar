@@ -22,13 +22,13 @@
 // 'read (caviar::interpreter::Parser*)' function of the objects.
 
 #define FC_IF_RAW_TOKEN_EOF_EOL                      \
-  auto t = parser->get_raw_token();                  \
-  std::string ts = t.string_value;                   \
-  if (t.kind == caviar::interpreter::Kind::eof)      \
+  auto token = parser->get_raw_token();                  \
+  std::string t = token.string_value;                   \
+  if (token.kind == caviar::interpreter::Kind::eof)      \
   {                                                  \
     break;                                           \
   }                                                  \
-  else if (t.kind == caviar::interpreter::Kind::eol) \
+  else if (token.kind == caviar::interpreter::Kind::eol) \
   {                                                  \
     break;                                           \
   }
@@ -37,15 +37,15 @@
 // 'radius = 1 'radius 1'
 // by this macro, we can change it all in the future
 #define FC_HANDLE_ASSIGN                           \
-  t = parser->get_raw_token();                     \
-  if (t.kind == caviar::interpreter::Kind::assign) \
+  token = parser->get_raw_token();                     \
+  if (token.kind == caviar::interpreter::Kind::assign) \
   {                                                \
   }                                                \
   else                                             \
     parser->keep_current_token();
 
 #define FC_IF_GET_REAL(VARIABLE)   \
-  if (string_cmp(ts, #VARIABLE))   \
+  if (string_cmp(t, #VARIABLE))   \
   {                                \
     FC_HANDLE_ASSIGN               \
     VARIABLE = parser->get_real(); \
@@ -53,7 +53,7 @@
   }
 
 #define FC_IF_GET_INT(VARIABLE)   \
-  if (string_cmp(ts, #VARIABLE))  \
+  if (string_cmp(t, #VARIABLE))  \
   {                               \
     FC_HANDLE_ASSIGN              \
     VARIABLE = parser->get_int(); \
@@ -61,7 +61,7 @@
   }
 
 #define FC_IF_GET_BOOL(VARIABLE)   \
-  if (string_cmp(ts, #VARIABLE))   \
+  if (string_cmp(t, #VARIABLE))   \
   {                                \
     FC_HANDLE_ASSIGN               \
     VARIABLE = parser->get_bool(); \
@@ -69,27 +69,27 @@
   }
 
 #define FC_IF_GET_POSITIVE_REAL(VARIABLE)                                                                     \
-  if (string_cmp(ts, #VARIABLE))                                                                              \
+  if (string_cmp(t, #VARIABLE))                                                                              \
   {                                                                                                           \
     FC_HANDLE_ASSIGN                                                                                          \
     VARIABLE = parser->get_real();                                                                            \
     if (VARIABLE <= 0)                                                                                        \
-      error->all(FC_FILE_LINE_FUNC_PARSE, "expected a positive real '" + ts + "' for object '" + OBJECT "'"); \
+      error->all(FC_FILE_LINE_FUNC_PARSE, "expected a positive real '" + t + "' for object '" + OBJECT "'"); \
     continue;                                                                                                 \
   }
 
 #define FC_IF_GET_POSITIVE_INT(VARIABLE)                                                                     \
-  if (string_cmp(ts, #VARIABLE))                                                                             \
+  if (string_cmp(t, #VARIABLE))                                                                             \
   {                                                                                                          \
     FC_HANDLE_ASSIGN                                                                                         \
     VARIABLE = parser->get_int();                                                                            \
     if (VARIABLE <= 0)                                                                                       \
-      error->all(FC_FILE_LINE_FUNC_PARSE, "expected a positive int '" + ts + "' for object '" + OBJECT "'"); \
+      error->all(FC_FILE_LINE_FUNC_PARSE, "expected a positive int '" + t + "' for object '" + OBJECT "'"); \
     continue;                                                                                                \
   }
 
 #define FC_IF_GET_REAL3D(VARIABLE)   \
-  if (string_cmp(ts, #VARIABLE))     \
+  if (string_cmp(t, #VARIABLE))     \
   {                                  \
     FC_HANDLE_ASSIGN                 \
     VARIABLE.x = parser->get_real(); \
@@ -99,7 +99,7 @@
   }
 
 #define FC_IF_GET_INT3D(VARIABLE)   \
-  if (string_cmp(ts, #VARIABLE))    \
+  if (string_cmp(t, #VARIABLE))    \
   {                                 \
     FC_HANDLE_ASSIGN                \
     VARIABLE.x = parser->get_int(); \
@@ -109,6 +109,6 @@
   }
 
 #define FC_ERROR_PARAMETER(OBJECT) \
-  error->all(FC_FILE_LINE_FUNC_PARSE, "unknown parameter '" + ts + "' for object '" + OBJECT "'");
+  error->all(FC_FILE_LINE_FUNC_PARSE, "unknown parameter '" + t + "' for object '" + OBJECT "'");
 
 #endif

@@ -50,17 +50,18 @@ namespace unique
     while (true)
     {
       FC_IF_RAW_TOKEN_EOF_EOL
+      FC_OBJECT_READ_INFO_STR      
       FC_IF_GET_REAL3D(position)
-      else FC_IF_GET_REAL3D(velocity) else if (string_cmp(ts, "add_molecule"))
+      else FC_IF_GET_REAL3D(velocity) else if (string_cmp(t, "add_molecule"))
       {
         FIND_OBJECT_BY_NAME(unique, it)
         FC_CHECK_OBJECT_CLASS_NAME(unique, it, molecule)
         auto m = *dynamic_cast<unique::Molecule *>(object_container->unique[it->second.index]);
 
         Vector<double> pos{0., 0., 0.};
-        auto t = parser->get_raw_token();
-        std::string ts = t.string_value;
-        if (string_cmp(ts, "at_position"))
+        auto token = parser->get_raw_token();
+        std::string t = token.string_value;
+        if (string_cmp(t, "at_position"))
         {
           GET_OR_CHOOSE_A_REAL_3D_VECTOR(pos, "", "")
         }
@@ -71,12 +72,12 @@ namespace unique
         molecules.push_back(m);
         continue;
       }
-      else if (string_cmp(ts, "clear"))
+      else if (string_cmp(t, "clear"))
       {
         molecules.clear();
         continue;
       }
-      else FC_ERR_UNDEFINED_VAR(ts)
+      else FC_ERR_UNDEFINED_VAR(t)
     }
 
     return true;

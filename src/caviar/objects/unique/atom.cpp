@@ -66,6 +66,7 @@ namespace unique
 
       GET_A_TOKEN_FOR_CREATION
       auto t = token.string_value;
+      FC_OBJECT_READ_INFO_STR
       if (string_cmp(t, "position"))
       {
         double x = 0,y = 0,z = 0;

@@ -47,7 +47,8 @@ namespace unique
     while (true)
     {
       FC_IF_RAW_TOKEN_EOF_EOL
-      if (string_cmp(ts, "add_atom"))
+      FC_OBJECT_READ_INFO_STR
+      if (string_cmp(t, "add_atom"))
       {
         FIND_OBJECT_BY_NAME(unique, it)
         FC_CHECK_OBJECT_CLASS_NAME(unique, it, atom)
@@ -56,13 +57,13 @@ namespace unique
         atoms.push_back(a);
         continue;
       }
-      else if (string_cmp(ts, "clear"))
+      else if (string_cmp(t, "clear"))
       {
         atoms.clear();
         continue;
       }
       else
-        FC_ERR_UNDEFINED_VAR(ts)
+        FC_ERR_UNDEFINED_VAR(t)
     }
 
     return true;

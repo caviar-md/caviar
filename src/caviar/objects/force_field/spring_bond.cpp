@@ -42,6 +42,7 @@ namespace force_field
     {
       GET_A_TOKEN_FOR_CREATION
       auto t = token.string_value;
+      FC_OBJECT_READ_INFO_STR
       if (string_cmp(t, "elastic_coef"))
       {
         GET_A_STDVECTOR_REAL_ELEMENT(elastic_coef)

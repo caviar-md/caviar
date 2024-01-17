@@ -33,6 +33,8 @@ namespace shape
     while (true)
     {
       GET_A_TOKEN_FOR_CREATION
+      auto t = token.string_value;
+      FC_OBJECT_READ_INFO_STR
       ASSIGN_REAL_3D_VECTOR(center, "CIRCLE read: ", "")
       else ASSIGN_REAL_3D_VECTOR(normal, "CIRCLE read: ", "") else ASSIGN_REAL(radius, "CIRCLE read:", "") else ASSIGN_REAL(flatness_tol, "CIRCLE read:", "") else error->all(FC_FILE_LINE_FUNC_PARSE, " CIRCLE read: Unknown variable or command");
     }
