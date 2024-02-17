@@ -154,9 +154,11 @@ namespace force_field
         const auto dv = vel[k2] - vel[k1];
 
         const auto dr_sq = dr * dr;
-        const auto dr_norm = std::sqrt(dr_sq);
-        const auto dr_vec = dr / dr_norm;
-        const auto force = -elastic_coef[btype] * (dr_norm - d) * dr_vec - (dissip_coef[btype] * dv);
+        const auto dr_length = std::sqrt(dr_sq);
+        const auto dr_unit = dr / dr_length;
+        const auto force = -elastic_coef[btype] * (dr_length - d) * dr_unit - (dissip_coef[btype] * dv);
+        //if (id_1 < id_2)          
+          virialLocal +=  -(elastic_coef[btype] * (dr_length - d)) * dr_length;
 
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp atomic

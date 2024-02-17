@@ -2005,9 +2005,9 @@ namespace force_field
 
   void Plt_dealii::scale_position(double scale_ratio, caviar::Vector<int> scale_axis)
   {
-    bool x_axis = (scale_axis.x == 1 ? true : false);
-    bool y_axis = (scale_axis.x == 1 ? true : false);
-    bool z_axis = (scale_axis.x == 1 ? true : false);
+    // bool x_axis = (scale_axis.x == 1 ? true : false);
+    // bool y_axis = (scale_axis.x == 1 ? true : false);
+    // bool z_axis = (scale_axis.x == 1 ? true : false);
 
     caviar::Vector<double> scale_ratio_3d{1, 1, 1};
     if (scale_axis.x == 1)

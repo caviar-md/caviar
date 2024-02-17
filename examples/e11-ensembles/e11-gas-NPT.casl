@@ -153,6 +153,10 @@ c_ber_bar dt dt_all
 c_ber_bar set_atom_data adata
 c_ber_bar set_domain dom
 c_ber_bar xi_max 0.2
+# c_ber_bar  step 5        # Moving Average Part
+# c_ber_bar  export_data 1
+# c_ber_bar  ma_type 1
+# c_ber_bar  ma_window 10
 
 #====== writer 
 writer atom_data w1

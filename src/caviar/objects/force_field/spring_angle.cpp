@@ -155,10 +155,12 @@ namespace force_field
         auto p21 = domain->periodic_distance(pos[k1] - pos[k2]);
         auto p23 = domain->periodic_distance(pos[k3] - pos[k2]);
 #endif
-        auto p21_size_inv = 1.0 / norm(p21);
-        auto p23_size_inv = 1.0 / norm(p23);
+        auto p21_length = norm(p21);
+        auto p23_length = norm(p23);
+        auto p21_length_inv = 1.0 / p21_length;
+        auto p23_length_inv = 1.0 / p23_length;
 
-        auto angle_cos = (p21 * p23) * (p21_size_inv * p23_size_inv);
+        auto angle_cos = (p21 * p23) * (p21_length_inv * p23_length_inv);
         auto angle = std::acos(angle_cos);
         auto angle_diff = angle - angle_value;
 
@@ -173,10 +175,10 @@ namespace force_field
             auto p21 = domain-> periodic_distance(pos_old[k1] - pos_old[k2]);
             auto p23 = domain-> periodic_distance(pos_old[k3] - pos_old[k2]);
         #endif
-            auto p21_size_inv = 1.0/norm(p21);
-            auto p23_size_inv = 1.0/norm(p23);
+            auto p21_length_inv = 1.0/norm(p21);
+            auto p23_length_inv = 1.0/norm(p23);
 
-            auto angle_cos_o = (p21*p23)*(p21_size_inv*p23_size_inv);
+            auto angle_cos_o = (p21*p23)*(p21_length_inv*p23_length_inv);
             auto angle_o = std::acos(angle_cos);
             auto dt = 0.001;
             angle_dot = (angle - angle_o)/dt;
@@ -187,16 +189,22 @@ namespace force_field
 
         auto torque = elastic_coef[atype] * angle_diff;
 
-        auto p21_norm = p21 * p21_size_inv;
-        auto p23_norm = p23 * p23_size_inv;
+
+
+        auto p21_norm = p21 * p21_length_inv;
+        auto p23_norm = p23 * p23_length_inv;
 
         auto n = cross_product(p21_norm, p23_norm);
         auto f12 = cross_product(n, p21_norm);
         auto f32 = cross_product(p23_norm, n);
 
         // r * F = Tau -> F = Tau / r
-        auto force_12 = torque * f12 * p21_size_inv;
-        auto force_32 = torque * f32 * p23_size_inv;
+        auto force_12 = torque * f12 * p21_length_inv;
+        auto force_32 = torque * f32 * p23_length_inv;
+
+        //if (id_1 < id_2 && id_2< id_3) // it's ok as long as all of the molecule reside in one MPI domain
+        virialLocal += force_12*p21;
+        virialLocal += force_32*p23;
 
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp atomic

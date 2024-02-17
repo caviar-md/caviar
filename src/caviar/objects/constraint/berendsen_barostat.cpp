@@ -74,6 +74,22 @@ namespace constraint
         GET_OR_CHOOSE_A_INT(step, "", "")
         if (step <= 0)
           error->all(FC_FILE_LINE_FUNC_PARSE, "step have to non-negative.");
+      }   
+      else if (string_cmp(t, "export_data"))
+      {
+        GET_OR_CHOOSE_A_INT(export_data, "", "")
+      }      
+      else if (string_cmp(t, "ma_window"))
+      {
+        GET_OR_CHOOSE_A_INT(ma_window, "", "")
+        if (ma_window < 0)
+          error->all(FC_FILE_LINE_FUNC_PARSE, "ma_window have to non-negative.");
+      }      
+      else if (string_cmp(t, "ma_type"))
+      {
+        GET_OR_CHOOSE_A_INT(ma_type, "", "")
+        if (ma_type <= 0)
+          error->all(FC_FILE_LINE_FUNC_PARSE, "ma_type have to non-negative.");
       }
       else if (string_cmp(t, "xi_max"))
       {
@@ -109,6 +125,34 @@ namespace constraint
     return in_file;
   }
 
+  double Berendsen_barostat::updateMovingAverage(double newData, double prevAvg, int numDataPoints) 
+  {
+      // Calculate the new moving average using the previous average and the new data point
+      return prevAvg + (newData - prevAvg) / numDataPoints;
+  }
+
+  double Berendsen_barostat::get_pressure()
+  {
+    double p = atom_data->pressure();
+    switch(ma_type)
+    {
+      default:
+      case 0:
+      return p;
+
+      case 1:
+      {
+        ma_current = updateMovingAverage(p, ma_current, ma_counter > ma_window ? ma_window : ma_counter);
+        ma_counter++;
+        if (ma_counter > 2000000) ma_counter = ma_window;
+        if (export_data)
+          ofs_export << ma_counter << " " << p << " " << ma_current << "\n";
+        return ma_current;
+      }
+
+    }    
+  }
+
   void Berendsen_barostat::verify_settings()
   {
     FC_NULLPTR_CHECK(atom_data)
@@ -122,6 +166,9 @@ namespace constraint
       error->all(FC_FILE_LINE_FUNC, "kappa is not set.");
     if (pressure < 0.0)
       error->all(FC_FILE_LINE_FUNC, "pressure is not set.");
+    
+    if (export_data)
+      ofs_export.open("o_berendsen_barostat");
   }
 
   void Berendsen_barostat::apply_barostat(int64_t timestep, bool &fix_position_needed)
@@ -129,7 +176,8 @@ namespace constraint
     if (timestep % step != 0) return;
     FC_OBJECT_VERIFY_SETTINGS
 
-    auto p = atom_data->pressure();
+    auto p = get_pressure();
+
     if (p <= 0) return;
 
     //std::cout << "p: " << p << std::endl;

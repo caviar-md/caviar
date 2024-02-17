@@ -18,6 +18,7 @@
 #define CAVIAR_OBJECTS_CONSTRAINT_BERENDSENBAROSTAT_H
 
 #include "caviar/objects/constraint.h"
+#include <fstream>
 
 CAVIAR_NAMESPACE_OPEN
 
@@ -44,6 +45,8 @@ namespace constraint
         void apply_barostat(int64_t, bool &fix_position_needed);
 
         void verify_settings();
+
+        double get_pressure();
         
         /**
          * the force_fields which a scale_position() must be called.
@@ -64,6 +67,41 @@ namespace constraint
         int step = 5;
 
         /**
+         * Moving Average window
+        */
+        int ma_window = 5;
+
+        /**
+         * Moving Average Type. 0: No moving average, 1: Simple moving average
+        */
+        int ma_type = 0;
+
+
+        /**
+         * export data for parameters validation
+        */
+        bool export_data = false;
+
+
+        /**
+         * export data for parameters validation
+        */
+        std::ofstream ofs_export;
+        
+        /**
+         * Moving Average counter
+        */
+        int ma_counter = 1;
+
+        /**
+         * Moving Average current value
+        */
+        double ma_current = 0.0;
+
+
+        
+
+        /**
          * Maximum value of scaling
         */
         double xi_max = 0.1;
@@ -73,6 +111,13 @@ namespace constraint
          * The direction of scaling simulation box. It will be done on periodic direction of the domain.
         */
         caviar::Vector<int> scale_axis;
+
+
+        /**
+        * Function to update moving average
+        */
+        double updateMovingAverage(double newData, double prevAvg, int numDataPoints); 
+
 
     public:
     };
