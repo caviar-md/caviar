@@ -175,6 +175,7 @@ namespace force_field
       const auto charge_i = atom_data->atom_type_params.charge[type_i];
       const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
       int id_i = atom_data->atom_struct_owned.id[i];
+      const auto mol_index_i = atom_data->atom_struct_owned.molecule_index[i];
 
       // short range part
       for (auto j : nlist[i])
@@ -216,8 +217,16 @@ namespace force_field
         const auto sum_r_x =  ((d1 * d1 * d1) - (d2 * d2 * d2));
 
         auto forceCoef = - k_electrostatic * charge_i * charge_j * sum_r_x;
-        if (lambda_is_set) forceCoef *= lambda[type_i][type_j];
 
+        const auto mol_index_j = atom_data->atom_struct_owned.molecule_index[j];
+
+        if (lambda_is_set) 
+        {
+          if (mol_index_i == mol_index_j)
+          {
+            forceCoef *= lambda[type_i][type_j];
+          }
+        }
 
         if (id_i < id_j)
         {
@@ -268,7 +277,7 @@ namespace force_field
       }
 
       auto force = k_electrostatic * charge_i * field;
-      if (lambda_is_set) force *= lambda[type_i][type_i];
+      // if (lambda_is_set) force *= lambda[type_i][type_i];
 
       if (get_pressure_process)
       {

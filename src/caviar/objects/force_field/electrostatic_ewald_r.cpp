@@ -135,6 +135,7 @@ namespace force_field
       const auto charge_i = atom_data->atom_type_params.charge[type_i];
       const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
       int id_i = atom_data->atom_struct_owned.id[i];
+      const auto mol_index_i = atom_data->atom_struct_owned.molecule_index[i];
 
       for (auto j : nlist[i])
       {
@@ -177,8 +178,15 @@ namespace force_field
         const auto sum_r_x = (2 * alpha * FC_PIS_INV * std::exp(-alpha_sq * rijml_sq) + std::erfc(erfc_arg) / rijml_norm) * ( 1.0 / rijml_sq);
 
         auto forceCoef = - k_electrostatic * charge_i * charge_j * sum_r_x;
-        if (lambda_is_set) forceCoef *= lambda[type_i][type_j];
+        const auto mol_index_j = atom_data->atom_struct_owned.molecule_index[j];
 
+        if (lambda_is_set) 
+        {
+          if (mol_index_i == mol_index_j)
+          {
+            forceCoef *= lambda[type_i][type_j];
+          }
+        }
 ////
 
         if (id_i < id_j)

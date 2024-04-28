@@ -160,6 +160,7 @@ namespace force_field
       const auto charge_i = atom_data->atom_type_params.charge[type_i];
       //const auto mol_index_i = mol_index[i];
       int id_i = atom_data->atom_struct_owned.id[i];
+      const auto mol_index_i = atom_data->atom_struct_owned.molecule_index[i];
 
       for (auto j : nlist[i])
       {
@@ -182,6 +183,7 @@ namespace force_field
         }
         charge_j = atom_data->atom_type_params.charge[type_j];
         mass_inv_j = atom_data->atom_type_params.mass_inv[type_j];
+        const auto mol_index_j = atom_data->atom_struct_owned.molecule_index[j];
 
         //const auto mol_index_j = mol_index[j];
 
@@ -194,7 +196,14 @@ namespace force_field
         const auto dr_norm = std::sqrt(dr_sq);
 
         auto forceCoef = -k_electrostatic * charge_i * charge_j / (dr_sq * dr_norm) * (1.0 - std::pow(dr_norm / cutoff, beta + 1));
-        if (lambda_is_set) forceCoef *= lambda[type_i][type_j];
+
+        if (lambda_is_set) 
+        {
+          if (mol_index_i == mol_index_j)
+          {
+            forceCoef *= lambda[type_i][type_j];
+          }
+        }
 
         const auto force_shifted = forceCoef * dr;
 
@@ -226,7 +235,7 @@ namespace force_field
       }
 
       auto force = external_field * charge_i;
-      if (lambda_is_set) force *= lambda[type_i][type_i];
+      // if (lambda_is_set) force *= lambda[type_i][type_i];
 
       if (get_pressure_process)
       {
