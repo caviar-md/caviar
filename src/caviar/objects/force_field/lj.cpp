@@ -126,6 +126,10 @@ namespace force_field
       {
         monitor_jump = true;
       }
+      else if (string_cmp(t, "ignore_intra_molecule"))
+      {
+        ignore_intra_molecule = true;
+      }
       else if (string_cmp(t, "wca"))
       {
         wca = true;
@@ -376,6 +380,7 @@ namespace force_field
       const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
       //const auto mol_index_i = mol_index[i];
       int id_i = atom_data->atom_struct_owned.id[i];
+      const auto mol_index_i = atom_data->atom_struct_owned.molecule_index[i];
 
       for (auto j : nlist[i])
       {
@@ -398,6 +403,12 @@ namespace force_field
           id_j = atom_data->atom_struct_owned.id[j];
         }
         mass_inv_j = atom_data->atom_type_params.mass_inv[type_j];
+
+
+        const auto mol_index_j = atom_data->atom_struct_owned.molecule_index[j];
+
+        if (ignore_intra_molecule && (mol_index_i == mol_index_j))        
+          continue;        
 
         //const auto mol_index_j = mol_index[j];
 

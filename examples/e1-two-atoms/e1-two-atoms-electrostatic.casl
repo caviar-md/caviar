@@ -81,6 +81,8 @@ f_lj sigma 0 0 1.0
 f_lj sigma 0 1 1.0
 f_lj sigma 1 0 1.0
 f_lj sigma 1 1 1.0
+f_lj ignore_intra_molecule
+
 
 f_lj set_neighborlist neigh
 f_lj set_atom_data adata
