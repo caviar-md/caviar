@@ -34,6 +34,7 @@ void Atom_data::exchange_ghost_single_md_domain(long) // timestep
   atom_struct_ghost.velocity.clear();
   atom_struct_ghost.id.clear();
   atom_struct_ghost.type.clear();
+  atom_struct_ghost.molecule_index.clear();
 
   const auto bc = domain->boundary_condition;
 
@@ -52,11 +53,13 @@ void Atom_data::exchange_ghost_single_md_domain(long) // timestep
   auto &vel = atom_struct_owned.velocity;
   auto &id = atom_struct_owned.id;
   auto &type = atom_struct_owned.type;
+  auto &m_index = atom_struct_owned.molecule_index;
 
   auto &g_pos = atom_struct_ghost.position;
   auto &g_vel = atom_struct_ghost.velocity;
   auto &g_id = atom_struct_ghost.id;
   auto &g_type = atom_struct_ghost.type;
+  auto &g_m_index = atom_struct_ghost.molecule_index;
 
   unsigned int num_local_atoms = atom_struct_owned.id.size();
 
@@ -108,6 +111,7 @@ void Atom_data::exchange_ghost_single_md_domain(long) // timestep
         g_vel.emplace_back(vel[i].x, vel[i].y, vel[i].z);
         g_id.emplace_back(id[i]);
         g_type.emplace_back(type[i]);
+        g_m_index.emplace_back(m_index[i]);
       }
       if (y_val != 0)
       {
@@ -115,6 +119,7 @@ void Atom_data::exchange_ghost_single_md_domain(long) // timestep
         g_vel.emplace_back(vel[i].x, vel[i].y, vel[i].z);
         g_id.emplace_back(id[i]);
         g_type.emplace_back(type[i]);
+        g_m_index.emplace_back(m_index[i]);
       }
       if (z_val != 0)
       {
@@ -122,6 +127,7 @@ void Atom_data::exchange_ghost_single_md_domain(long) // timestep
         g_vel.emplace_back(vel[i].x, vel[i].y, vel[i].z);
         g_id.emplace_back(id[i]);
         g_type.emplace_back(type[i]);
+        g_m_index.emplace_back(m_index[i]);
       }
       if (x_val != 0 && y_val != 0)
       {
@@ -129,6 +135,7 @@ void Atom_data::exchange_ghost_single_md_domain(long) // timestep
         g_vel.emplace_back(vel[i].x, vel[i].y, vel[i].z);
         g_id.emplace_back(id[i]);
         g_type.emplace_back(type[i]);
+        g_m_index.emplace_back(m_index[i]);
       }
       if (x_val != 0 && z_val != 0)
       {
@@ -136,6 +143,7 @@ void Atom_data::exchange_ghost_single_md_domain(long) // timestep
         g_vel.emplace_back(vel[i].x, vel[i].y, vel[i].z);
         g_id.emplace_back(id[i]);
         g_type.emplace_back(type[i]);
+        g_m_index.emplace_back(m_index[i]);
       }
       if (y_val != 0 && z_val != 0)
       {
@@ -143,6 +151,7 @@ void Atom_data::exchange_ghost_single_md_domain(long) // timestep
         g_vel.emplace_back(vel[i].x, vel[i].y, vel[i].z);
         g_id.emplace_back(id[i]);
         g_type.emplace_back(type[i]);
+        g_m_index.emplace_back(m_index[i]);
       }
       if (x_val != 0 && y_val != 0 && z_val != 0)
       {
@@ -150,6 +159,7 @@ void Atom_data::exchange_ghost_single_md_domain(long) // timestep
         g_vel.emplace_back(vel[i].x, vel[i].y, vel[i].z);
         g_id.emplace_back(id[i]);
         g_type.emplace_back(type[i]);
+        g_m_index.emplace_back(m_index[i]);
       }
     }
     else
@@ -159,42 +169,49 @@ void Atom_data::exchange_ghost_single_md_domain(long) // timestep
         g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y, pos[i].z);
         g_id.emplace_back(id[i]);
         g_type.emplace_back(type[i]);
+        g_m_index.emplace_back(m_index[i]);
       }
       if (y_val != 0)
       {
         g_pos.emplace_back(pos[i].x, pos[i].y - y_val * y_width, pos[i].z);
         g_id.emplace_back(id[i]);
         g_type.emplace_back(type[i]);
+        g_m_index.emplace_back(m_index[i]);
       }
       if (z_val != 0)
       {
         g_pos.emplace_back(pos[i].x, pos[i].y, pos[i].z - z_val * z_width);
         g_id.emplace_back(id[i]);
         g_type.emplace_back(type[i]);
+        g_m_index.emplace_back(m_index[i]);
       }
       if (x_val != 0 && y_val != 0)
       {
         g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y - y_val * y_width, pos[i].z);
         g_id.emplace_back(id[i]);
         g_type.emplace_back(type[i]);
+        g_m_index.emplace_back(m_index[i]);
       }
       if (x_val != 0 && z_val != 0)
       {
         g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y, pos[i].z - z_val * z_width);
         g_id.emplace_back(id[i]);
         g_type.emplace_back(type[i]);
+        g_m_index.emplace_back(m_index[i]);
       }
       if (y_val != 0 && z_val != 0)
       {
         g_pos.emplace_back(pos[i].x, pos[i].y - y_val * y_width, pos[i].z - z_val * z_width);
         g_id.emplace_back(id[i]);
         g_type.emplace_back(type[i]);
+        g_m_index.emplace_back(m_index[i]);
       }
       if (x_val != 0 && y_val != 0 && z_val != 0)
       {
         g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y - y_val * y_width, pos[i].z - z_val * z_width);
         g_id.emplace_back(id[i]);
         g_type.emplace_back(type[i]);
+        g_m_index.emplace_back(m_index[i]);
       }
     }
   }

@@ -65,7 +65,7 @@ namespace force_field
       }
       else if (string_cmp(t, "lambda"))
       {
-        GET_A_STDVECTOR_STDVECTOR_REAL_ELEMENT_R(lambda,1.0)
+        GET_A_STDVECTOR_STDVECTOR_REAL_ELEMENT_R(lambda, 1.0)
         if (vector_value < 0)
           error->all(FC_FILE_LINE_FUNC_PARSE, "Sigma have to be non-negative.");
         lambda_is_set = true;
@@ -100,12 +100,14 @@ namespace force_field
         atom_data_type_max = t;
     }
 
-    if(lambda_is_set)
+    if (lambda_is_set)
     {
-      if (lambda.size() <= atom_data_type_max) lambda.resize(atom_data_type_max+1);
+      if (lambda.size() <= atom_data_type_max)
+        lambda.resize(atom_data_type_max + 1);
       for (unsigned int i = 0; i < lambda.size(); ++i)
       {
-        if (lambda[i].size() <= atom_data_type_max) lambda[i].resize(atom_data_type_max+1, 1.0);
+        if (lambda[i].size() <= atom_data_type_max)
+          lambda[i].resize(atom_data_type_max + 1, 1.0);
       }
     }
   }
@@ -126,9 +128,9 @@ namespace force_field
 #endif
     for (unsigned i = 0; i < pos_size; ++i)
     {
-      #ifdef CAVIAR_WITH_MPI
-    if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
-      continue;
+#ifdef CAVIAR_WITH_MPI
+      if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+        continue;
 #endif
       const auto pos_i = atom_data->atom_struct_owned.position[i];
       const auto type_i = atom_data->atom_struct_owned.type[i];
@@ -143,22 +145,25 @@ namespace force_field
         Vector<Real_t> pos_j;
         Real_t type_j;
         int id_j;
+        int mol_index_j;
+
         if (is_ghost)
         {
           j -= pos_size;
           pos_j = atom_data->atom_struct_ghost.position[j];
           type_j = atom_data->atom_struct_ghost.type[j];
           id_j = atom_data->atom_struct_ghost.id[j];
+          mol_index_j = atom_data->atom_struct_ghost.molecule_index[j];
         }
         else
         {
           pos_j = atom_data->atom_struct_owned.position[j];
           type_j = atom_data->atom_struct_owned.type[j];
           id_j = atom_data->atom_struct_owned.id[j];
+          mol_index_j = atom_data->atom_struct_owned.molecule_index[j];
         }
 
         const auto charge_j = atom_data->atom_type_params.charge[type_j];
-        const auto mass_inv_j = atom_data->atom_type_params.mass_inv[type_j];
         const auto r_ij = pos_j - pos_i;
 
         if (r_ij.x == 0 && r_ij.y == 0 && r_ij.z == 0)
@@ -171,37 +176,36 @@ namespace force_field
 
         // if (erfc_arg > erfc_cutoff) continue;
 
-        //const auto sum_r = (2 * alpha * FC_PIS_INV * std::exp(-alpha_sq * rijml_sq) + std::erfc(erfc_arg) / rijml_norm) * (rijml / rijml_sq);
+        // const auto sum_r = (2 * alpha * FC_PIS_INV * std::exp(-alpha_sq * rijml_sq) + std::erfc(erfc_arg) / rijml_norm) * (rijml / rijml_sq);
 
-        //const auto force = - k_electrostatic * charge_i * charge_j * sum_r;
+        // const auto force = - k_electrostatic * charge_i * charge_j * sum_r;
 
-        const auto sum_r_x = (2 * alpha * FC_PIS_INV * std::exp(-alpha_sq * rijml_sq) + std::erfc(erfc_arg) / rijml_norm) * ( 1.0 / rijml_sq);
+        const auto sum_r_x = (2 * alpha * FC_PIS_INV * std::exp(-alpha_sq * rijml_sq) + std::erfc(erfc_arg) / rijml_norm) * (1.0 / rijml_sq);
 
-        auto forceCoef = - k_electrostatic * charge_i * charge_j * sum_r_x;
-        const auto mol_index_j = atom_data->atom_struct_owned.molecule_index[j];
+        auto forceCoef = -k_electrostatic * charge_i * charge_j * sum_r_x;
 
-        if (lambda_is_set) 
+        if (lambda_is_set)
         {
           if (mol_index_i == mol_index_j)
           {
             forceCoef *= lambda[type_i][type_j];
           }
         }
-////
+        ////
 
         if (id_i < id_j)
         {
-          virialLocal +=  -forceCoef * rijml_sq;
+          virialLocal += -forceCoef * rijml_sq;
         }
         auto force = forceCoef * rijml;
 
-////
-
-
+        ////
 
         atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
         if (!is_ghost)
         {
+          const auto mass_inv_j = atom_data->atom_type_params.mass_inv[type_j];
+
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp atomic
           atom_data->atom_struct_owned.acceleration[j].x -= force.x * mass_inv_j;
@@ -214,7 +218,6 @@ namespace force_field
 #endif
         }
       }
-      
     }
     //*/
 
@@ -304,7 +307,7 @@ namespace force_field
      }
 
     */
-   atom_data->virialForce += virialLocal;
+    atom_data->virialForce += virialLocal;
   }
 
 } // force_field

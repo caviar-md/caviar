@@ -65,7 +65,7 @@ namespace force_field
       }
       else if (string_cmp(t, "lambda"))
       {
-        GET_A_STDVECTOR_STDVECTOR_REAL_ELEMENT_R(lambda,1.0)
+        GET_A_STDVECTOR_STDVECTOR_REAL_ELEMENT_R(lambda, 1.0)
         if (vector_value < 0)
           error->all(FC_FILE_LINE_FUNC_PARSE, "Sigma have to be non-negative.");
         lambda_is_set = true;
@@ -120,12 +120,14 @@ namespace force_field
         atom_data_type_max = t;
     }
 
-    if(lambda_is_set)
+    if (lambda_is_set)
     {
-      if (lambda.size() <= atom_data_type_max) lambda.resize(atom_data_type_max+1);
+      if (lambda.size() <= atom_data_type_max)
+        lambda.resize(atom_data_type_max + 1);
       for (unsigned int i = 0; i < lambda.size(); ++i)
       {
-        if (lambda[i].size() <= atom_data_type_max) lambda[i].resize(atom_data_type_max+1, 1.0);
+        if (lambda[i].size() <= atom_data_type_max)
+          lambda[i].resize(atom_data_type_max + 1, 1.0);
       }
     }
   }
@@ -139,12 +141,11 @@ namespace force_field
     const auto &pos = atom_data->atom_struct_owned.position;
 
     const auto &nlist = neighborlist->neighlist;
-    //auto &mol_index = atom_data->atom_struct_owned.molecule_index;
+    // auto &mol_index = atom_data->atom_struct_owned.molecule_index;
 
     double virialLocal = 0;
 
     bool get_pressure_process = atom_data->get_pressure_process();
-
 
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
@@ -158,7 +159,7 @@ namespace force_field
       const auto type_i = atom_data->atom_struct_owned.type[i];
       const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
       const auto charge_i = atom_data->atom_type_params.charge[type_i];
-      //const auto mol_index_i = mol_index[i];
+      // const auto mol_index_i = mol_index[i];
       int id_i = atom_data->atom_struct_owned.id[i];
       const auto mol_index_i = atom_data->atom_struct_owned.molecule_index[i];
 
@@ -168,24 +169,25 @@ namespace force_field
         Vector<Real_t> pos_j;
         Real_t type_j, mass_inv_j, charge_j;
         int id_j;
+        int mol_index_j;
+
         if (is_ghost)
         {
           j -= nlist.size();
           pos_j = atom_data->atom_struct_ghost.position[j];
           type_j = atom_data->atom_struct_ghost.type[j];
           id_j = atom_data->atom_struct_ghost.id[j];
+          mol_index_j = atom_data->atom_struct_ghost.molecule_index[j];
         }
         else
         {
           pos_j = atom_data->atom_struct_owned.position[j];
           type_j = atom_data->atom_struct_owned.type[j];
           id_j = atom_data->atom_struct_owned.id[j];
+          mol_index_j = atom_data->atom_struct_owned.molecule_index[j];
         }
-        charge_j = atom_data->atom_type_params.charge[type_j];
-        mass_inv_j = atom_data->atom_type_params.mass_inv[type_j];
-        const auto mol_index_j = atom_data->atom_struct_owned.molecule_index[j];
 
-        //const auto mol_index_j = mol_index[j];
+        charge_j = atom_data->atom_type_params.charge[type_j];
 
         const auto dr = pos_j - pos[i];
 
@@ -197,7 +199,7 @@ namespace force_field
 
         auto forceCoef = -k_electrostatic * charge_i * charge_j / (dr_sq * dr_norm) * (1.0 - std::pow(dr_norm / cutoff, beta + 1));
 
-        if (lambda_is_set) 
+        if (lambda_is_set)
         {
           if (mol_index_i == mol_index_j)
           {
@@ -210,17 +212,18 @@ namespace force_field
         // const auto force = k_electrostatic * charge_i * charge_j * dr / (dr_sq * dr_norm);
         // const auto force_shifted = force * (1.0 - std::pow(dr_norm / cutoff, beta + 1));
 
-        //if ((mol_index_i == -1) || (mol_index_i != mol_index_j))        
+        // if ((mol_index_i == -1) || (mol_index_i != mol_index_j))
         if (id_i < id_j)
         {
           virialLocal += -forceCoef * dr_sq;
         }
-        
 
         atom_data->atom_struct_owned.acceleration[i] += force_shifted * mass_inv_i;
 
         if (!is_ghost)
         {
+          mass_inv_j = atom_data->atom_type_params.mass_inv[type_j];
+
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp atomic
           atom_data->atom_struct_owned.acceleration[j].x -= force_shifted.x * mass_inv_j;
@@ -248,7 +251,6 @@ namespace force_field
     }
 
     atom_data->virialForce += virialLocal;
-
   }
 
 } // force_field

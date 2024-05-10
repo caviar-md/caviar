@@ -388,6 +388,7 @@ namespace force_field
         Vector<Real_t> pos_j;
         Real_t type_j, mass_inv_j;
         int id_j;
+        int mol_index_j;
 
         if (is_ghost)
         {
@@ -395,22 +396,19 @@ namespace force_field
           pos_j = atom_data->atom_struct_ghost.position[j];
           type_j = atom_data->atom_struct_ghost.type[j];
           id_j = atom_data->atom_struct_ghost.id[j];
+          mol_index_j = atom_data->atom_struct_ghost.molecule_index[j];
         }
         else
         {
           pos_j = atom_data->atom_struct_owned.position[j];
           type_j = atom_data->atom_struct_owned.type[j];
           id_j = atom_data->atom_struct_owned.id[j];
+          mol_index_j = atom_data->atom_struct_owned.molecule_index[j];
         }
-        mass_inv_j = atom_data->atom_type_params.mass_inv[type_j];
 
-
-        const auto mol_index_j = atom_data->atom_struct_owned.molecule_index[j];
 
         if (ignore_intra_molecule && (mol_index_i == mol_index_j))        
           continue;        
-
-        //const auto mol_index_j = mol_index[j];
 
         const auto dr = pos_j - pos_i;
 
@@ -456,6 +454,7 @@ namespace force_field
         }
         auto force = forceCoef * dr;
 
+
         atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
         
         // if (atom_data->pressure_process)
@@ -463,6 +462,7 @@ namespace force_field
 
         if (!is_ghost)
         {
+          mass_inv_j = atom_data->atom_type_params.mass_inv[type_j];
 
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp atomic
