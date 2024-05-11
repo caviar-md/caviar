@@ -145,6 +145,20 @@ namespace force_field
 
           const auto type_j = atom_data->atom_struct_owned.type[j];
 
+          double lambda_coef = 1.0;
+
+          const auto mol_index_j = atom_data->atom_struct_owned.molecule_index[j];
+
+          if (lambda_is_set)
+          {
+            if (mol_index_i == mol_index_j)
+            {
+              if (lambda[type_i][type_j] == 0.0)
+                continue;
+              lambda_coef *= lambda[type_i][type_j];
+            }
+          }
+
           const auto mass_inv_j = atom_data->atom_type_params.mass_inv[type_j];
           const auto charge_j = atom_data->atom_type_params.charge[type_j];
           int id_j = atom_data->atom_struct_owned.id[i];
@@ -157,16 +171,8 @@ namespace force_field
 
           const auto dr_sq = dr * dr;
           const auto dr_norm = std::sqrt(dr_sq);
-          auto forceCoef = -k_electrostatic * charge_i * charge_j / (dr_sq * dr_norm);
-          const auto mol_index_j = atom_data->atom_struct_owned.molecule_index[j];
+          auto forceCoef = -lambda_coef * k_electrostatic * charge_i * charge_j / (dr_sq * dr_norm);
 
-          if (lambda_is_set)
-          {
-            if (mol_index_i == mol_index_j)
-            {
-              forceCoef *= lambda[type_i][type_j];
-            }
-          }
           // const auto force = k_electrostatic * charge_i * charge_j * dr / (dr_sq * dr_norm);
 
           if (id_i < id_j)

@@ -187,7 +187,17 @@ namespace force_field
           mol_index_j = atom_data->atom_struct_owned.molecule_index[j];
         }
 
-        charge_j = atom_data->atom_type_params.charge[type_j];
+        double lambda_coef = 1.0;
+
+        if (lambda_is_set)
+        {
+          if (mol_index_i == mol_index_j)
+          {
+            if (lambda[type_i][type_j] == 0.0)
+              continue;
+            lambda_coef *= lambda[type_i][type_j];
+          }
+        }
 
         const auto dr = pos_j - pos[i];
 
@@ -195,17 +205,12 @@ namespace force_field
 
         if (dr_sq >= cutoff_sq)
           continue;
+
+        charge_j = atom_data->atom_type_params.charge[type_j];
+
         const auto dr_norm = std::sqrt(dr_sq);
 
-        auto forceCoef = -k_electrostatic * charge_i * charge_j / (dr_sq * dr_norm) * (1.0 - std::pow(dr_norm / cutoff, beta + 1));
-
-        if (lambda_is_set)
-        {
-          if (mol_index_i == mol_index_j)
-          {
-            forceCoef *= lambda[type_i][type_j];
-          }
-        }
+        auto forceCoef = -lambda_coef * k_electrostatic * charge_i * charge_j / (dr_sq * dr_norm) * (1.0 - std::pow(dr_norm / cutoff, beta + 1));
 
         const auto force_shifted = forceCoef * dr;
 

@@ -105,13 +105,6 @@ namespace force_field
         if (k_electrostatic < 0)
           error->all(FC_FILE_LINE_FUNC_PARSE, "'k_electrostatic' has to be non-negative.");
       }
-      else if (string_cmp(t, "lambda"))
-      {
-        GET_A_STDVECTOR_STDVECTOR_REAL_ELEMENT_R(lambda,1.0)
-        if (vector_value < 0)
-          error->all(FC_FILE_LINE_FUNC_PARSE, "Sigma have to be non-negative.");
-        lambda_is_set = true;
-      }
       else if (string_cmp(t, "epsilon_dipole"))
       {
         GET_OR_CHOOSE_A_REAL(epsilon_dipole, "", "")
@@ -162,14 +155,7 @@ namespace force_field
         atom_data_type_max = t;
     }
 
-    if(lambda_is_set)
-    {
-      if (lambda.size() <= atom_data_type_max) lambda.resize(atom_data_type_max+1);
-      for (unsigned int i = 0; i < lambda.size(); ++i)
-      {
-        if (lambda[i].size() <= atom_data_type_max) lambda[i].resize(atom_data_type_max+1, 1.0);
-      }
-    }
+
   }
 
   void Electrostatic_ewald_k::calculate_acceleration()
@@ -177,7 +163,6 @@ namespace force_field
     FC_OBJECT_VERIFY_SETTINGS
 
     initialize();
-
 
     /* XXX working scheme but of order N^2
       const auto &pos = atom_data -> atom_struct_owned.position;
@@ -218,9 +203,9 @@ namespace force_field
 #endif
       for (unsigned int i = 0; i < pos.size(); ++i)
       {
-        #ifdef CAVIAR_WITH_MPI
-    if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
-      continue;
+#ifdef CAVIAR_WITH_MPI
+        if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+          continue;
 #endif
 
         const auto type_i = atom_data->atom_struct_owned.type[i];
@@ -231,7 +216,6 @@ namespace force_field
         const auto sum_k = FC_4PI * field_k_coef[k] * k_vector[k] * sum_j;
 
         auto force = k_electrostatic * charge_i * l_xyz_inv * sum_k;
-        if (lambda_is_set) force *= lambda[type_i][type_i];
 
         if (dipole)
         {
@@ -307,7 +291,6 @@ namespace force_field
      }
 
     */
-
   }
 
 } // force_field

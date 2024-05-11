@@ -162,12 +162,25 @@ namespace force_field
           id_j = atom_data->atom_struct_owned.id[j];
           mol_index_j = atom_data->atom_struct_owned.molecule_index[j];
         }
+        double lambda_coef = 1.0;
 
-        const auto charge_j = atom_data->atom_type_params.charge[type_j];
+        if (lambda_is_set)
+        {
+          if (mol_index_i == mol_index_j)
+          {
+            if (lambda[type_i][type_j] == 0.0)
+              continue;
+            lambda_coef *= lambda[type_i][type_j];
+          }
+        }
+
         const auto r_ij = pos_j - pos_i;
 
         if (r_ij.x == 0 && r_ij.y == 0 && r_ij.z == 0)
           continue;
+
+        const auto charge_j = atom_data->atom_type_params.charge[type_j];
+
 
         const auto rijml = r_ij;
         const auto rijml_sq = rijml * rijml;
@@ -182,15 +195,8 @@ namespace force_field
 
         const auto sum_r_x = (2 * alpha * FC_PIS_INV * std::exp(-alpha_sq * rijml_sq) + std::erfc(erfc_arg) / rijml_norm) * (1.0 / rijml_sq);
 
-        auto forceCoef = -k_electrostatic * charge_i * charge_j * sum_r_x;
+        auto forceCoef = -lambda_coef * k_electrostatic * charge_i * charge_j * sum_r_x;
 
-        if (lambda_is_set)
-        {
-          if (mol_index_i == mol_index_j)
-          {
-            forceCoef *= lambda[type_i][type_j];
-          }
-        }
         ////
 
         if (id_i < id_j)
