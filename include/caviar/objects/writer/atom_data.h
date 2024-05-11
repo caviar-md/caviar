@@ -120,8 +120,8 @@ namespace writer
     int64_t msd_step = 100; // number of steps to output data
     int64_t volume_step = 100;
 
-    int msd_type; // type of atom that should be used in msd calculations.
-    int msd_initial_step = 0;
+    int msd_type = -1; // type of atom that should be used in msd calculations. If '-1' all of the atoms will be calculated
+    int msd_initial_step = 0; // At this step, msd_initial_position will be generated
 
     std::ofstream ofs_energy;
     std::ofstream ofs_energy_mpi;

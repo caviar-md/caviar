@@ -244,7 +244,6 @@ namespace writer
       else if (string_cmp(t, "msd_initial_step"))
       {
         GET_OR_CHOOSE_A_INT(msd_initial_step, "", "")
-        // output_msd = true;
       }
       else if (string_cmp(t, "volume_step"))
       {
@@ -321,6 +320,10 @@ namespace writer
         FC_CHECK_OBJECT_CLASS_NAME(unique, it, time_function_3d)
         unique::Time_function_3d *a = dynamic_cast<unique::Time_function_3d *>(object_container->unique[it->second.index]);
         position_offset = a;
+      }
+      else if (string_cmp(t, "msd_type"))
+      {
+        GET_OR_CHOOSE_A_INT(msd_type, "", "")
       }
       else
         FC_ERR_UNDEFINED_VAR(t)

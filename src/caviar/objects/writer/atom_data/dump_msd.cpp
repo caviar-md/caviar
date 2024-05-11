@@ -67,27 +67,37 @@ namespace writer
 
 
     double sum_dr_sq = 0.0;
+    caviar::Vector<int> domain_cross {0, 0, 0};
+    int msd_particle_count = 0;
     for (unsigned int j = 0; j < pos_size; ++j)
     {
-      if (type[j] != static_cast<unsigned int>(msd_type))
+      if (msd_type > -1 && type[j] != static_cast<unsigned int>(msd_type))
         continue;
+
       auto dr = msd_initial_position[j] - pos[j];
 
       dr.x += atom_data->atom_struct_owned.msd_domain_cross[j].x * domain->size_global.x;
       dr.y += atom_data->atom_struct_owned.msd_domain_cross[j].y * domain->size_global.y;
       dr.z += atom_data->atom_struct_owned.msd_domain_cross[j].z * domain->size_global.z;
 
+      domain_cross.x += atom_data->atom_struct_owned.msd_domain_cross[j].x;
+      domain_cross.y += atom_data->atom_struct_owned.msd_domain_cross[j].x;
+      domain_cross.z += atom_data->atom_struct_owned.msd_domain_cross[j].x;
       // domain-> periodic_distance(dr);
 
       auto dr_sq = dr * dr;
       sum_dr_sq += dr_sq;
+
+      msd_particle_count++;
     }
+    double msd = 0;
+    if (msd_particle_count > 0)
+      msd = sum_dr_sq / msd_particle_count;
 
-    double msd = sum_dr_sq / pos_size;
-
+    int domain_cross_tot = domain_cross.x + domain_cross.y+ domain_cross.z;
     if (my_mpi_rank == 0)
     {
-      ofs_msd << i << " " << t << " " << msd << std::endl;
+      ofs_msd << i << " " << t << " " << msd << " " << domain_cross.x << " " << domain_cross.y << " " << domain_cross.z << " " << domain_cross_tot << std::endl;
     }
   }
 
