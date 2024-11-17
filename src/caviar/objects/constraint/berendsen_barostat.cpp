@@ -19,7 +19,7 @@
 #include "caviar/objects/force_field.h"
 #include "caviar/objects/domain.h"
 #include "caviar/utility/interpreter_io_headers.h"
-
+#include <fstream>
 CAVIAR_NAMESPACE_OPEN
 
 namespace constraint
@@ -176,15 +176,17 @@ namespace constraint
     if (timestep % step != 0) return;
     FC_OBJECT_VERIFY_SETTINGS
 
+
     auto p = get_pressure();
-
-    if (p <= 0) return;
-
-    //std::cout << "p: " << p << std::endl;
-
-    double xi = std::pow( 1.0 - kappa * (dt / tp) * (pressure - p), 0.333333333333333 );
-    
+      
+    double coef = kappa * (dt * step / tp) *  0.333333333333333;
+        double xi = 1.0 - coef * (pressure - p) ;
     //std::cout << "xi_calc: " << xi << std::endl;
+
+  std::ofstream outfile;
+
+  outfile.open("o_xi.txt", std::ios_base::app); // append instead of overwrite
+  outfile << timestep << " " << (pressure - p) << " "<< xi << "\r\n"; 
 
     double xi_low = 1 - xi_max;
     double xi_high = 1 + xi_max;
