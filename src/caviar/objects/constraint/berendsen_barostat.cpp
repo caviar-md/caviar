@@ -74,17 +74,17 @@ namespace constraint
         GET_OR_CHOOSE_A_INT(step, "", "")
         if (step <= 0)
           error->all(FC_FILE_LINE_FUNC_PARSE, "step have to non-negative.");
-      }   
+      }
       else if (string_cmp(t, "export_data"))
       {
         GET_OR_CHOOSE_A_INT(export_data, "", "")
-      }      
+      }
       else if (string_cmp(t, "ma_window"))
       {
         GET_OR_CHOOSE_A_INT(ma_window, "", "")
         if (ma_window < 0)
           error->all(FC_FILE_LINE_FUNC_PARSE, "ma_window have to non-negative.");
-      }      
+      }
       else if (string_cmp(t, "ma_type"))
       {
         GET_OR_CHOOSE_A_INT(ma_type, "", "")
@@ -113,9 +113,13 @@ namespace constraint
         domain = object_container->domain[it->second.index];
         scale_axis = domain->boundary_condition;
       }
-        else if (string_cmp(t, "scale_axis") || string_cmp(t, "bc"))
+      else if (string_cmp(t, "scale_axis") || string_cmp(t, "bc"))
       {
         GET_OR_CHOOSE_A_INT_3D_VECTOR(scale_axis, "", "")
+      }
+      else if (string_cmp(t, "output_xi"))
+      {
+        GET_OR_CHOOSE_A_INT(output_xi, "", "")
       }
       else
       {
@@ -125,32 +129,32 @@ namespace constraint
     return in_file;
   }
 
-  double Berendsen_barostat::updateMovingAverage(double newData, double prevAvg, int numDataPoints) 
+  double Berendsen_barostat::updateMovingAverage(double newData, double prevAvg, int numDataPoints)
   {
-      // Calculate the new moving average using the previous average and the new data point
-      return prevAvg + (newData - prevAvg) / numDataPoints;
+    // Calculate the new moving average using the previous average and the new data point
+    return prevAvg + (newData - prevAvg) / numDataPoints;
   }
 
   double Berendsen_barostat::get_pressure()
   {
     double p = atom_data->pressure();
-    switch(ma_type)
+    switch (ma_type)
     {
-      default:
-      case 0:
+    default:
+    case 0:
       return p;
 
-      case 1:
-      {
-        ma_current = updateMovingAverage(p, ma_current, ma_counter > ma_window ? ma_window : ma_counter);
-        ma_counter++;
-        if (ma_counter > 2000000) ma_counter = ma_window;
-        if (export_data)
-          ofs_export << ma_counter << " " << p << " " << ma_current << "\n";
-        return ma_current;
-      }
-
-    }    
+    case 1:
+    {
+      ma_current = updateMovingAverage(p, ma_current, ma_counter > ma_window ? ma_window : ma_counter);
+      ma_counter++;
+      if (ma_counter > 2000000)
+        ma_counter = ma_window;
+      if (export_data)
+        ofs_export << ma_counter << " " << p << " " << ma_current << "\n";
+      return ma_current;
+    }
+    }
   }
 
   void Berendsen_barostat::verify_settings()
@@ -166,46 +170,49 @@ namespace constraint
       error->all(FC_FILE_LINE_FUNC, "kappa is not set.");
     if (pressure < 0.0)
       error->all(FC_FILE_LINE_FUNC, "pressure is not set.");
-    
+
     if (export_data)
       ofs_export.open("o_berendsen_barostat");
   }
 
   void Berendsen_barostat::apply_barostat(int64_t timestep, bool &fix_position_needed)
-  {     
-    if (timestep % step != 0) return;
+  {
+    if (timestep % step != 0)
+      return;
     FC_OBJECT_VERIFY_SETTINGS
 
-
     auto p = get_pressure();
-      
-    double coef = kappa * (dt * step / tp) *  0.333333333333333;
-        double xi = 1.0 - coef * (pressure - p) ;
-    //std::cout << "xi_calc: " << xi << std::endl;
 
-  std::ofstream outfile;
+    double coef = kappa * (dt * step / tp) * 0.333333333333333;
+    double xi = 1.0 - coef * (pressure - p);
 
-  outfile.open("o_xi.txt", std::ios_base::app); // append instead of overwrite
-  outfile << timestep << " " << (pressure - p) << " "<< xi << "\r\n"; 
+    if (output_xi > 0)
+    {
+      std::ofstream outfile;
+
+      outfile.open("o_xi.txt", std::ios_base::app); // append instead of overwrite
+      outfile << timestep << " " << (pressure - p) << " " << xi << "\r\n";
+    }
 
     double xi_low = 1 - xi_max;
     double xi_high = 1 + xi_max;
 
     // to avoid crashes due to large or small scalings
-    if (xi < xi_low) xi = xi_low ;
-    if (xi > xi_high) xi = xi_high;
+    if (xi < xi_low)
+      xi = xi_low;
+    if (xi > xi_high)
+      xi = xi_high;
 
-    //std::cout << "xi_fix: " << xi << std::endl;
+    // std::cout << "xi_fix: " << xi << std::endl;
 
-    domain-> scale_position(xi, scale_axis);
+    domain->scale_position(xi, scale_axis);
 
     atom_data->scale_position(xi, scale_axis);
 
     for (unsigned int i = 0; i < force_field.size(); ++i)
       force_field[i]->scale_position(xi, scale_axis);
-    
-    fix_position_needed = true;
 
+    fix_position_needed = true;
   }
 
 } // constraint

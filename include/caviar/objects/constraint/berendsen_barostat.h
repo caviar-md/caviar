@@ -98,8 +98,10 @@ namespace constraint
         */
         double ma_current = 0.0;
 
-
-        
+        /**
+         * Moving Average current value
+        */
+        int output_xi = 0;
 
         /**
          * Maximum value of scaling
