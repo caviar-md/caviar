@@ -41,6 +41,52 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 LIST(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
 
+# ======================================= 
+# ===== set default catched variables === 
+# =======================================
+
+# Default to Release if no build type is set
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    message(STATUS "No build type specified. Defaulting to Release.")
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the build type" FORCE)
+endif()
+
+# Let users pick valid build types in ccmake/cmake-gui
+set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "RelWithDebInfo" "MinSizeRel")
+
+# Enable debug build of CAVIAR (adds extra checks, logging, assertions)
+set(CAVIAR_DEBUG_VERSION OFF CACHE BOOL "Build CAVIAR with debugging enabled")
+
+# Enable OpenMP parallelization in CAVIAR
+set(CAVIAR_WITH_OPENMP OFF CACHE BOOL "Enable OpenMP parallelization")
+
+# Enable MPI parallelization in CAVIAR
+set(CAVIAR_WITH_MPI OFF CACHE BOOL "Enable MPI parallelization")
+
+# Use a single MPI domain for molecular dynamics (experimental mode)
+set(CAVIAR_SINGLE_MPI_MD_DOMAIN OFF CACHE BOOL "Use a single MPI domain for MD simulation")
+
+# Enable support for deal.II finite element library
+set(CAVIAR_WITH_DEALII OFF CACHE BOOL "Enable deal.II integration")
+
+# Enable deal.II with MPI support
+set(CAVIAR_WITH_DEALII_MPI OFF CACHE BOOL "Enable deal.II with MPI support")
+
+# Enable Eigen linear algebra library support
+set(CAVIAR_WITH_EIGEN OFF CACHE BOOL "Enable Eigen library support")
+
+# Path to Eigen installation (if not found automatically)
+set(EIGEN_DIR "" CACHE PATH "Path to Eigen installation")
+
+# Enable muParser mathematical expression parser
+set(CAVIAR_WITH_MUPARSER OFF CACHE BOOL "Enable muParser support")
+
+# Path to muParser installation (if not found automatically)
+set(MUPARSER_DIR "" CACHE PATH "Path to muParser installation root")
+
+# Path to muParser include directory (if not found automatically)
+set(MUPARSER_INCLUDE_DIR "" CACHE PATH "Path to muParser include directory")
+
 # ===============================
 # ======= Load all macros =======
 # ===============================
