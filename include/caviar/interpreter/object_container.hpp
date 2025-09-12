@@ -18,8 +18,8 @@
 
 #include "caviar/utility/interpreter_common_headers.hpp"
 
-#include "caviar/utility/vector.hpp"
-#include "caviar/utility/vector2D.hpp"
+#include "caviar/utility/vector3d.hpp"
+#include "caviar/utility/vector2d.hpp"
 #include "caviar/interpreter/object_handler/dictionary.hpp"
 
 #include <vector>
@@ -68,10 +68,10 @@ namespace caviar
       // basic types
       std::vector<int> int_variable;                // -1
       std::vector<double> real_variable;            // -2
-      std::vector<Vector2D<int>> int_2d_vector;     // -3
-      std::vector<Vector2D<double>> real_2d_vector; // -4
-      std::vector<Vector<int>> int_3d_vector;       // -5
-      std::vector<Vector<double>> real_3d_vector;   // -6
+      std::vector<Vector2d<int>> int_2d_vector;     // -3
+      std::vector<Vector2d<double>> real_2d_vector; // -4
+      std::vector<Vector3d<int>> int_3d_vector;       // -5
+      std::vector<Vector3d<double>> real_3d_vector;   // -6
       std::vector<std::string> string_variable;     // -7
       std::vector<bool> boolean_variable;           // -8
       std::vector<std::shared_ptr<std::ofstream>> ofs_objects;

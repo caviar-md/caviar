@@ -33,9 +33,9 @@ namespace caviar
   namespace force_field
   {
 
-    Vector<double> Electrostatic_ewald_k::k_space_field(const int i)
+    Vector3d<double> Electrostatic_ewald_k::k_space_field(const int i)
     {
-      Vector<double> field{0, 0, 0};
+      Vector3d<double> field{0, 0, 0};
       const auto &pos = atom_data->atom_struct_owned.position;
       static std::complex<double> ii(0.0, 1.0);
 
@@ -61,7 +61,7 @@ namespace caviar
       const double sum_jy = std::imag(sum_ky);
       const double sum_jz = std::imag(sum_kz);
 
-      Vector<double> sv{sum_jx, sum_jy, sum_jz};
+      Vector3d<double> sv{sum_jx, sum_jy, sum_jz};
 
       const auto sum = FC_4PI * sv;
 
@@ -70,9 +70,9 @@ namespace caviar
       return field;
     }
 
-    Vector<double> Electrostatic_ewald_k::k_space_field(const Vector<double> &r)
+    Vector3d<double> Electrostatic_ewald_k::k_space_field(const Vector3d<double> &r)
     {
-      Vector<double> field{0, 0, 0};
+      Vector3d<double> field{0, 0, 0};
 
       static std::complex<double> ii(0.0, 1.0);
 
@@ -98,7 +98,7 @@ namespace caviar
       const double sum_jy = std::imag(sum_ky);
       const double sum_jz = std::imag(sum_kz);
 
-      Vector<double> sv{sum_jx, sum_jy, sum_jz};
+      Vector3d<double> sv{sum_jx, sum_jy, sum_jz};
 
       const auto sum = FC_4PI * sv;
 
@@ -107,12 +107,12 @@ namespace caviar
       return field;
     }
 
-    Vector<double> Electrostatic_ewald_k::dipole_field()
+    Vector3d<double> Electrostatic_ewald_k::dipole_field()
     {
       return dipole_field_vector;
     }
 
-    Vector<double> Electrostatic_ewald_k::field(int i)
+    Vector3d<double> Electrostatic_ewald_k::field(int i)
     {
       auto field = k_space_field(i);
       if (dipole)
@@ -120,7 +120,7 @@ namespace caviar
       return field;
     }
 
-    Vector<double> Electrostatic_ewald_k::field(const Vector<double> &r)
+    Vector3d<double> Electrostatic_ewald_k::field(const Vector3d<double> &r)
     {
       auto field = k_space_field(r);
       if (dipole)

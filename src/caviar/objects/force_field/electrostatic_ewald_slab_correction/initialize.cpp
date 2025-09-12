@@ -84,7 +84,7 @@ namespace caviar
     {
 
       const auto &pos = atom_data->atom_struct_owned.position;
-      auto ds = Vector<double>{0, 0, 0};
+      auto ds = Vector3d<double>{0, 0, 0};
       for (unsigned int j = 0; j < pos.size(); ++j)
       {
 #ifdef CAVIAR_WITH_MPI
@@ -99,18 +99,18 @@ namespace caviar
 
       if (slab_normal_axis == 0)
       {
-        dipole_field_vector = Vector<double>{dfv.x, 0, 0};
-        dipole_sum = Vector<double>{ds.x, 0, 0};
+        dipole_field_vector = Vector3d<double>{dfv.x, 0, 0};
+        dipole_sum = Vector3d<double>{ds.x, 0, 0};
       }
       if (slab_normal_axis == 1)
       {
-        dipole_field_vector = Vector<double>{0, dfv.y, 0};
-        dipole_sum = Vector<double>{0, ds.y, 0};
+        dipole_field_vector = Vector3d<double>{0, dfv.y, 0};
+        dipole_sum = Vector3d<double>{0, ds.y, 0};
       }
       if (slab_normal_axis == 2)
       {
-        dipole_field_vector = Vector<double>{0, 0, dfv.z};
-        dipole_sum = Vector<double>{0, 0, ds.z};
+        dipole_field_vector = Vector3d<double>{0, 0, dfv.z};
+        dipole_sum = Vector3d<double>{0, 0, ds.z};
       }
     }
 

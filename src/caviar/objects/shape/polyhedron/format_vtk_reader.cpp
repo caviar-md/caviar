@@ -112,7 +112,7 @@ namespace caviar
                     z = t1.int_value;
                   else
                     z = t1.real_value;
-                  vertex.push_back(Vector<double>{x, y, z});
+                  vertex.push_back(Vector3d<double>{x, y, z});
                 }
                 ++xyz;
                 if (xyz == 3)

@@ -17,7 +17,7 @@
 #pragma once
 
 #include "caviar/objects/unique.hpp"
-#include "caviar/utility/vector.hpp"
+#include "caviar/utility/vector3d.hpp"
 #include <vector>
 
 namespace caviar
@@ -41,11 +41,11 @@ namespace caviar
       ~Atom();
       bool read(caviar::interpreter::Parser *);
       void verify_settings();
-      Vector<double> pos_tot() const;
-      Vector<double> vel_tot() const;
+      Vector3d<double> pos_tot() const;
+      Vector3d<double> vel_tot() const;
 
       void output_xyz(std::ofstream &);
-      void extract_all_e_pos_vel(std::vector<int> &, std::vector<Vector<double>> &, std::vector<Vector<double>> &);
+      void extract_all_e_pos_vel(std::vector<int> &, std::vector<Vector3d<double>> &, std::vector<Vector3d<double>> &);
 
       bool part_of_a_molecule;
       Molecule *upper_level_molecule;
@@ -53,7 +53,7 @@ namespace caviar
       bool part_of_a_atom_group;
       Atom_group *upper_level_atom_group;
 
-      Vector<double> position, velocity;
+      Vector3d<double> position, velocity;
       unsigned int type;
     };
 

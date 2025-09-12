@@ -49,14 +49,14 @@ namespace caviar
             ++num_of_charged;
         }
 
-        image.position.resize(num_of_charged, Vector<double>{0, 0, 0});
+        image.position.resize(num_of_charged, Vector3d<double>{0, 0, 0});
         image.charge.resize(num_of_charged, 0);
       }
       else
       {
         if (image.position.size() < pos_size)
         {
-          image.position.resize(pos_size, Vector<double>{0, 0, 0});
+          image.position.resize(pos_size, Vector3d<double>{0, 0, 0});
           image.charge.resize(pos_size, 0);
         }
       }

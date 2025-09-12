@@ -471,7 +471,7 @@ namespace caviar
         // extract the atoms of the Molecule //
         //-------------------------------------
         std::vector<int> types;
-        std::vector<Vector<double>> pos, vel;
+        std::vector<Vector3d<double>> pos, vel;
 
         m.extract_all_e_pos_vel(types, pos, vel);
 
@@ -479,7 +479,7 @@ namespace caviar
         // check whether the center of mass of atoms of the molecule
         // is inside the simulation box or not. If not, ignore the molecule
         //--------------------------------------------------------------
-        // Vector<double> pos_cm(0, 0, 0);
+        // Vector3d<double> pos_cm(0, 0, 0);
         // for (unsigned int i = 0; i < pos.size(); ++i)
         // {
         //     pos_cm += pos[i];

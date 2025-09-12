@@ -75,12 +75,12 @@ namespace caviar
       /**
        * The anchor point position, i.e., the constraint position
        */
-      caviar::Vector<double> position{0, 0, 0};
+      caviar::Vector3d<double> position{0, 0, 0};
 
       /**
        * The spring
        */
-      caviar::Vector<double> dr;
+      caviar::Vector3d<double> dr;
 
       /**
        * Count number of files which is produced

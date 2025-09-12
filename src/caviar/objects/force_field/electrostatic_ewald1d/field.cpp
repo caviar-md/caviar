@@ -29,13 +29,13 @@ namespace caviar
 
     //======= total potential
 
-    Vector<double> Electrostatic_ewald1d::field(const Vector<double> &r)
+    Vector3d<double> Electrostatic_ewald1d::field(const Vector3d<double> &r)
     {
       FC_OBJECT_VERIFY_SETTINGS
       return field_r(r) + field_k(r);
     }
 
-    Vector<double> Electrostatic_ewald1d::field(const int i)
+    Vector3d<double> Electrostatic_ewald1d::field(const int i)
     {
       FC_OBJECT_VERIFY_SETTINGS
       return field_r(i) + field_k(i);
@@ -43,10 +43,10 @@ namespace caviar
 
     //======= short range
 
-    Vector<double> Electrostatic_ewald1d::field_r(const Vector<double> &r)
+    Vector3d<double> Electrostatic_ewald1d::field_r(const Vector3d<double> &r)
     {
 
-      Vector<double> field{0, 0, 0};
+      Vector3d<double> field{0, 0, 0};
 
       const auto &pos = atom_data->atom_struct_owned.position;
       const unsigned pos_size = pos.size();
@@ -70,7 +70,7 @@ namespace caviar
           unsigned int j = binlist[nb_ij.x][nb_ij.y][nb_ij.z][i];
 
           bool is_ghost = j >= pos_size;
-          Vector<double> pos_j;
+          Vector3d<double> pos_j;
           double type_j;
           if (is_ghost)
           {
@@ -105,9 +105,9 @@ namespace caviar
       ;
     }
 
-    Vector<double> Electrostatic_ewald1d::field_r(const int i)
+    Vector3d<double> Electrostatic_ewald1d::field_r(const int i)
     {
-      Vector<double> field{0, 0, 0};
+      Vector3d<double> field{0, 0, 0};
 
       error->all("not implemented. needs fixs for neighlist or maybe impossible.");
 
@@ -127,7 +127,7 @@ namespace caviar
         auto j = nlist[i][k];
         double coef = 2.0; // ewald: 'coef=2' for owned in 'neighlist'. Not for binlist.
         bool is_ghost = j >= pos_size;
-        Vector<double> pos_j;
+        Vector3d<double> pos_j;
         double type_j;
         if (is_ghost)
         {
@@ -162,9 +162,9 @@ namespace caviar
 
     //======= long range
 
-    Vector<double> Electrostatic_ewald1d::field_k(const Vector<double> &r)
+    Vector3d<double> Electrostatic_ewald1d::field_k(const Vector3d<double> &r)
     {
-      Vector<double> field{0, 0, 0};
+      Vector3d<double> field{0, 0, 0};
 
       const auto &pos = atom_data->atom_struct_owned.position;
       const auto lattice_vec_size = lattice_vec.size();
@@ -181,7 +181,7 @@ namespace caviar
         const auto type_j = atom_data->atom_struct_owned.type[j];
         const auto charge_j = atom_data->atom_type_params.charge[type_j];
 
-        Vector<double> sum{0, 0, 0};
+        Vector3d<double> sum{0, 0, 0};
         for (unsigned int k = 0; k < lattice_vec_size; ++k)
         {
           const auto dr = r - pos[j] + lattice_vec[k];
@@ -197,9 +197,9 @@ namespace caviar
       return field * k_electrostatic;
     }
 
-    Vector<double> Electrostatic_ewald1d::field_k(const int i)
+    Vector3d<double> Electrostatic_ewald1d::field_k(const int i)
     {
-      Vector<double> field{0, 0, 0};
+      Vector3d<double> field{0, 0, 0};
 
       const auto &pos = atom_data->atom_struct_owned.position;
       const auto lattice_vec_size = lattice_vec.size();
@@ -216,7 +216,7 @@ namespace caviar
         const auto type_j = atom_data->atom_struct_owned.type[j];
         const auto charge_j = atom_data->atom_type_params.charge[type_j];
 
-        Vector<double> sum{0, 0, 0};
+        Vector3d<double> sum{0, 0, 0};
         for (unsigned int k = 0; k < lattice_vec_size; ++k)
         {
           const auto dr = pos[i] - pos[j] + lattice_vec[k];

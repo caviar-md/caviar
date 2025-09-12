@@ -45,7 +45,7 @@ namespace caviar
 
       double BoundaryValues::potential_of_free_charges(const dealii::Point<3> &p) const
       {
-        const Vector<double> r = {p[0], p[1], p[2]};
+        const Vector3d<double> r = {p[0], p[1], p[2]};
 
         double potential = 0.0;
         if (deal_force->position_offset == nullptr)

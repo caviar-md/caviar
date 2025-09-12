@@ -37,19 +37,19 @@ namespace caviar
       Atom_group();
       ~Atom_group();
       bool read(caviar::interpreter::Parser *);
-      Vector<double> pos_tot() const;
-      Vector<double> vel_tot() const;
+      Vector3d<double> pos_tot() const;
+      Vector3d<double> vel_tot() const;
       void add_atom(const unique::Atom &);
       void add_atom(const unique::Atom &,
-                    caviar::Vector<double> p = caviar::Vector<double>{0, 0, 0},
-                    caviar::Vector<double> v = caviar::Vector<double>{0, 0, 0});
+                    caviar::Vector3d<double> p = caviar::Vector3d<double>{0, 0, 0},
+                    caviar::Vector3d<double> v = caviar::Vector3d<double>{0, 0, 0});
 
       std::vector<unique::Atom> atoms;
 
       bool part_of_a_atom_group;
       Atom_group *upper_level_atom_group;
 
-      Vector<double> position, velocity;
+      Vector3d<double> position, velocity;
     };
 
   } // unique

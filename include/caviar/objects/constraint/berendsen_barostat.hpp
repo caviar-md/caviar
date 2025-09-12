@@ -109,7 +109,7 @@ namespace caviar
             /**
              * The direction of scaling simulation box. It will be done on periodic direction of the domain.
              */
-            caviar::Vector<int> scale_axis;
+            caviar::Vector3d<int> scale_axis;
 
             /**
              * Function to update moving average

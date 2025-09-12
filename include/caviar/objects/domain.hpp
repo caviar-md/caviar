@@ -47,7 +47,7 @@ namespace caviar
      * Used in barostat scaling for geometrical forces.
      *
      */
-    virtual void scale_position(double scale_ratio, caviar::Vector<int> scale_axis);
+    virtual void scale_position(double scale_ratio, caviar::Vector3d<int> scale_axis);
 
     /**
      * calculates process rank from it grid index
@@ -63,7 +63,7 @@ namespace caviar
     virtual double fix_distance_y(double d);
     virtual double fix_distance_z(double d);
 
-    virtual caviar::Vector<double> fix_distance(caviar::Vector<double> v);
+    virtual caviar::Vector3d<double> fix_distance(caviar::Vector3d<double> v);
 
     /**
      * Gives the corrected position in periodic boundary condition. Use case: if an atom of a molecule crossed the  global boundary
@@ -71,9 +71,9 @@ namespace caviar
      * between domain is MPI expensive, we use fix_position to get the correct location of the atoms in cases it is needed, such as
      * when using the dealii force_field and we need all the particles remain inside mesh.
      */
-    virtual caviar::Vector<double> fix_position(caviar::Vector<double> v, caviar::Vector<int> &msd_value, bool &update_verlet_list);
+    virtual caviar::Vector3d<double> fix_position(caviar::Vector3d<double> v, caviar::Vector3d<int> &msd_value, bool &update_verlet_list);
 
-    virtual Vector<double> periodic_distance(const Vector<double>);
+    virtual Vector3d<double> periodic_distance(const Vector3d<double>);
 
     /**
      * Total volume of (mpi) local domain. In non-mpi simulations, local == global
@@ -85,15 +85,15 @@ namespace caviar
      */
     virtual double volume_global();
 
-    Vector<int> boundary_condition;
+    Vector3d<int> boundary_condition;
 
     int grid_index_x, grid_index_y, grid_index_z; // starts from (0) to (nprocs_i-1) ; i=x,y,z
     int nprocs_x, nprocs_y, nprocs_z;             // it can be at least (1) and at most (nprocs)
 
-    Vector<double> lower_global, upper_global;
-    Vector<double> lower_local, upper_local;
+    Vector3d<double> lower_global, upper_global;
+    Vector3d<double> lower_local, upper_local;
 
-    Vector<double> size_local, size_global;
+    Vector3d<double> size_local, size_global;
 
     /**
      * used in MD_MPI case:
@@ -113,7 +113,7 @@ namespace caviar
      */
     std::vector<int> neighborlist_domains;
 
-    Vector<double> half_edge;
+    Vector3d<double> half_edge;
 
   public:
     FC_BASE_OBJECT_COMMON_TOOLS

@@ -51,7 +51,7 @@ namespace caviar
         for (unsigned int j = 0; j < pos_size; ++j)
         {
           msd_initial_position[j] = pos[j];
-          atom_data->atom_struct_owned.msd_domain_cross[j] = Vector<int>{0, 0, 0};
+          atom_data->atom_struct_owned.msd_domain_cross[j] = Vector3d<int>{0, 0, 0};
         }
         if (my_mpi_rank == 0)
           ofs_msd << i << " " << t << " "
@@ -64,7 +64,7 @@ namespace caviar
         error->all(FC_FILE_LINE_FUNC, "  (pos.size != msd_initial_position.size())");
 
       double sum_dr_sq = 0.0;
-      caviar::Vector<int> domain_cross{0, 0, 0};
+      caviar::Vector3d<int> domain_cross{0, 0, 0};
       int msd_particle_count = 0;
       for (unsigned int j = 0; j < pos_size; ++j)
       {

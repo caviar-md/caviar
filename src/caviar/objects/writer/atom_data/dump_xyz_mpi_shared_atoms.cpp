@@ -169,7 +169,7 @@ namespace caviar
       if (my_mpi_rank != 0)
         return;
 
-      Vector<double> p_o{0, 0, 0};
+      Vector3d<double> p_o{0, 0, 0};
 
       if (position_offset != nullptr)
         p_o = position_offset->current_value;

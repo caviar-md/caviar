@@ -87,14 +87,14 @@ namespace caviar
       void output_field_vectors(caviar::interpreter::Parser *);
       void output_potential_values(caviar::interpreter::Parser *);
 
-      double potential(const Vector<double> &v); // Gives the total potential (sum of smooth and singular).
+      double potential(const Vector3d<double> &v); // Gives the total potential (sum of smooth and singular).
       double potential(const int);
 
       /**
        * Used in barostat scaling for geometrical forces.
        *
        */
-      void scale_position(double scale_ratio, caviar::Vector<int> scale_axis);
+      void scale_position(double scale_ratio, caviar::Vector3d<int> scale_axis);
 
       // simple: a dealii standard Laplace solving process is done in every step.
       // faster: Laplace is solved using dealii::Filtered matrix, in order to get
@@ -165,8 +165,8 @@ namespace caviar
 #error not implemented
 #endif
 
-      dealii::Vector<double> solution;
-      dealii::Vector<double> system_rhs;
+      dealii::Vector3d<double> solution;
+      dealii::Vector3d<double> system_rhs;
 
       int num_quadrature_points;
       int solver_control_maximum_iteration;
@@ -210,7 +210,7 @@ namespace caviar
       int my_mpi_rank, mpi_world_size;
 #endif
 
-      std::vector<Vector<double>> face_center_pos, face_center_field;
+      std::vector<Vector3d<double>> face_center_pos, face_center_field;
       std::vector<double> face_center_potential;
 
       std::vector<caviar::Force_field *> force_field_custom;

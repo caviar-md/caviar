@@ -49,7 +49,7 @@ namespace caviar
       unique::Time_function_3d *velocity_offset = nullptr;
       bool inside;
       double radius;
-      caviar::Vector<double> center;
+      caviar::Vector3d<double> center;
       double young_modulus, dissip_coef;
     };
 

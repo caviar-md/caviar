@@ -202,7 +202,7 @@ namespace caviar
         auto object_container = fptr->object_container;
         auto error = fptr->error;
         double radius = 1.0;
-        caviar::Vector<double> center{0, 0, 0};
+        caviar::Vector3d<double> center{0, 0, 0};
         bool in_file = true;
 
         while (true)
@@ -425,7 +425,7 @@ namespace caviar
                                 const double param2 = 0.03)
       {
 
-        dealii::Vector<float> estimated_error_per_cell(triangulation.n_active_cells());
+        dealii::Vector3d<float> estimated_error_per_cell(triangulation.n_active_cells());
 #if DEALII_VERSION_MAJOR == 8
         KellyErrorEstimator<3>::estimate(dof_handler,
                                          QGauss<3 - 1>(3),

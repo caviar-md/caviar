@@ -143,7 +143,7 @@ namespace caviar
         for (auto j : nlist[i])
         {
           bool is_ghost = j >= pos_size;
-          Vector<double> pos_j;
+          Vector3d<double> pos_j;
           double type_j;
           int id_j;
           int mol_index_j;
@@ -256,7 +256,7 @@ namespace caviar
             //
 
             bool is_ghost = j >= pos_size;
-            Vector<double> pos_j;
+            Vector3d<double> pos_j;
             double type_j;
             if (is_ghost) {
               j -= pos_size;

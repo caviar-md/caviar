@@ -30,7 +30,7 @@ namespace caviar
   {
 
     Electrostatic_short_range::Electrostatic_short_range(CAVIAR *fptr) : Force_field{fptr},
-                                                                         k_electrostatic{1.0}, external_field{Vector<double>{0, 0, 0}},
+                                                                         k_electrostatic{1.0}, external_field{Vector3d<double>{0, 0, 0}},
                                                                          beta{1.0}, initialized{false}
     {
       FC_OBJECT_INITIALIZE_INFO
@@ -167,7 +167,7 @@ namespace caviar
         for (auto j : nlist[i])
         {
           bool is_ghost = j >= nlist.size();
-          Vector<double> pos_j;
+          Vector3d<double> pos_j;
           double type_j, mass_inv_j, charge_j;
           int id_j;
           int mol_index_j;

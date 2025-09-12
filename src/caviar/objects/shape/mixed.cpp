@@ -100,7 +100,7 @@ namespace caviar
 #undef AND_OR_INSIDE_OUTSIDE
     }
 
-    bool Mixed::is_inside(const Vector<double> &v)
+    bool Mixed::is_inside(const Vector3d<double> &v)
     {
       bool tmp;
 
@@ -137,7 +137,7 @@ namespace caviar
       return tmp;
     }
 
-    bool Mixed::is_inside(const Vector<double> &v, const double r)
+    bool Mixed::is_inside(const Vector3d<double> &v, const double r)
     {
       bool tmp;
 
@@ -174,7 +174,7 @@ namespace caviar
       return tmp;
     }
 
-    bool Mixed::in_contact(const Vector<double> &v, const double r, Vector<double> &contact_vector)
+    bool Mixed::in_contact(const Vector3d<double> &v, const double r, Vector3d<double> &contact_vector)
     {
       std::string s = "incomplete function:";
       s += __FILE__ + std::to_string(__LINE__) + __func__;

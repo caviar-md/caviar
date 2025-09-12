@@ -45,17 +45,17 @@ namespace caviar
   {
   }
 
-  bool Shape::is_outside(const Vector<double> &v)
+  bool Shape::is_outside(const Vector3d<double> &v)
   {
     return !is_inside(v);
   }
 
-  bool Shape::is_outside(const Vector<double> &v, const double r)
+  bool Shape::is_outside(const Vector3d<double> &v, const double r)
   {
     return !is_inside(v, r);
   }
 
-  void Shape::scale_position(double, caviar::Vector<int>)
+  void Shape::scale_position(double, caviar::Vector3d<int>)
   {
     // error->all(FC_FILE_LINE_FUNC, "The scale_position of this force_field is not implemented");
   }

@@ -224,8 +224,8 @@ namespace caviar
           for (int k = 0; k < (int)grid_z->no_points(); ++k)
           {
             double z = grid_z->give_point(k);
-            sampling_position.push_back(caviar::Vector<double>{x, y, z});
-            sampling_position_index.push_back(caviar::Vector<int>{i, j, k});
+            sampling_position.push_back(caviar::Vector3d<double>{x, y, z});
+            sampling_position_index.push_back(caviar::Vector3d<int>{i, j, k});
           }
         }
       }

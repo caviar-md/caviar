@@ -303,7 +303,7 @@ namespace caviar
       data_out.attach_dof_handler(dof_handler);
       data_out.add_data_vector(locally_relevant_solution, "smoothPotential");
 
-      dealii::Vector<float> subdomain(triangulation.n_active_cells());
+      dealii::Vector3d<float> subdomain(triangulation.n_active_cells());
       for (unsigned int i = 0; i < subdomain.size(); ++i)
         subdomain(i) = triangulation.locally_owned_subdomain();
       data_out.add_data_vector(subdomain, "subdomain");
@@ -456,10 +456,10 @@ namespace caviar
 
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
 
-        caviar::Vector<double> pos_j{p1[0], p1[1], p1[2]};
+        caviar::Vector3d<double> pos_j{p1[0], p1[1], p1[2]};
 
         // singular field
-        caviar::Vector<double> f_si{0.0, 0.0, 0.0};
+        caviar::Vector3d<double> f_si{0.0, 0.0, 0.0};
 
         for (auto &&f_custom : force_field_custom)
           f_si += f_custom->field(pos_j);
@@ -644,7 +644,7 @@ namespace caviar
 
       /* // DATA check
       auto &pos = atom_data->atom_struct_owned.position;
-      caviar::Vector<double> pm{0,0,0};
+      caviar::Vector3d<double> pm{0,0,0};
       for (unsigned int i=0;i<pos.size();++i) {
         pm += pos[i];
       }
@@ -658,7 +658,7 @@ namespace caviar
 
       static std::vector<int> pos_in_mesh(pos_size, 0);
 
-      static std::vector<caviar::Vector<double>> acc_found(pos_size, caviar::Vector<double>{0, 0, 0});
+      static std::vector<caviar::Vector3d<double>> acc_found(pos_size, caviar::Vector3d<double>{0, 0, 0});
 
       // additional acceleration calculation for each domain
 
@@ -690,7 +690,7 @@ namespace caviar
           const auto charge_i = atom_data->atom_type_params.charge[type_i];
 
           auto frc = field * charge_i;
-          auto force = caviar::Vector<double>{frc[0], frc[1], frc[2]};
+          auto force = caviar::Vector3d<double>{frc[0], frc[1], frc[2]};
 
           atom_data->atom_struct_owned.acceleration[i] += force * mass_inv_i;
         }
@@ -714,13 +714,13 @@ namespace caviar
           catch (std::exception &exc)
           {
             pos_in_mesh[i] = false;
-            acc_found[i] = caviar::Vector<double>{0., 0., 0.};
+            acc_found[i] = caviar::Vector3d<double>{0., 0., 0.};
             continue;
           }
           catch (...)
           {
             pos_in_mesh[i] = false;
-            acc_found[i] = caviar::Vector<double>{0., 0., 0.};
+            acc_found[i] = caviar::Vector3d<double>{0., 0., 0.};
             continue;
           }
           pos_in_mesh[i] = true;
@@ -730,7 +730,7 @@ namespace caviar
           const auto charge_i = atom_data->atom_type_params.charge[type_i];
 
           auto frc = field * charge_i;
-          auto force = caviar::Vector<double>{frc[0], frc[1], frc[2]};
+          auto force = caviar::Vector3d<double>{frc[0], frc[1], frc[2]};
 
           acc_found[i] = force * mass_inv_i;
         }

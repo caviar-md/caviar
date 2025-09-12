@@ -29,7 +29,7 @@ namespace caviar
   namespace force_field
   {
 
-    double Electrostatic_ewald_k::potential(const Vector<double> &r)
+    double Electrostatic_ewald_k::potential(const Vector3d<double> &r)
     {
       double p = k_space_potential(r);
       if (dipole)
@@ -45,7 +45,7 @@ namespace caviar
       return p;
     }
 
-    double Electrostatic_ewald_k::k_space_potential(const Vector<double> &r)
+    double Electrostatic_ewald_k::k_space_potential(const Vector3d<double> &r)
     {
       // XXX Working scheme
       /*
@@ -134,7 +134,7 @@ namespace caviar
       return k_space_potential(atom_data->atom_struct_owned.position[i]);
     }
 
-    double Electrostatic_ewald_k::dipole_potential(const Vector<double> &r)
+    double Electrostatic_ewald_k::dipole_potential(const Vector3d<double> &r)
     {
       return 0 * r.x; // XXX
     }

@@ -34,7 +34,7 @@ namespace caviar
       wca = false;
       cutoff_list_activated = false;
       force_coef = 1.0;
-      center = caviar::Vector<double>(0, 0, 0);
+      center = caviar::Vector3d<double>(0, 0, 0);
       inside = true;
       radius = 1.0;
     }
@@ -197,7 +197,7 @@ namespace caviar
     void Geometry_sphere_lj::calculate_acceleration()
     {
       FC_OBJECT_VERIFY_SETTINGS
-      Vector<double> p_o{0, 0, 0};
+      Vector3d<double> p_o{0, 0, 0};
       if (position_offset != nullptr)
         p_o = position_offset->current_value;
       double virialLocal = 0;

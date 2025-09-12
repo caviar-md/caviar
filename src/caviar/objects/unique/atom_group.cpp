@@ -28,8 +28,8 @@ namespace caviar
 
     Atom_group::Atom_group(CAVIAR *fptr) : Unique{fptr},
                                            part_of_a_atom_group{false}, upper_level_atom_group{nullptr},
-                                           position{Vector<double>{0, 0, 0}},
-                                           velocity{Vector<double>{0, 0, 0}} {
+                                           position{Vector3d<double>{0, 0, 0}},
+                                           velocity{Vector3d<double>{0, 0, 0}} {
                                                FC_OBJECT_INITIALIZE_INFO}
 
                                            Atom_group::~Atom_group()
@@ -60,7 +60,7 @@ namespace caviar
           FC_CHECK_OBJECT_CLASS_NAME(unique, it, atom)
           auto a = *dynamic_cast<unique::Atom *>(object_container->unique[it->second.index]);
 
-          Vector<double> pos{0., 0., 0.};
+          Vector3d<double> pos{0., 0., 0.};
           auto t = parser->get_raw_token();
           std::string ts = t.string_value;
           if (string_cmp(ts, "at_position"))
@@ -91,8 +91,8 @@ namespace caviar
     }
 
     void Atom_group::add_atom(const unique::Atom &a,
-                              caviar::Vector<double> p,
-                              caviar::Vector<double> v)
+                              caviar::Vector3d<double> p,
+                              caviar::Vector3d<double> v)
     {
       auto at = a;
       at.position = at.position + p;
@@ -102,7 +102,7 @@ namespace caviar
       atoms.push_back(at);
     }
 
-    Vector<double> Atom_group::pos_tot() const
+    Vector3d<double> Atom_group::pos_tot() const
     {
       if (part_of_a_atom_group)
         return position + upper_level_atom_group->pos_tot();
@@ -110,7 +110,7 @@ namespace caviar
         return position;
     }
 
-    Vector<double> Atom_group::vel_tot() const
+    Vector3d<double> Atom_group::vel_tot() const
     {
       if (part_of_a_atom_group)
         return velocity + upper_level_atom_group->vel_tot();

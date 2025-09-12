@@ -229,12 +229,12 @@ caviar_{fptr},
         ;
       }
 
-      bool Handler::is_inside(const Vector<double> &v0)
+      bool Handler::is_inside(const Vector3d<double> &v0)
       {
         return polyhedron_point_inside->is_inside(polyhedron, v0);
       }
 
-      bool Handler::is_inside(const Vector<double> &v, const double r)
+      bool Handler::is_inside(const Vector3d<double> &v, const double r)
       {
         if (use_grid)
           return polyhedron_point_inside->is_inside_grid(polyhedron, v, r);
@@ -242,7 +242,7 @@ caviar_{fptr},
         return polyhedron_point_inside->is_inside_all(polyhedron, v, r);
       }
 
-      bool Handler::in_contact(const Vector<double> &v, const double r, Vector<double> &contact_vector)
+      bool Handler::in_contact(const Vector3d<double> &v, const double r, Vector3d<double> &contact_vector)
       {
         if (use_grid)
           return polyhedron_point_inside->in_contact_grid(polyhedron, v, r, contact_vector);

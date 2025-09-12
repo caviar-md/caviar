@@ -19,7 +19,7 @@
 #include <string>
 #include "caviar/utility/objects_common_headers.hpp"
 #include "caviar/objects/shape/polyhedron.hpp"
-#include "caviar/utility/vector.hpp"
+#include "caviar/utility/vector3d.hpp"
 
 namespace caviar
 {
@@ -57,7 +57,7 @@ namespace caviar
         /**
          * does what it says by using an inside point.
          */
-        bool normals_are_pointing_outside(shape::polyhedron::Polyhedron &p_object, const Vector<double> &);
+        bool normals_are_pointing_outside(shape::polyhedron::Polyhedron &p_object, const Vector3d<double> &);
         FC_BASE_OBJECT_COMMON_TOOLS
       };
     } // polyhedron

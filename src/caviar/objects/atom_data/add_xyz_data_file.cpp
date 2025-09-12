@@ -134,7 +134,7 @@ namespace caviar
     {
       auto type = pf.get_literal_int();
 
-      Vector<double> pos, vel{0.0, 0.0, 0.0};
+      Vector3d<double> pos, vel{0.0, 0.0, 0.0};
       ;
 
       pos.x = pf.get_literal_real();

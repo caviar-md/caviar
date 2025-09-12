@@ -45,15 +45,15 @@ namespace force_field
 
   public:
     int slab_normal_axis;
-    double potential(const Vector<double> &);
+    double potential(const Vector3d<double> &);
     double potential(const int);
 
-    Vector<double> field(const Vector<double> &);
-    Vector<double> field(const int);
+    Vector3d<double> field(const Vector3d<double> &);
+    Vector3d<double> field(const int);
 
-    inline Vector<double> give_slab_local_coordinates(const Vector<double> &vg)
+    inline Vector3d<double> give_slab_local_coordinates(const Vector3d<double> &vg)
     {
-      Vector<double> vl;
+      Vector3d<double> vl;
       if (slab_normal_axis == 0)
       {
         vl.x = vg.y;
@@ -75,9 +75,9 @@ namespace force_field
       return vl;
     };
 
-    inline Vector<double> give_slab_global_coordinates(const Vector<double> &vl)
+    inline Vector3d<double> give_slab_global_coordinates(const Vector3d<double> &vl)
     {
-      Vector<double> vg;
+      Vector3d<double> vg;
       if (slab_normal_axis == 0)
       {
         vg.x = vl.y;
@@ -107,12 +107,12 @@ namespace force_field
     void calculate_dipole_sum();
 
     double dipole_energy();
-    double dipole_potential(const Vector<double> &);
+    double dipole_potential(const Vector3d<double> &);
     double dipole_potential(const int);
-    Vector<double> dipole_field();
+    Vector3d<double> dipole_field();
 
     double k_electrostatic;
-    Vector<double> external_field;
+    Vector3d<double> external_field;
 
     // simulation box lengths and its product in slab local coordinates.
     // the local coordinates depends on the choice of 'slab_normal_axis'.
@@ -123,12 +123,12 @@ namespace force_field
     std::vector<double> kx_coef, ky_coef, kp_coef;
 
     double dipole_coef;
-    Vector<double> dipole_sum;          // dipole_sum: Sum_j(q_j vec(r_j))
-    Vector<double> dipole_field_vector; // it's different from ewald_k's dipole.
+    Vector3d<double> dipole_sum;          // dipole_sum: Sum_j(q_j vec(r_j))
+    Vector3d<double> dipole_field_vector; // it's different from ewald_k's dipole.
                                         // it comes from change in summation order
                                         // from spherical to cylindrical.
 
-    std::vector<Vector<double>> k_vector;
+    std::vector<Vector3d<double>> k_vector;
     std::vector<double> k_vector_sq;
     std::vector<double> field_k_coef; //, potential_k_coef;
 

@@ -26,10 +26,10 @@ namespace caviar
   namespace force_field
   {
 
-    Vector<double> Electrostatic::field(const Vector<double> &r)
+    Vector3d<double> Electrostatic::field(const Vector3d<double> &r)
     {
 
-      Vector<double> field_sum{0, 0, 0};
+      Vector3d<double> field_sum{0, 0, 0};
       const auto &pos = atom_data->atom_struct_owned.position;
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for reduction(+ : field_sum)
@@ -52,9 +52,9 @@ namespace caviar
       return field_sum * k_electrostatic;
     }
 
-    Vector<double> Electrostatic::field(const int i)
+    Vector3d<double> Electrostatic::field(const int i)
     {
-      Vector<double> field_sum{0, 0, 0};
+      Vector3d<double> field_sum{0, 0, 0};
       const auto &pos = atom_data->atom_struct_owned.position;
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for reduction(+ : field_sum)

@@ -17,7 +17,7 @@
 #pragma once
 
 #include "caviar/objects/postprocess.hpp"
-#include "caviar/utility/vector.hpp"
+#include "caviar/utility/vector3d.hpp"
 #include <vector>
 #include <fstream>
 namespace caviar
@@ -49,8 +49,8 @@ namespace caviar
 
       bool read(caviar::interpreter::Parser *);
 
-      std::vector<caviar::Vector<double>> sampling_position;
-      std::vector<caviar::Vector<int>> sampling_position_index;
+      std::vector<caviar::Vector3d<double>> sampling_position;
+      std::vector<caviar::Vector3d<int>> sampling_position_index;
 
       void run();
 

@@ -39,11 +39,11 @@ namespace caviar
 
       double radius;
 
-      Vector<double> center;
+      Vector3d<double> center;
 
-      bool is_inside(const Vector<double> &v);
-      bool is_inside(const Vector<double> &, const double rad);
-      bool in_contact(const Vector<double> &, const double rad, Vector<double> &contact_vector);
+      bool is_inside(const Vector3d<double> &v);
+      bool is_inside(const Vector3d<double> &, const double rad);
+      bool in_contact(const Vector3d<double> &, const double rad, Vector3d<double> &contact_vector);
 
       bool make_basis_vectors();
     };

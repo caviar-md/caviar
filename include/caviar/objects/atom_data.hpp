@@ -57,7 +57,7 @@ namespace caviar
      * Used in barostat scaling for geometrical forces.
      *
      */
-    virtual void scale_position(double scale_ratio, caviar::Vector<int> scale_axis);
+    virtual void scale_position(double scale_ratio, caviar::Vector3d<int> scale_axis);
 
     /**
      * It represents the position of the origin of non_inertia Cartesian reference frame by a time function.
@@ -81,7 +81,7 @@ namespace caviar
      * check if a position is empty of any atom. Usage in fixing number of atoms
      * or molarity when one wants to create atoms.
      */
-    virtual bool empty_of_atoms(const Vector<double>, double radius);
+    virtual bool empty_of_atoms(const Vector3d<double>, double radius);
 
     /**
      * MPI case: Finds the correct MPI domain of the atoms
@@ -101,34 +101,34 @@ namespace caviar
     /**
      * checks by atom_type
      */
-    virtual bool empty_of_atoms(const Vector<double>, int type);
+    virtual bool empty_of_atoms(const Vector3d<double>, int type);
     virtual bool empty_of_atoms(unique::Atom &a);
     virtual bool empty_of_atoms(unique::Molecule &m);
 
     /**
      *  position of the center of mass
      */
-    virtual Vector<double> owned_position_cm();
+    virtual Vector3d<double> owned_position_cm();
 
     /**
      *  position of the center of mass
      */
-    virtual Vector<double> owned_position_cm_mpi_domain();
+    virtual Vector3d<double> owned_position_cm_mpi_domain();
 
     /**
      *  velocity of the center of mass
      */
-    virtual Vector<double> owned_velocity_cm();
+    virtual Vector3d<double> owned_velocity_cm();
 
     /**
      *  velocity of the center of mass
      */
-    virtual Vector<double> owned_velocity_cm_mpi_domain();
+    virtual Vector3d<double> owned_velocity_cm_mpi_domain();
 
     /**
      *  angular momentum of the center of mass
      */
-    virtual Vector<double> owned_angular_momentum_cm()
+    virtual Vector3d<double> owned_angular_momentum_cm()
     {
       return owned_angular_momentum_cm(owned_position_cm());
     }
@@ -136,12 +136,12 @@ namespace caviar
     /**
      *  angular momentum of the center of mass
      */
-    virtual Vector<double> owned_angular_momentum_cm(const Vector<double> &p_cm);
+    virtual Vector3d<double> owned_angular_momentum_cm(const Vector3d<double> &p_cm);
 
     /**
      *  angular momentum of the center of mass
      */
-    virtual Vector<double> owned_angular_momentum_cm_mpi_domain()
+    virtual Vector3d<double> owned_angular_momentum_cm_mpi_domain()
     {
       return owned_angular_momentum_cm_mpi_domain(owned_position_cm_mpi_domain());
     }
@@ -149,7 +149,7 @@ namespace caviar
     /**
      *  angular momentum of the center of mass
      */
-    virtual Vector<double> owned_angular_momentum_cm_mpi_domain(const Vector<double> &p_cm);
+    virtual Vector3d<double> owned_angular_momentum_cm_mpi_domain(const Vector3d<double> &p_cm);
     /**
      *  inertia_tensor of the center of mass. The tensor type may be modified
      *  in the future.
@@ -163,7 +163,7 @@ namespace caviar
      *  inertia_tensor of the center of mass. The tensor type may be modified
      *  in the future.
      */
-    virtual std::array<std::array<double, 3>, 3> owned_inertia_tensor_cm(const Vector<double> &p_cm);
+    virtual std::array<std::array<double, 3>, 3> owned_inertia_tensor_cm(const Vector3d<double> &p_cm);
 
     /**
      *  inertia_tensor of the center of mass. The tensor type may be modified
@@ -178,7 +178,7 @@ namespace caviar
      *  inertia_tensor of the center of mass. The tensor type may be modified
      *  in the future.
      */
-    virtual std::array<std::array<double, 3>, 3> owned_inertia_tensor_cm_mpi_domain(const Vector<double> &p_cm);
+    virtual std::array<std::array<double, 3>, 3> owned_inertia_tensor_cm_mpi_domain(const Vector3d<double> &p_cm);
     /**
      * Initial setting of number of atoms.
      */
@@ -213,13 +213,13 @@ namespace caviar
     /**
      * add the external force to virial calculation (include MSD)
      */
-    virtual void add_to_external_virial(caviar::Vector<double> force, int index);
+    virtual void add_to_external_virial(caviar::Vector3d<double> force, int index);
 
     /**
      * add the external force to virial calculation (include MSD). If the position differs from
      * its absolute value (dealii and shaking mesh), this can be used
      */
-    virtual void add_to_external_virial(caviar::Vector<double> force, int index, caviar::Vector<double> position);
+    virtual void add_to_external_virial(caviar::Vector3d<double> force, int index, caviar::Vector3d<double> position);
 
     virtual void reset_virial()
     {
@@ -253,8 +253,8 @@ namespace caviar
      */
     virtual bool add_atom(size_t,
                           size_t,
-                          const Vector<double> &,
-                          const Vector<double> &vel = Vector<double>{0.0, 0.0, 0.0});
+                          const Vector3d<double> &,
+                          const Vector3d<double> &vel = Vector3d<double>{0.0, 0.0, 0.0});
 
     /**
      * add unique::Atom to the owned data
@@ -449,12 +449,12 @@ namespace caviar
     /**
      * does as it says
      */
-    virtual bool position_inside_local_domain(const Vector<double> &pos);
+    virtual bool position_inside_local_domain(const Vector3d<double> &pos);
 
     /**
      * Check if the position is inside simulation box
      */
-    virtual bool position_inside_global_domain(const Vector<double> &pos);
+    virtual bool position_inside_global_domain(const Vector3d<double> &pos);
 
     /**
      * in MPI, it is the sum of local atoms.
@@ -662,25 +662,25 @@ namespace caviar
     void set_msd_process(bool stat)
     {
       msd_process = stat;
-      atom_struct_owned.msd_domain_cross.resize(get_num_of_atoms_local(), caviar::Vector<int>{0, 0, 0});
+      atom_struct_owned.msd_domain_cross.resize(get_num_of_atoms_local(), caviar::Vector3d<int>{0, 0, 0});
     }
 
     void set_record_owned_position_old(bool stat)
     {
       record_owned_position_old = stat;
-      atom_struct_owned.position_old.resize(get_num_of_atoms_local(), caviar::Vector<double>{0, 0, 0});
+      atom_struct_owned.position_old.resize(get_num_of_atoms_local(), caviar::Vector3d<double>{0, 0, 0});
     }
 
     void set_record_owned_velocity_old(bool stat)
     {
       record_owned_velocity_old = stat;
-      atom_struct_owned.velocity_old.resize(get_num_of_atoms_local(), caviar::Vector<double>{0, 0, 0});
+      atom_struct_owned.velocity_old.resize(get_num_of_atoms_local(), caviar::Vector3d<double>{0, 0, 0});
     }
 
     void set_record_owned_acceleration_old(bool stat)
     {
       record_owned_acceleration_old = stat;
-      atom_struct_owned.acceleration_old.resize(get_num_of_atoms_local(), caviar::Vector<double>{0, 0, 0});
+      atom_struct_owned.acceleration_old.resize(get_num_of_atoms_local(), caviar::Vector3d<double>{0, 0, 0});
     }
     //===========================
     // Private Section

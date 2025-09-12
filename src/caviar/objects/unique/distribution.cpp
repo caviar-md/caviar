@@ -192,7 +192,7 @@ namespace caviar
         }
       }
 
-      std::vector<Vector<double>> p_vector; // total positions of atoms
+      std::vector<Vector3d<double>> p_vector; // total positions of atoms
       if (atom != nullptr)
       {
         p_vector.push_back(atom->pos_tot());
@@ -215,7 +215,7 @@ namespace caviar
           for (unsigned int k = 0; k < grid_1d_z->no_points(); ++k)
           {
             double z = grid_1d_z->give_point(k);
-            const Vector<double> p{x, y, z}, v{0, 0, 0};
+            const Vector3d<double> p{x, y, z}, v{0, 0, 0};
             /*
              // simple method - just center is inside condition
              if (boundary_shape->is_inside(p)) {
@@ -279,7 +279,7 @@ namespace caviar
         }
       }
 
-      std::vector<Vector<double>> p_vector; // total positions of atoms
+      std::vector<Vector3d<double>> p_vector; // total positions of atoms
       if (atom != nullptr)
       {
         p_vector.push_back(atom->pos_tot());
@@ -299,7 +299,7 @@ namespace caviar
         double x = random_1d_x->give_value();
         double y = random_1d_y->give_value();
         double z = random_1d_z->give_value();
-        const Vector<double> p{x, y, z}, v{0, 0, 0};
+        const Vector3d<double> p{x, y, z}, v{0, 0, 0};
         /*
          // simple method - just center is inside condition
          if (boundary_shape->is_inside(p)) {

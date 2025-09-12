@@ -43,7 +43,7 @@ namespace caviar
 
       auto nta = atom_data->atom_struct_owned.position.size();
 
-      Vector<double> p_o{0, 0, 0};
+      Vector3d<double> p_o{0, 0, 0};
       if (position_offset != nullptr)
         p_o = position_offset->current_value;
 #if defined(CAVIAR_WITH_MPI)
@@ -82,7 +82,7 @@ namespace caviar
 
       auto nta = atom_data->atom_struct_owned.position.size();
 
-      Vector<double> p_o{0, 0, 0};
+      Vector3d<double> p_o{0, 0, 0};
       if (position_offset != nullptr)
         p_o = position_offset->current_value;
       if (xyz_mpi_per_process)
@@ -130,7 +130,7 @@ namespace caviar
       auto &id = atom_data->atom_struct_ghost.id;
       auto nta = atom_data->atom_struct_ghost.position.size();
 
-      Vector<double> p_o{0, 0, 0};
+      Vector3d<double> p_o{0, 0, 0};
       if (position_offset != nullptr)
         p_o = position_offset->current_value;
 
@@ -163,7 +163,7 @@ namespace caviar
       auto &id = atom_data->atom_struct_ghost.id;
       auto nta = atom_data->atom_struct_ghost.position.size();
 
-      Vector<double> p_o{0, 0, 0};
+      Vector3d<double> p_o{0, 0, 0};
       if (position_offset != nullptr)
         p_o = position_offset->current_value;
 

@@ -28,7 +28,7 @@ namespace caviar
   {
 
     Magnetic_external::Magnetic_external(CAVIAR *fptr) : Force_field{fptr},
-                                                         amplitude{1.0}, direction{Vector<double>{0, 0, 0}}
+                                                         amplitude{1.0}, direction{Vector3d<double>{0, 0, 0}}
     {
       FC_OBJECT_INITIALIZE_INFO
       // FC_ERR_NOT_IMPLEMENTED

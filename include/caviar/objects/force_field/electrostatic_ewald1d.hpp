@@ -34,23 +34,23 @@ namespace caviar
     public:
       Electrostatic_ewald1d(class CAVIAR *);
       ~Electrostatic_ewald1d() {};
-      double potential(const Vector<double> &);
+      double potential(const Vector3d<double> &);
       double potential(const int);
 
-      double potential_r(const Vector<double> &);
+      double potential_r(const Vector3d<double> &);
       double potential_r(const int);
 
-      double potential_k(const Vector<double> &);
+      double potential_k(const Vector3d<double> &);
       double potential_k(const int);
 
-      Vector<double> field(const Vector<double> &);
-      Vector<double> field(const int);
+      Vector3d<double> field(const Vector3d<double> &);
+      Vector3d<double> field(const int);
 
-      Vector<double> field_r(const Vector<double> &);
-      Vector<double> field_r(const int);
+      Vector3d<double> field_r(const Vector3d<double> &);
+      Vector3d<double> field_r(const int);
 
-      Vector<double> field_k(const Vector<double> &);
-      Vector<double> field_k(const int);
+      Vector3d<double> field_k(const Vector3d<double> &);
+      Vector3d<double> field_k(const int);
 
       double energy();
 
@@ -63,7 +63,7 @@ namespace caviar
       bool lambda_is_set = false;
       double k_electrostatic;
       double sigma; //   smoothing-out parameter
-      std::vector<Vector<double>> lattice_vec;
+      std::vector<Vector3d<double>> lattice_vec;
       int num_mirrors;
     };
 

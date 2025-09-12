@@ -102,7 +102,7 @@ namespace caviar
               double ny = parser->get_literal_real();
               double nz = parser->get_literal_real();
 
-              Vector<double> normal{nx, ny, nz}; // XXX
+              Vector3d<double> normal{nx, ny, nz}; // XXX
               normal.x = normal.x;
 
               parser->go_to_next_line();
@@ -129,7 +129,7 @@ namespace caviar
               double v1y = parser->get_literal_real();
               double v1z = parser->get_literal_real();
 
-              Vector<double> v1{v1x, v1y, v1z};
+              Vector3d<double> v1{v1x, v1y, v1z};
 
               parser->go_to_next_line();
 
@@ -142,7 +142,7 @@ namespace caviar
               double v2y = parser->get_literal_real();
               double v2z = parser->get_literal_real();
 
-              Vector<double> v2{v2x, v2y, v2z};
+              Vector3d<double> v2{v2x, v2y, v2z};
 
               parser->go_to_next_line();
 
@@ -155,7 +155,7 @@ namespace caviar
               double v3y = parser->get_literal_real();
               double v3z = parser->get_literal_real();
 
-              Vector<double> v3{v3x, v3y, v3z};
+              Vector3d<double> v3{v3x, v3y, v3z};
 
               parser->go_to_next_line();
 

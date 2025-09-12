@@ -26,7 +26,7 @@ namespace caviar
   namespace force_field
   {
 
-    double Electrostatic_short_range::potential(const Vector<double> &r)
+    double Electrostatic_short_range::potential(const Vector3d<double> &r)
     {
       if (!initialized)
         initialize();

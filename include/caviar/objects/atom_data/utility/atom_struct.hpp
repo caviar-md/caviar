@@ -65,7 +65,7 @@ namespace caviar
       /**
        * Atom kinematic properties in the current time-step.
        */
-      std::vector<Vector<double>> position, velocity, acceleration;
+      std::vector<Vector3d<double>> position, velocity, acceleration;
 
       /**
        * This vectors are used in some integrator schemes and constraint methods.
@@ -75,19 +75,19 @@ namespace caviar
        * This function may be needed to have MPI_send-recv. process in these case.
        * look up to it.
        */
-      std::vector<Vector<double>> position_old, velocity_old, acceleration_old;
+      std::vector<Vector3d<double>> position_old, velocity_old, acceleration_old;
 
       /**
        * Coordinates before applying any constraints. It can be used to calculate constraint forces which is needed
        * in pressure calculations.
        */
-      // std::vector<Vector<double>> position_no_constraint, velocity_no_constraint, acceleration_no_constraint;
+      // std::vector<Vector3d<double>> position_no_constraint, velocity_no_constraint, acceleration_no_constraint;
 
       /**
        * this vector is meaningful when there's one domain. We can calculate MSD
        * using this. It collects number of periodic domain cross for each particle.
        */
-      std::vector<Vector<int>> msd_domain_cross;
+      std::vector<Vector3d<int>> msd_domain_cross;
 
       /**
        * this vector contain a molecule index for all the atoms. if it's '-1' the

@@ -268,7 +268,7 @@ namespace caviar
 
     for (auto m : send_index[i][j][k])
     {
-      Vector<double> pos_tmp = pos[m];
+      Vector3d<double> pos_tmp = pos[m];
       //================================================================
       // Fixing the position of the atoms in periodic boundary condition
       //================================================================

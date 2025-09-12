@@ -26,7 +26,7 @@ namespace caviar
   namespace force_field
   {
 
-    double Electrostatic::potential(const Vector<double> &r)
+    double Electrostatic::potential(const Vector3d<double> &r)
     {
 
       double potential_sum = 0;

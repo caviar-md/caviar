@@ -133,10 +133,10 @@ namespace force_field
   void Geometry_slab::calculate_acceleration()
   {
     FC_OBJECT_VERIFY_SETTINGS
-    Vector<double> p_o{0, 0, 0};
+    Vector3d<double> p_o{0, 0, 0};
     if (position_offset != nullptr)
       p_o = position_offset->current_value;
-    Vector<double> v_o{0, 0, 0};
+    Vector3d<double> v_o{0, 0, 0};
     if (velocity_offset != nullptr)
       v_o = velocity_offset->current_value;
     double virialLocal = 0;
@@ -145,8 +145,8 @@ namespace force_field
     auto &acc = atom_data->atom_struct_owned.acceleration;
     auto a_radius = atom_data->atom_type_params.radius;
 
-    Vector<double> contact_vector{0, 0, 0};
-    Vector<double> abs_contact_vector{0, 0, 0};
+    Vector3d<double> contact_vector{0, 0, 0};
+    Vector3d<double> abs_contact_vector{0, 0, 0};
 
     auto abs_slab_direction = (slab_direction < 0 ? -slab_direction : slab_direction);
 

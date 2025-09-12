@@ -26,12 +26,12 @@ namespace caviar
   namespace force_field
   {
 
-    Vector<double> Electrostatic_spherical_boundary::field(const Vector<double> &r)
+    Vector3d<double> Electrostatic_spherical_boundary::field(const Vector3d<double> &r)
     {
 
       initialize();
 
-      Vector<double> field_sum{0, 0, 0};
+      Vector3d<double> field_sum{0, 0, 0};
       // const auto &pos = atom_data -> atom_struct_owned.position;
 
       // particle-particle interaction part.
@@ -63,11 +63,11 @@ namespace caviar
       return field_sum * k_electrostatic;
     }
 
-    Vector<double> Electrostatic_spherical_boundary::field(const int i)
+    Vector3d<double> Electrostatic_spherical_boundary::field(const int i)
     {
       initialize();
 
-      Vector<double> field_sum{0, 0, 0};
+      Vector3d<double> field_sum{0, 0, 0};
       const auto &pos = atom_data->atom_struct_owned.position;
 
       // particle-particle interaction part.

@@ -119,10 +119,10 @@ namespace caviar
     void Geometry::calculate_acceleration()
     {
       FC_OBJECT_VERIFY_SETTINGS
-      Vector<double> p_o{0, 0, 0};
+      Vector3d<double> p_o{0, 0, 0};
       if (position_offset != nullptr)
         p_o = position_offset->current_value;
-      Vector<double> v_o{0, 0, 0};
+      Vector3d<double> v_o{0, 0, 0};
       if (velocity_offset != nullptr)
         v_o = velocity_offset->current_value;
       double virialLocal = 0;
@@ -147,7 +147,7 @@ namespace caviar
         // Vector <double> contact_vector {0,0,0};
         for (unsigned int j = 0; j < shape.size(); ++j)
         {
-          Vector<double> contact_vector{0, 0, 0};
+          Vector3d<double> contact_vector{0, 0, 0};
           if (shape[j]->in_contact(pos[i] - p_o, r, contact_vector))
           {
             acc[i] -= mass_inv_i * contact_vector * (young_modulus + ((vel[i] - v_o) * contact_vector) * dissip_coef / (contact_vector * contact_vector));

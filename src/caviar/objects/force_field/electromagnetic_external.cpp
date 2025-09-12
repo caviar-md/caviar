@@ -29,8 +29,8 @@ namespace caviar
   {
 
     Electromagnetic_external::Electromagnetic_external(CAVIAR *fptr) : Force_field{fptr},
-                                                                       amplitude_E{1.0}, amplitude_B{1.0}, direction_E{Vector<double>{0, 0, 0}},
-                                                                       direction_B{Vector<double>{0, 0, 0}}
+                                                                       amplitude_E{1.0}, amplitude_B{1.0}, direction_E{Vector3d<double>{0, 0, 0}},
+                                                                       direction_B{Vector3d<double>{0, 0, 0}}
     {
       FC_OBJECT_INITIALIZE_INFO
     }

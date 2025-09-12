@@ -438,12 +438,12 @@ namespace caviar
 
     /*
     // TODO: complete expression_3d before this
-    Vector<int> Parser::get_int_3d () {
+    Vector3d<int> Parser::get_int_3d () {
       return int (expression_3d (true));
     }
 
 
-    Vector<double> Parser::get_real_3d () {
+    Vector3d<double> Parser::get_real_3d () {
       return expression_3d (true);
     }
     */
@@ -744,9 +744,9 @@ namespace caviar
 
     // TODO: To be developed
     /*
-    Vector<double> Parser::expression_3d (bool get) {
+    Vector3d<double> Parser::expression_3d (bool get) {
 
-      Vector<double> left = term_3d(get);
+      Vector3d<double> left = term_3d(get);
       for (;;) {
         switch (token_stream->current().kind) {
           case Kind::plus:
@@ -763,7 +763,7 @@ namespace caviar
       return 0;//WARNING
     }
 
-    Vector<double> Parser::term_3d (bool get) {
+    Vector3d<double> Parser::term_3d (bool get) {
 
       double left = primary_3d(get);
       for (;;) {
@@ -798,7 +798,7 @@ namespace caviar
 
     }
 
-    Vector<double> Parser::primary_3d (bool get) {
+    Vector3d<double> Parser::primary_3d (bool get) {
 
       if (get) get_raw_token ();
       switch (token_stream->current().kind) {

@@ -28,7 +28,7 @@ namespace caviar
   namespace force_field
   {
 
-    double Electrostatic_ewald_r::potential(const Vector<double> &r)
+    double Electrostatic_ewald_r::potential(const Vector3d<double> &r)
     {
       // XXX Working scheme using binlist
       double potential_r = 0;
@@ -55,7 +55,7 @@ namespace caviar
 
           bool is_ghost = j >= pos_size;
 
-          Vector<double> pos_j;
+          Vector3d<double> pos_j;
           double type_j;
           if (is_ghost)
           {
@@ -108,7 +108,7 @@ namespace caviar
         double coef = 2.0; // ewald: 'coef=2' for owned in 'neighlist'. Not for binlist.
         bool is_ghost = j >= pos_size;
 
-        Vector<double> pos_j;
+        Vector3d<double> pos_j;
         double type_j;
         if (is_ghost)
         {

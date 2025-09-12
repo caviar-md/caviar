@@ -169,13 +169,13 @@ namespace caviar
         const auto type_i = atom_data -> atom_struct_owned.type [i] ;
         const auto charge_i = atom_data -> atom_type_params.charge [ type_i ];
         const auto mass_inv_i = atom_data -> atom_type_params.mass_inv [ type_i ];
-        Vector<double> sum_j {0,0,0};
+        Vector3d<double> sum_j {0,0,0};
         for (unsigned int j=0;j<pos.size();++j) {
 
           const auto type_j = atom_data -> atom_struct_owned.type [j] ;
           const auto charge_j = atom_data -> atom_type_params.charge [ type_j ];
           const auto r_ij = pos[i] - pos[j];
-          Vector<double> sum_k {0,0,0};
+          Vector3d<double> sum_k {0,0,0};
           for (int k = 0; k<n_k_vectors; ++k) {
             sum_k += FC_4PI * field_k_coef[k] * k_vector[k] * std::sin(k_vector[k]*r_ij);
           }
@@ -261,7 +261,7 @@ namespace caviar
           const double sum_jy = std::imag(sum_ky);
           const double sum_jz = std::imag(sum_kz);
 
-          Vector<double> sv {sum_jx, sum_jy, sum_jz};
+          Vector3d<double> sv {sum_jx, sum_jy, sum_jz};
 
           const auto sum = FC_4PI *  sv ;
 

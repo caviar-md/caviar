@@ -28,8 +28,8 @@ namespace caviar
 
     Molecule_group::Molecule_group(CAVIAR *fptr) : Unique{fptr},
                                                    part_of_a_molecule_group{false}, upper_level_molecule_group{nullptr},
-                                                   position{Vector<double>{0, 0, 0}},
-                                                   velocity{Vector<double>{0, 0, 0}} {
+                                                   position{Vector3d<double>{0, 0, 0}},
+                                                   velocity{Vector3d<double>{0, 0, 0}} {
                                                        FC_OBJECT_INITIALIZE_INFO}
 
                                                    Molecule_group::~Molecule_group()
@@ -59,7 +59,7 @@ namespace caviar
           FC_CHECK_OBJECT_CLASS_NAME(unique, it, molecule)
           auto m = *dynamic_cast<unique::Molecule *>(object_container->unique[it->second.index]);
 
-          Vector<double> pos{0., 0., 0.};
+          Vector3d<double> pos{0., 0., 0.};
           auto token = parser->get_raw_token();
           std::string t = token.string_value;
           if (string_cmp(t, "at_position"))
@@ -90,8 +90,8 @@ namespace caviar
     }
 
     void Molecule_group::add_molecule(const unique::Molecule &m,
-                                      caviar::Vector<double> p,
-                                      caviar::Vector<double> v)
+                                      caviar::Vector3d<double> p,
+                                      caviar::Vector3d<double> v)
     {
       auto mt = m;
       mt.position = mt.position + p;
@@ -102,7 +102,7 @@ namespace caviar
       molecules.push_back(mt);
     }
 
-    Vector<double> Molecule_group::pos_tot() const
+    Vector3d<double> Molecule_group::pos_tot() const
     {
       if (part_of_a_molecule_group)
         return position + upper_level_molecule_group->pos_tot();
@@ -110,7 +110,7 @@ namespace caviar
         return position;
     }
 
-    Vector<double> Molecule_group::vel_tot() const
+    Vector3d<double> Molecule_group::vel_tot() const
     {
       if (part_of_a_molecule_group)
         return velocity + upper_level_molecule_group->vel_tot();

@@ -39,17 +39,17 @@ namespace caviar
       return polyhedron_handler->read(parser);
     }
 
-    bool Polyhedron::is_inside(const Vector<double> &v)
+    bool Polyhedron::is_inside(const Vector3d<double> &v)
     {
       return polyhedron_handler->is_inside(v);
     }
 
-    bool Polyhedron::is_inside(const Vector<double> &v, const double r)
+    bool Polyhedron::is_inside(const Vector3d<double> &v, const double r)
     {
       return polyhedron_handler->is_inside(v, r);
     }
 
-    bool Polyhedron::in_contact(const Vector<double> &v, const double r, Vector<double> &contact_vector)
+    bool Polyhedron::in_contact(const Vector3d<double> &v, const double r, Vector3d<double> &contact_vector)
     {
       return polyhedron_handler->in_contact(v, r, contact_vector);
     }

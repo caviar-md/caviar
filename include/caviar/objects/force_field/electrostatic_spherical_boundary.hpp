@@ -33,11 +33,11 @@ namespace caviar
     public:
       Electrostatic_spherical_boundary(class CAVIAR *);
       ~Electrostatic_spherical_boundary() {};
-      double potential(const Vector<double> &);
+      double potential(const Vector3d<double> &);
       double potential(const int);
 
-      Vector<double> field(const Vector<double> &);
-      Vector<double> field(const int);
+      Vector3d<double> field(const Vector3d<double> &);
+      Vector3d<double> field(const int);
 
       double energy();
 
@@ -48,25 +48,25 @@ namespace caviar
       void calculate_image_charges();
       void initialize();
 
-      double potential_of_charge(const Vector<double> &, unsigned int i);
-      double potential_of_image(const Vector<double> &, unsigned int i);
+      double potential_of_charge(const Vector3d<double> &, unsigned int i);
+      double potential_of_image(const Vector3d<double> &, unsigned int i);
 
-      double potential_of_charges(const Vector<double> &); // tot. potential at a point  due to charge only
+      double potential_of_charges(const Vector3d<double> &); // tot. potential at a point  due to charge only
       double potential_of_charges(unsigned int i);         // tot. potential at a point  due to charge only
 
-      Vector<double> field_of_charge(const Vector<double> &, unsigned int i);
-      Vector<double> field_of_image(const Vector<double> &, unsigned int i);
+      Vector3d<double> field_of_charge(const Vector3d<double> &, unsigned int i);
+      Vector3d<double> field_of_image(const Vector3d<double> &, unsigned int i);
 
-      Vector<double> field_of_charges(const Vector<double> &); // tot. field at a point due to real charges
-      Vector<double> field_of_charges(unsigned int i);         // tot. field on a charge from others
+      Vector3d<double> field_of_charges(const Vector3d<double> &); // tot. field at a point due to real charges
+      Vector3d<double> field_of_charges(unsigned int i);         // tot. field on a charge from others
 
     public:
       bool calculated_once;
       double k_electrostatic;
-      Vector<double> external_field;
+      Vector3d<double> external_field;
 
       double radius;         // radius of the spherical boundary
-      Vector<double> center; // center of the spherical boundary
+      Vector3d<double> center; // center of the spherical boundary
       double voltage;        // voltage on the spherical boundary
 
       // this will optimise in the case of the existence of uncharged particles
@@ -78,7 +78,7 @@ namespace caviar
         std::vector<double> charge; // note that the charge can be different for
                                     // each of images. So the charge in this struct
                                     // is different from Atom_data's owned charge.
-        std::vector<Vector<double>> position;
+        std::vector<Vector3d<double>> position;
       } image;
     };
 

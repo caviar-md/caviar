@@ -41,7 +41,7 @@ namespace caviar
     public:
       // std::vector<std::vector<double>> epsilon,sigma;
       double k_gravity;
-      Vector<double> external_field;
+      Vector3d<double> external_field;
     };
 
   } // force_field

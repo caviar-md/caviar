@@ -87,7 +87,7 @@ namespace caviar
         std::array<std::array<double, 3>, 3> I_cm_inverse = {{{0.0, 0.0, 0.0},
                                                               {0.0, 0.0, 0.0},
                                                               {0.0, 0.0, 0.0}}};
-        Vector<double> I_i_L(0, 0, 0);
+        Vector3d<double> I_i_L(0, 0, 0);
         bool correct_result = false;
         if (matrix_inverse_3d(I_cm, I_cm_inverse) != 0)
         {
@@ -228,13 +228,13 @@ namespace caviar
 #endif
   }
 
-  void Atom_data::add_to_external_virial(caviar::Vector<double> force, int i)
+  void Atom_data::add_to_external_virial(caviar::Vector3d<double> force, int i)
   {
     virialExternalForce +=
         +(force.x * (atom_struct_owned.position[i].x + (atom_struct_owned.msd_domain_cross[i].x * domain->size_global.x))) + (force.y * (atom_struct_owned.position[i].y + (atom_struct_owned.msd_domain_cross[i].y * domain->size_global.y))) + (force.z * (atom_struct_owned.position[i].z + (atom_struct_owned.msd_domain_cross[i].z * domain->size_global.z)));
   }
 
-  void Atom_data::add_to_external_virial(caviar::Vector<double> force, int i, caviar::Vector<double> pos)
+  void Atom_data::add_to_external_virial(caviar::Vector3d<double> force, int i, caviar::Vector3d<double> pos)
   {
     virialExternalForce +=
         +(force.x * (pos.x + (atom_struct_owned.msd_domain_cross[i].x * domain->size_global.x))) + (force.y * (pos.y + (atom_struct_owned.msd_domain_cross[i].y * domain->size_global.y))) + (force.z * (pos.z + (atom_struct_owned.msd_domain_cross[i].z * domain->size_global.z)));
@@ -272,7 +272,7 @@ namespace caviar
       // double fix_y =atom_struct_owned.msd_domain_cross[i].y * domain_dx.y;
       // double fix_z =atom_struct_owned.msd_domain_cross[i].z * domain_dx.z;
 
-      // Vector<double> pos_msd_i = {atom_struct_owned.position[i].x + fix_x,
+      // Vector3d<double> pos_msd_i = {atom_struct_owned.position[i].x + fix_x,
       //                             atom_struct_owned.position[i].y + fix_y,
       //                             atom_struct_owned.position[i].z + fix_z};
       // if (fix_x >0 || fix_y>0 || fix_z >0)
@@ -346,7 +346,7 @@ namespace caviar
     pressure_ = p1 + p2_total;
   }
 
-  Vector<double> Atom_data::owned_position_cm()
+  Vector3d<double> Atom_data::owned_position_cm()
   {
     double p_cm_f[3] = {0.0, 0.0, 0.0};
     double mass_sum = 0.0;
@@ -383,15 +383,15 @@ namespace caviar
 #else
 
 #endif
-    Vector<double> p_cm{p_cm_f[0], p_cm_f[1], p_cm_f[2]};
+    Vector3d<double> p_cm{p_cm_f[0], p_cm_f[1], p_cm_f[2]};
 
     p_cm = p_cm / mass_sum;
     return p_cm;
   }
 
-  Vector<double> Atom_data::owned_position_cm_mpi_domain()
+  Vector3d<double> Atom_data::owned_position_cm_mpi_domain()
   {
-    Vector<double> p_cm{0.0, 0.0, 0.0};
+    Vector3d<double> p_cm{0.0, 0.0, 0.0};
     double mass_sum = 0.0;
     auto p_size = atom_struct_owned.position.size(); // MPI check
 #ifdef CAVIAR_WITH_OPENMP
@@ -411,7 +411,7 @@ namespace caviar
     return p_cm;
   }
 
-  Vector<double> Atom_data::owned_velocity_cm()
+  Vector3d<double> Atom_data::owned_velocity_cm()
   {
     double v_cm_f[3] = {0.0, 0.0, 0.0};
 
@@ -451,15 +451,15 @@ namespace caviar
 #else
 
 #endif
-    Vector<double> v_cm{v_cm_f[0], v_cm_f[1], v_cm_f[2]};
+    Vector3d<double> v_cm{v_cm_f[0], v_cm_f[1], v_cm_f[2]};
 
     v_cm = v_cm / mass_sum;
     return v_cm;
   }
 
-  Vector<double> Atom_data::owned_velocity_cm_mpi_domain()
+  Vector3d<double> Atom_data::owned_velocity_cm_mpi_domain()
   {
-    Vector<double> v_cm{0.0, 0.0, 0.0};
+    Vector3d<double> v_cm{0.0, 0.0, 0.0};
     double mass_sum = 0.0;
     auto p_size = atom_struct_owned.velocity.size(); // MPI check
 #ifdef CAVIAR_WITH_OPENMP
@@ -479,7 +479,7 @@ namespace caviar
     return v_cm;
   }
 
-  Vector<double> Atom_data::owned_angular_momentum_cm(const Vector<double> &p_cm)
+  Vector3d<double> Atom_data::owned_angular_momentum_cm(const Vector3d<double> &p_cm)
   {
 
     double L_cm_f[3] = {0.0, 0.0, 0.0};
@@ -513,15 +513,15 @@ namespace caviar
 #else
 
 #endif
-    Vector<double> L_cm{L_cm_f[0], L_cm_f[1], L_cm_f[2]};
+    Vector3d<double> L_cm{L_cm_f[0], L_cm_f[1], L_cm_f[2]};
 
     return L_cm;
   }
 
-  Vector<double> Atom_data::owned_angular_momentum_cm_mpi_domain(const Vector<double> &p_cm)
+  Vector3d<double> Atom_data::owned_angular_momentum_cm_mpi_domain(const Vector3d<double> &p_cm)
   {
 
-    Vector<double> L_cm{0.0, 0.0, 0.0};
+    Vector3d<double> L_cm{0.0, 0.0, 0.0};
 
     auto p_size = atom_struct_owned.position.size(); // MPI check
 #ifdef CAVIAR_WITH_OPENMP
@@ -541,7 +541,7 @@ namespace caviar
     return L_cm;
   }
 
-  std::array<std::array<double, 3>, 3> Atom_data::owned_inertia_tensor_cm(const Vector<double> &p_cm)
+  std::array<std::array<double, 3>, 3> Atom_data::owned_inertia_tensor_cm(const Vector3d<double> &p_cm)
   {
 
     double I_cm_flat[9] = {
@@ -609,7 +609,7 @@ namespace caviar
     return I_cm;
   }
 
-  std::array<std::array<double, 3>, 3> Atom_data::owned_inertia_tensor_cm_mpi_domain(const Vector<double> &p_cm)
+  std::array<std::array<double, 3>, 3> Atom_data::owned_inertia_tensor_cm_mpi_domain(const Vector3d<double> &p_cm)
   {
 
     std::array<std::array<double, 3>, 3> I_cm = {{{0.0, 0.0, 0.0},

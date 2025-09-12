@@ -112,7 +112,7 @@ namespace caviar
       if (bc.x + bc.y + bc.z != 1)
         error->all(FC_FILE_LINE_FUNC, "expected one periodicity in the domain.");
 
-      Vector<double> v{0, 0, 0};
+      Vector3d<double> v{0, 0, 0};
 
       if (bc.x == 1)
         v.x = dd.x;
@@ -184,7 +184,7 @@ namespace caviar
         for (auto j : nlist[i])
         {
           bool is_ghost = j >= pos_size;
-          Vector<double> pos_j;
+          Vector3d<double> pos_j;
           double type_j;
           int id_j;
           int mol_index_j;
@@ -263,7 +263,7 @@ namespace caviar
         ///*
         // long range part
 
-        Vector<double> field{0, 0, 0};
+        Vector3d<double> field{0, 0, 0};
         for (unsigned int j = 0; j < pos.size(); ++j)
         {
 #ifdef CAVIAR_WITH_MPI
@@ -273,7 +273,7 @@ namespace caviar
           const auto type_j = atom_data->atom_struct_owned.type[j];
           const auto charge_j = atom_data->atom_type_params.charge[type_j];
 
-          Vector<double> sum{0, 0, 0};
+          Vector3d<double> sum{0, 0, 0};
           for (unsigned int k = 0; k < lattice_vec_size; ++k)
           {
             const auto dr = pos[i] - pos[j] + lattice_vec[k];

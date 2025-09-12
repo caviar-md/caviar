@@ -21,7 +21,7 @@
 namespace caviar
 {
 
-  inline void normalize(Vector<double> &v)
+  inline void normalize(Vector3d<double> &v)
   {
     v /= std::sqrt(v * v);
   }
@@ -45,17 +45,17 @@ namespace caviar
     virtual ~Shape();
 
     virtual bool read(class caviar::interpreter::Parser *) = 0;
-    virtual bool is_inside(const Vector<double> &) = 0;
-    virtual bool is_outside(const Vector<double> &);
-    virtual bool is_inside(const Vector<double> &, const double rad) = 0;
-    virtual bool is_outside(const Vector<double> &, const double rad);
-    virtual bool in_contact(const Vector<double> &, const double rad, Vector<double> &contact_vector) = 0;
+    virtual bool is_inside(const Vector3d<double> &) = 0;
+    virtual bool is_outside(const Vector3d<double> &);
+    virtual bool is_inside(const Vector3d<double> &, const double rad) = 0;
+    virtual bool is_outside(const Vector3d<double> &, const double rad);
+    virtual bool in_contact(const Vector3d<double> &, const double rad, Vector3d<double> &contact_vector) = 0;
 
     /**
      * Used in barostat scaling for geometrical forces.
      *
      */
-    virtual void scale_position(double scale_ratio, caviar::Vector<int> scale_axis);
+    virtual void scale_position(double scale_ratio, caviar::Vector3d<int> scale_axis);
 
     FC_BASE_OBJECT_COMMON_TOOLS
   };

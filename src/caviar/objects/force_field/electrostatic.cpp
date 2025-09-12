@@ -29,7 +29,7 @@ namespace caviar
   namespace force_field
   {
 
-    Electrostatic::Electrostatic(CAVIAR *fptr) : Force_field{fptr}, k_electrostatic{1.0}, external_field{Vector<double>{0, 0, 0}}
+    Electrostatic::Electrostatic(CAVIAR *fptr) : Force_field{fptr}, k_electrostatic{1.0}, external_field{Vector3d<double>{0, 0, 0}}
     {
       FC_OBJECT_INITIALIZE_INFO
     }

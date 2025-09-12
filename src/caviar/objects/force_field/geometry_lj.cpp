@@ -265,7 +265,7 @@ namespace caviar
     {
       FC_OBJECT_VERIFY_SETTINGS
 
-      Vector<double> p_o{0, 0, 0};
+      Vector3d<double> p_o{0, 0, 0};
       if (position_offset != nullptr)
         p_o = position_offset->current_value;
 
@@ -288,7 +288,7 @@ namespace caviar
         {
           auto type_s = shape_type[j];
 
-          Vector<double> contact_vector{0, 0, 0};
+          Vector3d<double> contact_vector{0, 0, 0};
 
           double c = cutoff;
 

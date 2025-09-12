@@ -18,7 +18,7 @@
 #include "caviar/objects/neighborlist.hpp"
 #include "caviar/objects/atom_data.hpp"
 #include "caviar/objects/domain.hpp"
-#include "caviar/utility/vector.hpp"
+#include "caviar/utility/vector3d.hpp"
 #include "caviar/utility/interpreter_io_headers.hpp"
 #include <cmath>
 
@@ -146,7 +146,7 @@ namespace caviar
           // std::cout << "j: " << j << std::endl;
           // std::cout << nlist[i].size()  << " " ;
           bool is_ghost = j >= nlist.size();
-          Vector<double> pos_j, vel_j;
+          Vector3d<double> pos_j, vel_j;
           double type_j, mass_inv_j;
           if (is_ghost)
           {

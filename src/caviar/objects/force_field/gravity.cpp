@@ -27,7 +27,7 @@ namespace caviar
 namespace force_field
 {
 
-  Gravity::Gravity(CAVIAR *fptr) : Force_field{fptr}, k_gravity{1.0}, external_field{Vector<double>{0, 0, 0}}
+  Gravity::Gravity(CAVIAR *fptr) : Force_field{fptr}, k_gravity{1.0}, external_field{Vector3d<double>{0, 0, 0}}
   {
     FC_OBJECT_INITIALIZE_INFO
   }

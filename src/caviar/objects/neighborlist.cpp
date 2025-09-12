@@ -29,7 +29,7 @@ namespace caviar
     return (int)(x + 100000) - 100000;
   }
 
-  static void remove_duplicates(std::vector<Vector<int>> &v)
+  static void remove_duplicates(std::vector<Vector3d<int>> &v)
   {
     auto end = v.end();
     for (auto it = v.begin(); it != end; ++it)
@@ -393,9 +393,9 @@ namespace caviar
 
     // // std::cout << "dd : " << dd << std::endl;
     // // std::cout << "no_bins : " << no_bins << std::endl;
-    // // std::cout << "binlist_index(0,0,0)  : " << binlist_index(Vector<double>(0, 0, 0)) << std::endl;
-    // // std::cout << "binlist_index(-120,-12,-12)  : " << binlist_index(Vector<double>(-120, -12, -12)) << std::endl;
-    // // std::cout << "binlist_index(120,12,12)  : " << binlist_index(Vector<double>(120, 12, 12)) << std::endl;
+    // // std::cout << "binlist_index(0,0,0)  : " << binlist_index(Vector3d<double>(0, 0, 0)) << std::endl;
+    // // std::cout << "binlist_index(-120,-12,-12)  : " << binlist_index(Vector3d<double>(-120, -12, -12)) << std::endl;
+    // // std::cout << "binlist_index(120,12,12)  : " << binlist_index(Vector3d<double>(120, 12, 12)) << std::endl;
     // for (int i = 0; i < no_bins.x; ++i)
     // {
     //   for (int j = 0; j < no_bins.y; ++j)
@@ -417,9 +417,9 @@ namespace caviar
     // }
   }
 
-  Vector<int> Neighborlist::binlist_index(const Vector<double> &pos)
+  Vector3d<int> Neighborlist::binlist_index(const Vector3d<double> &pos)
   {
-    Vector<int> ind;
+    Vector3d<int> ind;
     ind.x = std::floor((pos.x - domain->lower_local.x) * cutoff_inv); // int_floor
     ind.y = std::floor((pos.y - domain->lower_local.y) * cutoff_inv);
     ind.z = std::floor((pos.z - domain->lower_local.z) * cutoff_inv);
@@ -441,7 +441,7 @@ namespace caviar
     return ind;
   }
 
-  int Neighborlist::neigh_bin_index(const Vector<double> &pos)
+  int Neighborlist::neigh_bin_index(const Vector3d<double> &pos)
   {
     auto ind = binlist_index(pos);
     return ind.x + no_bins.x * ind.y + no_bins.x * no_bins.y * ind.z;
@@ -592,7 +592,7 @@ namespace caviar
 
     // neigh_bin_linear.resize(no_bins.x * no_bins.y * no_bins.z);
 
-    Vector<int> ind{0, 0, 0};
+    Vector3d<int> ind{0, 0, 0};
 
     for (ind.x = 0; ind.x < no_bins.x; ++ind.x)
     {
@@ -657,7 +657,7 @@ namespace caviar
             {
               for (int ind_z_i = ind_z_min; ind_z_i <= ind_z_max; ++ind_z_i)
               {
-                caviar::Vector<int> nvec{ind_x_i, ind_y_i, ind_z_i};
+                caviar::Vector3d<int> nvec{ind_x_i, ind_y_i, ind_z_i};
 
 #if defined(CAVIAR_WITH_MPI) && !defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
 

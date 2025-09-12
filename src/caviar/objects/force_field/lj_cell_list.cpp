@@ -120,7 +120,7 @@ namespace caviar
             unsigned j = binlist[nb_ij.x][nb_ij.y][nb_ij.z][nb_k];
 
             bool is_ghost = j >= pos_size;
-            Vector<double> pos_j;
+            Vector3d<double> pos_j;
             double type_j, mass_inv_j;
             if (is_ghost)
             {

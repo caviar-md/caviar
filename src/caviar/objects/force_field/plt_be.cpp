@@ -239,7 +239,7 @@ namespace caviar
           {
             double ut = tg[g] * (1 - vg[g]);
 
-            Vector<double> vk = pc1[i] * ut + pc2[i] * vg[g] + pc3[i];
+            Vector3d<double> vk = pc1[i] * ut + pc2[i] * vg[g] + pc3[i];
 
             double fs3d = -0.25 / (FC_PI * std::sqrt((vk - face_center[k]) * (vk - face_center[k])));
 
@@ -370,7 +370,7 @@ namespace caviar
     //---------
     // part V
     //---------
-    double Plt_be::potential_value(const Vector<double> v)
+    double Plt_be::potential_value(const Vector3d<double> v)
     {
       const auto &normal = polyhedron->polyhedron_handler->polyhedron.normal;
 
@@ -387,7 +387,7 @@ namespace caviar
         {
           double ut = tg[g] * (1 - vg[g]);
 
-          Vector<double> vk = pc1[i] * ut + pc2[i] * vg[g] + pc3[i];
+          Vector3d<double> vk = pc1[i] * ut + pc2[i] * vg[g] + pc3[i];
 
           double fs3d = -0.25 / (FC_PI * std::sqrt((vk - v) * (vk - v)));
 
@@ -454,13 +454,13 @@ namespace caviar
 
       const double delta = 1e-6; // XXX
 
-      const Vector<double> r{pos[0].x, pos[0].y, pos[0].z};
-      const Vector<double> rx{pos[0].x + delta, pos[0].y, pos[0].z};
-      const Vector<double> ry{pos[0].x, pos[0].y + delta, pos[0].z};
-      const Vector<double> rz{pos[0].x, pos[0].y, pos[0].z + delta};
+      const Vector3d<double> r{pos[0].x, pos[0].y, pos[0].z};
+      const Vector3d<double> rx{pos[0].x + delta, pos[0].y, pos[0].z};
+      const Vector3d<double> ry{pos[0].x, pos[0].y + delta, pos[0].z};
+      const Vector3d<double> rz{pos[0].x, pos[0].y, pos[0].z + delta};
 
       double p_sm = 0.0;
-      Vector<double> f_sm_d{0, 0, 0};
+      Vector3d<double> f_sm_d{0, 0, 0};
       double p_sm_x = 0.0, p_sm_y = 0.0, p_sm_z = 0.0;
 
       // when the point is out of the mesh, we ignore the output
@@ -815,9 +815,9 @@ namespace caviar
           f_sm = - VectorTools::point_gradient (dof_handler, solution, p1);
         }
 
-        caviar::Vector<double> pos_j {p1[0], p1[1], p1[2]};
+        caviar::Vector3d<double> pos_j {p1[0], p1[1], p1[2]};
 
-        caviar::Vector<double> f_si {0.0, 0.0, 0.0};
+        caviar::Vector3d<double> f_si {0.0, 0.0, 0.0};
         for (auto &&f_custom : force_field_custom)
           f_si += f_custom -> field(pos_j);
 
@@ -1217,7 +1217,7 @@ namespace caviar
             MPI_Send (pos.data(), 3*root_pos_size, MPI::DOUBLE, i, 1, MPI_COMM_WORLD);
           }
 
-          std::vector<Vector<double>> root_acc (root_pos_size,{0,0,0});
+          std::vector<Vector3d<double>> root_acc (root_pos_size,{0,0,0});
 
           for (int i = root+1; i < nprocs; ++i) {
             MPI_Recv (root_acc.data(), 3*root_pos_size, MPI::DOUBLE,
@@ -1230,7 +1230,7 @@ namespace caviar
 
         } else {
           if (me > root) {
-            std::vector<Vector<double>> root_pos   (root_pos_size);
+            std::vector<Vector3d<double>> root_pos   (root_pos_size);
             std::vector<unsigned> root_type (root_pos_size);
 
             MPI_Recv (root_type.data(), root_pos_size, MPI::UNSIGNED,
@@ -1240,7 +1240,7 @@ namespace caviar
               root, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
 
-            std::vector<Vector<double>> root_acc (root_pos_size,{0,0,0});
+            std::vector<Vector3d<double>> root_acc (root_pos_size,{0,0,0});
 
 
             for (unsigned i=0;i<pos.size();++i) {
@@ -1296,7 +1296,7 @@ namespace caviar
           field = - VectorTools::point_gradient (dof_handler, solution, r);
         }
         auto frc = field * charge_i;
-        auto force = caviar::Vector<double> {frc[0], frc[1], frc[2]};
+        auto force = caviar::Vector3d<double> {frc[0], frc[1], frc[2]};
         atom_data -> atom_struct_owned.acceleration [i] += force * mass_inv_i;
       }
 

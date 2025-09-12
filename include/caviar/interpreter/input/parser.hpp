@@ -18,7 +18,7 @@
 
 #include "caviar/utility/interpreter_common_headers.hpp"
 
-#include "caviar/utility/vector.hpp"
+#include "caviar/utility/vector3d.hpp"
 
 namespace caviar
 {
@@ -120,8 +120,8 @@ namespace caviar
        */
       bool get_literal_bool();
 
-      // Vector<double> get_real3d ();
-      // Vector<int> get_int3d ();
+      // Vector3d<double> get_real3d ();
+      // Vector3d<int> get_int3d ();
 
       /**
        * returns a string. It can contains string variables.
@@ -166,9 +166,9 @@ namespace caviar
       /**
        * CAVIAR::Vector counterpart of the functions above
        */
-      // Vector<double> expression_3d (bool);
-      // Vector<double> term_3d (bool);
-      // Vector<double> primary_3d (bool);
+      // Vector3d<double> expression_3d (bool);
+      // Vector3d<double> term_3d (bool);
+      // Vector3d<double> primary_3d (bool);
 
     public:
       /**

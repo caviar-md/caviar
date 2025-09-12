@@ -95,7 +95,7 @@ namespace caviar
     void Electrostatic_ewald_k::calculate_dipole_sum()
     {
       const auto &pos = atom_data->atom_struct_owned.position;
-      dipole_sum = Vector<double>{0, 0, 0};
+      dipole_sum = Vector3d<double>{0, 0, 0};
 #ifdef CAVIAR_WITH_OPENMP
       // #pragma omp parallel for reduction (+:dipole_sum) //weird error in gavazang compiler but no error in my laptop
       //   error: ‘caviar::force_field::Electrostatic_ewald_k::dipole_sum’ is not a variable in clause ‘reduction’
@@ -206,7 +206,7 @@ namespace caviar
           for (auto kz = -kz_max; kz <= kz_max; ++kz)
           {
 
-            Vector<double> k_vec{FC_2PI * kx * lx_inv, FC_2PI * ky * ly_inv, FC_2PI * kz * lz_inv};
+            Vector3d<double> k_vec{FC_2PI * kx * lx_inv, FC_2PI * ky * ly_inv, FC_2PI * kz * lz_inv};
 
             const auto k_vec_sq = k_vec * k_vec;
             if (k_vec_sq == 0)

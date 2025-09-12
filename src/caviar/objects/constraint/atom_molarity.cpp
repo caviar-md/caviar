@@ -39,10 +39,10 @@ namespace caviar
       FC_OBJECT_INITIALIZE_INFO
       atom_type = 0;
       minimum_limit = 0;
-      calculation_box_low = Vector<double>{0.0, 0.0, 0.0};
-      calculation_box_high = Vector<double>{0.0, 0.0, 0.0};
-      creation_box_low = Vector<double>{0.0, 0.0, 0.0};
-      creation_box_high = Vector<double>{0.0, 0.0, 0.0};
+      calculation_box_low = Vector3d<double>{0.0, 0.0, 0.0};
+      calculation_box_high = Vector3d<double>{0.0, 0.0, 0.0};
+      creation_box_low = Vector3d<double>{0.0, 0.0, 0.0};
+      creation_box_high = Vector3d<double>{0.0, 0.0, 0.0};
       creation_try = 1;
       creation_molecule = nullptr;
       creation_atom = nullptr;
@@ -230,7 +230,7 @@ namespace caviar
           auto a = *creation_molecule;
           while (tries < creation_try && sum_of_type < minimum_limit)
           {
-            Vector<double> p{dist_x(mt), dist_y(mt), dist_z(mt)};
+            Vector3d<double> p{dist_x(mt), dist_y(mt), dist_z(mt)};
             a.position = p;
             if (atom_data->empty_of_atoms(a))
             {
@@ -247,7 +247,7 @@ namespace caviar
           auto a = *creation_atom;
           while (tries < creation_try && sum_of_type < minimum_limit)
           {
-            Vector<double> p{dist_x(mt), dist_y(mt), dist_z(mt)};
+            Vector3d<double> p{dist_x(mt), dist_y(mt), dist_z(mt)};
             a.position = p;
             if (atom_data->empty_of_atoms(a))
             {

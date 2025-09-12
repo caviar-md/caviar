@@ -135,7 +135,7 @@ namespace caviar
         for (auto j : nlist[i])
         {
           bool is_ghost = j >= nlist.size();
-          Vector<double> pos_j, vel_j;
+          Vector3d<double> pos_j, vel_j;
           double type_j, mass_inv_j;
           if (is_ghost)
           {

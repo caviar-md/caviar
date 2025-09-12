@@ -46,7 +46,7 @@ namespace caviar
 
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
 
-                        const Vector<double> r = {p[0], p[1], p[2]};
+                        const Vector3d<double> r = {p[0], p[1], p[2]};
 
                         double potential = 0.0;
 

@@ -30,8 +30,8 @@ namespace caviar
     Atom::Atom(CAVIAR *fptr) : Unique{fptr},
                                part_of_a_molecule{false}, upper_level_molecule{nullptr},
                                part_of_a_atom_group{false}, upper_level_atom_group{nullptr},
-                               position{Vector<double>{0, 0, 0}},
-                               velocity{Vector<double>{0, 0, 0}}, type{0} {
+                               position{Vector3d<double>{0, 0, 0}},
+                               velocity{Vector3d<double>{0, 0, 0}}, type{0} {
                                                                       // this is the user accessable creation function. So we only
                                                                       // call the macro initializer here.
                                                                       FC_OBJECT_INITIALIZE_INFO}
@@ -75,7 +75,7 @@ namespace caviar
           GET_OR_CHOOSE_A_REAL(x, "", "")
           GET_OR_CHOOSE_A_REAL(y, "", "")
           GET_OR_CHOOSE_A_REAL(z, "", "")
-          position = Vector<double>{x, y, z};
+          position = Vector3d<double>{x, y, z};
         }
         else if (string_cmp(t, "velocity"))
         {
@@ -83,7 +83,7 @@ namespace caviar
           GET_OR_CHOOSE_A_REAL(x, "", "")
           GET_OR_CHOOSE_A_REAL(y, "", "")
           GET_OR_CHOOSE_A_REAL(z, "", "")
-          velocity = Vector<double>{x, y, z};
+          velocity = Vector3d<double>{x, y, z};
         }
         else if (string_cmp(t, "type"))
         {
@@ -97,8 +97,8 @@ namespace caviar
       return in_file;
     }
 
-    void Atom::extract_all_e_pos_vel(std::vector<int> &e, std::vector<Vector<double>> &p,
-                                     std::vector<Vector<double>> &v)
+    void Atom::extract_all_e_pos_vel(std::vector<int> &e, std::vector<Vector3d<double>> &p,
+                                     std::vector<Vector3d<double>> &v)
     {
       e.push_back(type);
       p.push_back(pos_tot());
@@ -112,7 +112,7 @@ namespace caviar
       out_file << type << " " << p.x << " " << p.y << " " << p.z << std::endl;
     }
 
-    Vector<double> Atom::pos_tot() const
+    Vector3d<double> Atom::pos_tot() const
     {
       if (part_of_a_molecule)
         return position + upper_level_molecule->pos_tot();
@@ -122,7 +122,7 @@ namespace caviar
         return position;
     }
 
-    Vector<double> Atom::vel_tot() const
+    Vector3d<double> Atom::vel_tot() const
     {
       if (part_of_a_molecule)
         return velocity + upper_level_molecule->vel_tot();

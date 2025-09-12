@@ -39,11 +39,11 @@ namespace caviar
 
       bool inside_check;
 
-      bool is_inside(const Vector<double> &);
-      bool is_inside(const Vector<double> &, const double r);
-      bool in_contact(const Vector<double> &v, const double r, Vector<double> &contact_vector);
+      bool is_inside(const Vector3d<double> &);
+      bool is_inside(const Vector3d<double> &, const double r);
+      bool in_contact(const Vector3d<double> &v, const double r, Vector3d<double> &contact_vector);
 
-      // bool is_all (const Vector<double> &); //checks 'is_inside()' if 'inside_check==true'
+      // bool is_all (const Vector3d<double> &); //checks 'is_inside()' if 'inside_check==true'
 
       std::vector<caviar::Shape *> shapes;
       std::vector<int> operators; // 1:and_inside, -1:and_outside, 2:or_inside, -2:or_outside

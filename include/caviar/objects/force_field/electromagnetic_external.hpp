@@ -41,7 +41,7 @@ namespace caviar
 
     public:
       double amplitude_E, amplitude_B;
-      Vector<double> direction_E, direction_B;
+      Vector3d<double> direction_E, direction_B;
     };
 
   } // force_field

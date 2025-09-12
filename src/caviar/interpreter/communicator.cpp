@@ -16,7 +16,7 @@
 #include "caviar/CAVIAR.hpp"
 #include "caviar/interpreter/all.hpp"
 #include "caviar/interpreter/communicator.hpp"
-#include "caviar/utility/vector.hpp"
+#include "caviar/utility/vector3d.hpp"
 #if defined(CAVIAR_WITH_MPI)
 #include <mpi.h>
 #endif
@@ -54,9 +54,9 @@ namespace caviar
       // MPI_Datatype mpi_fc_vector_type;
       MPI_Aint offsets[3];
 
-      offsets[0] = offsetof(caviar::Vector<double>, x);
-      offsets[1] = offsetof(caviar::Vector<double>, y);
-      offsets[2] = offsetof(caviar::Vector<double>, z);
+      offsets[0] = offsetof(caviar::Vector3d<double>, x);
+      offsets[1] = offsetof(caviar::Vector3d<double>, y);
+      offsets[2] = offsetof(caviar::Vector3d<double>, z);
 
       MPI_Type_create_struct(nitems, blocklengths, offsets, types, &mpi_fc_vector_type);
       MPI_Type_commit(&mpi_fc_vector_type);

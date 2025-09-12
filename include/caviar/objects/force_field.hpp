@@ -38,16 +38,16 @@ namespace caviar
     virtual bool read(class caviar::interpreter::Parser *) = 0;
     virtual void calculate_acceleration() = 0;
     virtual double energy();
-    virtual double potential(const Vector<double> &);
+    virtual double potential(const Vector3d<double> &);
     virtual double potential(const int);
-    virtual Vector<double> field(const Vector<double> &);
-    virtual Vector<double> field(const int);
+    virtual Vector3d<double> field(const Vector3d<double> &);
+    virtual Vector3d<double> field(const int);
 
     /**
      * Used in barostat scaling for geometrical forces.
      *
      */
-    virtual void scale_position(double scale_ratio, caviar::Vector<int> scale_axis);
+    virtual void scale_position(double scale_ratio, caviar::Vector3d<int> scale_axis);
 
     double cutoff;
     class Atom_data *atom_data = nullptr;

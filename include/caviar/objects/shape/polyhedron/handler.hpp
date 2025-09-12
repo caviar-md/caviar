@@ -17,7 +17,7 @@
 #pragma once
 
 
-#include "caviar/utility/vector.hpp"
+#include "caviar/utility/vector3d.hpp"
 #include "caviar/objects/shape/polyhedron/polyhedron.hpp"
 #include "caviar/utility/objects_common_headers.hpp"
 
@@ -43,9 +43,9 @@ namespace caviar
         virtual ~Handler();
 
         bool read(caviar::interpreter::Parser *);
-        bool is_inside(const Vector<double> &v);
-        bool is_inside(const Vector<double> &, const double rad);
-        bool in_contact(const Vector<double> &, const double rad, Vector<double> &contact_vector);
+        bool is_inside(const Vector3d<double> &v);
+        bool is_inside(const Vector3d<double> &, const double rad);
+        bool in_contact(const Vector3d<double> &, const double rad, Vector3d<double> &contact_vector);
 
       public:
         void command_generate();
@@ -73,7 +73,7 @@ namespace caviar
          * near a corner) the user has to set the point to a place which
          * is near to the center of a flat polyhedron, and far from concave corners.
          */
-        Vector<double> an_inside_point;
+        Vector3d<double> an_inside_point;
         bool an_inside_point_is_set;
         FC_BASE_OBJECT_COMMON_TOOLS
       };

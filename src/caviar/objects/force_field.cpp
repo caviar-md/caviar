@@ -50,7 +50,7 @@ namespace caviar
     return 0.0;
   }
 
-  double Force_field::potential(const Vector<double> &)
+  double Force_field::potential(const Vector3d<double> &)
   {
     error->all(FC_FILE_LINE_FUNC, "The potential calculation of this force_field is not implemented");
     return 0.0;
@@ -62,19 +62,19 @@ namespace caviar
     return 0.0;
   }
 
-  Vector<double> Force_field::field(const Vector<double> &)
+  Vector3d<double> Force_field::field(const Vector3d<double> &)
   {
     error->all(FC_FILE_LINE_FUNC, "The field calculation of this force_field is not implemented");
-    return Vector<double>{0, 0, 0};
+    return Vector3d<double>{0, 0, 0};
   }
 
-  Vector<double> Force_field::field(const int)
+  Vector3d<double> Force_field::field(const int)
   {
     error->all(FC_FILE_LINE_FUNC, "The field calculation of this force_field is not implemented");
-    return Vector<double>{0, 0, 0};
+    return Vector3d<double>{0, 0, 0};
   }
 
-  void Force_field::scale_position(double, caviar::Vector<int>)
+  void Force_field::scale_position(double, caviar::Vector3d<int>)
   {
     error->all(FC_FILE_LINE_FUNC, "The scale_position of this force_field is not implemented");
   }

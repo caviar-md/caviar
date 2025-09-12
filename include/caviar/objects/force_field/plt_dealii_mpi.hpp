@@ -191,7 +191,7 @@ namespace caviar
       int zeros_of_mesh_output;
       int my_mpi_rank, mpi_world_size;
 
-      std::vector<Vector<double>> face_center_pos, face_center_field;
+      std::vector<Vector3d<double>> face_center_pos, face_center_field;
       std::vector<double> face_center_potential;
 
       std::vector<caviar::Force_field *> force_field_custom;

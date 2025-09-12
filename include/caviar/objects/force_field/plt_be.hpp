@@ -68,7 +68,7 @@ namespace caviar
       void set_potential_on_boundary();
       void make_vec_zz(); // makes 'vec_zz' from 'D2', 'm_inverse', and 'phi_boundary'.
 
-      double potential_value(const Vector<double> v);
+      double potential_value(const Vector3d<double> v);
 
       std::vector<double> vec_zz;
       std::vector<double> phi_boundary;
@@ -76,9 +76,9 @@ namespace caviar
 
       std::vector<std::vector<double>> D1, D2;
 
-      std::vector<Vector<double>> pc1, pc2, pc3; // ?
+      std::vector<Vector3d<double>> pc1, pc2, pc3; // ?
       // std::vector<double> D_1, D_2;
-      std::vector<Vector<double>> face_center; // faces centeral point ?
+      std::vector<Vector3d<double>> face_center; // faces centeral point ?
       std::vector<double> tg, vg;
       unsigned face_size;
 
@@ -109,8 +109,8 @@ namespace caviar
         void set_spherical_manifold();
 
 
-        dealii::Vector<double> solution;
-        dealii::Vector<double> system_rhs;
+        dealii::Vector3d<double> solution;
+        dealii::Vector3d<double> system_rhs;
 
 
         int num_quadrature_points;
@@ -149,7 +149,7 @@ namespace caviar
         bool make_time_profile;
         int zeros_of_mesh_output;
 
-        std::vector<Vector<double>> face_center_pos, face_center_field;
+        std::vector<Vector3d<double>> face_center_pos, face_center_field;
         std::vector<double> face_center_potential;
 
 

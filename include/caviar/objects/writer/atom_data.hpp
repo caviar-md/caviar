@@ -182,7 +182,7 @@ namespace caviar
       bool msd_mpi_rank0 = false;
       bool volume_mpi_rank0 = false;
 
-      std::vector<caviar::Vector<double>> msd_initial_position;
+      std::vector<caviar::Vector3d<double>> msd_initial_position;
 
       // records previous wallTime of XYZ dump.
       double wallTimeXyzDump1;

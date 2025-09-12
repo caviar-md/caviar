@@ -205,7 +205,7 @@ namespace caviar
       if (molecule_struct_owned[m].ghost)
         continue;
 
-      Vector<double> cm{0, 0, 0}; // center of molecule
+      Vector3d<double> cm{0, 0, 0}; // center of molecule
       int molecule_size = molecule_struct_owned[m].atom_list.size();
       for (int n = 0; n < molecule_size; ++n)
       {

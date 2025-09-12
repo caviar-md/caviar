@@ -28,13 +28,13 @@ namespace caviar
   namespace force_field
   {
 
-    Electrostatic_spherical_boundary::Electrostatic_spherical_boundary(CAVIAR *fptr) : Force_field{fptr}, k_electrostatic{1.0}, external_field{Vector<double>{0, 0, 0}}
+    Electrostatic_spherical_boundary::Electrostatic_spherical_boundary(CAVIAR *fptr) : Force_field{fptr}, k_electrostatic{1.0}, external_field{Vector3d<double>{0, 0, 0}}
     {
       FC_OBJECT_INITIALIZE_INFO
       calculated_once = false;
       radius = 1.0;
       voltage = 0.0;
-      center = Vector<double>{0, 0, 0};
+      center = Vector3d<double>{0, 0, 0};
       uncharged_particles_optimization = false;
     }
 

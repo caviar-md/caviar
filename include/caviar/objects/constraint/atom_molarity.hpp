@@ -51,8 +51,8 @@ namespace caviar
       int minimum_limit;
       int creation_try;
       int steps, check_steps;
-      Vector<double> calculation_box_low, calculation_box_high;
-      Vector<double> creation_box_low, creation_box_high;
+      Vector3d<double> calculation_box_low, calculation_box_high;
+      Vector3d<double> creation_box_low, creation_box_high;
       unique::Molecule *creation_molecule;
       unique::Atom *creation_atom;
       bool settings_verified;

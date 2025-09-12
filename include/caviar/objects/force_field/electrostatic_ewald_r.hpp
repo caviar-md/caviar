@@ -35,11 +35,11 @@ namespace caviar
       Electrostatic_ewald_r(class CAVIAR *);
       ~Electrostatic_ewald_r() {};
 
-      double potential(const Vector<double> &);
+      double potential(const Vector3d<double> &);
       double potential(const int);
 
-      Vector<double> field(const Vector<double> &);
-      Vector<double> field(const int);
+      Vector3d<double> field(const Vector3d<double> &);
+      Vector3d<double> field(const int);
 
       bool read(class caviar::interpreter::Parser *);
       void verify_settings();
@@ -51,7 +51,7 @@ namespace caviar
       std::vector<std::vector<double>> lambda;
       bool lambda_is_set = false;
       double k_electrostatic, alpha;
-      Vector<double> external_field;
+      Vector3d<double> external_field;
     };
 
   } // force_field

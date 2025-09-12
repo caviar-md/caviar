@@ -49,7 +49,7 @@ namespace caviar
         const auto &type = atom_struct_owned.type;
 
         std::vector<std::vector<int>> all_id;
-        std::vector<Vector<double>> all_pos;
+        std::vector<Vector3d<double>> all_pos;
         std::vector<int> all_type;
 
         const auto nla = pos.size();//atom_data -> num_local_atoms;
@@ -105,20 +105,20 @@ namespace caviar
 
           if (me != 0) { //==================================// pos send
             for (unsigned int i=0; i<pos.size (); ++i){
-              Vector<double> p_tmp {pos[i].x, pos[i].y, pos[i].z};
+              Vector3d<double> p_tmp {pos[i].x, pos[i].y, pos[i].z};
               MPI_Send (&p_tmp.x, 3, MPI_DOUBLE, 0, id[i], mpi_comm);
             }
           } else {
             all_pos.reserve(nta);
             for (unsigned int i=0; i<nla; ++i){
-              Vector<double> p_tmp;
+              Vector3d<double> p_tmp;
               p_tmp = pos[i];
               all_pos.push_back (p_tmp);
             }
 
             for (unsigned int i=1; i < nprocs; ++i) {
               for (auto j : all_id[i]) {
-                Vector<double> p_tmp;
+                Vector3d<double> p_tmp;
                 MPI_Recv (&p_tmp, 3, MPI_DOUBLE, i, j, mpi_comm, MPI_STATUS_IGNORE);
                 all_pos.push_back (p_tmp);
               }

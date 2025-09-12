@@ -143,7 +143,7 @@ namespace caviar
       {
         GET_OR_CHOOSE_A_INT(msd_process, "", "")
         if (msd_process)
-          atom_struct_owned.msd_domain_cross.resize(atom_struct_owned.position.size(), caviar::Vector<int>{0, 0, 0});
+          atom_struct_owned.msd_domain_cross.resize(atom_struct_owned.position.size(), caviar::Vector3d<int>{0, 0, 0});
       }
       else if (string_cmp(t, "debug_virial"))
       {
@@ -155,7 +155,7 @@ namespace caviar
         if (pressure_process)
         {
           msd_process = true;
-          atom_struct_owned.msd_domain_cross.resize(atom_struct_owned.position.size(), caviar::Vector<int>{0, 0, 0});
+          atom_struct_owned.msd_domain_cross.resize(atom_struct_owned.position.size(), caviar::Vector3d<int>{0, 0, 0});
         }
         reset_pressure();
       }
@@ -274,7 +274,7 @@ namespace caviar
         auto x = parser->get_real();
         auto y = parser->get_real();
         auto z = parser->get_real();
-        atom_struct_owned.position[ind] = Vector<double>{x, y, z};
+        atom_struct_owned.position[ind] = Vector3d<double>{x, y, z};
       }
       else if (string_cmp(t, "set_owned_velocity"))
       {
@@ -282,7 +282,7 @@ namespace caviar
         auto x = parser->get_real();
         auto y = parser->get_real();
         auto z = parser->get_real();
-        atom_struct_owned.velocity[ind] = Vector<double>{x, y, z};
+        atom_struct_owned.velocity[ind] = Vector3d<double>{x, y, z};
       }
       else if (string_cmp(t, "set_owned_acceleration"))
       {
@@ -290,7 +290,7 @@ namespace caviar
         auto x = parser->get_real();
         auto y = parser->get_real();
         auto z = parser->get_real();
-        atom_struct_owned.acceleration[ind] = Vector<double>{x, y, z};
+        atom_struct_owned.acceleration[ind] = Vector3d<double>{x, y, z};
       }
       else if (string_cmp(t, "add_random_velocity"))
       {
@@ -412,7 +412,7 @@ namespace caviar
     error->all(FC_FILE_LINE_FUNC, "Why you need this function??");
   }
 
-  bool Atom_data::position_inside_local_domain(const Vector<double> &pos)
+  bool Atom_data::position_inside_local_domain(const Vector3d<double> &pos)
   {
     if (domain == nullptr)
       error->all(FC_FILE_LINE_FUNC, "domain = nullptr");
@@ -444,7 +444,7 @@ namespace caviar
     return true;
   }
 
-  bool Atom_data::position_inside_global_domain(const Vector<double> &pos)
+  bool Atom_data::position_inside_global_domain(const Vector3d<double> &pos)
   {
     if (domain == nullptr)
       error->all(FC_FILE_LINE_FUNC, "domain = nullptr");
@@ -501,8 +501,8 @@ namespace caviar
   // Any new vector addition to this function should be deleted in 'remove_atom()' functions.
   bool Atom_data::add_atom(size_t id,
                            size_t type,
-                           const Vector<double> &pos,
-                           const Vector<double> &vel)
+                           const Vector3d<double> &pos,
+                           const Vector3d<double> &vel)
   {
     // =======================================
     // Adding data to atom_struct_owned.
@@ -539,17 +539,17 @@ namespace caviar
   {
     atom_struct_owned.id.resize(new_size, 0);
     atom_struct_owned.type.resize(new_size, 0);
-    atom_struct_owned.position.resize(new_size, caviar::Vector<double>{0, 0, 0});
-    atom_struct_owned.velocity.resize(new_size, caviar::Vector<double>{0, 0, 0});
-    atom_struct_owned.acceleration.resize(new_size, caviar::Vector<double>{0, 0, 0});
+    atom_struct_owned.position.resize(new_size, caviar::Vector3d<double>{0, 0, 0});
+    atom_struct_owned.velocity.resize(new_size, caviar::Vector3d<double>{0, 0, 0});
+    atom_struct_owned.acceleration.resize(new_size, caviar::Vector3d<double>{0, 0, 0});
     if (record_owned_position_old)
-      atom_struct_owned.position_old.resize(new_size, caviar::Vector<double>{0, 0, 0});
+      atom_struct_owned.position_old.resize(new_size, caviar::Vector3d<double>{0, 0, 0});
     if (record_owned_velocity_old)
-      atom_struct_owned.velocity_old.resize(new_size, caviar::Vector<double>{0, 0, 0});
+      atom_struct_owned.velocity_old.resize(new_size, caviar::Vector3d<double>{0, 0, 0});
     if (record_owned_acceleration_old)
-      atom_struct_owned.acceleration_old.resize(new_size, caviar::Vector<double>{0, 0, 0});
+      atom_struct_owned.acceleration_old.resize(new_size, caviar::Vector3d<double>{0, 0, 0});
     if (msd_process)
-      atom_struct_owned.msd_domain_cross.resize(new_size, caviar::Vector<int>{0, 0, 0});
+      atom_struct_owned.msd_domain_cross.resize(new_size, caviar::Vector3d<int>{0, 0, 0});
     atom_struct_owned.molecule_index.resize(new_size, -1);
     atom_struct_owned.atomic_bond_count.resize(new_size, 0);
     return true;
@@ -579,9 +579,9 @@ namespace caviar
   {
     atom_struct_ghost.id.resize(new_size, 0);
     atom_struct_ghost.type.resize(new_size, 0);
-    atom_struct_ghost.position.resize(new_size, caviar::Vector<double>{0, 0, 0});
+    atom_struct_ghost.position.resize(new_size, caviar::Vector3d<double>{0, 0, 0});
     if (make_ghost_velocity)
-      atom_struct_ghost.velocity.resize(new_size, caviar::Vector<double>{0, 0, 0});
+      atom_struct_ghost.velocity.resize(new_size, caviar::Vector3d<double>{0, 0, 0});
 
     return true;
   }
@@ -752,7 +752,7 @@ namespace caviar
     // remove_atom(index_to_remove);
   }
 
-  void Atom_data::scale_position(double xi, caviar::Vector<int> scale_axis)
+  void Atom_data::scale_position(double xi, caviar::Vector3d<int> scale_axis)
   {
 
     // for (unsigned m = 0; m < molecule_struct_owned.size(); ++m)
@@ -823,7 +823,7 @@ namespace caviar
         if (molecule_struct_owned[m].ghost)
           continue;
 
-        Vector<double> cm{0, 0, 0}; // center of molecule
+        Vector3d<double> cm{0, 0, 0}; // center of molecule
         int molecule_size = molecule_struct_owned[m].atom_list.size();
         for (int n = 0; n < molecule_size; ++n)
         {
@@ -832,7 +832,7 @@ namespace caviar
         }
         cm /= molecule_size;
 
-        Vector<double> cm_new{cm.x, cm.y, cm.z};
+        Vector3d<double> cm_new{cm.x, cm.y, cm.z};
         if (x_axis)
           cm_new.x *= xi;
         if (y_axis)

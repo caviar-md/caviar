@@ -64,7 +64,7 @@ namespace caviar
         const auto &normal = p_object.normal;
         auto &edge_norms3 = p_object.edge_norms3;
 
-        std::vector<std::vector<Vector<double>>> edge_norms1, edge_norms2;
+        std::vector<std::vector<Vector3d<double>>> edge_norms1, edge_norms2;
         std::map<std::vector<unsigned int>, std::vector<unsigned int>>::const_iterator it_edges;
         const unsigned int fsize = face.size();
         edge_norms1.resize(fsize);
@@ -74,7 +74,7 @@ namespace caviar
         {
           for (unsigned int j = 0; j < face[i].size(); ++j)
           {
-            Vector<double> n1 = normal[i];
+            Vector3d<double> n1 = normal[i];
             unsigned int k0 = j;
             unsigned int k1 = (j == face[i].size() - 1) ? 0 : j + 1;
             unsigned int v0 = face[i][k0];
@@ -93,11 +93,11 @@ namespace caviar
             n1 /= std::sqrt(n1 * n1); // it is not necessary
             edge_norms1[i].push_back(n1);
             //-------
-            Vector<double> n2 = vertex[face[i][k1]] - vertex[face[i][k0]];
+            Vector3d<double> n2 = vertex[face[i][k1]] - vertex[face[i][k0]];
             n2 /= std::sqrt(n2 * n2); // it is not necessary
             edge_norms2[i].push_back(n2);
             //-------
-            Vector<double> n3 = cross_product(n1, n2);
+            Vector3d<double> n3 = cross_product(n1, n2);
             n3 /= std::sqrt(n3 * n3); // it is not necessary
             edge_norms3[i].push_back(n3);
           }
@@ -117,9 +117,9 @@ namespace caviar
           // std::cout << i << " , v1: 1 " << face[i][1] << std::endl;
           // std::cout << i << " , v1: 2 " << face[i][2] << std::endl;
           // std::cout << i << " , v1: 0 " << face[i][0] << std::endl;
-          Vector<double> v1 = vertex[face[i][1]] - vertex[face[i][0]];
-          Vector<double> v2 = vertex[face[i][2]] - vertex[face[i][0]];
-          Vector<double> n = cross_product(v1, v2);
+          Vector3d<double> v1 = vertex[face[i][1]] - vertex[face[i][0]];
+          Vector3d<double> v2 = vertex[face[i][2]] - vertex[face[i][0]];
+          Vector3d<double> n = cross_product(v1, v2);
           //    std::cout<<"v1: "<<v1 << " v2 :" << v2 << " v1*v2: "<< n <<std::endl;
           double n_lenght = sqrt(n.x * n.x + n.y * n.y + n.z * n.z);
           n /= n_lenght;
@@ -127,7 +127,7 @@ namespace caviar
         }
       }
 
-      bool Utility::normals_are_pointing_outside(shape::polyhedron::Polyhedron &p_object, const Vector<double> &v)
+      bool Utility::normals_are_pointing_outside(shape::polyhedron::Polyhedron &p_object, const Vector3d<double> &v)
       {
         const auto &vertex = p_object.vertex;
         const auto &face = p_object.face;
@@ -140,7 +140,7 @@ namespace caviar
         {
 
           // center of the faces
-          Vector<double> cr = {(vertex[face[i][0]].x + vertex[face[i][1]].x + vertex[face[i][2]].x) / 3.0,
+          Vector3d<double> cr = {(vertex[face[i][0]].x + vertex[face[i][1]].x + vertex[face[i][2]].x) / 3.0,
                                (vertex[face[i][0]].y + vertex[face[i][1]].y + vertex[face[i][2]].y) / 3.0,
                                (vertex[face[i][0]].z + vertex[face[i][1]].z + vertex[face[i][2]].z) / 3.0};
 
@@ -157,7 +157,7 @@ namespace caviar
           error->all(FC_FILE_LINE_FUNC, "'An_inside_point' is far from any polygons on the geometry");
 
         unsigned int i = nearest_index;
-        Vector<double> cr = {(vertex[face[i][0]].x + vertex[face[i][1]].x + vertex[face[i][2]].x) / 3.0,
+        Vector3d<double> cr = {(vertex[face[i][0]].x + vertex[face[i][1]].x + vertex[face[i][2]].x) / 3.0,
                              (vertex[face[i][0]].y + vertex[face[i][1]].y + vertex[face[i][2]].y) / 3.0,
                              (vertex[face[i][0]].z + vertex[face[i][1]].z + vertex[face[i][2]].z) / 3.0};
 

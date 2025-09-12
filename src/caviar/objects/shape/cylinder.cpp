@@ -44,35 +44,35 @@ namespace caviar
       ;
     }
 
-    bool Cylinder::on_the_plane(const Vector<double> &v)
+    bool Cylinder::on_the_plane(const Vector3d<double> &v)
     {
-      Vector<double> v_1 = v - center;
+      Vector3d<double> v_1 = v - center;
       if (v_1 * normal > flatness_tol)
         return false;
       return true;
     }
 
-    bool Cylinder::is_inside(const Vector<double> &v)
+    bool Cylinder::is_inside(const Vector3d<double> &v)
     {
       if (!on_the_plane(v))
         return false;
-      Vector<double> v_1 = v - center;
+      Vector3d<double> v_1 = v - center;
       if (v_1 * v_1 > radius * radius)
         return false;
       return true;
     }
 
-    bool Cylinder::is_inside(const Vector<double> &v, const double r)
+    bool Cylinder::is_inside(const Vector3d<double> &v, const double r)
     {
       if (!on_the_plane(v))
         return false;
-      Vector<double> v_1 = v - center;
+      Vector3d<double> v_1 = v - center;
       if (v_1 * v_1 > (radius - r) * (radius - r))
         return false;
       return true;
     }
 
-    bool Cylinder::in_contact(const Vector<double> &v, const double r, Vector<double> &contact_vector)
+    bool Cylinder::in_contact(const Vector3d<double> &v, const double r, Vector3d<double> &contact_vector)
     {
       std::string s = "incomplete function:";
       s += __FILE__ + std::to_string(__LINE__) + __func__;

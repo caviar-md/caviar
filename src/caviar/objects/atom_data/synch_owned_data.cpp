@@ -64,9 +64,9 @@ namespace caviar
 
       if (pos_size != root_pos_size)
       {
-        atom_struct_owned.position.resize(root_pos_size, caviar::Vector<double>{0, 0, 0});
-        atom_struct_owned.velocity.resize(root_pos_size, caviar::Vector<double>{0, 0, 0});
-        atom_struct_owned.acceleration.resize(root_pos_size, caviar::Vector<double>{0, 0, 0});
+        atom_struct_owned.position.resize(root_pos_size, caviar::Vector3d<double>{0, 0, 0});
+        atom_struct_owned.velocity.resize(root_pos_size, caviar::Vector3d<double>{0, 0, 0});
+        atom_struct_owned.acceleration.resize(root_pos_size, caviar::Vector3d<double>{0, 0, 0});
       }
 
       if (type_size != root_pos_size)

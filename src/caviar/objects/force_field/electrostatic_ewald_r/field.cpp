@@ -29,10 +29,10 @@ namespace caviar
   namespace force_field
   {
 
-    Vector<double> Electrostatic_ewald_r::field(const Vector<double> &r)
+    Vector3d<double> Electrostatic_ewald_r::field(const Vector3d<double> &r)
     {
 
-      Vector<double> field{0, 0, 0};
+      Vector3d<double> field{0, 0, 0};
 
       const auto &pos = atom_data->atom_struct_owned.position;
       const unsigned pos_size = pos.size();
@@ -57,7 +57,7 @@ namespace caviar
           unsigned int j = binlist[nb_ij.x][nb_ij.y][nb_ij.z][i];
 
           bool is_ghost = j >= pos_size;
-          Vector<double> pos_j;
+          Vector3d<double> pos_j;
           double type_j;
           if (is_ghost)
           {
@@ -94,9 +94,9 @@ namespace caviar
       return field * k_electrostatic;
     }
 
-    Vector<double> Electrostatic_ewald_r::field(const int i)
+    Vector3d<double> Electrostatic_ewald_r::field(const int i)
     {
-      Vector<double> field{0, 0, 0};
+      Vector3d<double> field{0, 0, 0};
 
       error->all("not implemented. needs fixs for neighlist or maybe impossible.");
 
@@ -116,7 +116,7 @@ namespace caviar
         auto j = nlist[i][k];
         double coef = 2.0; // ewald: 'coef=2' for owned in 'neighlist'. Not for binlist.
         bool is_ghost = j >= pos_size;
-        Vector<double> pos_j;
+        Vector3d<double> pos_j;
         double type_j;
         if (is_ghost)
         {

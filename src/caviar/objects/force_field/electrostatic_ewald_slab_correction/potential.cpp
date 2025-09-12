@@ -29,7 +29,7 @@ namespace caviar
   namespace force_field
   {
 
-    double Electrostatic_ewald_slab_correction::potential(const Vector<double> &r)
+    double Electrostatic_ewald_slab_correction::potential(const Vector3d<double> &r)
     {
       double sum_p = 0;
 
@@ -90,7 +90,7 @@ namespace caviar
       return potential(atom_data->atom_struct_owned.position[i]);
     }
 
-    double Electrostatic_ewald_slab_correction::dipole_potential(const Vector<double> &r)
+    double Electrostatic_ewald_slab_correction::dipole_potential(const Vector3d<double> &r)
     {
       return 0 * r.x; // XXX
     }

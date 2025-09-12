@@ -29,7 +29,7 @@ namespace caviar
 
     //======= total potential
 
-    double Electrostatic_ewald1d::potential(const Vector<double> &r)
+    double Electrostatic_ewald1d::potential(const Vector3d<double> &r)
     {
       FC_OBJECT_VERIFY_SETTINGS
       return potential_r(r) + potential_k(r);
@@ -44,7 +44,7 @@ namespace caviar
     //======= short range
 
     // using binlist
-    double Electrostatic_ewald1d::potential_r(const Vector<double> &r)
+    double Electrostatic_ewald1d::potential_r(const Vector3d<double> &r)
     {
       double potential_value = 0;
 
@@ -70,7 +70,7 @@ namespace caviar
 
           bool is_ghost = j >= pos_size;
 
-          Vector<double> pos_j;
+          Vector3d<double> pos_j;
           double type_j;
           if (is_ghost)
           {
@@ -126,7 +126,7 @@ namespace caviar
         double coef = 2.0; // ewald: 'coef=2' for owned in 'neighlist'. Not for binlist.
         bool is_ghost = j >= pos_size;
 
-        Vector<double> pos_j;
+        Vector3d<double> pos_j;
         double type_j;
         if (is_ghost)
         {
@@ -158,7 +158,7 @@ namespace caviar
 
     //====== long rang
 
-    double Electrostatic_ewald1d::potential_k(const Vector<double> &r)
+    double Electrostatic_ewald1d::potential_k(const Vector3d<double> &r)
     {
       double potential_value = 0;
       const auto &pos = atom_data->atom_struct_owned.position;

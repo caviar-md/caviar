@@ -44,12 +44,12 @@ namespace caviar
       bool read(caviar::interpreter::Parser *);
       void verify_settings();
 
-      Vector<double> pos_tot() const;
-      Vector<double> vel_tot() const;
+      Vector3d<double> pos_tot() const;
+      Vector3d<double> vel_tot() const;
 
       bool add_atom(caviar::interpreter::Parser *);
       bool add_atom(const class Atom &);
-      bool add_atom(const class Atom &, const Vector<double> &p, const Vector<double> &v);
+      bool add_atom(const class Atom &, const Vector3d<double> &p, const Vector3d<double> &v);
 
       // called by the molecule itself. The output file name is automaticly generated
       void output_xyz();
@@ -61,13 +61,13 @@ namespace caviar
       void output_xyz(const std::string &);
 
       // puts the atoms type, total position and velocity inside the vectors.
-      void extract_all_e_pos_vel(std::vector<int> &, std::vector<Vector<double>> &,
-                                 std::vector<Vector<double>> &);
+      void extract_all_e_pos_vel(std::vector<int> &, std::vector<Vector3d<double>> &,
+                                 std::vector<Vector3d<double>> &);
 
       bool part_of_a_molecule_group;
       Molecule_group *upper_level_molecule_group;
 
-      Vector<double> position, velocity;
+      Vector3d<double> position, velocity;
       std::vector<Atom> atoms;
 
       std::vector<atom_data::Bond> atomic_bond;

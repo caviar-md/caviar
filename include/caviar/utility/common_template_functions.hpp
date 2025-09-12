@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "caviar/utility/vector.hpp"
+#include "caviar/utility/vector3d.hpp"
 #include <algorithm>
 #include <vector>
 #include <array>
@@ -191,7 +191,7 @@ namespace caviar
    *
    */
   template <typename T>
-  int matrix_Vector_product(const std::vector<std::vector<T>> &A, const Vector<T> &V, Vector<T> &R)
+  int matrix_Vector_product(const std::vector<std::vector<T>> &A, const Vector3d<T> &V, Vector3d<T> &R)
   {
 
     const auto A_size = A.size();
@@ -215,7 +215,7 @@ namespace caviar
    *
    */
   template <typename T>
-  int matrix_Vector_product_3d(const std::array<std::array<T, 3>, 3> &A, const Vector<T> &V, Vector<T> &R)
+  int matrix_Vector_product_3d(const std::array<std::array<T, 3>, 3> &A, const Vector3d<T> &V, Vector3d<T> &R)
   {
 
     R.x = A[0][0] * V.x + A[0][1] * V.y + A[0][2] * V.z;

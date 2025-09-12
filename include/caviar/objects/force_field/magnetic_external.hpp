@@ -40,7 +40,7 @@ namespace caviar
 
     public:
       double amplitude;
-      Vector<double> direction;
+      Vector3d<double> direction;
     };
 
   } // force_field

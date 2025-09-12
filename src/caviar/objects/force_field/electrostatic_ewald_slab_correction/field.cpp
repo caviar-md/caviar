@@ -27,8 +27,8 @@ namespace caviar
 
 namespace force_field {
 
-Vector<double> Electrostatic_ewald_slab_correction::field (const Vector<double> &r) {
-  Vector<double> f_local{0,0,0};
+Vector3d<double> Electrostatic_ewald_slab_correction::field (const Vector3d<double> &r) {
+  Vector3d<double> f_local{0,0,0};
 
 // XXX Working Scheme of order N
 // /*
@@ -216,11 +216,11 @@ Vector<double> Electrostatic_ewald_slab_correction::field (const Vector<double> 
   return give_slab_global_coordinates(f_local) + dipole_field_vector;
 }
 
-Vector<double> Electrostatic_ewald_slab_correction::field (int i) {
+Vector3d<double> Electrostatic_ewald_slab_correction::field (int i) {
   return field (atom_data->atom_struct_owned.position[i]);
 }
 
-Vector<double> Electrostatic_ewald_slab_correction::dipole_field () {
+Vector3d<double> Electrostatic_ewald_slab_correction::dipole_field () {
   return dipole_field_vector;
 }
 

@@ -63,8 +63,8 @@ namespace caviar
 
       double dt;
       double error_tolerance;
-      caviar::Vector<double> domain_dh;
-      caviar::Vector<int> domain_bc;
+      caviar::Vector3d<double> domain_dh;
+      caviar::Vector3d<int> domain_bc;
       bool initialized;
     };
 

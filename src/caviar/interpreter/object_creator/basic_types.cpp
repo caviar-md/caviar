@@ -275,7 +275,7 @@ namespace caviar
       std::string NAME = "";
 
       bool in_file = true;
-      Vector2D<int> r{0, 0};
+      Vector2d<int> r{0, 0};
 
       // there are four different cases of creation of a int_3d_vector:
       // 'int3d '
@@ -341,7 +341,7 @@ namespace caviar
       std::string NAME = "";
 
       bool in_file = true;
-      Vector2D<double> r{0, 0};
+      Vector2d<double> r{0, 0};
 
       // there are four different cases of creation of a real_3d_vector:
       // 'real3d '
@@ -407,7 +407,7 @@ namespace caviar
       std::string NAME = "";
 
       bool in_file = true;
-      Vector<int> r{0, 0, 0};
+      Vector3d<int> r{0, 0, 0};
 
       // there are four different cases of creation of a int_3d_vector:
       // 'int3d '
@@ -475,7 +475,7 @@ namespace caviar
       std::string NAME = "";
 
       bool in_file = true;
-      Vector<double> r{0, 0, 0};
+      Vector3d<double> r{0, 0, 0};
 
       // there are four different cases of creation of a real_3d_vector:
       // 'real3d '

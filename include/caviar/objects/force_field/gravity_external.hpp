@@ -45,7 +45,7 @@ namespace caviar
 
     public:
       double amplitude;
-      Vector<double> direction;
+      Vector3d<double> direction;
       unique::Time_function_3d *non_inertia_reference_frame_acc = nullptr;
     };
 

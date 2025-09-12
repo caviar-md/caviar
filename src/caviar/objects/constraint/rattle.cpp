@@ -30,8 +30,8 @@ namespace caviar
     Rattle::Rattle(CAVIAR *fptr) : Constraint{fptr},
                                    domain{nullptr},
                                    dt{-1.0}, error_tolerance{1e-6},
-                                   domain_dh{Vector<double>{0, 0, 0}},
-                                   domain_bc{Vector<int>{0, 0, 0}},
+                                   domain_dh{Vector3d<double>{0, 0, 0}},
+                                   domain_bc{Vector3d<int>{0, 0, 0}},
                                    initialized{false}
     {
       FC_OBJECT_INITIALIZE_INFO

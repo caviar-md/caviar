@@ -130,7 +130,7 @@ namespace caviar
 
           node_label.push_back(tmp);
 
-          vertex.push_back(Vector<double>{pos[0], pos[1], pos[2]});
+          vertex.push_back(Vector3d<double>{pos[0], pos[1], pos[2]});
         }
       }
 

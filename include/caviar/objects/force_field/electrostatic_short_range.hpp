@@ -35,11 +35,11 @@ namespace caviar
     public:
       Electrostatic_short_range(class CAVIAR *);
       ~Electrostatic_short_range() {};
-      double potential(const Vector<double> &);
+      double potential(const Vector3d<double> &);
       double potential(const int);
 
-      Vector<double> field(const Vector<double> &);
-      Vector<double> field(const int);
+      Vector3d<double> field(const Vector3d<double> &);
+      Vector3d<double> field(const int);
 
       double energy();
 
@@ -52,7 +52,7 @@ namespace caviar
       bool lambda_is_set = false;
 
       double k_electrostatic;
-      Vector<double> external_field;
+      Vector3d<double> external_field;
 
       // short range force shift
       // V(r) = ( q_i q_j / 4 Pi epsilon ) * (1/r + c r ^beta + d)

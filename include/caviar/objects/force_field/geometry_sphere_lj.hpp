@@ -49,7 +49,7 @@ namespace caviar
 
       bool inside;
       double radius;
-      caviar::Vector<double> center;
+      caviar::Vector3d<double> center;
 
       // epsilon - sigma of a single type. inter-type values will be deduced using these
       std::vector<double> epsilon_atom, sigma_atom;

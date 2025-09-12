@@ -50,7 +50,7 @@ namespace caviar
 #endif
     for (unsigned int i = 0; i < pos_size; ++i)
     {
-      caviar::Vector<int> msd{0, 0, 0};
+      caviar::Vector3d<int> msd{0, 0, 0};
       pos[i] = domain->fix_position(pos[i], msd, update_verlet_list);
 
       if (msd_process)

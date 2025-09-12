@@ -86,17 +86,17 @@ namespace caviar
         for (unsigned int i = 0; i < face.size(); ++i)
         {
           // center of polygons
-          Vector<double> cr = {(vertex[face[i][0]].x + vertex[face[i][1]].x + vertex[face[i][2]].x) / 3.0,
+          Vector3d<double> cr = {(vertex[face[i][0]].x + vertex[face[i][1]].x + vertex[face[i][2]].x) / 3.0,
                                (vertex[face[i][0]].y + vertex[face[i][1]].y + vertex[face[i][2]].y) / 3.0,
                                (vertex[face[i][0]].z + vertex[face[i][1]].z + vertex[face[i][2]].z) / 3.0};
 
           // I think there's two different type of vectors as for output
 
           // the first type is like this
-          // Vector<double> di = cr + normal[i];
+          // Vector3d<double> di = cr + normal[i];
           // if one
           // this Type works for GNUPlot 'splot with vectors'
-          Vector<double> di = normal[i];
+          Vector3d<double> di = normal[i];
 
           // one can have a scale done on the vectors using gnuplot
 
@@ -126,11 +126,11 @@ namespace caviar
 
         for (unsigned int i = 0; i < face.size(); ++i)
         {
-          Vector<double> cr = {(vertex[face[i][0]].x + vertex[face[i][1]].x + vertex[face[i][2]].x) / 3.0,
+          Vector3d<double> cr = {(vertex[face[i][0]].x + vertex[face[i][1]].x + vertex[face[i][2]].x) / 3.0,
                                (vertex[face[i][0]].y + vertex[face[i][1]].y + vertex[face[i][2]].y) / 3.0,
                                (vertex[face[i][0]].z + vertex[face[i][1]].z + vertex[face[i][2]].z) / 3.0};
 
-          Vector<double> di = cr + vec_length * normal[i];
+          Vector3d<double> di = cr + vec_length * normal[i];
           cr -= (vec_length / 10.0) * normal[i];
 
           vfptr_file << "graphics top cone ";
@@ -219,11 +219,11 @@ namespace caviar
           double vec_rad = 1.5;
 
           for (unsigned int i=0;i<face.size();++i) {
-            Vector<double> cr = {(vertex[face[i][0]].x + vertex[face[i][1]].x + vertex[face[i][2]].x)/3.0,
+            Vector3d<double> cr = {(vertex[face[i][0]].x + vertex[face[i][1]].x + vertex[face[i][2]].x)/3.0,
                                   (vertex[face[i][0]].y + vertex[face[i][1]].y + vertex[face[i][2]].y)/3.0,
                                   (vertex[face[i][0]].z + vertex[face[i][1]].z + vertex[face[i][2]].z)/3.0};
 
-            Vector<double> di = cr + vec_length*normal[i];
+            Vector3d<double> di = cr + vec_length*normal[i];
             cr -=  (vec_length/10.0) * normal[i];
 
             vfptr_file << "graphics top cone ";

@@ -66,9 +66,9 @@ namespace caviar
 
     virtual void all_atom_test_function(int state = 0);
 
-    virtual Vector<int> binlist_index(const Vector<double> &);
+    virtual Vector3d<int> binlist_index(const Vector3d<double> &);
 
-    virtual int neigh_bin_index(const Vector<double> &);
+    virtual int neigh_bin_index(const Vector3d<double> &);
 
     virtual void make_neigh_bin();
 
@@ -100,7 +100,7 @@ namespace caviar
     /**
      * Cell List: The 3D index of the neighbors of each bin.
      */
-    std::vector<std::vector<Vector<int>>> neigh_bin;
+    std::vector<std::vector<Vector3d<int>>> neigh_bin;
 
     ///*
     // * Cell List: The 3D index of the neighbors of each bin.
@@ -110,7 +110,7 @@ namespace caviar
     /**
      * Cell List: Number of bins in each direction
      */
-    Vector<int> no_bins;
+    Vector3d<int> no_bins;
 
     /**
      * Maximum cutoff of short-ranged force-fields.
@@ -157,12 +157,12 @@ namespace caviar
     /**
      * position of the ghost particles at the previous verlet list generation step
      */
-    std::vector<Vector<double>> ghost_pos_old;
+    std::vector<Vector3d<double>> ghost_pos_old;
 
     /**
      * position of the particles at the previous verlet list generation step
      */
-    std::vector<Vector<double>> pos_old;
+    std::vector<Vector3d<double>> pos_old;
 
     std::vector<int> mpi_rank_old;
 

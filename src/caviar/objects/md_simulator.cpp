@@ -727,7 +727,7 @@ namespace caviar
                        " , " + std::to_string(pos[i].y) + " , " + std::to_string(pos[i].z) + ") is has NaN acceleration.");
       }
 
-      const auto eta = Vector<double>{L.eta_x[i], L.eta_y[i], L.eta_z[i]};
+      const auto eta = Vector3d<double>{L.eta_x[i], L.eta_y[i], L.eta_z[i]};
 
       vel[i] += 0.5 * acc[i] * dt + L.b * eta;
       // std::cout << "acc " << acc[i] << ",vel " << vel[i] << "\n";
@@ -810,7 +810,7 @@ namespace caviar
       if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
         continue;
 #endif
-      const auto eta = Vector<double>{L.eta_x[i], L.eta_y[i], L.eta_z[i]};
+      const auto eta = Vector3d<double>{L.eta_x[i], L.eta_y[i], L.eta_z[i]};
       vel[i] = L.a * vel[i] + L.b * eta + 0.5 * acc[i] * dt;
       // std::cout << "2 acc " << acc[i] << ",vel " << vel[i] << "\n";
     }

@@ -58,15 +58,15 @@ namespace caviar
       Point_Inside::~Point_Inside() {}
       void Point_Inside::verify_settings() {}
       // this function is used for particle distribution
-      bool Point_Inside::is_inside(shape::polyhedron::Polyhedron &p_object, const Vector<double> &v0)
+      bool Point_Inside::is_inside(shape::polyhedron::Polyhedron &p_object, const Vector3d<double> &v0)
       {
         auto method = point_is_inside_method;
         if (method == -1)
         {
           // since the method of ray is not perfect yet, we use these two additional
           // vector values to add to the rays.
-          Vector<double> v3 = {1e-5, 3e-5, 25e-6};
-          Vector<double> v4 = {-1e-5, 2e-5, -3e-5};
+          Vector3d<double> v3 = {1e-5, 3e-5, 25e-6};
+          Vector3d<double> v4 = {-1e-5, 2e-5, -3e-5};
 
           const auto r0 = ray_tells_point_is_inside(p_object, v0, 0);
           const auto r1 = ray_tells_point_is_inside(p_object, v0, 1);
@@ -107,7 +107,7 @@ namespace caviar
         return false;
       }
 
-      bool Point_Inside::is_inside_grid(shape::polyhedron::Polyhedron &p_object, const Vector<double> &v, const double r)
+      bool Point_Inside::is_inside_grid(shape::polyhedron::Polyhedron &p_object, const Vector3d<double> &v, const double r)
       {
         if (!is_inside(p_object, v))
           return false;
@@ -116,7 +116,7 @@ namespace caviar
         return true;
       }
 
-      bool Point_Inside::is_inside_all(shape::polyhedron::Polyhedron &p_object, const Vector<double> &v, const double r)
+      bool Point_Inside::is_inside_all(shape::polyhedron::Polyhedron &p_object, const Vector3d<double> &v, const double r)
       {
         if (!is_inside(p_object, v))
           return false;
@@ -130,14 +130,14 @@ namespace caviar
       // any fix should be done on both of them.
       // for the optimization reasons, we won't make them one functions.
       bool Point_Inside::in_contact_grid(shape::polyhedron::Polyhedron &p_object,
-                                         const Vector<double> &v, const double radius, Vector<double> &contact_vector)
+                                         const Vector3d<double> &v, const double radius, Vector3d<double> &contact_vector)
       {
 
         const auto &vertex = p_object.vertex;
         const auto &face = p_object.face;
         const auto &normal = p_object.normal;
 
-        Vector<double> compression_vector{0.0, 0.0, 0.0};
+        Vector3d<double> compression_vector{0.0, 0.0, 0.0};
 
         const auto &grid = p_object.grid;
 
@@ -248,7 +248,7 @@ namespace caviar
 
           int closest_edge = -1;
           double dist_closest_edge_sq = -1;
-          Vector<double> closest_egde_vector{0, 0, 0};
+          Vector3d<double> closest_egde_vector{0, 0, 0};
 
           if (vpr_on_edge01)
           {
@@ -302,7 +302,7 @@ namespace caviar
 
           // finding the closest distance from 'v' to polygon
           double dist_closest_vertex_sq = dis_v_fv0_sq;
-          Vector<double> closest_vertex_vector = v_fv0;
+          Vector3d<double> closest_vertex_vector = v_fv0;
 
           if (dist_closest_vertex_sq > dis_v_fv1_sq)
           {
@@ -335,14 +335,14 @@ namespace caviar
       // any fix should be done on both of them.
       // for the optimization reasons, we won't make them one functions.
       bool Point_Inside::in_contact_all(shape::polyhedron::Polyhedron &p_object,
-                                        const Vector<double> &v, const double radius, Vector<double> &contact_vector)
+                                        const Vector3d<double> &v, const double radius, Vector3d<double> &contact_vector)
       {
 
         const auto &vertex = p_object.vertex;
         const auto &face = p_object.face;
         const auto &normal = p_object.normal;
 
-        Vector<double> compression_vector{0.0, 0.0, 0.0};
+        Vector3d<double> compression_vector{0.0, 0.0, 0.0};
 
         bool contact_flag = false;
 
@@ -421,7 +421,7 @@ namespace caviar
 
           int closest_edge = -1;
           double dist_closest_edge_sq = -1;
-          Vector<double> closest_egde_vector{0, 0, 0};
+          Vector3d<double> closest_egde_vector{0, 0, 0};
 
           if (vpr_on_edge01)
           {
@@ -475,7 +475,7 @@ namespace caviar
 
           // finding the closest distance from 'v' to polygon
           double dist_closest_vertex_sq = dis_v_fv0_sq;
-          Vector<double> closest_vertex_vector = v_fv0;
+          Vector3d<double> closest_vertex_vector = v_fv0;
 
           if (dist_closest_vertex_sq > dis_v_fv1_sq)
           {
@@ -503,7 +503,7 @@ namespace caviar
         return contact_flag;
       }
 
-      bool Point_Inside::ray_tells_point_is_inside(shape::polyhedron::Polyhedron &p_object, const Vector<double> &v, const int ray_axis)
+      bool Point_Inside::ray_tells_point_is_inside(shape::polyhedron::Polyhedron &p_object, const Vector3d<double> &v, const int ray_axis)
       {
 
         const auto &vertex = p_object.vertex;
@@ -515,7 +515,7 @@ namespace caviar
         for (unsigned int i = 0; i < face.size(); ++i)
         {
 
-          Vector<double> v_pr = v;
+          Vector3d<double> v_pr = v;
           const auto v0 = vertex[face[i][0]];
           const auto n = normal[i];
 
@@ -597,7 +597,7 @@ namespace caviar
       // any fix should be done on both of them.
       // for the optimization reasons, we won't make them one functions.
       bool Point_Inside::in_contact_grid(shape::polyhedron::Polyhedron &p_object,
-                                         const Vector<double> &v, const double radius)
+                                         const Vector3d<double> &v, const double radius)
       {
 
         const auto &vertex = p_object.vertex;
@@ -710,7 +710,7 @@ namespace caviar
 
           int closest_edge = -1;
           double dist_closest_edge_sq = -1;
-          Vector<double> closest_egde_vector{0, 0, 0};
+          Vector3d<double> closest_egde_vector{0, 0, 0};
 
           if (vpr_on_edge01)
           {
@@ -763,7 +763,7 @@ namespace caviar
 
           // finding the closest distance from 'v' to polygon
           double dist_closest_vertex_sq = dis_v_fv0_sq;
-          Vector<double> closest_vertex_vector = v_fv0;
+          Vector3d<double> closest_vertex_vector = v_fv0;
 
           if (dist_closest_vertex_sq > dis_v_fv1_sq)
           {
@@ -794,7 +794,7 @@ namespace caviar
       // any fix should be done on both of them.
       // for the optimization reasons, we won't make them one functions.
       bool Point_Inside::in_contact_all(shape::polyhedron::Polyhedron &p_object,
-                                        const Vector<double> &v, const double radius)
+                                        const Vector3d<double> &v, const double radius)
       {
 
         const auto &vertex = p_object.vertex;
@@ -875,7 +875,7 @@ namespace caviar
 
           int closest_edge = -1;
           double dist_closest_edge_sq = -1;
-          Vector<double> closest_egde_vector{0, 0, 0};
+          Vector3d<double> closest_egde_vector{0, 0, 0};
 
           if (vpr_on_edge01)
           {
@@ -928,7 +928,7 @@ namespace caviar
 
           // finding the closest distance from 'v' to polygon
           double dist_closest_vertex_sq = dis_v_fv0_sq;
-          Vector<double> closest_vertex_vector = v_fv0;
+          Vector3d<double> closest_vertex_vector = v_fv0;
 
           if (dist_closest_vertex_sq > dis_v_fv1_sq)
           {

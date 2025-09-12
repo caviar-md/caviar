@@ -45,7 +45,7 @@ namespace caviar
       void generate_export_file();
       void generate_formula();
       void verify_settings();
-      Vector<double> value() { return current_value; };
+      Vector3d<double> value() { return current_value; };
       void update_time_variable(double t);
       void calculate();
 
@@ -53,7 +53,7 @@ namespace caviar
       std::string function_definition_y = "0";
       std::string function_definition_z = "0";
       double time_variable;
-      Vector<double> current_value;
+      Vector3d<double> current_value;
       bool export_values_to_file;
       bool export_file_append;
       std::string export_file_name;

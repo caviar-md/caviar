@@ -28,7 +28,7 @@ namespace caviar
 {
 
   Domain::Domain(CAVIAR *fptr) : 
-                                 boundary_condition{Vector<int>{0, 0, 0}},
+                                 boundary_condition{Vector3d<int>{0, 0, 0}},
                                  grid_index_x{0}, grid_index_y{0}, grid_index_z{0},
                                  nprocs_x{1}, nprocs_y{1}, nprocs_z{1}, me{0}, nprocs{1}, caviar_{fptr},
                                    comm{fptr->comm},
@@ -168,10 +168,10 @@ namespace caviar
   // note that this force cannot be used when one is using neighborlist loop.
   // currently its main usage is when one is using Shake like algorithms.
   // or Spring_bond or Spring_angle force_fields.
-  Vector<double> Domain::periodic_distance(const Vector<double> v)
+  Vector3d<double> Domain::periodic_distance(const Vector3d<double> v)
   {
-    caviar::Vector<double> vf = v;
-    static caviar::Vector<double> domain_dh = {0.5 * (upper_global.x - lower_global.x),
+    caviar::Vector3d<double> vf = v;
+    static caviar::Vector3d<double> domain_dh = {0.5 * (upper_global.x - lower_global.x),
                                                0.5 * (upper_global.y - lower_global.y),
                                                0.5 * (upper_global.z - lower_global.z)};
     if (boundary_condition.x == 1)
@@ -376,14 +376,14 @@ namespace caviar
     return d;
   }
 
-  caviar::Vector<double> Domain::fix_distance(caviar::Vector<double> v)
+  caviar::Vector3d<double> Domain::fix_distance(caviar::Vector3d<double> v)
   {
-    return caviar::Vector<double>{fix_distance_x(v.x),
+    return caviar::Vector3d<double>{fix_distance_x(v.x),
                                   fix_distance_y(v.y),
                                   fix_distance_z(v.z)};
   }
 
-  void Domain::scale_position(double xi, caviar::Vector<int> scale_axis)
+  void Domain::scale_position(double xi, caviar::Vector3d<int> scale_axis)
   {
     bool x_axis = (scale_axis.x == 1 ? true : false);
     bool y_axis = (scale_axis.x == 1 ? true : false);
@@ -426,7 +426,7 @@ namespace caviar
     return size_global.x * size_global.y * size_global.z;
   }
 
-  caviar::Vector<double> Domain::fix_position(caviar::Vector<double> p, caviar::Vector<int> &msd, bool &update_verlet_list)
+  caviar::Vector3d<double> Domain::fix_position(caviar::Vector3d<double> p, caviar::Vector3d<int> &msd, bool &update_verlet_list)
   {
 
     if (boundary_condition.x == 1)

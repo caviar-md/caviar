@@ -26,11 +26,11 @@ namespace caviar
   namespace force_field
   {
 
-    Vector<double> Electrostatic_short_range::field(const Vector<double> &r)
+    Vector3d<double> Electrostatic_short_range::field(const Vector3d<double> &r)
     {
       if (!initialized)
         initialize();
-      Vector<double> field_shifted_sum{0, 0, 0};
+      Vector3d<double> field_shifted_sum{0, 0, 0};
       const auto &pos = atom_data->atom_struct_owned.position;
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for reduction(+ : field_shifted_sum)
@@ -54,11 +54,11 @@ namespace caviar
       return field_shifted_sum * k_electrostatic;
     }
 
-    Vector<double> Electrostatic_short_range::field(const int i)
+    Vector3d<double> Electrostatic_short_range::field(const int i)
     {
       if (!initialized)
         initialize();
-      Vector<double> field_shifted_sum{0, 0, 0};
+      Vector3d<double> field_shifted_sum{0, 0, 0};
       const auto &pos = atom_data->atom_struct_owned.position;
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for reduction(+ : field_shifted_sum)

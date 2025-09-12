@@ -98,7 +98,7 @@ namespace caviar
 #ifdef CAVIAR_WITH_MPI
       auto neighborlist_domains = domain->neighborlist_domains;
       std::vector<int> g_num_recv, g_num_send;
-      std::vector<std::vector<Vector<double>>> g_send_accel, g_recv_accel;
+      std::vector<std::vector<Vector3d<double>>> g_send_accel, g_recv_accel;
       std::vector<std::vector<size_t>> g_send_id, g_recv_id;
       int nd = domain->neighborlist_domains.size();
       g_send_accel.resize(nd);
@@ -114,7 +114,7 @@ namespace caviar
         rank_to_index[neighborlist_domains[i]] = i; // only after send_owned() happened it is needed to be cleared.
       }
 #else
-      std::vector<Vector<double>> g_send_accel;
+      std::vector<Vector3d<double>> g_send_accel;
       std::vector<size_t> g_send_id;
 #endif
 
@@ -141,7 +141,7 @@ namespace caviar
         for (auto j : nlist[i])
         {
           bool is_ghost = j >= nlist.size();
-          Vector<double> pos_j;
+          Vector3d<double> pos_j;
           double type_j, mass_inv_j;
           size_t id_j = 0;
           if (is_ghost)

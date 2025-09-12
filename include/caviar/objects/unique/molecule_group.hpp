@@ -41,20 +41,20 @@ namespace caviar
       bool read(caviar::interpreter::Parser *);
       void verify_settings();
 
-      Vector<double> pos_tot() const;
-      Vector<double> vel_tot() const;
+      Vector3d<double> pos_tot() const;
+      Vector3d<double> vel_tot() const;
 
       void add_molecule(const unique::Molecule &);
       void add_molecule(const unique::Molecule &,
-                        caviar::Vector<double> p = caviar::Vector<double>{0, 0, 0},
-                        caviar::Vector<double> v = caviar::Vector<double>{0, 0, 0});
+                        caviar::Vector3d<double> p = caviar::Vector3d<double>{0, 0, 0},
+                        caviar::Vector3d<double> v = caviar::Vector3d<double>{0, 0, 0});
 
       std::vector<unique::Molecule> molecules;
 
       bool part_of_a_molecule_group;
       Molecule_group *upper_level_molecule_group;
 
-      Vector<double> position, velocity;
+      Vector3d<double> position, velocity;
     };
 
   } // unique

@@ -41,7 +41,7 @@ namespace caviar
 
     public:
       std::vector<double> elastic_coef, dissip_coef, radius;
-      Vector<double> gravity;
+      Vector3d<double> gravity;
       int force_type;
     };
 

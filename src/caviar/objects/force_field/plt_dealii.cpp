@@ -530,7 +530,7 @@ namespace caviar
 
       std::cout << "generate_ml_training_data: create grid vector" << std::endl;
       // create all points of the grid vector
-      std::vector<Vector<double>> cpoints;
+      std::vector<Vector3d<double>> cpoints;
       std::vector<dealii::Point<3>> dpoints;
       auto no_reserve = grid_1d_x->no_points() * grid_1d_y->no_points() * grid_1d_z->no_points();
       cpoints.reserve(no_reserve);
@@ -554,7 +554,7 @@ namespace caviar
               // Point is outside of the mesh
               continue;
             }
-            cpoints.emplace_back(Vector<double>{x, y, z});
+            cpoints.emplace_back(Vector3d<double>{x, y, z});
             dpoints.emplace_back(dealii::Point<3>{x, y, z});
           }
         }
@@ -653,7 +653,7 @@ namespace caviar
           }
           double p_si = 0;
           for (auto &&f_custom : force_field_custom)
-            p_si += f_custom->potential(caviar::Vector<double>{face_center[f][0], face_center[f][1], face_center[f][2]});
+            p_si += f_custom->potential(caviar::Vector3d<double>{face_center[f][0], face_center[f][1], face_center[f][2]});
 
           // ofs_ref << p_si + p_sm << ",";
           // boundary_potential[f] = p_si + p_sm;
@@ -823,7 +823,7 @@ namespace caviar
 
       std::ofstream ofs;
 
-      Vector<double> po{0, 0, 0};
+      Vector3d<double> po{0, 0, 0};
       if (position_offset != nullptr)
         po += position_offset->current_value;
 
@@ -839,7 +839,7 @@ namespace caviar
           {
             double z = grid_1d_z->give_point(k);
 
-            caviar::Vector<double> field_tot = {0, 0, 0};
+            caviar::Vector3d<double> field_tot = {0, 0, 0};
 
             // const dealii::Point<3> r = {x, y, z};
             const dealii::Point<3> r = {x - po.x, y - po.y, z - po.z}; // Is it necessary ??
@@ -864,8 +864,8 @@ namespace caviar
 
             if (field_type != 'm')
             {
-              const caviar::Vector<double> p{x, y, z};
-              caviar::Vector<double> field_si{0, 0, 0};
+              const caviar::Vector3d<double> p{x, y, z};
+              caviar::Vector3d<double> field_si{0, 0, 0};
 
               for (auto &&f : force_field_custom)
                 field_si += f->field(p);
@@ -965,7 +965,7 @@ namespace caviar
       std::ofstream ofs;
       std::ofstream ofs_x, ofs_y, ofs_z, ofs_p;
 
-      Vector<double> po{0, 0, 0};
+      Vector3d<double> po{0, 0, 0};
       if (position_offset != nullptr)
         po += position_offset->current_value;
 
@@ -1007,7 +1007,7 @@ namespace caviar
 
             if (field_type != 'm')
             {
-              const caviar::Vector<double> p{x, y, z};
+              const caviar::Vector3d<double> p{x, y, z};
               double potential_si = 0;
 
               for (auto &&f : force_field_custom)
@@ -1150,7 +1150,7 @@ namespace caviar
       }
       else
       {
-        //  Vector<double> f_sm = (f_sm_d[0], f_sm_d[1], f_sm_d[2]);
+        //  Vector3d<double> f_sm = (f_sm_d[0], f_sm_d[1], f_sm_d[2]);
         // auto f_sm_norm = std::sqrt(f_sm*f_sm);
         auto f_sm_norm = std::sqrt(f_sm_d * f_sm_d);
 
@@ -1377,7 +1377,7 @@ namespace caviar
     {
 
       std::vector<double> induced_charge(boundary_id_max + 1, 0);
-      Vector<double> po{0, 0, 0};
+      Vector3d<double> po{0, 0, 0};
       if (position_offset != nullptr)
         po += position_offset->current_value;
 
@@ -1415,9 +1415,9 @@ namespace caviar
           f_sm = -VectorTools::point_gradient(dof_handler, solution, p1);
         }
 
-        caviar::Vector<double> pos_j{p1[0] + po.x, p1[1] + po.y, p1[2] + po.z};
+        caviar::Vector3d<double> pos_j{p1[0] + po.x, p1[1] + po.y, p1[2] + po.z};
 
-        caviar::Vector<double> f_si{0.0, 0.0, 0.0};
+        caviar::Vector3d<double> f_si{0.0, 0.0, 0.0};
         for (auto &&f_custom : force_field_custom)
           f_si += f_custom->field(pos_j); // OPEN MP IS INSIDE
 
@@ -1841,7 +1841,7 @@ namespace caviar
             MPI_Send (pos.data(), 3*root_pos_size, MPI::DOUBLE, i, 1, MPI_COMM_WORLD);
           }
 
-          std::vector<Vector<double>> root_acc (root_pos_size,{0,0,0});
+          std::vector<Vector3d<double>> root_acc (root_pos_size,{0,0,0});
 
           for (int i = root+1; i < nprocs; ++i) {
             MPI_Recv (root_acc.data(), 3*root_pos_size, MPI::DOUBLE,
@@ -1854,7 +1854,7 @@ namespace caviar
 
         } else {
           if (me > root) {
-            std::vector<Vector<double>> root_pos   (root_pos_size);
+            std::vector<Vector3d<double>> root_pos   (root_pos_size);
             std::vector<unsigned> root_type (root_pos_size);
 
             MPI_Recv (root_type.data(), root_pos_size, MPI::UNSIGNED,
@@ -1864,7 +1864,7 @@ namespace caviar
               root, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
 
-            std::vector<Vector<double>> root_acc (root_pos_size,{0,0,0});
+            std::vector<Vector3d<double>> root_acc (root_pos_size,{0,0,0});
 
 
             for (unsigned i=0;i<pos.size();++i) {
@@ -1904,8 +1904,8 @@ namespace caviar
     {
       double virialLocal = 0;
       const auto &pos = atom_data->atom_struct_owned.position;
-      caviar::Vector<double> po{0, 0, 0};
-      caviar::Vector<int> msd_dummy{0, 0, 0};
+      caviar::Vector3d<double> po{0, 0, 0};
+      caviar::Vector3d<int> msd_dummy{0, 0, 0};
       bool bool_dummy = false;
 
       bool get_pressure_process = atom_data->get_pressure_process();
@@ -1925,7 +1925,7 @@ namespace caviar
         const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
         const auto charge_i = atom_data->atom_type_params.charge[type_i];
 
-        caviar::Vector<double> p_i = pos[i] - po;
+        caviar::Vector3d<double> p_i = pos[i] - po;
         if (atom_data->atom_struct_owned.molecule_index[i] != -1)
           p_i = domain->fix_position(p_i, msd_dummy, bool_dummy); // bool_dummy and msd_dummy are not used;
 
@@ -1948,7 +1948,7 @@ namespace caviar
           field = -VectorTools::point_gradient(dof_handler, solution, r);
         }
         auto frc = field * charge_i;
-        auto force = caviar::Vector<double>{frc[0], frc[1], frc[2]};
+        auto force = caviar::Vector3d<double>{frc[0], frc[1], frc[2]};
 
         if (get_pressure_process)
         {
@@ -1975,14 +1975,14 @@ namespace caviar
       return 0.0;
     }
 
-    double Plt_dealii::potential(const Vector<double> &v)
+    double Plt_dealii::potential(const Vector3d<double> &v)
     {
 
       double potential_singular = 0.0;
       for (auto &&f : force_field_custom)
         potential_singular += f->potential(v);
 
-      Vector<double> po{0, 0, 0};
+      Vector3d<double> po{0, 0, 0};
       if (position_offset != nullptr)
         po += position_offset->current_value;
 
@@ -2004,13 +2004,13 @@ namespace caviar
     //==================================================
     //==================================================
 
-    void Plt_dealii::scale_position(double scale_ratio, caviar::Vector<int> scale_axis)
+    void Plt_dealii::scale_position(double scale_ratio, caviar::Vector3d<int> scale_axis)
     {
       // bool x_axis = (scale_axis.x == 1 ? true : false);
       // bool y_axis = (scale_axis.x == 1 ? true : false);
       // bool z_axis = (scale_axis.x == 1 ? true : false);
 
-      caviar::Vector<double> scale_ratio_3d{1, 1, 1};
+      caviar::Vector3d<double> scale_ratio_3d{1, 1, 1};
       if (scale_axis.x == 1)
         scale_ratio_3d.x *= scale_ratio;
       if (scale_axis.y == 1)

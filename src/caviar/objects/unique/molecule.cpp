@@ -29,8 +29,8 @@ namespace caviar
 
     Molecule::Molecule(CAVIAR *fptr) : Unique{fptr},
                                        part_of_a_molecule_group{false}, upper_level_molecule_group{nullptr},
-                                       position{Vector<double>{0, 0, 0}},
-                                       velocity{Vector<double>{0, 0, 0}} {
+                                       position{Vector3d<double>{0, 0, 0}},
+                                       velocity{Vector3d<double>{0, 0, 0}} {
                                            // (maybe) the only user accessable creation funciton.
                                            FC_OBJECT_INITIALIZE_INFO}
 
@@ -195,8 +195,8 @@ namespace caviar
       auto a = *dynamic_cast<unique::Atom *>(object_container->unique[it->second.index]);
 
       bool in_file = true;
-      Vector<double> pos_ = {0, 0, 0};
-      Vector<double> vel_ = {0, 0, 0};
+      Vector3d<double> pos_ = {0, 0, 0};
+      Vector3d<double> vel_ = {0, 0, 0};
       bool position_called = false;
       bool velocity_called = false;
       while (true)
@@ -242,8 +242,8 @@ namespace caviar
     }
     */
 
-    void Molecule::extract_all_e_pos_vel(std::vector<int> &e, std::vector<Vector<double>> &p,
-                                         std::vector<Vector<double>> &v)
+    void Molecule::extract_all_e_pos_vel(std::vector<int> &e, std::vector<Vector3d<double>> &p,
+                                         std::vector<Vector3d<double>> &v)
     {
 
       for (unsigned int i = 0; i < atoms.size(); ++i)
@@ -283,7 +283,7 @@ namespace caviar
       }
     }
 
-    bool Molecule::add_atom(const unique::Atom &a, const Vector<double> &p, const Vector<double> &v)
+    bool Molecule::add_atom(const unique::Atom &a, const Vector3d<double> &p, const Vector3d<double> &v)
     {
       unsigned int i = atoms.size();
       atoms.push_back(a);
@@ -303,7 +303,7 @@ namespace caviar
       return true; // WARNING
     }
 
-    Vector<double> Molecule::pos_tot() const
+    Vector3d<double> Molecule::pos_tot() const
     {
       if (part_of_a_molecule_group)
         return position + upper_level_molecule_group->pos_tot();
@@ -311,7 +311,7 @@ namespace caviar
         return position;
     }
 
-    Vector<double> Molecule::vel_tot() const
+    Vector3d<double> Molecule::vel_tot() const
     {
       if (part_of_a_molecule_group)
         return velocity + upper_level_molecule_group->vel_tot();
