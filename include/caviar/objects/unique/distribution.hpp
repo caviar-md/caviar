@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_UNIQUE_DISTRIBUTION_H
-#define CAVIAR_OBJECTS_UNIQUE_DISTRIBUTION_H
+#pragma once
 
 #include "caviar/objects/unique.hpp"
 
@@ -64,5 +63,3 @@ namespace unique
 } // unique
 
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

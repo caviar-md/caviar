@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_FORCEFIELD_PLTDEALIIFUNCTIONS_H
-#define CAVIAR_OBJECTS_FORCEFIELD_PLTDEALIIFUNCTIONS_H
+#pragma once
 
 // XXX: Note that (for now!) this file should be included after Deal.II usual
 // inclusions.
@@ -468,4 +467,3 @@ namespace force_field
 } // force_field
 
 CAVIAR_NAMESPACE_CLOSE
-#endif

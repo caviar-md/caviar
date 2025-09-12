@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_CAVIAR_CONFIG_H
-#define CAVIAR_CAVIAR_CONFIG_H
+#pragma once
 
 #define CAVIAR_MAJOR_VERSION 1
 // #define CAVIAR_MINOR_VERSION 0
@@ -30,4 +29,3 @@
     {
 #define CAVIAR_NAMESPACE_CLOSE }
 
-#endif

@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_INTERPRETER_INPUT_H
-#define CAVIAR_INTERPRETER_INPUT_H
+#pragma once
 
 #include "caviar/utility/pointers.hpp"
 #include <istream>
@@ -134,5 +133,3 @@ namespace interpreter
   };
 } // interpreter
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

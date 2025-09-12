@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_ATOMDATA_BASIC_H
-#define CAVIAR_OBJECTS_ATOMDATA_BASIC_H
+#pragma once
 
 #include "caviar/objects/atom_data.hpp"
 
@@ -40,5 +39,3 @@ namespace atom_data
 } // atom_data
 
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

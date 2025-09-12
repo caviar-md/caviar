@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_SHAPE_POLYHEDRON_POINT_INSIDE_H
-#define CAVIAR_OBJECTS_SHAPE_POLYHEDRON_POINT_INSIDE_H
+#pragma once
 
 #include "caviar/utility/pointers.hpp"
 #include "caviar/utility/vector.hpp"
@@ -83,5 +82,3 @@ namespace shape
 } // shape
 
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

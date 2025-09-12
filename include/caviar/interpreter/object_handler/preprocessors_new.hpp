@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_INTERPRETER_OBJECTHANDLER_PREPROCESSORSNEW_H
-#define CAVIAR_INTERPRETER_OBJECTHANDLER_PREPROCESSORSNEW_H
+#pragma once
 
 // This file have all it needs to make the code smaller, more generic and
 // developer friendly. It contains macro functions that are used at the
@@ -111,4 +110,3 @@
 #define FC_ERROR_PARAMETER(OBJECT) \
   error->all(FC_FILE_LINE_FUNC_PARSE, "unknown parameter '" + t + "' for object '" + OBJECT "'");
 
-#endif

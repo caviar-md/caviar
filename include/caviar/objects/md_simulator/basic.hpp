@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_MDSIMULATOR_BASIC_H
-#define CAVIAR_OBJECTS_MDSIMULATOR_BASIC_H
+#pragma once
 
 #include "caviar/objects/md_simulator.hpp"
 
@@ -39,5 +38,3 @@ namespace md_simulator
 } // md_simulator
 
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

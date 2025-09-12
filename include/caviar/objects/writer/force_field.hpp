@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_WRITER_FORCEFIELD_H
-#define CAVIAR_OBJECTS_WRITER_FORCEFIELD_H
+#pragma once
 
 #include "caviar/objects/writer.hpp"
 
@@ -49,5 +48,3 @@ namespace writer
 } // writer
 
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

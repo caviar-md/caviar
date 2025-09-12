@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_INTERPRETER_OBJECTHANDLER_COMMANDSMAP_H
-#define CAVIAR_INTERPRETER_OBJECTHANDLER_COMMANDSMAP_H
+#pragma once
 
 #include "caviar/interpreter/object_handler.hpp"
 
@@ -34,5 +33,3 @@ namespace interpreter
     };
 } // interpreter
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_TYPES_H
-#define CAVIAR_TYPES_H
+#pragma once
 
 #include "caviar_config.hpp"
 
@@ -31,5 +30,3 @@ using Real_t = double;           // //
 constexpr auto max_GlobalID = std::numeric_limits<GlobalID_t>::max();
 
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

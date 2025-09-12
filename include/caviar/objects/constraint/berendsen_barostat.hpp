@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_CONSTRAINT_BERENDSENBAROSTAT_H
-#define CAVIAR_OBJECTS_CONSTRAINT_BERENDSENBAROSTAT_H
+#pragma once
 
 #include "caviar/objects/constraint.hpp"
 #include <fstream>
@@ -127,5 +126,3 @@ namespace constraint
 } // constraint
 
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

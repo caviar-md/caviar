@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_POINTERS_H
-#define CAVIAR_POINTERS_H
+#pragma once
 
 
 #include "caviar/CAVIAR.hpp"
@@ -81,5 +80,3 @@ public:
 };
 
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_CAVIAR_H
-#define CAVIAR_CAVIAR_H
+#pragma once
 
 #include "caviar/utility/caviar_config.hpp"
 #include "caviar/utility/types.hpp"
@@ -88,5 +87,3 @@ public:
 };
 
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

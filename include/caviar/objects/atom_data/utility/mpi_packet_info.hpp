@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_ATOMDATA_UTILITY_MPI_PACKET_INFO_H
-#define CAVIAR_OBJECTS_ATOMDATA_UTILITY_MPI_PACKET_INFO_H
+#pragma once
 
 #include "caviar/utility/objects_common_headers.hpp"
 
@@ -44,4 +43,3 @@ namespace atom_data
   } ;
 }
 CAVIAR_NAMESPACE_CLOSE
-#endif

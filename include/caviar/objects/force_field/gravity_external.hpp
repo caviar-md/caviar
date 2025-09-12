@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_FORCEFIELD_GRAVITYEXTERNAL_H
-#define CAVIAR_OBJECTS_FORCEFIELD_GRAVITYEXTERNAL_H
+#pragma once
 
 #include "caviar/objects/force_field.hpp"
 
@@ -52,5 +51,3 @@ namespace force_field
 } // force_field
 
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

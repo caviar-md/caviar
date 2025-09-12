@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_INTERPRETER_OBJECTHANDLER_GDST_H
-#define CAVIAR_INTERPRETER_OBJECTHANDLER_GDST_H
+#pragma once
 
 #include "caviar/utility/caviar_config.hpp"
 #include <string>
@@ -61,5 +60,3 @@ namespace interpreter
   }
 } // interpreter
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

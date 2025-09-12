@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_INTERPRETER_OBJECTCREATOR_COMMANDSMAP_H
-#define CAVIAR_INTERPRETER_OBJECTCREATOR_COMMANDSMAP_H
+#pragma once
 
 #include "caviar/interpreter/object_creator.hpp"
 
@@ -66,5 +65,3 @@ namespace interpreter
     };
 } // interpreter
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_INTERPRETER_LEXER_H
-#define CAVIAR_INTERPRETER_LEXER_H
+#pragma once
 
 #include <string>
 #include <istream>
@@ -146,5 +145,3 @@ namespace interpreter
 
 } // interpreter
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

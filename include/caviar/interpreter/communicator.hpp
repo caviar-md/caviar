@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_INTERPRETER_COMMUNICATOR_H
-#define CAVIAR_INTERPRETER_COMMUNICATOR_H
+#pragma once
 
 #include "caviar/utility/pointers.hpp"
 // #if defined(CAVIAR_WITH_MPI)
@@ -53,5 +52,3 @@ namespace interpreter
   };
 } // interpreter
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_CONSTRAINT_CMMOTION_H
-#define CAVIAR_OBJECTS_CONSTRAINT_CMMOTION_H
+#pragma once
 
 #include "caviar/objects/constraint.hpp"
 
@@ -52,5 +51,3 @@ namespace constraint
 } // constraint
 
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

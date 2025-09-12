@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_MDSIMULATOR_H
-#define CAVIAR_OBJECTS_MDSIMULATOR_H
+#pragma once
 
 #include "caviar/utility/objects_common_headers.hpp"
 
@@ -237,5 +236,3 @@ public:
 };
 
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

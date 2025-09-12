@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_INTERPRETER_OBJECTHANDLER_PREPROCESSORS_H
-#define CAVIAR_INTERPRETER_OBJECTHANDLER_PREPROCESSORS_H
+#pragma once
 
 // ====================
 // ==================== MAKE_ERROR_MASSAGE
@@ -631,4 +630,3 @@
     error->all(FC_FILE_LINE_FUNC_PARSE,": undefined object. ");
 */
 
-#endif

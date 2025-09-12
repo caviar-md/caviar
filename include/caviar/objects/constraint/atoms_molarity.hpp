@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_CONSTRAINT_ATOMSMOLARITY_H
-#define CAVIAR_OBJECTS_CONSTRAINT_ATOMSMOLARITY_H
+#pragma once
 
 #include "caviar/objects/constraint.hpp"
 
@@ -62,5 +61,3 @@ namespace constraint
 } // constraint
 
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

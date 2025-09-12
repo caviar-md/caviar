@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_SHAPE_POLYHEDRON_FORMAT_STL_READER_h
-#define CAVIAR_OBJECTS_SHAPE_POLYHEDRON_FORMAT_STL_READER_h
+#pragma once
 
 #include "caviar/utility/pointers.hpp"
 
@@ -43,5 +42,3 @@ namespace shape
 } // shape
 
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

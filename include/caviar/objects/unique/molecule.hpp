@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_UNIQUE_MOLECULE_H
-#define CAVIAR_OBJECTS_UNIQUE_MOLECULE_H
+#pragma once
 
 #include "caviar/objects/unique.hpp"
 #include "caviar/objects/atom_data/utility/bond.hpp"
@@ -83,5 +82,3 @@ namespace unique
 } // unique
 
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

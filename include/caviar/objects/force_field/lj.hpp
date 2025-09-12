@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_FORCEFIELD_LJ_H
-#define CAVIAR_OBJECTS_FORCEFIELD_LJ_H
+#pragma once
 
 #include "caviar/objects/force_field.hpp"
 
@@ -65,5 +64,3 @@ namespace force_field
 } // force_field
 
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_UNIQUE_MOLECULEGROUP_H
-#define CAVIAR_OBJECTS_UNIQUE_MOLECULEGROUP_H
+#pragma once
 
 #include "caviar/objects/unique.hpp"
 #include "caviar/objects/unique/molecule.hpp"
@@ -60,5 +59,3 @@ namespace unique
 } // unique
 
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

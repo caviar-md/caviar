@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_POSTPROCESS_POTENTIALSAMPLER_H
-#define CAVIAR_OBJECTS_POSTPROCESS_POTENTIALSAMPLER_H
+#pragma once
 
 #include "caviar/objects/postprocess.hpp"
 #include "caviar/utility/vector.hpp"
@@ -88,5 +87,3 @@ namespace postprocess
 } // postproces
 
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

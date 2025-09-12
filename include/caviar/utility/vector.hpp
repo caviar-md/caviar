@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_VECTOR_H
-#define CAVIAR_VECTOR_H
+#pragma once
 
 #include "caviar_config.hpp"
 
@@ -199,5 +198,3 @@ constexpr T norm(const Vector<T> &v1)
 #endif
 
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

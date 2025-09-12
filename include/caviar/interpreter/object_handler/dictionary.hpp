@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_INTERPRETER_OBJECTHANDLER_DICTIONARY_H
-#define CAVIAR_INTERPRETER_OBJECTHANDLER_DICTIONARY_H
+#pragma once
 
 #include "caviar/utility/caviar_config.hpp"
 
@@ -43,5 +42,3 @@ namespace interpreter
   } // object_handler
 } // interpreter
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

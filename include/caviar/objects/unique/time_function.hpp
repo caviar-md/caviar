@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_UNIQUE_TIMEFUNCTION_H
-#define CAVIAR_OBJECTS_UNIQUE_TIMEFUNCTION_H
+#pragma once
 
 #include "caviar/objects/unique.hpp"
 #include <random>
@@ -63,5 +62,3 @@ namespace unique
 } // unique
 
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

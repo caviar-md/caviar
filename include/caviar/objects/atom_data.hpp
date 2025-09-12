@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_ATOMDATA_H
-#define CAVIAR_OBJECTS_ATOMDATA_H
+#pragma once
 
 #include "caviar/utility/objects_common_headers.hpp"
 #include "caviar/objects/atom_data/utility/atom_struct.hpp"
@@ -800,5 +799,3 @@ public:
 };
 
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

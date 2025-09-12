@@ -13,12 +13,13 @@
 // the top level of the CAVIAR distribution.
 //
 //========================================================================
-#ifndef CAVIAR_ATOMDATA_MPIOPTIMIZATION_H
-#define CAVIAR_ATOMDATA_MPIOPTIMIZATION_H
+#pragma once
 /**
  * More sharing results in less MPI overhead and probably faster MPI simulation. However, simulation will take more RAM. 
  * For large number of processors and particles, it must be tested.
 */
+CAVIAR_NAMESPACE_OPEN
+
 enum class MpiOptimization
 {
   None,
@@ -27,5 +28,6 @@ enum class MpiOptimization
   ShareMolecules,
   ShareAtomsAndMolecules,
 };
+CAVIAR_NAMESPACE_CLOSE
 
-#endif
+

@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_FORCEFIELD_PLTBE_H
-#define CAVIAR_OBJECTS_FORCEFIELD_PLTBE_H
+#pragma once
 
 #include "caviar/objects/force_field.hpp"
 
@@ -164,5 +163,3 @@ public:
 } //force_field
 
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

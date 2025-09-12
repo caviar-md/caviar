@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_DOMAIN_BOX_H
-#define CAVIAR_OBJECTS_DOMAIN_BOX_H
+#pragma once
 
 #include "caviar/objects/domain.hpp"
 
@@ -38,5 +37,3 @@ namespace domain
 } // domain
 
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

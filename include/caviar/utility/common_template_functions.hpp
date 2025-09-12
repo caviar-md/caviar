@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_UTILITY_H
-#define CAVIAR_UTILITY_H
+#pragma once
 
 #include "caviar_config.hpp"
 #include "caviar/utility/vector.hpp"
@@ -230,5 +229,3 @@ int matrix_Vector_product_3d(const std::array<std::array<T, 3>, 3> &A, const Vec
   return 0;
 }
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

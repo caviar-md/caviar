@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_CONSTRAINT_BERENDSEN_H
-#define CAVIAR_OBJECTS_CONSTRAINT_BERENDSEN_H
+#pragma once
 
 #include "caviar/objects/constraint.hpp"
 
@@ -64,5 +63,3 @@ namespace constraint
 } // constraint
 
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

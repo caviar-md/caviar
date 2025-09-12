@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_NEIGHBORLIST_BASIC_H
-#define CAVIAR_OBJECTS_NEIGHBORLIST_BASIC_H
+#pragma once
 
 #include "caviar/objects/neighborlist.hpp"
 
@@ -39,5 +38,3 @@ namespace neighborlist
 } // neighborlist
 
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

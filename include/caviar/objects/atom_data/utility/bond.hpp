@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_OBJECTS_ATOMDATA_UTILITY_BOND_H
-#define CAVIAR_OBJECTS_ATOMDATA_UTILITY_BOND_H
+#pragma once
 
 CAVIAR_NAMESPACE_OPEN
 
@@ -31,4 +30,3 @@ namespace atom_data
   };
 }
 CAVIAR_NAMESPACE_CLOSE
-#endif

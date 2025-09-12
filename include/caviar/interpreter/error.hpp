@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_INTERPRETER_ERROR_H
-#define CAVIAR_INTERPRETER_ERROR_H
+#pragma once
 
 #include "caviar/utility/pointers.hpp"
 
@@ -53,5 +52,3 @@ namespace interpreter
   };
 } // interpreter
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

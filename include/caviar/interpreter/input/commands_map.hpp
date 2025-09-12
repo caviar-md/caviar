@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_INTERPRETER_INPUT_COMMANDSMAP_H
-#define CAVIAR_INTERPRETER_INPUT_COMMANDSMAP_H
+#pragma once
 
 #include "caviar/interpreter/input.hpp"
 
@@ -89,5 +88,3 @@ const std::map<std::string,InputCommandFunc> Input::commands_map = {
 
 } //interpreter
 CAVIAR_NAMESPACE_CLOSE
-
-#endif

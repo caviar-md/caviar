@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_UTILITY_MACRO_CONSTANTS_H
-#define CAVIAR_UTILITY_MACRO_CONSTANTS_H
+#pragma once
 
 #define FC_PI 3.14159265358979323846      // pi
 #define FC_2PI 6.28318530717958647692     // 2pi
@@ -29,4 +28,3 @@
 #define FC_SQRT2 1.41421356237309504880   // sqrt(2)
 #define FC_CBRT2 1.25992104989487316476   // 2*(1/3)
 
-#endif

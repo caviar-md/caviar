@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_UTILITY_MACRO_FUNCTIONS_H
-#define CAVIAR_UTILITY_MACRO_FUNCTIONS_H
+#pragma once
 
 #define FC_SET_OBJECT_TYPE                                 \
   if (object_full_type == "")                              \
@@ -83,4 +82,3 @@ public:                                                               \
     error->all(FC_FILE_LINE_FUNC,                                                    \
                static_cast<std::string>("expected a '") + #VARNAME + "'object but got a '" + ocn_st + "' object.");
 
-#endif

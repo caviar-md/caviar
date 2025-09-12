@@ -14,8 +14,7 @@
 //
 //========================================================================
 
-#ifndef CAVIAR_INTERPRETER_PARSER_H
-#define CAVIAR_INTERPRETER_PARSER_H
+#pragma once
 
 #include "caviar/utility/pointers.hpp"
 #include "caviar/utility/vector.hpp"
@@ -178,5 +177,3 @@ namespace interpreter
   };
 } // interpreter
 CAVIAR_NAMESPACE_CLOSE
-
-#endif
