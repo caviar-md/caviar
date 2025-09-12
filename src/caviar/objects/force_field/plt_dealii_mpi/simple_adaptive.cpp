@@ -21,8 +21,8 @@
 
 #ifdef CAVIAR_WITH_DEALII_MPI
 
-#include "caviar/objects/force_field/plt_dealii_mpi.h"
-#include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/objects/force_field/plt_dealii_mpi.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
 
 #include <deal.II/grid/tria.h>
 #include <deal.II/dofs/dof_handler.h>

@@ -14,7 +14,7 @@
 //
 //========================================================================
 
-#include "caviar/interpreter/object_handler/dictionary.h"
+#include "caviar/interpreter/object_handler/dictionary.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 namespace interpreter

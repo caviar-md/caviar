@@ -14,11 +14,11 @@
 //
 //========================================================================
 
-#include "caviar/objects/constraint/atom_molarity.h"
-#include "caviar/objects/atom_data.h"
-#include "caviar/objects/unique/atom.h"
-#include "caviar/objects/unique/molecule.h"
-#include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/objects/constraint/atom_molarity.hpp"
+#include "caviar/objects/atom_data.hpp"
+#include "caviar/objects/unique/atom.hpp"
+#include "caviar/objects/unique/molecule.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
 
 #include <random>
 #include <algorithm>

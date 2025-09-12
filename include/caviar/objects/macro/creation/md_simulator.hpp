@@ -22,7 +22,7 @@ FC_OBJECT_CREATOR_DEFAULT_FUNCTION(md_simulator)
 
   Md_simulator *p_sh = nullptr;
 
-#include "caviar/objects/md_simulator/macro/all.h"
+#include "caviar/objects/md_simulator/macro/all.hpp"
 
   FC_ADD_OBJECT_TO_CONTAINER(md_simulator)
 }

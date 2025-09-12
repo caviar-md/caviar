@@ -13,7 +13,7 @@
 // the top level of the CAVIAR distribution.
 //
 //========================================================================
-#include "caviar/utility/caviar_config.h"
+#include "caviar/utility/caviar_config.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

@@ -14,11 +14,11 @@
 //
 //========================================================================
 
-#include "caviar/objects/force_field/gravity_external.h"
-#include "caviar/utility/interpreter_io_headers.h"
-#include "caviar/objects/neighborlist.h"
-#include "caviar/objects/atom_data.h"
-#include "caviar/objects/unique/time_function_3d.h"
+#include "caviar/objects/force_field/gravity_external.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
+#include "caviar/objects/neighborlist.hpp"
+#include "caviar/objects/atom_data.hpp"
+#include "caviar/objects/unique/time_function_3d.hpp"
 
 #include <cmath>
 #include <iomanip>

@@ -14,10 +14,10 @@
 //
 //========================================================================
 
-#include "caviar/objects/atom_data.h"
-#include "caviar/interpreter/communicator.h"
-#include "caviar/interpreter/error.h"
-#include "caviar/objects/domain.h"
+#include "caviar/objects/atom_data.hpp"
+#include "caviar/interpreter/communicator.hpp"
+#include "caviar/interpreter/error.hpp"
+#include "caviar/objects/domain.hpp"
 
 #include <algorithm>
 

@@ -14,9 +14,9 @@
 //
 //========================================================================
 
-#include "caviar/objects/domain/box.h"
-//#include "caviar/interpreter/communicator.h"
-#include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/objects/domain/box.hpp"
+//#include "caviar/interpreter/communicator.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

@@ -17,7 +17,7 @@
 #ifndef CAVIAR_OBJECTS_CONSTRAINT_BERENDSENBAROSTAT_H
 #define CAVIAR_OBJECTS_CONSTRAINT_BERENDSENBAROSTAT_H
 
-#include "caviar/objects/constraint.h"
+#include "caviar/objects/constraint.hpp"
 #include <fstream>
 
 CAVIAR_NAMESPACE_OPEN

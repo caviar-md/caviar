@@ -14,8 +14,8 @@
 //
 //========================================================================
 
-#include "caviar/objects/unique/time_function.h"
-#include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/objects/unique/time_function.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
 
 #if defined(CAVIAR_WITH_MUPARSER)
 #include <muParser.h>

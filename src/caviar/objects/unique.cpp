@@ -14,7 +14,7 @@
 //
 //========================================================================
 
-#include "caviar/objects/unique.h"
+#include "caviar/objects/unique.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

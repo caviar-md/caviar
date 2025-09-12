@@ -14,7 +14,7 @@
 //
 //========================================================================
 
-#include "caviar/CAVIAR.h"
+#include "caviar/CAVIAR.hpp"
 
 #include <string>
 
@@ -22,7 +22,7 @@
 #include <omp.h>
 #endif
 
-#include "caviar/interpreter/all.h"
+#include "caviar/interpreter/all.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

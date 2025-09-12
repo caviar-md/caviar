@@ -14,11 +14,11 @@
 //
 //========================================================================
 
-#include "caviar/objects/neighborlist.h"
-#include "caviar/interpreter/error.h"
-#include "caviar/objects/atom_data.h"
-#include "caviar/objects/domain.h"
-#include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/objects/neighborlist.hpp"
+#include "caviar/interpreter/error.hpp"
+#include "caviar/objects/atom_data.hpp"
+#include "caviar/objects/domain.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

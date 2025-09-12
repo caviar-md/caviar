@@ -17,7 +17,7 @@
 #ifndef CAVIAR_OBJECTS_UNIQUE_RANDOM1D_H
 #define CAVIAR_OBJECTS_UNIQUE_RANDOM1D_H
 
-#include "caviar/objects/unique.h"
+#include "caviar/objects/unique.hpp"
 #include <random>
 
 CAVIAR_NAMESPACE_OPEN

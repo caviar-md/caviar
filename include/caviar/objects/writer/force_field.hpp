@@ -17,7 +17,7 @@
 #ifndef CAVIAR_OBJECTS_WRITER_FORCEFIELD_H
 #define CAVIAR_OBJECTS_WRITER_FORCEFIELD_H
 
-#include "caviar/objects/writer.h"
+#include "caviar/objects/writer.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

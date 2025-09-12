@@ -14,4 +14,4 @@
 //
 //========================================================================
 
-#include "caviar/objects/postprocess/potential_sampler.h"
+#include "caviar/objects/postprocess/potential_sampler.hpp"

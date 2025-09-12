@@ -14,10 +14,10 @@
 //
 //========================================================================
 
-#include "caviar/objects/force_field/electrostatic_ewald_slab_correction.h"
-#include "caviar/utility/interpreter_io_headers.h"
-#include "caviar/objects/atom_data.h"
-#include "caviar/utility/macro_constants.h"
+#include "caviar/objects/force_field/electrostatic_ewald_slab_correction.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
+#include "caviar/objects/atom_data.hpp"
+#include "caviar/utility/macro_constants.hpp"
 
 #include <cmath>
 #include <iomanip>

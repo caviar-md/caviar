@@ -17,7 +17,7 @@
 #ifndef CAVIAR_INTERPRETER_OBJECTCREATOR_COMMANDSMAP_H
 #define CAVIAR_INTERPRETER_OBJECTCREATOR_COMMANDSMAP_H
 
-#include "caviar/interpreter/object_creator.h"
+#include "caviar/interpreter/object_creator.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 namespace interpreter
@@ -36,7 +36,7 @@ namespace interpreter
 
 #define FC_GENERAL_CLASSNAME_MACRO_ACTIVATED
 
-#include "caviar/objects/macro/declaration/all.h"
+#include "caviar/objects/macro/declaration/all.hpp"
 
 #undef FC_GENERAL_CLASSNAME_MACRO_ACTIVATED
 #undef FC_GENERAL_CLASSNAME_MACRO

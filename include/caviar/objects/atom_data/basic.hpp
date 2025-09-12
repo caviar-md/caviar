@@ -17,7 +17,7 @@
 #ifndef CAVIAR_OBJECTS_ATOMDATA_BASIC_H
 #define CAVIAR_OBJECTS_ATOMDATA_BASIC_H
 
-#include "caviar/objects/atom_data.h"
+#include "caviar/objects/atom_data.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

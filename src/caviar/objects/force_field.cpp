@@ -14,8 +14,8 @@
 //
 //========================================================================
 
-#include "caviar/objects/force_field.h"
-#include "caviar/interpreter/error.h"
+#include "caviar/objects/force_field.hpp"
+#include "caviar/interpreter/error.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

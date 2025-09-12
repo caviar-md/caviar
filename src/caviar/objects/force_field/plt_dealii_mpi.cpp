@@ -17,15 +17,15 @@
 //
 //========================================================================
 
-#include "caviar/objects/force_field/plt_dealii_mpi.h"
-#include "caviar/utility/interpreter_io_headers.h"
-#include "caviar/interpreter/communicator.h"
+#include "caviar/objects/force_field/plt_dealii_mpi.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
+#include "caviar/interpreter/communicator.hpp"
 
 #ifdef CAVIAR_WITH_DEALII_MPI
 
-#include "caviar/objects/atom_data.h"
-#include "caviar/objects/neighborlist.h"
-#include "caviar/utility/macro_constants.h"
+#include "caviar/objects/atom_data.hpp"
+#include "caviar/objects/neighborlist.hpp"
+#include "caviar/utility/macro_constants.hpp"
 
 #include <deal.II/grid/tria.h>
 #include <deal.II/dofs/dof_handler.h>
@@ -80,8 +80,8 @@
 #include <cmath>
 #include <time.h>
 
-#include "caviar/objects/force_field/utility/plt_dealii_constants.h"
-#include "caviar/objects/force_field/utility/plt_dealii_functions.h"
+#include "caviar/objects/force_field/utility/plt_dealii_constants.hpp"
+#include "caviar/objects/force_field/utility/plt_dealii_functions.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

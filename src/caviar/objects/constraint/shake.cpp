@@ -16,10 +16,10 @@
 //
 //========================================================================
 
-#include "caviar/objects/constraint/shake.h"
-#include "caviar/objects/atom_data.h"
-#include "caviar/objects/domain.h"
-#include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/objects/constraint/shake.hpp"
+#include "caviar/objects/atom_data.hpp"
+#include "caviar/objects/domain.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
 
 // #define ABS(x) (x<0 ? -x : x)
 

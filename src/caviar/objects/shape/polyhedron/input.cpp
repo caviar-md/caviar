@@ -14,10 +14,10 @@
 //
 //========================================================================
 
-#include "caviar/objects/shape/polyhedron/input.h"
-#include "caviar/objects/shape/polyhedron/format_unv_reader.h"
-#include "caviar/objects/shape/polyhedron/format_vtk_reader.h"
-#include "caviar/objects/shape/polyhedron/format_stl_reader.h"
+#include "caviar/objects/shape/polyhedron/input.hpp"
+#include "caviar/objects/shape/polyhedron/format_unv_reader.hpp"
+#include "caviar/objects/shape/polyhedron/format_vtk_reader.hpp"
+#include "caviar/objects/shape/polyhedron/format_stl_reader.hpp"
 
 #include <string>
 #include <fstream>

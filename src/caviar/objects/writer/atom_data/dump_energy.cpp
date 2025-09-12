@@ -14,10 +14,10 @@
 //
 //========================================================================
 
-#include "caviar/objects/writer/atom_data.h"
-#include "caviar/objects/atom_data.h"
-#include "caviar/utility/interpreter_io_headers.h"
-#include "caviar/objects/domain.h"
+#include "caviar/objects/writer/atom_data.hpp"
+#include "caviar/objects/atom_data.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
+#include "caviar/objects/domain.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

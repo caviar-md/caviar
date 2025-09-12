@@ -22,7 +22,7 @@ FC_OBJECT_CREATOR_DEFAULT_FUNCTION(unique)
 
   Unique *p_sh = nullptr;
 
-#include "caviar/objects/unique/macro/all.h"
+#include "caviar/objects/unique/macro/all.hpp"
 
   FC_ADD_OBJECT_TO_CONTAINER(unique)
 }

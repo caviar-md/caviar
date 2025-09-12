@@ -14,13 +14,13 @@
 //
 //========================================================================
 
-#include "caviar/objects/atom_data.h"
-#include "caviar/interpreter/communicator.h"
-#include "caviar/interpreter/error.h"
-#include "caviar/interpreter/output.h"
-#include "caviar/objects/domain.h"
-#include "caviar/utility/common_template_functions.h"
-#include "caviar/objects/unique/time_function_3d.h"
+#include "caviar/objects/atom_data.hpp"
+#include "caviar/interpreter/communicator.hpp"
+#include "caviar/interpreter/error.hpp"
+#include "caviar/interpreter/output.hpp"
+#include "caviar/objects/domain.hpp"
+#include "caviar/utility/common_template_functions.hpp"
+#include "caviar/objects/unique/time_function_3d.hpp"
 #include <algorithm>
 #ifdef CAVIAR_WITH_MPI
 #include <mpi.h>

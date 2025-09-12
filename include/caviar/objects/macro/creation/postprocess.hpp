@@ -22,7 +22,7 @@ FC_OBJECT_CREATOR_DEFAULT_FUNCTION(postprocess)
 
   Postprocess *p_sh = nullptr;
 
-#include "caviar/objects/postprocess/macro/all.h"
+#include "caviar/objects/postprocess/macro/all.hpp"
 
   FC_ADD_OBJECT_TO_CONTAINER(postprocess)
 }

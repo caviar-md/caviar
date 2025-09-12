@@ -17,7 +17,7 @@
 #ifndef CAVIAR_OBJECTS_MDSIMULATOR_BASIC_H
 #define CAVIAR_OBJECTS_MDSIMULATOR_BASIC_H
 
-#include "caviar/objects/md_simulator.h"
+#include "caviar/objects/md_simulator.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

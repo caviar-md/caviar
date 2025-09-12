@@ -17,7 +17,7 @@
 #ifndef CAVIAR_INTERPRETER_OBJECTHANDLER_DICTIONARY_H
 #define CAVIAR_INTERPRETER_OBJECTHANDLER_DICTIONARY_H
 
-#include "caviar/utility/caviar_config.h"
+#include "caviar/utility/caviar_config.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 namespace interpreter

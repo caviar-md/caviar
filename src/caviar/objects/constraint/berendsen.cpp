@@ -14,9 +14,9 @@
 //
 //========================================================================
 
-#include "caviar/objects/constraint/berendsen.h"
-#include "caviar/objects/atom_data.h"
-#include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/objects/constraint/berendsen.hpp"
+#include "caviar/objects/atom_data.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

@@ -21,10 +21,10 @@
 
 #ifdef CAVIAR_WITH_DEALII
 
-#include "caviar/objects/force_field/plt_dealii.h"
-#include "caviar/utility/interpreter_io_headers.h"
-#include "caviar/utility/time_utility.h"
-#include "caviar/objects/unique/time_function.h"
+#include "caviar/objects/force_field/plt_dealii.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
+#include "caviar/utility/time_utility.hpp"
+#include "caviar/objects/unique/time_function.hpp"
 
 #include <deal.II/grid/tria.h>
 #include <deal.II/dofs/dof_handler.h>

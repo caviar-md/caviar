@@ -16,10 +16,10 @@
 //
 //========================================================================
 
-#include "caviar/objects/constraint/m_shake.h"
-#include "caviar/objects/atom_data.h"
-#include "caviar/objects/domain.h"
-#include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/objects/constraint/m_shake.hpp"
+#include "caviar/objects/atom_data.hpp"
+#include "caviar/objects/domain.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
 #include <string>
 
 CAVIAR_NAMESPACE_OPEN

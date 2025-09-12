@@ -14,11 +14,11 @@
 //
 //========================================================================
 
-#include "caviar/objects/unique/molecule_list.h"
-#include "caviar/objects/unique/molecule.h"
-#include "caviar/objects/unique/molecule_group.h"
-#include "caviar/utility/interpreter_io_headers.h"
-#include "caviar/interpreter/object_handler/preprocessors_new.h"
+#include "caviar/objects/unique/molecule_list.hpp"
+#include "caviar/objects/unique/molecule.hpp"
+#include "caviar/objects/unique/molecule_group.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
+#include "caviar/interpreter/object_handler/preprocessors_new.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

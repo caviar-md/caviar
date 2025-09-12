@@ -22,7 +22,7 @@ FC_OBJECT_CREATOR_DEFAULT_FUNCTION(atom_data)
 
   Atom_data *p_sh = nullptr;
 
-#include "caviar/objects/atom_data/macro/all.h"
+#include "caviar/objects/atom_data/macro/all.hpp"
 
   FC_ADD_OBJECT_TO_CONTAINER(atom_data)
 }

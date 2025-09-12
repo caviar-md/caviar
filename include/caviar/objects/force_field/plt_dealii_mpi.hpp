@@ -22,7 +22,7 @@
 #ifndef CAVIAR_OBJECTS_FORCEFIELD_PLTDEALIIMPI_H
 #define CAVIAR_OBJECTS_FORCEFIELD_PLTDEALIIMPI_H
 
-#include "caviar/objects/force_field.h"
+#include "caviar/objects/force_field.hpp"
 
 #ifdef CAVIAR_WITH_DEALII_MPI
 

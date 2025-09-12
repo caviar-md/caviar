@@ -14,7 +14,7 @@
 //
 //========================================================================
 
-#include "caviar/interpreter/object_handler/gdst.h"
+#include "caviar/interpreter/object_handler/gdst.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 namespace interpreter

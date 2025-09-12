@@ -17,8 +17,8 @@
 #ifndef CAVIAR_INTERPRETER_PARSER_H
 #define CAVIAR_INTERPRETER_PARSER_H
 
-#include "caviar/utility/pointers.h"
-#include "caviar/utility/vector.h"
+#include "caviar/utility/pointers.hpp"
+#include "caviar/utility/vector.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 namespace interpreter

@@ -14,10 +14,10 @@
 //
 //========================================================================
 
-#include "caviar/objects/atom_data.h"
-#include "caviar/utility/interpreter_io_headers.h"
-#include "caviar/interpreter/object_handler/preprocessors_new.h"
-#include "caviar/utility/file_utility.h"
+#include "caviar/objects/atom_data.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
+#include "caviar/interpreter/object_handler/preprocessors_new.hpp"
+#include "caviar/utility/file_utility.hpp"
 
 #include <string>
 

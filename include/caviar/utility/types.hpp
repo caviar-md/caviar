@@ -17,7 +17,7 @@
 #ifndef CAVIAR_TYPES_H
 #define CAVIAR_TYPES_H
 
-#include "caviar_config.h"
+#include "caviar_config.hpp"
 
 #include <limits>
 

@@ -17,7 +17,7 @@
 #ifndef CAVIAR_INTERPRETER_INPUT_H
 #define CAVIAR_INTERPRETER_INPUT_H
 
-#include "caviar/utility/pointers.h"
+#include "caviar/utility/pointers.hpp"
 #include <istream>
 #include <map>
 

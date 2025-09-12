@@ -17,10 +17,10 @@
 #ifndef CAVIAR_OBJECTS_UNIQUE_MOLECULE_H
 #define CAVIAR_OBJECTS_UNIQUE_MOLECULE_H
 
-#include "caviar/objects/unique.h"
-#include "caviar/objects/atom_data/utility/bond.h"
-#include "caviar/objects/atom_data/utility/angle.h"
-#include "caviar/objects/atom_data/utility/proper_dihedral.h"
+#include "caviar/objects/unique.hpp"
+#include "caviar/objects/atom_data/utility/bond.hpp"
+#include "caviar/objects/atom_data/utility/angle.hpp"
+#include "caviar/objects/atom_data/utility/proper_dihedral.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

@@ -19,7 +19,7 @@
 #ifndef CAVIAR_OBJECTS_CONSTRAINT_MSHAKE_H
 #define CAVIAR_OBJECTS_CONSTRAINT_MSHAKE_H
 
-#include "caviar/objects/constraint.h"
+#include "caviar/objects/constraint.hpp"
 
 #include <vector>
 

@@ -17,7 +17,7 @@
 #ifndef CAVIAR_OBJECTS_MDSIMULATOR_H
 #define CAVIAR_OBJECTS_MDSIMULATOR_H
 
-#include "caviar/utility/objects_common_headers.h"
+#include "caviar/utility/objects_common_headers.hpp"
 
 #include <random> // used for velocity_verlet_langevin
 

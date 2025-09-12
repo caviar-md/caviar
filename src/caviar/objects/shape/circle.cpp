@@ -14,8 +14,8 @@
 //
 //========================================================================
 
-#include "caviar/objects/shape/circle.h"
-#include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/objects/shape/circle.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

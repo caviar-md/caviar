@@ -14,9 +14,9 @@
 //
 //========================================================================
 
-#include "caviar/interpreter/object_creator.h"
-#include "caviar/utility/interpreter_io_headers.h"
-#include "caviar/objects/all_derived_classes.h"
+#include "caviar/interpreter/object_creator.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
+#include "caviar/objects/all_derived_classes.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 namespace interpreter
@@ -53,7 +53,7 @@ namespace interpreter
 #define FC_OBJECT_CREATOR_FUNCTION_DEFINITON
 #define FC_CHECK_AND_CREATE_ACTIVATED
 
-#include "caviar/objects/macro/creation/all.h"
+#include "caviar/objects/macro/creation/all.hpp"
 
 #undef FC_CHECK_AND_CREATE_ACTIVATED
 #undef FC_OBJECT_CREATOR_FUNCTION_DEFINITON

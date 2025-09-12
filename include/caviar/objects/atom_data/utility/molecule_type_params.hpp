@@ -17,10 +17,10 @@
 #ifndef CAVIAR_OBJECTS_ATOMDATA_UTILITY_MOLECULETYPEPARAMS_H
 #define CAVIAR_OBJECTS_ATOMDATA_UTILITY_MOLECULETYPEPARAMS_H
 
-#include "caviar/utility/objects_common_headers.h"
-#include "caviar/objects/atom_data/utility/bond.h"
-#include "caviar/objects/atom_data/utility/angle.h"
-#include "caviar/objects/atom_data/utility/proper_dihedral.h"
+#include "caviar/utility/objects_common_headers.hpp"
+#include "caviar/objects/atom_data/utility/bond.hpp"
+#include "caviar/objects/atom_data/utility/angle.hpp"
+#include "caviar/objects/atom_data/utility/proper_dihedral.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

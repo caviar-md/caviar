@@ -14,9 +14,9 @@
 //
 //========================================================================
 
-#include "caviar/interpreter/object_container.h"
-#include "caviar/utility/interpreter_io_headers.h"
-#include "caviar/objects/all.h" // used in deletion
+#include "caviar/interpreter/object_container.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
+#include "caviar/objects/all.hpp" // used in deletion
 
 CAVIAR_NAMESPACE_OPEN
 namespace interpreter
@@ -36,7 +36,7 @@ namespace interpreter
 
 #define FC_GENERAL_CLASSNAME_MACRO_ACTIVATED
 
-#include "caviar/objects/macro/declaration/all.h"
+#include "caviar/objects/macro/declaration/all.hpp"
 
 #undef FC_GENERAL_CLASSNAME_MACRO_ACTIVATED
 #undef FC_GENERAL_CLASSNAME_MACRO

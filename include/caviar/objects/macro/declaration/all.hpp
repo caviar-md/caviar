@@ -14,13 +14,13 @@
 //
 //========================================================================
 
-#include "caviar/objects/macro/declaration/atom_data.h"
-#include "caviar/objects/macro/declaration/domain.h"
-#include "caviar/objects/macro/declaration/force_field.h"
-#include "caviar/objects/macro/declaration/neighborlist.h"
-#include "caviar/objects/macro/declaration/shape.h"
-#include "caviar/objects/macro/declaration/md_simulator.h"
-#include "caviar/objects/macro/declaration/writer.h"
-#include "caviar/objects/macro/declaration/constraint.h"
-#include "caviar/objects/macro/declaration/unique.h"
-#include "caviar/objects/macro/declaration/postprocess.h"
+#include "caviar/objects/macro/declaration/atom_data.hpp"
+#include "caviar/objects/macro/declaration/domain.hpp"
+#include "caviar/objects/macro/declaration/force_field.hpp"
+#include "caviar/objects/macro/declaration/neighborlist.hpp"
+#include "caviar/objects/macro/declaration/shape.hpp"
+#include "caviar/objects/macro/declaration/md_simulator.hpp"
+#include "caviar/objects/macro/declaration/writer.hpp"
+#include "caviar/objects/macro/declaration/constraint.hpp"
+#include "caviar/objects/macro/declaration/unique.hpp"
+#include "caviar/objects/macro/declaration/postprocess.hpp"

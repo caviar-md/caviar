@@ -14,9 +14,9 @@
 //
 //========================================================================
 
-#include "caviar/interpreter/input/lexer.h"
-#include "caviar/interpreter/communicator.h"
-#include "caviar/interpreter/error.h"
+#include "caviar/interpreter/input/lexer.hpp"
+#include "caviar/interpreter/communicator.hpp"
+#include "caviar/interpreter/error.hpp"
 
 // #define DEBUG_ME
 

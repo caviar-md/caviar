@@ -14,9 +14,9 @@
 //
 //========================================================================
 
-#include "mesh_modifier.h"
+#include "mesh_modifier.hpp"
 
-#include "vector.h"
+#include "vector.hpp"
 
 #include <iostream>
 #include <algorithm>

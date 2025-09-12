@@ -16,11 +16,11 @@
 //
 //========================================================================
 
-#include "caviar/objects/force_field/opls_proper_dihedral.h"
-#include "caviar/utility/interpreter_io_headers.h"
-#include "caviar/objects/neighborlist.h"
-#include "caviar/objects/atom_data.h"
-#include "caviar/objects/domain.h"
+#include "caviar/objects/force_field/opls_proper_dihedral.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
+#include "caviar/objects/neighborlist.hpp"
+#include "caviar/objects/atom_data.hpp"
+#include "caviar/objects/domain.hpp"
 
 #include <cmath>
 #include <iomanip>

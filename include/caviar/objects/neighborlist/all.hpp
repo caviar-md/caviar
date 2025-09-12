@@ -14,4 +14,4 @@
 //
 //========================================================================
 
-#include "caviar/objects/neighborlist/basic.h"
+#include "caviar/objects/neighborlist/basic.hpp"

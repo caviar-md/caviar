@@ -17,7 +17,7 @@
 #ifndef CAVIAR_OBJECTS_FORCEFIELD_DPD_H
 #define CAVIAR_OBJECTS_FORCEFIELD_DPD_H
 
-#include "caviar/objects/force_field.h"
+#include "caviar/objects/force_field.hpp"
 
 #include <random>
 

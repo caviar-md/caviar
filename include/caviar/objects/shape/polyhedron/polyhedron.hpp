@@ -17,9 +17,9 @@
 #ifndef CAVIAR_OBJECTS_SHAPE_POLYHEDRON_POLYHEDRON_H
 #define CAVIAR_OBJECTS_SHAPE_POLYHEDRON_POLYHEDRON_H
 
-#include "caviar/utility/caviar_config.h"
-#include "caviar/utility/vector.h"
-#include "caviar/utility/types.h"
+#include "caviar/utility/caviar_config.hpp"
+#include "caviar/utility/vector.hpp"
+#include "caviar/utility/types.hpp"
 #include <vector>
 #include <map>
 

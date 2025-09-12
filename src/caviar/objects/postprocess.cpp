@@ -14,7 +14,7 @@
 //
 //========================================================================
 
-#include "caviar/objects/postprocess.h"
+#include "caviar/objects/postprocess.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

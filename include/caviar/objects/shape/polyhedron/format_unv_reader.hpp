@@ -17,7 +17,7 @@
 #ifndef CAVIAR_OBJECTS_SHAPE_POLYHEDRON_FORMAT_UNV_READER_h
 #define CAVIAR_OBJECTS_SHAPE_POLYHEDRON_FORMAT_UNV_READER_h
 
-#include "caviar/utility/pointers.h"
+#include "caviar/utility/pointers.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

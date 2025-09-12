@@ -17,7 +17,7 @@
 #ifndef CAVIAR_OBJECTS_SHAPE_POLYHEDRON_PREPROCESS_H
 #define CAVIAR_OBJECTS_SHAPE_POLYHEDRON_PREPROCESS_H
 
-#include "caviar/utility/pointers.h"
+#include "caviar/utility/pointers.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

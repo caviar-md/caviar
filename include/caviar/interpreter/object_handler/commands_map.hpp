@@ -17,7 +17,7 @@
 #ifndef CAVIAR_INTERPRETER_OBJECTHANDLER_COMMANDSMAP_H
 #define CAVIAR_INTERPRETER_OBJECTHANDLER_COMMANDSMAP_H
 
-#include "caviar/interpreter/object_handler.h"
+#include "caviar/interpreter/object_handler.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 namespace interpreter

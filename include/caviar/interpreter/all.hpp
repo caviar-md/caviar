@@ -14,10 +14,10 @@
 //
 //========================================================================
 
-#include "caviar/interpreter/communicator.h"
-#include "caviar/interpreter/input.h"
-#include "caviar/interpreter/output.h"
-#include "caviar/interpreter/error.h"
-#include "caviar/interpreter/object_handler.h"
-#include "caviar/interpreter/object_container.h"
-#include "caviar/interpreter/object_creator.h"
+#include "caviar/interpreter/communicator.hpp"
+#include "caviar/interpreter/input.hpp"
+#include "caviar/interpreter/output.hpp"
+#include "caviar/interpreter/error.hpp"
+#include "caviar/interpreter/object_handler.hpp"
+#include "caviar/interpreter/object_container.hpp"
+#include "caviar/interpreter/object_creator.hpp"

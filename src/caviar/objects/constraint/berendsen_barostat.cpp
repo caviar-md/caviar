@@ -14,11 +14,11 @@
 //
 //========================================================================
 
-#include "caviar/objects/constraint/berendsen_barostat.h"
-#include "caviar/objects/atom_data.h"
-#include "caviar/objects/force_field.h"
-#include "caviar/objects/domain.h"
-#include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/objects/constraint/berendsen_barostat.hpp"
+#include "caviar/objects/atom_data.hpp"
+#include "caviar/objects/force_field.hpp"
+#include "caviar/objects/domain.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
 #include <fstream>
 CAVIAR_NAMESPACE_OPEN
 

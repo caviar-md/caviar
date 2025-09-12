@@ -22,7 +22,7 @@ FC_OBJECT_CREATOR_DEFAULT_FUNCTION(domain)
 
   Domain *p_sh = nullptr;
 
-#include "caviar/objects/domain/macro/all.h"
+#include "caviar/objects/domain/macro/all.hpp"
 
   FC_ADD_OBJECT_TO_CONTAINER(domain)
 }

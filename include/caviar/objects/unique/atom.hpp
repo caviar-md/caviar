@@ -17,8 +17,8 @@
 #ifndef CAVIAR_OBJECTS_UNIQUE_ATOM_H
 #define CAVIAR_OBJECTS_UNIQUE_ATOM_H
 
-#include "caviar/objects/unique.h"
-#include "caviar/utility/vector.h"
+#include "caviar/objects/unique.hpp"
+#include "caviar/utility/vector.hpp"
 #include <vector>
 
 CAVIAR_NAMESPACE_OPEN

@@ -17,8 +17,8 @@
 #ifndef CAVIAR_OBJECTS_SHAPE_POLYHEDRON_UTILITY_H
 #define CAVIAR_OBJECTS_SHAPE_POLYHEDRON_UTILITY_H
 
-#include "caviar/utility/pointers.h"
-#include "caviar/utility/vector.h"
+#include "caviar/utility/pointers.hpp"
+#include "caviar/utility/vector.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

@@ -14,13 +14,13 @@
 //
 //========================================================================
 
-#include "caviar/objects/constraint/macro/m_shake.h"
-#include "caviar/objects/constraint/macro/shake.h"
-#include "caviar/objects/constraint/macro/rattle.h"
-#include "caviar/objects/constraint/macro/nve.h"
-#include "caviar/objects/constraint/macro/nose_hoover.h"
-#include "caviar/objects/constraint/macro/berendsen.h"
-#include "caviar/objects/constraint/macro/berendsen_barostat.h"
-#include "caviar/objects/constraint/macro/atom_molarity.h"
-#include "caviar/objects/constraint/macro/atoms_molarity.h"
-#include "caviar/objects/constraint/macro/cm_motion.h"
+#include "caviar/objects/constraint/macro/m_shake.hpp"
+#include "caviar/objects/constraint/macro/shake.hpp"
+#include "caviar/objects/constraint/macro/rattle.hpp"
+#include "caviar/objects/constraint/macro/nve.hpp"
+#include "caviar/objects/constraint/macro/nose_hoover.hpp"
+#include "caviar/objects/constraint/macro/berendsen.hpp"
+#include "caviar/objects/constraint/macro/berendsen_barostat.hpp"
+#include "caviar/objects/constraint/macro/atom_molarity.hpp"
+#include "caviar/objects/constraint/macro/atoms_molarity.hpp"
+#include "caviar/objects/constraint/macro/cm_motion.hpp"

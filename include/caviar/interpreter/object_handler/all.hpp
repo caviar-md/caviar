@@ -14,6 +14,6 @@
 //
 //========================================================================
 
-#include "caviar/interpreter/object_handler/preprocessors.h"
-#include "caviar/interpreter/object_handler/dictionary.h"
-#include "caviar/interpreter/object_handler/gdst.h"
+#include "caviar/interpreter/object_handler/preprocessors.hpp"
+#include "caviar/interpreter/object_handler/dictionary.hpp"
+#include "caviar/interpreter/object_handler/gdst.hpp"

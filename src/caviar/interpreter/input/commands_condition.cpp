@@ -14,10 +14,10 @@
 //
 //========================================================================
 
-#include "caviar/interpreter/input.h"
-#include "caviar/interpreter/object_creator.h"
-#include "caviar/interpreter/object_handler.h"
-#include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/interpreter/input.hpp"
+#include "caviar/interpreter/object_creator.hpp"
+#include "caviar/interpreter/object_handler.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
 
 #include <map>
 #include <cmath>

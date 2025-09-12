@@ -14,17 +14,17 @@
 //
 //========================================================================
 
-#include "caviar/objects/md_simulator.h"
-#include "caviar/objects/atom_data.h"
-#include "caviar/objects/neighborlist.h"
-#include "caviar/objects/force_field.h"
-#include "caviar/objects/constraint.h"
-#include "caviar/objects/writer.h"
-#include "caviar/objects/unique/time_function.h"
-#include "caviar/objects/unique/time_function_3d.h"
-#include "caviar/utility/interpreter_io_headers.h"
-#include "caviar/utility/time_utility.h"
-#include "caviar/interpreter/communicator.h"
+#include "caviar/objects/md_simulator.hpp"
+#include "caviar/objects/atom_data.hpp"
+#include "caviar/objects/neighborlist.hpp"
+#include "caviar/objects/force_field.hpp"
+#include "caviar/objects/constraint.hpp"
+#include "caviar/objects/writer.hpp"
+#include "caviar/objects/unique/time_function.hpp"
+#include "caviar/objects/unique/time_function_3d.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
+#include "caviar/utility/time_utility.hpp"
+#include "caviar/interpreter/communicator.hpp"
 // #ifdef CAVIAR_WITH_MPI
 // #include <mpi.h>
 // #endif
@@ -558,7 +558,7 @@ void Md_simulator::integrate_velocity_verlet()
   auto &pos = atom_data->atom_struct_owned.position;
   auto &vel = atom_data->atom_struct_owned.velocity;
   auto &acc = atom_data->atom_struct_owned.acceleration;
-  auto &pos_old = atom_data->atom_struct_owned.position;
+  auto &pos_old = atom_data->atom_struct_owned.position_old;
   auto &acc_old = atom_data->atom_struct_owned.acceleration_old; // velocity verlet
   auto psize = pos.size();
   pos_old.resize(psize);

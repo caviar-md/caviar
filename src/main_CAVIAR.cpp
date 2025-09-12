@@ -18,7 +18,7 @@
 #include <mpi.h>
 #endif
 
-#include "caviar/CAVIAR.h"
+#include "caviar/CAVIAR.hpp"
 
 #ifdef CAVIAR_WITH_DEALII_MPI
 #include <deal.II/base/mpi.h>

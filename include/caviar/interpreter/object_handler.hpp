@@ -17,7 +17,7 @@
 #ifndef CAVIAR_INTERPRETER_OBJECTHANDLER_H
 #define CAVIAR_INTERPRETER_OBJECTHANDLER_H
 
-#include "caviar/utility/pointers.h"
+#include "caviar/utility/pointers.hpp"
 #include <string>
 #include <map>
 

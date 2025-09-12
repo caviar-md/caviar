@@ -17,7 +17,7 @@
 #ifndef CAVIAR_INTERPRETER_OBJECTHANDLER_GDST_H
 #define CAVIAR_INTERPRETER_OBJECTHANDLER_GDST_H
 
-#include "caviar/utility/caviar_config.h"
+#include "caviar/utility/caviar_config.hpp"
 #include <string>
 #include <vector>
 // #include <map>
@@ -44,7 +44,7 @@ namespace interpreter
 
 #define FC_GENERAL_CLASSNAME_MACRO_ACTIVATED
 
-#include "caviar/objects/macro/declaration/all.h"
+#include "caviar/objects/macro/declaration/all.hpp"
 
 #undef FC_GENERAL_CLASSNAME_MACRO_ACTIVATED
 #undef FC_GENERAL_CLASSNAME_MACRO
@@ -53,7 +53,7 @@ namespace interpreter
 #VAR1,
 
 #define FC_BASIC_TYPES_MACRO_ACTIVATED
-#include "caviar/interpreter/object_handler/all_basic_types_macro.h"
+#include "caviar/interpreter/object_handler/all_basic_types_macro.hpp"
 #undef FC_BASIC_TYPES_MACRO_ACTIVATED
 #undef FC_BASIC_TYPES_MACRO
     };

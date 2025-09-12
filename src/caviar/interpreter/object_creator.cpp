@@ -14,8 +14,8 @@
 //
 //========================================================================
 
-#include "caviar/interpreter/object_creator.h"
-#include "caviar/interpreter/object_creator/commands_map.h"
+#include "caviar/interpreter/object_creator.hpp"
+#include "caviar/interpreter/object_creator/commands_map.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 namespace interpreter

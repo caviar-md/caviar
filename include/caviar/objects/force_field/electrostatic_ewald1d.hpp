@@ -17,7 +17,7 @@
 #ifndef CAVIAR_OBJECTS_FORCEFIELD_ELECTROSTATICEWALD1D_H
 #define CAVIAR_OBJECTS_FORCEFIELD_ELECTROSTATICEWALD1D_H
 
-#include "caviar/objects/force_field.h"
+#include "caviar/objects/force_field.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

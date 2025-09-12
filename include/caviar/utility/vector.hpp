@@ -17,7 +17,7 @@
 #ifndef CAVIAR_VECTOR_H
 #define CAVIAR_VECTOR_H
 
-#include "caviar_config.h"
+#include "caviar_config.hpp"
 
 #include <iostream>
 #include <cmath>

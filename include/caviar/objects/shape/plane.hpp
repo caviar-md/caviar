@@ -17,7 +17,7 @@
 #ifndef CAVIAR_OBJECTS_SHAPE_PLANE_H
 #define CAVIAR_OBJECTS_SHAPE_PLANE_H
 
-#include "caviar/objects/shape.h"
+#include "caviar/objects/shape.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

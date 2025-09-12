@@ -17,7 +17,7 @@
 #ifndef CAVIAR_INTERPRETER_COMMUNICATOR_H
 #define CAVIAR_INTERPRETER_COMMUNICATOR_H
 
-#include "caviar/utility/pointers.h"
+#include "caviar/utility/pointers.hpp"
 // #if defined(CAVIAR_WITH_MPI)
 // #include<mpi.h>
 // #endif

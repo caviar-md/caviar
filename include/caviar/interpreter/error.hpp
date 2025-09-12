@@ -17,7 +17,7 @@
 #ifndef CAVIAR_INTERPRETER_ERROR_H
 #define CAVIAR_INTERPRETER_ERROR_H
 
-#include "caviar/utility/pointers.h"
+#include "caviar/utility/pointers.hpp"
 
 #define FC_FILE_LINE_FUNC_LINE_COL __FILE__, __LINE__, __func__, line, col
 #define FC_FILE_LINE_FUNC_PARSE __FILE__, __LINE__, __func__, parser->line, parser->col

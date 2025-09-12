@@ -14,7 +14,7 @@
 //
 //========================================================================
 
-#include "mesh_modifier.h"
+#include "mesh_modifier.hpp"
 
 #include <fstream>
 #include <sstream>

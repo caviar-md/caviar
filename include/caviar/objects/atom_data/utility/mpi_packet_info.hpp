@@ -17,7 +17,7 @@
 #ifndef CAVIAR_OBJECTS_ATOMDATA_UTILITY_MPI_PACKET_INFO_H
 #define CAVIAR_OBJECTS_ATOMDATA_UTILITY_MPI_PACKET_INFO_H
 
-#include "caviar/utility/objects_common_headers.h"
+#include "caviar/utility/objects_common_headers.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

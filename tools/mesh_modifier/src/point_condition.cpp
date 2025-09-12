@@ -14,8 +14,8 @@
 //
 //========================================================================
 
-#include "point_condition.h"
-#include "macros.h"
+#include "point_condition.hpp"
+#include "macros.hpp"
 #include <iostream>
 // #include <cmath>
 

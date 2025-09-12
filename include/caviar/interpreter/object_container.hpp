@@ -17,10 +17,10 @@
 #ifndef CAVIAR_INTERPRETER_OBJECTCONTAINER_H
 #define CAVIAR_INTERPRETER_OBJECTCONTAINER_H
 
-#include "caviar/utility/pointers.h"
-#include "caviar/utility/vector.h"
-#include "caviar/utility/vector2D.h"
-#include "caviar/interpreter/object_handler/dictionary.h"
+#include "caviar/utility/pointers.hpp"
+#include "caviar/utility/vector.hpp"
+#include "caviar/utility/vector2D.hpp"
+#include "caviar/interpreter/object_handler/dictionary.hpp"
 
 #include <vector>
 #include <string>
@@ -29,7 +29,7 @@
 #include <memory>
 
 #define FC_COMPLETE_FORWARD_DECLERATION
-#include "caviar/objects/macro/declaration/all.h"
+#include "caviar/objects/macro/declaration/all.hpp"
 #undef FC_COMPLETE_FORWARD_DECLERATION
 
 CAVIAR_NAMESPACE_OPEN
@@ -59,7 +59,7 @@ namespace interpreter
 
 #define FC_GENERAL_CLASSNAME_MACRO_ACTIVATED
 
-#include "caviar/objects/macro/declaration/all.h"
+#include "caviar/objects/macro/declaration/all.hpp"
 
 #undef FC_GENERAL_CLASSNAME_MACRO_ACTIVATED
 #undef FC_GENERAL_CLASSNAME_MACRO

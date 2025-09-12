@@ -17,8 +17,8 @@
 #ifndef CAVIAR_OBJECTS_POSTPROCESS_POTENTIALSAMPLER_H
 #define CAVIAR_OBJECTS_POSTPROCESS_POTENTIALSAMPLER_H
 
-#include "caviar/objects/postprocess.h"
-#include "caviar/utility/vector.h"
+#include "caviar/objects/postprocess.hpp"
+#include "caviar/utility/vector.hpp"
 #include <vector>
 
 CAVIAR_NAMESPACE_OPEN

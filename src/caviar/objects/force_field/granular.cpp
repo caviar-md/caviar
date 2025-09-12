@@ -14,12 +14,12 @@
 //
 //========================================================================
 
-#include "caviar/objects/force_field/granular.h"
-#include "caviar/objects/neighborlist.h"
-#include "caviar/objects/atom_data.h"
-#include "caviar/objects/domain.h"
-#include "caviar/utility/vector.h"
-#include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/objects/force_field/granular.hpp"
+#include "caviar/objects/neighborlist.hpp"
+#include "caviar/objects/atom_data.hpp"
+#include "caviar/objects/domain.hpp"
+#include "caviar/utility/vector.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
 #include <cmath>
 
 CAVIAR_NAMESPACE_OPEN

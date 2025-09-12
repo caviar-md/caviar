@@ -14,11 +14,11 @@
 //
 //========================================================================
 
-#include "caviar/interpreter/object_handler.h"
-#include "caviar/interpreter/object_handler/all.h"
-#include "caviar/interpreter/object_handler/commands_map.h"
-#include "caviar/utility/interpreter_io_headers.h"
-#include "caviar/objects/all.h" // this is needed b.c. we want to call read()
+#include "caviar/interpreter/object_handler.hpp"
+#include "caviar/interpreter/object_handler/all.hpp"
+#include "caviar/interpreter/object_handler/commands_map.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
+#include "caviar/objects/all.hpp" // this is needed b.c. we want to call read()
 
 CAVIAR_NAMESPACE_OPEN
 namespace interpreter
@@ -53,7 +53,7 @@ namespace interpreter
 
 #define FC_GENERAL_CLASSNAME_MACRO_ACTIVATED
 
-#include "caviar/objects/macro/declaration/all.h"
+#include "caviar/objects/macro/declaration/all.hpp"
 
 #undef FC_GENERAL_CLASSNAME_MACRO_ACTIVATED
 #undef FC_GENERAL_CLASSNAME_MACRO

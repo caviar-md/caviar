@@ -63,9 +63,9 @@ unique molecule_group mg
 #===== Domain
 
 domain box dom
-dom xmin -25 xmax 25
-dom ymin -25 ymax 25
-dom zmin -25 zmax 25
+dom xmin -16 xmax 16
+dom ymin -16 ymax 16
+dom zmin -16 zmax 16
 dom boundary_condition 1 1 1
  
 dom generate
@@ -81,11 +81,15 @@ unique grid_1d gz
 #gy min -14 max 14 segment 8
 #gz min -14 max 14 segment 8
 
+# compact distribution
+gx min -14 max 14 segment 4
+gy min -14 max 14 segment 4
+gz min -14 max 14 segment 4
 
 # A few number of molecules
-gx min -5 max 5 segment 2
-gy min -5 max 5 segment 2
-gz min -5 max 5 segment 2
+#gx min -5 max 5 segment 2
+#gy min -5 max 5 segment 2
+#gz min -5 max 5 segment 2
 
 gx generate
 gy generate
@@ -217,7 +221,7 @@ c_ber set_atom_data adata
 constraint  Berendsen_barostat c_ber_bar
 c_ber_bar tp 0.1 
 c_ber_bar kappa 3.0 
-c_ber_bar pressure 0.008
+c_ber_bar pressure 0.1
 c_ber_bar xi_max 0.2
 c_ber_bar step 5
 c_ber_bar dt dt_all

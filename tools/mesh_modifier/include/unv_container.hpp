@@ -18,8 +18,8 @@
 #define UNV_CONTAINER_H
 
 #include <vector>
-#include "universal_dataset_number_all.h"
-#include "vector.h"
+#include "universal_dataset_number_all.hpp"
+#include "vector.hpp"
 
 namespace mesh_modifier
 {

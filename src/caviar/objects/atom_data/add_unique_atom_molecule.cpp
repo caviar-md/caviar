@@ -14,15 +14,15 @@
 //
 //========================================================================
 
-#include "caviar/objects/atom_data.h"
-#include "caviar/interpreter/communicator.h"
-#include "caviar/interpreter/error.h"
-#include "caviar/objects/unique/atom.h"
-#include "caviar/objects/unique/atom_group.h"
-#include "caviar/objects/unique/atom_list.h"
-#include "caviar/objects/unique/molecule.h"
-#include "caviar/objects/unique/molecule_group.h"
-#include "caviar/objects/unique/molecule_list.h"
+#include "caviar/objects/atom_data.hpp"
+#include "caviar/interpreter/communicator.hpp"
+#include "caviar/interpreter/error.hpp"
+#include "caviar/objects/unique/atom.hpp"
+#include "caviar/objects/unique/atom_group.hpp"
+#include "caviar/objects/unique/atom_list.hpp"
+#include "caviar/objects/unique/molecule.hpp"
+#include "caviar/objects/unique/molecule_group.hpp"
+#include "caviar/objects/unique/molecule_list.hpp"
 
 #include <algorithm>
 #include <random>

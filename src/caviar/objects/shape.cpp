@@ -14,7 +14,7 @@
 //
 //========================================================================
 
-#include "caviar/objects/shape.h"
+#include "caviar/objects/shape.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

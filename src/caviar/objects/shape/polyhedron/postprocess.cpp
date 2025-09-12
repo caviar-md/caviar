@@ -14,8 +14,8 @@
 //
 //========================================================================
 
-#include "caviar/objects/shape/polyhedron/postprocess.h"
-#include "caviar/objects/shape/polyhedron/polyhedron.h"
+#include "caviar/objects/shape/polyhedron/postprocess.hpp"
+#include "caviar/objects/shape/polyhedron/polyhedron.hpp"
 
 #include <string>
 #include <cmath>

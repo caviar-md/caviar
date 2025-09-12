@@ -14,12 +14,12 @@
 //
 //========================================================================
 
-#include "caviar/objects/force_field/umbrella_sampling.h"
-#include "caviar/utility/interpreter_io_headers.h"
-#include "caviar/utility/file_utility.h"
-#include "caviar/objects/neighborlist.h"
-#include "caviar/objects/atom_data.h"
-#include "caviar/objects/domain.h"
+#include "caviar/objects/force_field/umbrella_sampling.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
+#include "caviar/utility/file_utility.hpp"
+#include "caviar/objects/neighborlist.hpp"
+#include "caviar/objects/atom_data.hpp"
+#include "caviar/objects/domain.hpp"
 
 #include <cmath>
 #include <iomanip>

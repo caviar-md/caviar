@@ -17,7 +17,7 @@
 #ifndef CAVIAR_OBJECTS_UNIQUE_H
 #define CAVIAR_OBJECTS_UNIQUE_H
 
-#include "caviar/utility/objects_common_headers.h"
+#include "caviar/utility/objects_common_headers.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

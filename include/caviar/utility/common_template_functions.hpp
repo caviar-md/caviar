@@ -17,8 +17,8 @@
 #ifndef CAVIAR_UTILITY_H
 #define CAVIAR_UTILITY_H
 
-#include "caviar_config.h"
-#include "caviar/utility/vector.h"
+#include "caviar_config.hpp"
+#include "caviar/utility/vector.hpp"
 #include <algorithm>
 #include <vector>
 #include <array>

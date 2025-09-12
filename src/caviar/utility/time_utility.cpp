@@ -17,7 +17,7 @@
 //  Windows
 #ifdef _WIN32
 #include <Windows.h>
-#include "caviar/utility/caviar_config.h"
+#include "caviar/utility/caviar_config.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 
@@ -61,7 +61,7 @@ CAVIAR_NAMESPACE_CLOSE
 
 #include <time.h>
 #include <sys/time.h>
-#include "caviar/utility/caviar_config.h"
+#include "caviar/utility/caviar_config.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

@@ -14,8 +14,8 @@
 //
 //========================================================================
 
-#include "caviar/objects/writer.h"
-#include "caviar/interpreter/communicator.h"
+#include "caviar/objects/writer.hpp"
+#include "caviar/interpreter/communicator.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

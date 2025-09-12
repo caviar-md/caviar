@@ -17,7 +17,7 @@
 #ifndef CAVIAR_OBJECTS_DOMAIN_BOX_H
 #define CAVIAR_OBJECTS_DOMAIN_BOX_H
 
-#include "caviar/objects/domain.h"
+#include "caviar/objects/domain.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

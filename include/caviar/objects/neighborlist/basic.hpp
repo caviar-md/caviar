@@ -17,7 +17,7 @@
 #ifndef CAVIAR_OBJECTS_NEIGHBORLIST_BASIC_H
 #define CAVIAR_OBJECTS_NEIGHBORLIST_BASIC_H
 
-#include "caviar/objects/neighborlist.h"
+#include "caviar/objects/neighborlist.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

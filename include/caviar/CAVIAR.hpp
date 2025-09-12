@@ -17,14 +17,14 @@
 #ifndef CAVIAR_CAVIAR_H
 #define CAVIAR_CAVIAR_H
 
-#include "caviar/utility/caviar_config.h"
-#include "caviar/utility/types.h"
+#include "caviar/utility/caviar_config.hpp"
+#include "caviar/utility/types.hpp"
 
 #include <iostream>
 #include <fstream>
 #include <map>
 
-#include "caviar/utility/common_template_functions.h"
+#include "caviar/utility/common_template_functions.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

@@ -14,8 +14,8 @@
 //
 //========================================================================
 
-#include "caviar/objects/shape/sphere.h"
-#include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/objects/shape/sphere.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

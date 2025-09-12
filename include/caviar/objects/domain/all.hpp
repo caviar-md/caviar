@@ -14,4 +14,4 @@
 //
 //========================================================================
 
-#include "caviar/objects/domain/box.h"
+#include "caviar/objects/domain/box.hpp"

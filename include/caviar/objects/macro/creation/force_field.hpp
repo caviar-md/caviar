@@ -22,7 +22,7 @@ FC_OBJECT_CREATOR_DEFAULT_FUNCTION(force_field)
 
   Force_field *p_sh = nullptr;
 
-#include "caviar/objects/force_field/macro/all.h"
+#include "caviar/objects/force_field/macro/all.hpp"
 
   FC_ADD_OBJECT_TO_CONTAINER(force_field)
 }

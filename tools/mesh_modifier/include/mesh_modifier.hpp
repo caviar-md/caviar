@@ -21,9 +21,9 @@
 #include <fstream>
 #include <vector>
 
-#include "unv_container.h"
-#include "vector.h"
-#include "point_condition.h"
+#include "unv_container.hpp"
+#include "vector.hpp"
+#include "point_condition.hpp"
 
 namespace mesh_modifier
 {

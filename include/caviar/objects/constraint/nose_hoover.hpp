@@ -17,7 +17,7 @@
 #ifndef CAVIAR_OBJECTS_CONSTRAINT_NOSEHOOVER_H
 #define CAVIAR_OBJECTS_CONSTRAINT_NOSEHOOVER_H
 
-#include "caviar/objects/constraint.h"
+#include "caviar/objects/constraint.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

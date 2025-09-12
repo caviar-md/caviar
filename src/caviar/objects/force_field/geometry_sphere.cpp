@@ -14,10 +14,10 @@
 //
 //========================================================================
 
-#include "caviar/objects/force_field/geometry_sphere.h"
-#include "caviar/utility/interpreter_io_headers.h"
-#include "caviar/objects/atom_data.h"
-#include "caviar/objects/unique/time_function_3d.h"
+#include "caviar/objects/force_field/geometry_sphere.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
+#include "caviar/objects/atom_data.hpp"
+#include "caviar/objects/unique/time_function_3d.hpp"
 #include <string>
 #include <cmath>
 #include <fstream>

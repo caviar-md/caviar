@@ -17,7 +17,7 @@
 #ifndef CAVIAR_INTERPRETER_INPUT_COMMANDSMAP_H
 #define CAVIAR_INTERPRETER_INPUT_COMMANDSMAP_H
 
-#include "caviar/interpreter/input.h"
+#include "caviar/interpreter/input.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 namespace interpreter {

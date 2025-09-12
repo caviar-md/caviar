@@ -22,7 +22,7 @@ FC_OBJECT_CREATOR_DEFAULT_FUNCTION(shape)
 
   Shape *p_sh = nullptr;
 
-#include "caviar/objects/shape/macro/all.h"
+#include "caviar/objects/shape/macro/all.hpp"
 
   FC_ADD_OBJECT_TO_CONTAINER(shape)
 }

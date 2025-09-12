@@ -14,7 +14,7 @@
 //
 //========================================================================
 
-#include "caviar/objects/constraint.h"
+#include "caviar/objects/constraint.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

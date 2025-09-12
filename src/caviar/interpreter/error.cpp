@@ -14,7 +14,7 @@
 //
 //========================================================================
 
-#include "caviar/interpreter/error.h"
+#include "caviar/interpreter/error.hpp"
 #if defined(CAVIAR_WITH_MPI)
 #include<mpi.h>
 #endif

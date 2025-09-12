@@ -14,11 +14,11 @@
 //
 //========================================================================
 
-#include "caviar/objects/shape/macro/circle.h"
-#include "caviar/objects/shape/macro/cylinder.h"
-#include "caviar/objects/shape/macro/triangle.h"
-#include "caviar/objects/shape/macro/plane.h"
-#include "caviar/objects/shape/macro/sphere.h"
-#include "caviar/objects/shape/macro/polygon.h"
-#include "caviar/objects/shape/macro/polyhedron.h"
-#include "caviar/objects/shape/macro/mixed.h"
+#include "caviar/objects/shape/macro/circle.hpp"
+#include "caviar/objects/shape/macro/cylinder.hpp"
+#include "caviar/objects/shape/macro/triangle.hpp"
+#include "caviar/objects/shape/macro/plane.hpp"
+#include "caviar/objects/shape/macro/sphere.hpp"
+#include "caviar/objects/shape/macro/polygon.hpp"
+#include "caviar/objects/shape/macro/polyhedron.hpp"
+#include "caviar/objects/shape/macro/mixed.hpp"

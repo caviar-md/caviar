@@ -14,9 +14,9 @@
 //
 //========================================================================
 
-#include "caviar/objects/shape/polyhedron/preprocess.h"
-#include "caviar/objects/shape/polyhedron/polyhedron.h"
-#include "caviar/interpreter/error.h"
+#include "caviar/objects/shape/polyhedron/preprocess.hpp"
+#include "caviar/objects/shape/polyhedron/polyhedron.hpp"
+#include "caviar/interpreter/error.hpp"
 
 #include <string>
 #include <cmath>

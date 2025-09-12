@@ -14,21 +14,21 @@
 //
 //========================================================================
 
-#include "caviar/objects/atom_data.h"
-#include "caviar/interpreter/communicator.h"
-#include "caviar/objects/domain.h"
-#include "caviar/objects/force_field.h"
-#include "caviar/objects/unique.h"
-#include "caviar/objects/neighborlist.h"
-#include "caviar/objects/unique/atom.h"
-#include "caviar/objects/unique/atom_group.h"
-#include "caviar/objects/unique/atom_list.h"
-#include "caviar/objects/unique/molecule.h"
-#include "caviar/objects/unique/molecule_group.h"
-#include "caviar/objects/unique/molecule_list.h"
-#include "caviar/objects/unique/time_function_3d.h"
+#include "caviar/objects/atom_data.hpp"
+#include "caviar/interpreter/communicator.hpp"
+#include "caviar/objects/domain.hpp"
+#include "caviar/objects/force_field.hpp"
+#include "caviar/objects/unique.hpp"
+#include "caviar/objects/neighborlist.hpp"
+#include "caviar/objects/unique/atom.hpp"
+#include "caviar/objects/unique/atom_group.hpp"
+#include "caviar/objects/unique/atom_list.hpp"
+#include "caviar/objects/unique/molecule.hpp"
+#include "caviar/objects/unique/molecule_group.hpp"
+#include "caviar/objects/unique/molecule_list.hpp"
+#include "caviar/objects/unique/time_function_3d.hpp"
 
-#include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/utility/interpreter_io_headers.hpp"
 #include <algorithm>
 #include <random>
 

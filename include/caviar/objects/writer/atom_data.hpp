@@ -17,8 +17,8 @@
 #ifndef CAVIAR_OBJECTS_WRITER_ATOMDATA_H
 #define CAVIAR_OBJECTS_WRITER_ATOMDATA_H
 
-#include "caviar/objects/writer.h"
-#include "caviar/objects/atom_data/utility/mpi_packet_info.h"
+#include "caviar/objects/writer.hpp"
+#include "caviar/objects/atom_data/utility/mpi_packet_info.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

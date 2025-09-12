@@ -14,9 +14,9 @@
 //
 //========================================================================
 
-#include "caviar/objects/force_field/electrostatic_ewald1d.h"
-#include "caviar/utility/interpreter_io_headers.h"
-#include "caviar/objects/atom_data.h"
+#include "caviar/objects/force_field/electrostatic_ewald1d.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
+#include "caviar/objects/atom_data.hpp"
 
 #include <cmath>
 

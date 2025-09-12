@@ -14,9 +14,9 @@
 //
 //========================================================================
 
-#include "caviar/objects/shape/polyhedron.h"
-#include "caviar/objects/shape/polyhedron/handler.h"
-#include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/objects/shape/polyhedron.hpp"
+#include "caviar/objects/shape/polyhedron/handler.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

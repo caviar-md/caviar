@@ -22,7 +22,7 @@
 #include <sstream>
 #include <vector>
 
-#include "caviar/utility/pointers.h"
+#include "caviar/utility/pointers.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 namespace interpreter

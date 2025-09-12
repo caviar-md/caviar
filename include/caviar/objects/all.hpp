@@ -14,13 +14,13 @@
 //
 //========================================================================
 
-#include "caviar/objects/atom_data.h"
-#include "caviar/objects/domain.h"
-#include "caviar/objects/force_field.h"
-#include "caviar/objects/neighborlist.h"
-#include "caviar/objects/shape.h"
-#include "caviar/objects/md_simulator.h"
-#include "caviar/objects/writer.h"
-#include "caviar/objects/constraint.h"
-#include "caviar/objects/unique.h"
-#include "caviar/objects/postprocess.h"
+#include "caviar/objects/atom_data.hpp"
+#include "caviar/objects/domain.hpp"
+#include "caviar/objects/force_field.hpp"
+#include "caviar/objects/neighborlist.hpp"
+#include "caviar/objects/shape.hpp"
+#include "caviar/objects/md_simulator.hpp"
+#include "caviar/objects/writer.hpp"
+#include "caviar/objects/constraint.hpp"
+#include "caviar/objects/unique.hpp"
+#include "caviar/objects/postprocess.hpp"

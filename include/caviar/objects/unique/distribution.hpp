@@ -17,7 +17,7 @@
 #ifndef CAVIAR_OBJECTS_UNIQUE_DISTRIBUTION_H
 #define CAVIAR_OBJECTS_UNIQUE_DISTRIBUTION_H
 
-#include "caviar/objects/unique.h"
+#include "caviar/objects/unique.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

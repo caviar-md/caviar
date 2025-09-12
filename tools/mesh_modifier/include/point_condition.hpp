@@ -18,7 +18,7 @@
 #define POINT_CONDITION_H
 
 #include <string>
-#include "vector.h"
+#include "vector.hpp"
 class Point_condition
 {
 public:

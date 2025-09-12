@@ -17,8 +17,8 @@
 #ifndef CAVIAR_OBJECTS_UNIQUE_MOLECULEGROUP_H
 #define CAVIAR_OBJECTS_UNIQUE_MOLECULEGROUP_H
 
-#include "caviar/objects/unique.h"
-#include "caviar/objects/unique/molecule.h"
+#include "caviar/objects/unique.hpp"
+#include "caviar/objects/unique/molecule.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

@@ -22,7 +22,7 @@ FC_OBJECT_CREATOR_DEFAULT_FUNCTION(neighborlist)
 
   Neighborlist *p_sh = nullptr;
 
-#include "caviar/objects/neighborlist/macro/all.h"
+#include "caviar/objects/neighborlist/macro/all.hpp"
 
   FC_ADD_OBJECT_TO_CONTAINER(neighborlist)
 }

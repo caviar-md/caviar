@@ -14,8 +14,8 @@
 //
 //========================================================================
 
-#include "caviar/interpreter/communicator.h"
-#include "caviar/utility/vector.h"
+#include "caviar/interpreter/communicator.hpp"
+#include "caviar/utility/vector.hpp"
 #if defined(CAVIAR_WITH_MPI)
 #include <mpi.h>
 #endif

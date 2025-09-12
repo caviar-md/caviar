@@ -14,20 +14,20 @@
 //
 //========================================================================
 
-#include "caviar/objects/force_field/plt_be.h"
-#include "caviar/utility/interpreter_io_headers.h"
-#include "caviar/interpreter/communicator.h"
-#include "caviar/objects/atom_data.h"
-#include "caviar/objects/neighborlist.h"
-#include "caviar/utility/macro_constants.h"
+#include "caviar/objects/force_field/plt_be.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
+#include "caviar/interpreter/communicator.hpp"
+#include "caviar/objects/atom_data.hpp"
+#include "caviar/objects/neighborlist.hpp"
+#include "caviar/utility/macro_constants.hpp"
 
 #if defined(CAVIAR_WITH_EIGEN)
 #include <Eigen/Dense>
 #endif
 
-#include "caviar/objects/shape/polyhedron.h"
+#include "caviar/objects/shape/polyhedron.hpp"
 
-#include "caviar/objects/shape/polyhedron/handler.h"
+#include "caviar/objects/shape/polyhedron/handler.hpp"
 #include <fstream>
 #include <iostream>
 #include <cmath>

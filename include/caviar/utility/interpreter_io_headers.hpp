@@ -14,9 +14,9 @@
 //
 //========================================================================
 
-#include "caviar/interpreter/input/parser.h"
-#include "caviar/interpreter/input/lexer.h"
-#include "caviar/interpreter/error.h"
-#include "caviar/interpreter/output.h"
-#include "caviar/interpreter/object_handler/all.h" // accessing object finding functions
-#include "caviar/interpreter/object_container.h"
+#include "caviar/interpreter/input/parser.hpp"
+#include "caviar/interpreter/input/lexer.hpp"
+#include "caviar/interpreter/error.hpp"
+#include "caviar/interpreter/output.hpp"
+#include "caviar/interpreter/object_handler/all.hpp" // accessing object finding functions
+#include "caviar/interpreter/object_container.hpp"

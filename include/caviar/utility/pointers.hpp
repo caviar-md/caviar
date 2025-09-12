@@ -18,7 +18,7 @@
 #define CAVIAR_POINTERS_H
 
 
-#include "caviar/CAVIAR.h"
+#include "caviar/CAVIAR.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

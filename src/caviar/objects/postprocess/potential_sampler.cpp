@@ -14,12 +14,12 @@
 //
 //========================================================================
 
-#include "caviar/objects/postprocess/potential_sampler.h"
-#include "caviar/utility/interpreter_io_headers.h"
-#include "caviar/objects/atom_data.h"
-#include "caviar/objects/force_field.h"
-#include "caviar/objects/md_simulator.h"
-#include "caviar/objects/unique/grid_1d.h"
+#include "caviar/objects/postprocess/potential_sampler.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
+#include "caviar/objects/atom_data.hpp"
+#include "caviar/objects/force_field.hpp"
+#include "caviar/objects/md_simulator.hpp"
+#include "caviar/objects/unique/grid_1d.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

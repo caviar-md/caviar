@@ -14,10 +14,10 @@
 //
 //========================================================================
 
-#include "caviar/objects/shape/polyhedron/format_vtk_reader.h"
-#include "caviar/objects/shape/polyhedron/polyhedron.h"
-#include "caviar/objects/shape/polyhedron/preprocess.h"
-#include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/objects/shape/polyhedron/format_vtk_reader.hpp"
+#include "caviar/objects/shape/polyhedron/polyhedron.hpp"
+#include "caviar/objects/shape/polyhedron/preprocess.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

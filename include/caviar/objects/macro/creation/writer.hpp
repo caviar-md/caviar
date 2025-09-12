@@ -22,7 +22,7 @@ FC_OBJECT_CREATOR_DEFAULT_FUNCTION(writer)
 
   Writer *p_sh = nullptr;
 
-#include "caviar/objects/writer/macro/all.h"
+#include "caviar/objects/writer/macro/all.hpp"
 
   FC_ADD_OBJECT_TO_CONTAINER(writer)
 }

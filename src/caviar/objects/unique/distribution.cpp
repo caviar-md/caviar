@@ -14,16 +14,16 @@
 //
 //========================================================================
 
-#include "caviar/objects/unique/distribution.h"
-#include "caviar/objects/atom_data.h" // TODO CLEAN THIS PART
-#include "caviar/objects/shape.h"
-#include "caviar/objects/unique/grid_1d.h"
-#include "caviar/objects/unique/random_1d.h"
-#include "caviar/objects/unique/atom.h"
-#include "caviar/objects/unique/atom_group.h"
-#include "caviar/objects/unique/molecule.h"
-#include "caviar/objects/unique/molecule_group.h"
-#include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/objects/unique/distribution.hpp"
+#include "caviar/objects/atom_data.hpp" // TODO CLEAN THIS PART
+#include "caviar/objects/shape.hpp"
+#include "caviar/objects/unique/grid_1d.hpp"
+#include "caviar/objects/unique/random_1d.hpp"
+#include "caviar/objects/unique/atom.hpp"
+#include "caviar/objects/unique/atom_group.hpp"
+#include "caviar/objects/unique/molecule.hpp"
+#include "caviar/objects/unique/molecule_group.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
 
 CAVIAR_NAMESPACE_OPEN
 

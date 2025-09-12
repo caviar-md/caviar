@@ -14,5 +14,5 @@
 //
 //========================================================================
 
-#include "caviar/objects/writer/macro/atom_data.h"
-#include "caviar/objects/writer/macro/force_field.h"
+#include "caviar/objects/writer/macro/atom_data.hpp"
+#include "caviar/objects/writer/macro/force_field.hpp"

@@ -14,10 +14,10 @@
 //
 //========================================================================
 
-#include "caviar/interpreter/input/parser.h"
-#include "caviar/interpreter/input/lexer.h"
-#include "caviar/interpreter/error.h"
-#include "caviar/utility/interpreter_io_headers.h"
+#include "caviar/interpreter/input/parser.hpp"
+#include "caviar/interpreter/input/lexer.hpp"
+#include "caviar/interpreter/error.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
 
 #include <cmath>
 

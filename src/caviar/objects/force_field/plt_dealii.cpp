@@ -17,18 +17,18 @@
 //
 //========================================================================
 
-#include "caviar/objects/force_field/plt_dealii.h"
-#include "caviar/utility/interpreter_io_headers.h"
-#include "caviar/interpreter/communicator.h"
-#include "caviar/objects/atom_data.h"
-#include "caviar/objects/neighborlist.h"
-#include "caviar/objects/domain.h"
-#include "caviar/utility/macro_constants.h"
-#include "caviar/utility/time_utility.h"
-#include "caviar/utility/file_utility.h"
-#include "caviar/objects/unique/time_function.h"
-#include "caviar/objects/unique/time_function_3d.h"
-#include "caviar/objects/unique/grid_1d.h"
+#include "caviar/objects/force_field/plt_dealii.hpp"
+#include "caviar/utility/interpreter_io_headers.hpp"
+#include "caviar/interpreter/communicator.hpp"
+#include "caviar/objects/atom_data.hpp"
+#include "caviar/objects/neighborlist.hpp"
+#include "caviar/objects/domain.hpp"
+#include "caviar/utility/macro_constants.hpp"
+#include "caviar/utility/time_utility.hpp"
+#include "caviar/utility/file_utility.hpp"
+#include "caviar/objects/unique/time_function.hpp"
+#include "caviar/objects/unique/time_function_3d.hpp"
+#include "caviar/objects/unique/grid_1d.hpp"
 
 #ifdef CAVIAR_WITH_MPI
 #include <mpi.h>
@@ -94,9 +94,9 @@
 #include <cmath>
 #include <time.h>
 
-#include "caviar/objects/force_field/utility/plt_dealii_constants.h"
-#include "caviar/objects/force_field/utility/plt_dealii_functions.h"
-#include "caviar/objects/neighborlist.h" // used for ml training
+#include "caviar/objects/force_field/utility/plt_dealii_constants.hpp"
+#include "caviar/objects/force_field/utility/plt_dealii_functions.hpp"
+#include "caviar/objects/neighborlist.hpp" // used for ml training
 
 CAVIAR_NAMESPACE_OPEN
 
