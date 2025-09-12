@@ -18,66 +18,67 @@
 
 #include "caviar/objects/constraint.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace constraint
+namespace caviar
 {
 
-    /**
-     * This class has Nose-Hoover thermostat.
-     * It is implemented according to
-     * 'Berendsen and Nose-Hoover thermostats Victor Ruhle August 8, 2007'
-     *
-     */
-    class Nose_hoover : public Constraint
+    namespace constraint
     {
-    public:
-        Nose_hoover(class CAVIAR *);
-        ~Nose_hoover();
-        bool read(class caviar::interpreter::Parser *);
-
-        void apply_thermostat(int64_t, bool &recalculate_temperature);
-
-        void verify_settings();
 
         /**
-         * This fictious mass determines the coupling between heat bath and the system.
-         * Used in type 1 .
+         * This class has Nose-Hoover thermostat.
+         * It is implemented according to
+         * 'Berendsen and Nose-Hoover thermostats Victor Ruhle August 8, 2007'
+         *
          */
-        double mass;
+        class Nose_hoover : public Constraint
+        {
+        public:
+            Nose_hoover(class CAVIAR *);
+            ~Nose_hoover();
+            bool read(class caviar::interpreter::Parser *);
 
-        /**
-         * effective relaxation time. Used in type 2 .
-         */
-        double tau;
+            void apply_thermostat(int64_t, bool &recalculate_temperature);
 
-        /**
-         * additional degree of freedom related to the heat bath
-         */
-        double zeta, zeta_dot;
+            void verify_settings();
 
-        /**
-         * timestep value
-         */
-        double dt;
+            /**
+             * This fictious mass determines the coupling between heat bath and the system.
+             * Used in type 1 .
+             */
+            double mass;
 
-        bool settings_verified;
+            /**
+             * effective relaxation time. Used in type 2 .
+             */
+            double tau;
 
-        /**
-         * the type of thermostat implementation
-         */
-        int type;
+            /**
+             * additional degree of freedom related to the heat bath
+             */
+            double zeta, zeta_dot;
 
-        /**
-         * Boltzman constant. Used in type 1 .
-         */
-        double kb;
+            /**
+             * timestep value
+             */
+            double dt;
 
-        double temperature;
+            bool settings_verified;
 
-    public:
-    };
+            /**
+             * the type of thermostat implementation
+             */
+            int type;
 
-} // constraint
+            /**
+             * Boltzman constant. Used in type 1 .
+             */
+            double kb;
 
-CAVIAR_NAMESPACE_CLOSE
+            double temperature;
+
+        public:
+        };
+
+    } // constraint
+
+}

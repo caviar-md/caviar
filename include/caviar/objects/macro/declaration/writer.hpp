@@ -19,9 +19,10 @@ FC_GENERAL_CLASSNAME_MACRO(Writer, writer, Writer)
 #endif
 
 #ifdef FC_COMPLETE_FORWARD_DECLERATION
-CAVIAR_NAMESPACE_OPEN
+namespace caviar
+{
 
-class Writer;
+  class Writer;
 
-CAVIAR_NAMESPACE_CLOSE
+}
 #endif

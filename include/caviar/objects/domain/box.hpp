@@ -18,22 +18,24 @@
 
 #include "caviar/objects/domain.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace domain
+namespace caviar
 {
 
-  /**
-   * This class creates a 3D box for a simulation domain
-   */
-  class Box : public Domain
+  namespace domain
   {
-  public:
-    Box(class CAVIAR *);
-    ~Box();
-  public:
-  };
 
-} // domain
+    /**
+     * This class creates a 3D box for a simulation domain
+     */
+    class Box : public Domain
+    {
+    public:
+      Box(class CAVIAR *);
+      ~Box();
 
-CAVIAR_NAMESPACE_CLOSE
+    public:
+    };
+
+  } // domain
+
+}

@@ -19,9 +19,10 @@ FC_GENERAL_CLASSNAME_MACRO(Shape, shape, Shape)
 #endif
 
 #ifdef FC_COMPLETE_FORWARD_DECLERATION
-CAVIAR_NAMESPACE_OPEN
+namespace caviar
+{
 
-class Shape;
+  class Shape;
 
-CAVIAR_NAMESPACE_CLOSE
+}
 #endif

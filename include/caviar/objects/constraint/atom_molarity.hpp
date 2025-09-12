@@ -18,45 +18,46 @@
 
 #include "caviar/objects/constraint.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace unique
-{
-  class Atom;
-  class Molecule;
-}
-namespace constraint
+namespace caviar
 {
 
-  /**
-   * This class fixes number of a single type of atom in an area
-   *
-   *
-   */
-  class Atom_molarity : public Constraint
+  namespace unique
   {
-  public:
-    Atom_molarity(class CAVIAR *);
-    ~Atom_molarity();
-    bool read(class caviar::interpreter::Parser *);
+    class Atom;
+    class Molecule;
+  }
+  namespace constraint
+  {
 
-    void apply(int64_t);
+    /**
+     * This class fixes number of a single type of atom in an area
+     *
+     *
+     */
+    class Atom_molarity : public Constraint
+    {
+    public:
+      Atom_molarity(class CAVIAR *);
+      ~Atom_molarity();
+      bool read(class caviar::interpreter::Parser *);
 
-    void verify_settings();
+      void apply(int64_t);
 
-    bool minimum_set, maximum_set;
-    int maximum_limit;
-    int atom_type;
-    int minimum_limit;
-    int creation_try;
-    int steps, check_steps;
-    Vector<double> calculation_box_low, calculation_box_high;
-    Vector<double> creation_box_low, creation_box_high;
-    unique::Molecule *creation_molecule;
-    unique::Atom *creation_atom;
-    bool settings_verified;
-  };
+      void verify_settings();
 
-} // constraint
+      bool minimum_set, maximum_set;
+      int maximum_limit;
+      int atom_type;
+      int minimum_limit;
+      int creation_try;
+      int steps, check_steps;
+      Vector<double> calculation_box_low, calculation_box_high;
+      Vector<double> creation_box_low, creation_box_high;
+      unique::Molecule *creation_molecule;
+      unique::Atom *creation_atom;
+      bool settings_verified;
+    };
 
-CAVIAR_NAMESPACE_CLOSE
+  } // constraint
+
+}

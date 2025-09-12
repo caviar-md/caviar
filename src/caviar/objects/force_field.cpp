@@ -17,51 +17,52 @@
 #include "caviar/objects/force_field.hpp"
 #include "caviar/interpreter/error.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-Force_field::Force_field(CAVIAR *fptr) : Pointers{fptr},
-                                         atom_data{nullptr}, domain{nullptr}, neighborlist{nullptr}
+namespace caviar
 {
-  FC_OBJECT_INITIALIZE
-}
 
-void Force_field::verify_settings()
-{
-}
+  Force_field::Force_field(CAVIAR *fptr) : Pointers{fptr},
+                                           atom_data{nullptr}, domain{nullptr}, neighborlist{nullptr}
+  {
+    FC_OBJECT_INITIALIZE
+  }
 
-double Force_field::energy()
-{
-  error->all(FC_FILE_LINE_FUNC, "The energy calculation of this force_field is not implemented");
-  return 0.0;
-}
+  void Force_field::verify_settings()
+  {
+  }
 
-double Force_field::potential(const Vector<double> &)
-{
-  error->all(FC_FILE_LINE_FUNC, "The potential calculation of this force_field is not implemented");
-  return 0.0;
-}
+  double Force_field::energy()
+  {
+    error->all(FC_FILE_LINE_FUNC, "The energy calculation of this force_field is not implemented");
+    return 0.0;
+  }
 
-double Force_field::potential(const int)
-{
-  error->all(FC_FILE_LINE_FUNC, "The potential calculation of this force_field is not implemented");
-  return 0.0;
-}
+  double Force_field::potential(const Vector<double> &)
+  {
+    error->all(FC_FILE_LINE_FUNC, "The potential calculation of this force_field is not implemented");
+    return 0.0;
+  }
 
-Vector<double> Force_field::field(const Vector<double> &)
-{
-  error->all(FC_FILE_LINE_FUNC, "The field calculation of this force_field is not implemented");
-  return Vector<double>{0, 0, 0};
-}
+  double Force_field::potential(const int)
+  {
+    error->all(FC_FILE_LINE_FUNC, "The potential calculation of this force_field is not implemented");
+    return 0.0;
+  }
 
-Vector<double> Force_field::field(const int)
-{
-  error->all(FC_FILE_LINE_FUNC, "The field calculation of this force_field is not implemented");
-  return Vector<double>{0, 0, 0};
-}
+  Vector<double> Force_field::field(const Vector<double> &)
+  {
+    error->all(FC_FILE_LINE_FUNC, "The field calculation of this force_field is not implemented");
+    return Vector<double>{0, 0, 0};
+  }
 
-void Force_field::scale_position(double, caviar::Vector<int>)
-{
-  error->all(FC_FILE_LINE_FUNC, "The scale_position of this force_field is not implemented");
-}
+  Vector<double> Force_field::field(const int)
+  {
+    error->all(FC_FILE_LINE_FUNC, "The field calculation of this force_field is not implemented");
+    return Vector<double>{0, 0, 0};
+  }
 
-CAVIAR_NAMESPACE_CLOSE
+  void Force_field::scale_position(double, caviar::Vector<int>)
+  {
+    error->all(FC_FILE_LINE_FUNC, "The scale_position of this force_field is not implemented");
+  }
+
+}

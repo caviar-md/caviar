@@ -18,47 +18,46 @@
 #include "caviar/interpreter/communicator.hpp"
 #include "caviar/objects/domain.hpp"
 
-
-CAVIAR_NAMESPACE_OPEN
-
-
-void Atom_data::exchange_ghost(long i) // timestep
+namespace caviar
 {
+
+  void Atom_data::exchange_ghost(long i) // timestep
+  {
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
 
-  exchange_ghost_single_md_domain();
+    exchange_ghost_single_md_domain();
 
 #elif defined(CAVIAR_WITH_MPI)
 
-  exchange_ghost_mpi_shared_atoms(i);
-  // exchange_ghost_mpi(i);
+    exchange_ghost_mpi_shared_atoms(i);
+    // exchange_ghost_mpi(i);
 
 #else
 
-  exchange_ghost_single_md_domain(i);
+    exchange_ghost_single_md_domain(i);
 
 #endif
+  }
+
+  //  if (self_ghost_check())
+  //    error->all (FC_FILE_LINE_FUNC_PARSE, "Self ghost can happen. Force field cutoff is larger than half of a domain.");
+  /*
+  bool ::self_ghost_check () {
+    const auto x_llow = domain->lower_local.x;
+    const auto x_lupp = domain->upper_local.x;
+    const auto y_llow = domain->lower_local.y;
+    const auto y_lupp = domain->upper_local.y;
+    const auto z_llow = domain->lower_local.z;
+    const auto z_lupp = domain->upper_local.z;
+
+    const auto x_width = x_lupp - x_llow;
+    const auto y_width = y_lupp - y_llow;
+    const auto z_width = z_lupp - z_llow;
+
+    const auto cutoff = force_field->cutoff;
+    if (2*cutoff>x_width || 2*cutoff>y_width || 2*cutoff>z_width)
+      return true;
+    return false;
+  }*/
+
 }
-
-//  if (self_ghost_check())
-//    error->all (FC_FILE_LINE_FUNC_PARSE, "Self ghost can happen. Force field cutoff is larger than half of a domain.");
-/*
-bool ::self_ghost_check () {
-  const auto x_llow = domain->lower_local.x;
-  const auto x_lupp = domain->upper_local.x;
-  const auto y_llow = domain->lower_local.y;
-  const auto y_lupp = domain->upper_local.y;
-  const auto z_llow = domain->lower_local.z;
-  const auto z_lupp = domain->upper_local.z;
-
-  const auto x_width = x_lupp - x_llow;
-  const auto y_width = y_lupp - y_llow;
-  const auto z_width = z_lupp - z_llow;
-
-  const auto cutoff = force_field->cutoff;
-  if (2*cutoff>x_width || 2*cutoff>y_width || 2*cutoff>z_width)
-    return true;
-  return false;
-}*/
-
-CAVIAR_NAMESPACE_CLOSE

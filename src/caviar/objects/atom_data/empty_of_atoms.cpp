@@ -23,58 +23,59 @@
 
 #include <algorithm>
 
-CAVIAR_NAMESPACE_OPEN
-
-bool Atom_data::empty_of_atoms(const Vector<Real_t> p, double radius)
+namespace caviar
 {
-  double radius_sq = radius * radius;
-  for (unsigned int i = 0; i < atom_struct_owned.position.size(); ++i)
+
+  bool Atom_data::empty_of_atoms(const Vector<Real_t> p, double radius)
   {
-    auto dp = atom_struct_owned.position[i] - p;
-    auto dp_sq = dp * dp;
-    if (dp_sq < radius_sq)
-      return false;
-  }
-  return true;
-}
-
-bool Atom_data::empty_of_atoms(const Vector<Real_t>, int)
-{
-
-  error->all(FC_FILE_LINE_FUNC, "not implemented");
-  /*
     double radius_sq = radius * radius;
-    for (int i = 0; i < atom_struct_owned.position.size(); ++i) {
+    for (unsigned int i = 0; i < atom_struct_owned.position.size(); ++i)
+    {
       auto dp = atom_struct_owned.position[i] - p;
-      auto dp_sq = dp*dp;
-      if (dp_sq < radius_sq) return false;
+      auto dp_sq = dp * dp;
+      if (dp_sq < radius_sq)
+        return false;
     }
-  */
-  return true;
-}
-
-bool Atom_data::empty_of_atoms(unique::Atom &a)
-{
-  auto rad_a = atom_type_params.radius[a.type];
-  for (unsigned int i = 0; i < atom_struct_owned.position.size(); ++i)
-  {
-    auto dp = atom_struct_owned.position[i] - a.pos_tot();
-    auto dp_sq = dp * dp;
-    auto rad_sum = atom_type_params.radius[atom_struct_owned.type[i]] + rad_a;
-    if (dp_sq < rad_sum * rad_sum)
-      return false;
+    return true;
   }
-  return true;
-}
 
-bool Atom_data::empty_of_atoms(unique::Molecule &m)
-{
-  for (auto &&a : m.atoms)
+  bool Atom_data::empty_of_atoms(const Vector<Real_t>, int)
   {
-    if (!empty_of_atoms(a))
-      return false;
-  }
-  return true;
-}
 
-CAVIAR_NAMESPACE_CLOSE
+    error->all(FC_FILE_LINE_FUNC, "not implemented");
+    /*
+      double radius_sq = radius * radius;
+      for (int i = 0; i < atom_struct_owned.position.size(); ++i) {
+        auto dp = atom_struct_owned.position[i] - p;
+        auto dp_sq = dp*dp;
+        if (dp_sq < radius_sq) return false;
+      }
+    */
+    return true;
+  }
+
+  bool Atom_data::empty_of_atoms(unique::Atom &a)
+  {
+    auto rad_a = atom_type_params.radius[a.type];
+    for (unsigned int i = 0; i < atom_struct_owned.position.size(); ++i)
+    {
+      auto dp = atom_struct_owned.position[i] - a.pos_tot();
+      auto dp_sq = dp * dp;
+      auto rad_sum = atom_type_params.radius[atom_struct_owned.type[i]] + rad_a;
+      if (dp_sq < rad_sum * rad_sum)
+        return false;
+    }
+    return true;
+  }
+
+  bool Atom_data::empty_of_atoms(unique::Molecule &m)
+  {
+    for (auto &&a : m.atoms)
+    {
+      if (!empty_of_atoms(a))
+        return false;
+    }
+    return true;
+  }
+
+}

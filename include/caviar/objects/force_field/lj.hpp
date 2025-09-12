@@ -18,49 +18,50 @@
 
 #include "caviar/objects/force_field.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace force_field
+namespace caviar
 {
 
-  /**
-   * This class calculates LJ potential for the particles.
-   *
-   */
-  class Lj : public Force_field
+  namespace force_field
   {
-  public:
-    Lj(class CAVIAR *);
-    ~Lj(){};
 
-    bool read(class caviar::interpreter::Parser *);
-    void verify_settings();
-    void calculate_acceleration();
+    /**
+     * This class calculates LJ potential for the particles.
+     *
+     */
+    class Lj : public Force_field
+    {
+    public:
+      Lj(class CAVIAR *);
+      ~Lj() {};
 
-  public:
-    std::vector<std::vector<Real_t>> lambda_e;
-    std::vector<std::vector<Real_t>> lambda_s;
-    bool lambda_e_is_set = false;
-    bool lambda_s_is_set = false;
-    bool ignore_intra_molecule = false;
-    bool input_by_array;
-    std::vector<std::vector<Real_t>> epsilon, sigma;
-    bool make_off_diagonal_vectors;
+      bool read(class caviar::interpreter::Parser *);
+      void verify_settings();
+      void calculate_acceleration();
 
-    bool input_by_atom;
-    // epsilon - sigma of a single type. inter-type values will be deduced using these
-    std::vector<Real_t> epsilon_atom, sigma_atom;
+    public:
+      std::vector<std::vector<Real_t>> lambda_e;
+      std::vector<std::vector<Real_t>> lambda_s;
+      bool lambda_e_is_set = false;
+      bool lambda_s_is_set = false;
+      bool ignore_intra_molecule = false;
+      bool input_by_array;
+      std::vector<std::vector<Real_t>> epsilon, sigma;
+      bool make_off_diagonal_vectors;
 
-    // some helper variables, used for debugging
-    bool jump_fix, monitor_jump;
-    double jump_tol;
+      bool input_by_atom;
+      // epsilon - sigma of a single type. inter-type values will be deduced using these
+      std::vector<Real_t> epsilon_atom, sigma_atom;
 
-    bool wca; // Week-Chandler-Anderson (WCA) potential activated.
-    bool cutoff_list_activated;
-    std::vector<std::vector<Real_t>> cutoff_list; // list of cutoffs when it is needed.
-                                                  // for example in WCA potentials
-  };
+      // some helper variables, used for debugging
+      bool jump_fix, monitor_jump;
+      double jump_tol;
 
-} // force_field
+      bool wca; // Week-Chandler-Anderson (WCA) potential activated.
+      bool cutoff_list_activated;
+      std::vector<std::vector<Real_t>> cutoff_list; // list of cutoffs when it is needed.
+                                                    // for example in WCA potentials
+    };
 
-CAVIAR_NAMESPACE_CLOSE
+  } // force_field
+
+}

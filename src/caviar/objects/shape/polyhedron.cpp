@@ -18,41 +18,42 @@
 #include "caviar/objects/shape/polyhedron/handler.hpp"
 #include "caviar/utility/interpreter_io_headers.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace shape
+namespace caviar
 {
 
-  Polyhedron::Polyhedron(CAVIAR *fptr) : Shape{fptr},
-                                         polyhedron_handler{new shape::polyhedron::Handler{fptr}} {
-                                             FC_OBJECT_INITIALIZE_INFO}
-
-                                         Polyhedron::~Polyhedron()
+  namespace shape
   {
-    delete polyhedron_handler;
-  }
 
-  bool Polyhedron::read(caviar::interpreter::Parser *parser)
-  {
-    FC_OBJECT_READ_INFO
-    return polyhedron_handler->read(parser);
-  }
+    Polyhedron::Polyhedron(CAVIAR *fptr) : Shape{fptr},
+                                           polyhedron_handler{new shape::polyhedron::Handler{fptr}} {
+                                               FC_OBJECT_INITIALIZE_INFO}
 
-  bool Polyhedron::is_inside(const Vector<double> &v)
-  {
-    return polyhedron_handler->is_inside(v);
-  }
+                                           Polyhedron::~Polyhedron()
+    {
+      delete polyhedron_handler;
+    }
 
-  bool Polyhedron::is_inside(const Vector<double> &v, const double r)
-  {
-    return polyhedron_handler->is_inside(v, r);
-  }
+    bool Polyhedron::read(caviar::interpreter::Parser *parser)
+    {
+      FC_OBJECT_READ_INFO
+      return polyhedron_handler->read(parser);
+    }
 
-  bool Polyhedron::in_contact(const Vector<double> &v, const double r, Vector<double> &contact_vector)
-  {
-    return polyhedron_handler->in_contact(v, r, contact_vector);
-  }
+    bool Polyhedron::is_inside(const Vector<double> &v)
+    {
+      return polyhedron_handler->is_inside(v);
+    }
 
-} // shape
+    bool Polyhedron::is_inside(const Vector<double> &v, const double r)
+    {
+      return polyhedron_handler->is_inside(v, r);
+    }
 
-CAVIAR_NAMESPACE_CLOSE
+    bool Polyhedron::in_contact(const Vector<double> &v, const double r, Vector<double> &contact_vector)
+    {
+      return polyhedron_handler->in_contact(v, r, contact_vector);
+    }
+
+  } // shape
+
+}

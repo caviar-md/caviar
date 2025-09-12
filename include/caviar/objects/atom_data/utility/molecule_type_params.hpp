@@ -21,20 +21,18 @@
 #include "caviar/objects/atom_data/utility/angle.hpp"
 #include "caviar/objects/atom_data/utility/proper_dihedral.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace atom_data
+namespace caviar
 {
- /**
-   * It contains all the physical data of atoms and molecules
-   * but since it is used only once here, its name won't be of any use. Also
-   * a good name would be 'atom_data' which is used before!.
-   */
-  struct Molecule_type_params  
+
+  namespace atom_data
   {
-
-
-
-  };
+    /**
+     * It contains all the physical data of atoms and molecules
+     * but since it is used only once here, its name won't be of any use. Also
+     * a good name would be 'atom_data' which is used before!.
+     */
+    struct Molecule_type_params
+    {
+    };
+  }
 }
-CAVIAR_NAMESPACE_CLOSE

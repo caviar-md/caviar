@@ -19,42 +19,43 @@
 #include "caviar/objects/unique.hpp"
 #include <random>
 
-CAVIAR_NAMESPACE_OPEN
-class Parser;
-
-namespace unique
+namespace caviar
 {
+  class Parser;
 
-  /**
-   * This class is a wrapper for std::random used for initial position of the particles
-   *
-   */
-  class Random_1D : public Unique
+  namespace unique
   {
-  public:
-    Random_1D();
-    Random_1D(class CAVIAR *);
-    Random_1D(class CAVIAR *, std::string TYPE, double MIN, double MAX, double STDDEV, double MEAN, int SEED);
-    ~Random_1D();
-    bool read(caviar::interpreter::Parser *);
-    void generate(); // creates the std::mt19937 with given parameters ...
-    void verify_settings();
-    double give_value();
-    double min, max, stddev, mean;
 
-    std::string type;
+    /**
+     * This class is a wrapper for std::random used for initial position of the particles
+     *
+     */
+    class Random_1D : public Unique
+    {
+    public:
+      Random_1D();
+      Random_1D(class CAVIAR *);
+      Random_1D(class CAVIAR *, std::string TYPE, double MIN, double MAX, double STDDEV, double MEAN, int SEED);
+      ~Random_1D();
+      bool read(caviar::interpreter::Parser *);
+      void generate(); // creates the std::mt19937 with given parameters ...
+      void verify_settings();
+      double give_value();
+      double min, max, stddev, mean;
 
-    int seed;
-    int num; // number of random atoms or molecules to be created
-    int type_int;
+      std::string type;
 
-    bool generated, generated_u_dist, generated_n_dist;
+      int seed;
+      int num; // number of random atoms or molecules to be created
+      int type_int;
 
-    std::mt19937 *ran_gen;
-    std::uniform_real_distribution<> *u_dist;
-    std::normal_distribution<> *n_dist;
-  };
+      bool generated, generated_u_dist, generated_n_dist;
 
-} // unique
+      std::mt19937 *ran_gen;
+      std::uniform_real_distribution<> *u_dist;
+      std::normal_distribution<> *n_dist;
+    };
 
-CAVIAR_NAMESPACE_CLOSE
+  } // unique
+
+}

@@ -16,17 +16,18 @@
 
 #include "caviar/objects/postprocess.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-Postprocess::Postprocess(CAVIAR *fptr) : Pointers{fptr} {
-                                             FC_OBJECT_INITIALIZE}
-
-                                         Postprocess::~Postprocess()
+namespace caviar
 {
-}
 
-void Postprocess::verify_settings()
-{
-}
+    Postprocess::Postprocess(CAVIAR *fptr) : Pointers{fptr} {
+                                                 FC_OBJECT_INITIALIZE}
 
-CAVIAR_NAMESPACE_CLOSE
+                                             Postprocess::~Postprocess()
+    {
+    }
+
+    void Postprocess::verify_settings()
+    {
+    }
+
+}

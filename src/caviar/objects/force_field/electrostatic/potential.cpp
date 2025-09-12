@@ -20,68 +20,67 @@
 
 #include <cmath>
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace force_field
+namespace caviar
 {
 
-  double Electrostatic::potential(const Vector<double> &r)
+  namespace force_field
   {
 
-    double potential_sum = 0;
-
-    const auto &pos = atom_data->atom_struct_owned.position;
-#ifdef CAVIAR_WITH_OPENMP
-#pragma omp parallel for reduction(+ \
-                                   : potential_sum)
-#endif
-    for (unsigned int j = 0; j < pos.size(); ++j)
+    double Electrostatic::potential(const Vector<double> &r)
     {
-#ifdef CAVIAR_WITH_MPI
-      if (atom_data->atom_struct_owned.mpi_rank[j] != my_mpi_rank)
-        continue;
-#endif
-      const auto type_j = atom_data->atom_struct_owned.type[j];
-      const auto charge_j = atom_data->atom_type_params.charge[type_j];
-      const auto dr = r - pos[j];
-      const auto dr_sq = dr * dr;
-      if (dr_sq == 0.0)
-        continue;
-      const auto dr_norm = std::sqrt(dr_sq);
-      potential_sum += charge_j / dr_norm;
-    }
-    return potential_sum * k_electrostatic;
-  }
 
-  double Electrostatic::potential(const int i)
-  {
+      double potential_sum = 0;
 
-    double potential_sum = 0;
-
-    const auto &pos = atom_data->atom_struct_owned.position;
+      const auto &pos = atom_data->atom_struct_owned.position;
 #ifdef CAVIAR_WITH_OPENMP
-#pragma omp parallel for reduction(+ \
-                                   : potential_sum)
+#pragma omp parallel for reduction(+ : potential_sum)
 #endif
-    for (unsigned int j = 0; j < pos.size(); ++j)
-    {
+      for (unsigned int j = 0; j < pos.size(); ++j)
+      {
 #ifdef CAVIAR_WITH_MPI
-      if (atom_data->atom_struct_owned.mpi_rank[j] != my_mpi_rank)
-        continue;
+        if (atom_data->atom_struct_owned.mpi_rank[j] != my_mpi_rank)
+          continue;
 #endif
-      if (i == static_cast<int>(j))
-        continue;
-      const auto type_j = atom_data->atom_struct_owned.type[j];
-      const auto charge_j = atom_data->atom_type_params.charge[type_j];
-      const auto dr = pos[i] - pos[j];
-      const auto dr_sq = dr * dr;
-
-      const auto dr_norm = std::sqrt(dr_sq);
-      potential_sum += charge_j / dr_norm;
+        const auto type_j = atom_data->atom_struct_owned.type[j];
+        const auto charge_j = atom_data->atom_type_params.charge[type_j];
+        const auto dr = r - pos[j];
+        const auto dr_sq = dr * dr;
+        if (dr_sq == 0.0)
+          continue;
+        const auto dr_norm = std::sqrt(dr_sq);
+        potential_sum += charge_j / dr_norm;
+      }
+      return potential_sum * k_electrostatic;
     }
-    return potential_sum * k_electrostatic;
-  }
 
-} // force_field
+    double Electrostatic::potential(const int i)
+    {
 
-CAVIAR_NAMESPACE_CLOSE
+      double potential_sum = 0;
+
+      const auto &pos = atom_data->atom_struct_owned.position;
+#ifdef CAVIAR_WITH_OPENMP
+#pragma omp parallel for reduction(+ : potential_sum)
+#endif
+      for (unsigned int j = 0; j < pos.size(); ++j)
+      {
+#ifdef CAVIAR_WITH_MPI
+        if (atom_data->atom_struct_owned.mpi_rank[j] != my_mpi_rank)
+          continue;
+#endif
+        if (i == static_cast<int>(j))
+          continue;
+        const auto type_j = atom_data->atom_struct_owned.type[j];
+        const auto charge_j = atom_data->atom_type_params.charge[type_j];
+        const auto dr = pos[i] - pos[j];
+        const auto dr_sq = dr * dr;
+
+        const auto dr_norm = std::sqrt(dr_sq);
+        potential_sum += charge_j / dr_norm;
+      }
+      return potential_sum * k_electrostatic;
+    }
+
+  } // force_field
+
+}

@@ -26,176 +26,177 @@
 #include <algorithm>
 #include <cstring>
 
-//#define DEBUG_ME
+// #define DEBUG_ME
 
-CAVIAR_NAMESPACE_OPEN
-namespace interpreter
+namespace caviar
 {
-  // used in order to remove 'if' or 'elseif' from the line and get the condition
-  /*
-  static std::string remove_the_first_word (const std::string &str) {
-    int i = 0;
-    while (isblank(str[i])) i++;
-    while (!isblank(str[i])) i++;
-    while (isblank(str[i])) i++;
-    if (i > static_cast<int>(str.size())) return "";
-    return str.substr(i);
-  }
-  */
-  //0     1     2
-  //cav  -i  /dsaads/das
-  Input::Input(CAVIAR *fptr, int argc, char **argv) : Pointers{fptr}, fptr{fptr}
+  namespace interpreter
   {
-    fptr->interpreter_num_Input_class++;
-
-    bool input_file_found = false;
-    std::string input_file;
-
-    for (int i = 0; i < argc; ++i)
+    // used in order to remove 'if' or 'elseif' from the line and get the condition
+    /*
+    static std::string remove_the_first_word (const std::string &str) {
+      int i = 0;
+      while (isblank(str[i])) i++;
+      while (!isblank(str[i])) i++;
+      while (isblank(str[i])) i++;
+      if (i > static_cast<int>(str.size())) return "";
+      return str.substr(i);
+    }
+    */
+    // 0     1     2
+    // cav  -i  /dsaads/das
+    Input::Input(CAVIAR *fptr, int argc, char **argv) : Pointers{fptr}, fptr{fptr}
     {
-      //std::cout << "argv " << i << " " << argv[i] << " " << std::endl;
-      if (std::strcmp(argv[i],"-i") == 0)
+      fptr->interpreter_num_Input_class++;
+
+      bool input_file_found = false;
+      std::string input_file;
+
+      for (int i = 0; i < argc; ++i)
       {
-        if (argc > i + 1)
+        // std::cout << "argv " << i << " " << argv[i] << " " << std::endl;
+        if (std::strcmp(argv[i], "-i") == 0)
         {
-          input_file = argv[i+1];
-          if (file_exists_1(input_file))
+          if (argc > i + 1)
           {
-            input_file_found = true;
-            input_file_directory = directory_of_file(input_file);
+            input_file = argv[i + 1];
+            if (file_exists_1(input_file))
+            {
+              input_file_found = true;
+              input_file_directory = directory_of_file(input_file);
+            }
+            else
+            {
+              std::cout << "Error: File doesn't exist " << input_file << std::endl;
+              exit(1);
+            }
           }
           else
           {
-            std::cout << "Error: File doesn't exist " << input_file << std::endl;
+            std::cout << "Error: Expected input file after '-i' argument" << std::endl;
             exit(1);
           }
         }
-        else
+      }
+
+      if (input_file_found)
+        parser = new Parser{fptr, input_file};
+      else
+        parser = new Parser{fptr};
+
+#ifdef DEBUG_ME
+      std::cout << "DEBUG_ME: INPUT constructor t0" << std::endl;
+#endif
+    }
+
+    Input::Input(CAVIAR *fptr) : Pointers{fptr}, parser{new Parser{fptr}},
+                                 fptr{fptr}
+    {
+      fptr->interpreter_num_Input_class++;
+#ifdef DEBUG_ME
+      std::cout << "DEBUG_ME: INPUT constructor t1" << std::endl;
+#endif
+    }
+
+    Input::Input(CAVIAR *fptr, const std::string &file) : Pointers{fptr},
+                                                          parser{new Parser{fptr, file}}, fptr{fptr}
+    {
+      fptr->interpreter_num_Input_class++;
+#ifdef DEBUG_ME
+      std::cout << "DEBUG_ME: INPUT constructor t2" << std::endl;
+#endif
+    }
+
+    Input::Input(CAVIAR *fptr, std::istringstream &iss) : Pointers{fptr},
+                                                          parser{new Parser{fptr, iss}}, fptr{fptr}
+    {
+      fptr->interpreter_num_Input_class++;
+#ifdef DEBUG_ME
+      std::cout << "DEBUG_ME: INPUT constructor t3" << std::endl;
+#endif
+    }
+
+    Input::~Input()
+    {
+      fptr->interpreter_num_Input_class--;
+#ifdef DEBUG_ME
+      std::cout << "DEBUG_ME: INPUT destructor " << std::endl;
+#endif
+      delete parser;
+    }
+
+    // called by CAVIAR object at execute()
+    void Input::read()
+    {
+      while (read_command(parser))
+        ;
+      if (fptr->interpreter_num_Input_class == 1)
+      {
+        if (fptr->interpreter_break_called)
         {
-          std::cout << "Error: Expected input file after '-i' argument" << std::endl;
-          exit(1);
+          error->all(FC_FILE_LINE_FUNC_PARSE, "stray 'break' command.");
+        }
+        else if (fptr->interpreter_continue_called)
+        {
+          error->all(FC_FILE_LINE_FUNC_PARSE, "stray 'continue' command.");
         }
       }
     }
 
-    if (input_file_found)
-      parser = new Parser{fptr, input_file};
-    else
-      parser = new Parser{fptr};
-
-#ifdef DEBUG_ME
-    std::cout << "DEBUG_ME: INPUT constructor t0" << std::endl;
-#endif
-  }
-
-  Input::Input(CAVIAR *fptr) : Pointers{fptr}, parser{new Parser{fptr}},
-                               fptr{fptr}
-  {
-    fptr->interpreter_num_Input_class++;
-#ifdef DEBUG_ME
-    std::cout << "DEBUG_ME: INPUT constructor t1" << std::endl;
-#endif
-  }
-
-  Input::Input(CAVIAR *fptr, const std::string &file) : Pointers{fptr},
-                                                        parser{new Parser{fptr, file}}, fptr{fptr}
-  {
-    fptr->interpreter_num_Input_class++;
-#ifdef DEBUG_ME
-    std::cout << "DEBUG_ME: INPUT constructor t2" << std::endl;
-#endif
-  }
-
-  Input::Input(CAVIAR *fptr, std::istringstream &iss) : Pointers{fptr},
-                                                        parser{new Parser{fptr, iss}}, fptr{fptr}
-  {
-    fptr->interpreter_num_Input_class++;
-#ifdef DEBUG_ME
-    std::cout << "DEBUG_ME: INPUT constructor t3" << std::endl;
-#endif
-  }
-
-  Input::~Input()
-  {
-    fptr->interpreter_num_Input_class--;
-#ifdef DEBUG_ME
-    std::cout << "DEBUG_ME: INPUT destructor " << std::endl;
-#endif
-    delete parser;
-  }
-
-  // called by CAVIAR object at execute()
-  void Input::read()
-  {
-    while (read_command(parser))
-      ;
-    if (fptr->interpreter_num_Input_class == 1)
+    bool Input::read(caviar::interpreter::Parser *parser)
     {
-      if (fptr->interpreter_break_called)
-      {
-        error->all(FC_FILE_LINE_FUNC_PARSE, "stray 'break' command.");
-      }
-      else if (fptr->interpreter_continue_called)
-      {
-        error->all(FC_FILE_LINE_FUNC_PARSE, "stray 'continue' command.");
-      }
+      while (read_command(parser))
+        ;
+      return true;
     }
-  }
 
-  bool Input::read(caviar::interpreter::Parser *parser)
-  {
-    while (read_command(parser))
-      ;
-    return true;
-  }
-
-  bool Input::read_command(Parser *parser)
-  {
-    // there can be more than one Input levels when there's a 'break' or 'continue'
-    // call. For example in cases there's an 'if' condition inside a 'do' loop.
-    // In that case, the interpreter isn't allowed to do anything unless the command
-    // is handled.
-    if (fptr->interpreter_break_called || fptr->interpreter_continue_called)
+    bool Input::read_command(Parser *parser)
     {
-      return false;
-    }
-    Token t;
-    do
-    { // go to the first non-eol token
-      t = parser->get_raw_token();
-    } while (t.kind == caviar::interpreter::Kind::eol);
+      // there can be more than one Input levels when there's a 'break' or 'continue'
+      // call. For example in cases there's an 'if' condition inside a 'do' loop.
+      // In that case, the interpreter isn't allowed to do anything unless the command
+      // is handled.
+      if (fptr->interpreter_break_called || fptr->interpreter_continue_called)
+      {
+        return false;
+      }
+      Token t;
+      do
+      { // go to the first non-eol token
+        t = parser->get_raw_token();
+      } while (t.kind == caviar::interpreter::Kind::eol);
 
-    std::string command;
-    if (t.kind == caviar::interpreter::Kind::eof)
-      return false;
-    if (t.kind == caviar::interpreter::Kind::identifier)
-      command = t.string_value;
-    auto command_lowercase = command;
+      std::string command;
+      if (t.kind == caviar::interpreter::Kind::eof)
+        return false;
+      if (t.kind == caviar::interpreter::Kind::identifier)
+        command = t.string_value;
+      auto command_lowercase = command;
 #ifdef CAVIAR_SCRIPT_COMMAND_CASE_INSENSITIVE
-    // transform 'command' to lower case
-    std::transform(command_lowercase.begin(), command_lowercase.end(),
-                   command_lowercase.begin(), ::tolower);
+      // transform 'command' to lower case
+      std::transform(command_lowercase.begin(), command_lowercase.end(),
+                     command_lowercase.begin(), ::tolower);
 #endif
-    if (commands_map.count(command_lowercase) != 0)
-      return (this->*commands_map.at(command_lowercase))(parser);
-    else if (object_creator->commands_map.count(command_lowercase) != 0)
-    {
-      return (object_creator->*object_creator->commands_map.at(command_lowercase))(parser);
+      if (commands_map.count(command_lowercase) != 0)
+        return (this->*commands_map.at(command_lowercase))(parser);
+      else if (object_creator->commands_map.count(command_lowercase) != 0)
+      {
+        return (object_creator->*object_creator->commands_map.at(command_lowercase))(parser);
+      }
+      else if (object_handler->commands_map.count(command_lowercase) != 0)
+      {
+        return (object_handler->*object_handler->commands_map.at(command_lowercase))(parser);
+      }
+      else if (object_container->all_names.count(command) != 0)
+      { // object name is case sensitive
+        return object_handler->read_object(parser, command);
+      }
+      else
+      {
+        error->all(FC_FILE_LINE_FUNC_PARSE, static_cast<std::string>("Invalid command or object name: ") + command_lowercase);
+      }
+      return true;
     }
-    else if (object_handler->commands_map.count(command_lowercase) != 0)
-    {
-      return (object_handler->*object_handler->commands_map.at(command_lowercase))(parser);
-    }
-    else if (object_container->all_names.count(command) != 0)
-    { // object name is case sensitive
-      return object_handler->read_object(parser, command);
-    }
-    else
-    {
-      error->all(FC_FILE_LINE_FUNC_PARSE, static_cast<std::string>("Invalid command or object name: ") + command_lowercase);
-    }
-    return true;
-  }
-} // interpreter
+  } // interpreter
 
-CAVIAR_NAMESPACE_CLOSE
+}

@@ -18,39 +18,40 @@
 
 #include "caviar/utility/pointers.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace shape
+namespace caviar
 {
-  namespace polyhedron
+
+  namespace shape
   {
-    struct Polyhedron;
-    class Format_unv_reader : public Pointers
+    namespace polyhedron
     {
-    public:
-      Format_unv_reader(class CAVIAR *);
-      ~Format_unv_reader();
+      struct Polyhedron;
+      class Format_unv_reader : public Pointers
+      {
+      public:
+        Format_unv_reader(class CAVIAR *);
+        ~Format_unv_reader();
 
-      void read_polyhedron(shape::polyhedron::Polyhedron &, const std::string &);
+        void read_polyhedron(shape::polyhedron::Polyhedron &, const std::string &);
 
-      void import_udn_ignore(std::ifstream &ifs, int udn_code);
-      void import_udn_2411(shape::polyhedron::Polyhedron &p_object, std::ifstream &); // vertex
-      void import_udn_2412(shape::polyhedron::Polyhedron &p_object, std::ifstream &); // shape
-      void import_udn_2467(shape::polyhedron::Polyhedron &p_object, std::ifstream &); // group
+        void import_udn_ignore(std::ifstream &ifs, int udn_code);
+        void import_udn_2411(shape::polyhedron::Polyhedron &p_object, std::ifstream &); // vertex
+        void import_udn_2412(shape::polyhedron::Polyhedron &p_object, std::ifstream &); // shape
+        void import_udn_2467(shape::polyhedron::Polyhedron &p_object, std::ifstream &); // group
 
-      void write_unv(shape::polyhedron::Polyhedron &, const std::string st_out = "o_shape.unv");
-      void export_udn_2411(shape::polyhedron::Polyhedron &p_object, std::ofstream &ofs);
-      void export_udn_2412(shape::polyhedron::Polyhedron &p_object, std::ofstream &ofs);
-      void export_udn_2467(shape::polyhedron::Polyhedron &p_object, std::ofstream &ofs);
+        void write_unv(shape::polyhedron::Polyhedron &, const std::string st_out = "o_shape.unv");
+        void export_udn_2411(shape::polyhedron::Polyhedron &p_object, std::ofstream &ofs);
+        void export_udn_2412(shape::polyhedron::Polyhedron &p_object, std::ofstream &ofs);
+        void export_udn_2467(shape::polyhedron::Polyhedron &p_object, std::ofstream &ofs);
 
-      void make_label_to_index(const std::vector<int> &u, std::vector<int> &v);
+        void make_label_to_index(const std::vector<int> &u, std::vector<int> &v);
 
-      std::vector<int> node_label;
-      std::vector<int> node_label_to_index;
-      std::vector<int> face_label;
-      std::vector<int> face_label_to_index;
-    };
-  } // polyhedron
-} // shape
+        std::vector<int> node_label;
+        std::vector<int> node_label_to_index;
+        std::vector<int> face_label;
+        std::vector<int> face_label_to_index;
+      };
+    } // polyhedron
+  } // shape
 
-CAVIAR_NAMESPACE_CLOSE
+}

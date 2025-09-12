@@ -20,53 +20,54 @@
 
 #include "caviar/objects/constraint.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-class Domain;
-namespace constraint
+namespace caviar
 {
 
-  /**
-   * This class fixes atomic bond using RATTLE algorithm
-   *
-   *
-   */
-  class Rattle : public Constraint
+  class Domain;
+  namespace constraint
   {
-  public:
-    Rattle(class CAVIAR *);
-    ~Rattle();
-    bool read(class caviar::interpreter::Parser *);
-
-    void apply_shake(int64_t);
-
-    void bond_fix();
-
-    void verify_settings();
-
-    static inline int delta(int a, int b)
-    {
-      if (a == b)
-        return 1;
-      else
-        return 0;
-    }
-
-    class Domain *domain = nullptr;
-    int iteration_max = 100;
 
     /**
-     * The molecule bond types which will be included in the algorithm
-    */    
-    std::vector<int> bond_type;
-    
-    double dt;
-    double error_tolerance;
-    caviar::Vector<double> domain_dh;
-    caviar::Vector<int> domain_bc;
-    bool initialized;
-  };
+     * This class fixes atomic bond using RATTLE algorithm
+     *
+     *
+     */
+    class Rattle : public Constraint
+    {
+    public:
+      Rattle(class CAVIAR *);
+      ~Rattle();
+      bool read(class caviar::interpreter::Parser *);
 
-} // constraint
+      void apply_shake(int64_t);
 
-CAVIAR_NAMESPACE_CLOSE
+      void bond_fix();
+
+      void verify_settings();
+
+      static inline int delta(int a, int b)
+      {
+        if (a == b)
+          return 1;
+        else
+          return 0;
+      }
+
+      class Domain *domain = nullptr;
+      int iteration_max = 100;
+
+      /**
+       * The molecule bond types which will be included in the algorithm
+       */
+      std::vector<int> bond_type;
+
+      double dt;
+      double error_tolerance;
+      caviar::Vector<double> domain_dh;
+      caviar::Vector<int> domain_bc;
+      bool initialized;
+    };
+
+  } // constraint
+
+}

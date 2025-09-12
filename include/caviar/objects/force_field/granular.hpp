@@ -18,32 +18,33 @@
 
 #include "caviar/objects/force_field.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace force_field
+namespace caviar
 {
 
-  /**
-   * This class makes simple Hookean force-field for the particles;
-   * force_type = 0; linear dashpot
-   * force_type = 1; visco-elastic
-   */
-  class Granular : public Force_field
+  namespace force_field
   {
-  public:
-    Granular(class CAVIAR *);
-    ~Granular(){};
 
-    bool read(class caviar::interpreter::Parser *);
-    void verify_settings();
-    void calculate_acceleration();
+    /**
+     * This class makes simple Hookean force-field for the particles;
+     * force_type = 0; linear dashpot
+     * force_type = 1; visco-elastic
+     */
+    class Granular : public Force_field
+    {
+    public:
+      Granular(class CAVIAR *);
+      ~Granular() {};
 
-  public:
-    std::vector<Real_t> elastic_coef, dissip_coef, radius;
-    Vector<Real_t> gravity;
-    int force_type;
-  };
+      bool read(class caviar::interpreter::Parser *);
+      void verify_settings();
+      void calculate_acceleration();
 
-} // force_field
+    public:
+      std::vector<Real_t> elastic_coef, dissip_coef, radius;
+      Vector<Real_t> gravity;
+      int force_type;
+    };
 
-CAVIAR_NAMESPACE_CLOSE
+  } // force_field
+
+}

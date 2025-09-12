@@ -17,522 +17,523 @@
 #include "caviar/interpreter/object_creator.hpp"
 #include "caviar/utility/interpreter_io_headers.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-namespace interpreter
+namespace caviar
 {
-  bool Object_creator::string_variable(Parser *parser)
+  namespace interpreter
   {
-    std::string this_object_full_type = __func__;
-    output->info_create(this_object_full_type);
-
-    std::string NAME = "";
-    bool in_file = true;
-    std::string r = "";
-
-    // there are four different cases of creation of a real varable:
-    // 'string '
-    // 'string NAME'
-    // 'string NAME SOMETHING_INT '
-    // 'string NAME=SOMETHING_INT '
-
-    auto t = parser->get_val_token();
-    // 'string '
-    if (t.kind == caviar::interpreter::Kind::eol)
+    bool Object_creator::string_variable(Parser *parser)
     {
-      return true;
-    }
-    if (t.kind == caviar::interpreter::Kind::eof)
-    {
-      return false;
-    }
+      std::string this_object_full_type = __func__;
+      output->info_create(this_object_full_type);
 
-    // 'string NAME'
-    if (t.kind == caviar::interpreter::Kind::identifier)
-    {
-      NAME_ASSIGN_CHECK(t)
-      NAME = t.string_value;
-      object_container->all_names.insert(NAME);
-    }
+      std::string NAME = "";
+      bool in_file = true;
+      std::string r = "";
 
-    t = parser->get_raw_token();
-    if (t.kind == caviar::interpreter::Kind::eol)
-    {
-    }
-    else if (t.kind == caviar::interpreter::Kind::eof)
-    {
-      in_file = false;
-    }
-    else if (t.kind == caviar::interpreter::Kind::assign)
-    {
-      // string NAME = SOMETHING_STRING
-      r = parser->get_string();
-    }
-    else
-    {
-      // string NAME SOMETHING_STRING
-      parser->keep_current_token();
-      r = parser->get_string();
-    }
+      // there are four different cases of creation of a real varable:
+      // 'string '
+      // 'string NAME'
+      // 'string NAME SOMETHING_INT '
+      // 'string NAME=SOMETHING_INT '
 
-    int index = object_container->string_variable.size();
-    object_container->string_variable.emplace_back(r);
-    object_handler::Dictionary dict(object_handler::gdst("string_variable"), index);
-    object_container->dictionary.insert(std::make_pair(NAME, dict));
+      auto t = parser->get_val_token();
+      // 'string '
+      if (t.kind == caviar::interpreter::Kind::eol)
+      {
+        return true;
+      }
+      if (t.kind == caviar::interpreter::Kind::eof)
+      {
+        return false;
+      }
 
-    return in_file;
-  }
+      // 'string NAME'
+      if (t.kind == caviar::interpreter::Kind::identifier)
+      {
+        NAME_ASSIGN_CHECK(t)
+        NAME = t.string_value;
+        object_container->all_names.insert(NAME);
+      }
 
-  bool Object_creator::boolean_variable(Parser *parser)
-  {
-    std::string this_object_full_type = __func__;
-    output->info_create(this_object_full_type);
+      t = parser->get_raw_token();
+      if (t.kind == caviar::interpreter::Kind::eol)
+      {
+      }
+      else if (t.kind == caviar::interpreter::Kind::eof)
+      {
+        in_file = false;
+      }
+      else if (t.kind == caviar::interpreter::Kind::assign)
+      {
+        // string NAME = SOMETHING_STRING
+        r = parser->get_string();
+      }
+      else
+      {
+        // string NAME SOMETHING_STRING
+        parser->keep_current_token();
+        r = parser->get_string();
+      }
 
-    std::string NAME = "";
-    bool in_file = true;
-    bool r = 0;
+      int index = object_container->string_variable.size();
+      object_container->string_variable.emplace_back(r);
+      object_handler::Dictionary dict(object_handler::gdst("string_variable"), index);
+      object_container->dictionary.insert(std::make_pair(NAME, dict));
 
-    // there are four different cases of creation of a boolean varable:
-    // 'bool '
-    // 'bool NAME'
-    // 'bool NAME SOMETHING_bool '
-    // 'bool NAME=SOMETHING_bool '
-
-    auto t = parser->get_val_token();
-    // 'bool '
-    if (t.kind == caviar::interpreter::Kind::eol)
-    {
-      return true;
-    }
-    if (t.kind == caviar::interpreter::Kind::eof)
-    {
-      return false;
+      return in_file;
     }
 
-    // 'bool NAME'
-    if (t.kind == caviar::interpreter::Kind::identifier)
+    bool Object_creator::boolean_variable(Parser *parser)
     {
-      NAME_ASSIGN_CHECK(t)
-      NAME = t.string_value;
-      object_container->all_names.insert(NAME);
+      std::string this_object_full_type = __func__;
+      output->info_create(this_object_full_type);
+
+      std::string NAME = "";
+      bool in_file = true;
+      bool r = 0;
+
+      // there are four different cases of creation of a boolean varable:
+      // 'bool '
+      // 'bool NAME'
+      // 'bool NAME SOMETHING_bool '
+      // 'bool NAME=SOMETHING_bool '
+
+      auto t = parser->get_val_token();
+      // 'bool '
+      if (t.kind == caviar::interpreter::Kind::eol)
+      {
+        return true;
+      }
+      if (t.kind == caviar::interpreter::Kind::eof)
+      {
+        return false;
+      }
+
+      // 'bool NAME'
+      if (t.kind == caviar::interpreter::Kind::identifier)
+      {
+        NAME_ASSIGN_CHECK(t)
+        NAME = t.string_value;
+        object_container->all_names.insert(NAME);
+      }
+
+      t = parser->get_raw_token();
+      if (t.kind == caviar::interpreter::Kind::eol)
+      {
+      }
+      else if (t.kind == caviar::interpreter::Kind::eof)
+      {
+        in_file = false;
+      }
+      else if (t.kind == caviar::interpreter::Kind::assign)
+      {
+        // bool NAME = SOMETHING_bool
+        r = parser->get_bool();
+      }
+      else
+      {
+        // bool NAME SOMETHING_bool
+        parser->keep_current_token();
+        r = parser->get_bool();
+      }
+
+      int index = object_container->boolean_variable.size();
+      object_container->boolean_variable.emplace_back(r);
+      object_handler::Dictionary dict(object_handler::gdst("boolean_variable"), index);
+      object_container->dictionary.insert(std::make_pair(NAME, dict));
+
+      return in_file;
     }
 
-    t = parser->get_raw_token();
-    if (t.kind == caviar::interpreter::Kind::eol)
+    bool Object_creator::int_variable(Parser *parser)
     {
-    }
-    else if (t.kind == caviar::interpreter::Kind::eof)
-    {
-      in_file = false;
-    }
-    else if (t.kind == caviar::interpreter::Kind::assign)
-    {
-      // bool NAME = SOMETHING_bool
-      r = parser->get_bool();
-    }
-    else
-    {
-      // bool NAME SOMETHING_bool
-      parser->keep_current_token();
-      r = parser->get_bool();
-    }
+      std::string this_object_full_type = __func__;
+      output->info_create(this_object_full_type);
 
-    int index = object_container->boolean_variable.size();
-    object_container->boolean_variable.emplace_back(r);
-    object_handler::Dictionary dict(object_handler::gdst("boolean_variable"), index);
-    object_container->dictionary.insert(std::make_pair(NAME, dict));
+      std::string NAME = "";
+      bool in_file = true;
+      int r = 0;
 
-    return in_file;
-  }
+      // there are four different cases of creation of a real varable:
+      // 'int '
+      // 'int NAME'
+      // 'int NAME SOMETHING_INT '
+      // 'int NAME=SOMETHING_INT '
 
-  bool Object_creator::int_variable(Parser *parser)
-  {
-    std::string this_object_full_type = __func__;
-    output->info_create(this_object_full_type);
+      auto t = parser->get_val_token();
+      // 'int '
+      if (t.kind == caviar::interpreter::Kind::eol)
+      {
+        return true;
+      }
+      if (t.kind == caviar::interpreter::Kind::eof)
+      {
+        return false;
+      }
 
-    std::string NAME = "";
-    bool in_file = true;
-    int r = 0;
+      // 'int NAME'
+      if (t.kind == caviar::interpreter::Kind::identifier)
+      {
+        NAME_ASSIGN_CHECK(t)
+        NAME = t.string_value;
+        object_container->all_names.insert(NAME);
+      }
 
-    // there are four different cases of creation of a real varable:
-    // 'int '
-    // 'int NAME'
-    // 'int NAME SOMETHING_INT '
-    // 'int NAME=SOMETHING_INT '
+      t = parser->get_raw_token();
+      if (t.kind == caviar::interpreter::Kind::eol)
+      {
+      }
+      else if (t.kind == caviar::interpreter::Kind::eof)
+      {
+        in_file = false;
+      }
+      else if (t.kind == caviar::interpreter::Kind::assign)
+      {
+        // int NAME = SOMETHING_INT
+        r = parser->get_int();
+      }
+      else
+      {
+        // int NAME SOMETHING_INT
+        parser->keep_current_token();
+        r = parser->get_int();
+      }
 
-    auto t = parser->get_val_token();
-    // 'int '
-    if (t.kind == caviar::interpreter::Kind::eol)
-    {
-      return true;
-    }
-    if (t.kind == caviar::interpreter::Kind::eof)
-    {
-      return false;
-    }
+      int index = object_container->int_variable.size();
+      object_container->int_variable.emplace_back(r);
+      object_handler::Dictionary dict(object_handler::gdst("int_variable"), index);
+      object_container->dictionary.insert(std::make_pair(NAME, dict));
 
-    // 'int NAME'
-    if (t.kind == caviar::interpreter::Kind::identifier)
-    {
-      NAME_ASSIGN_CHECK(t)
-      NAME = t.string_value;
-      object_container->all_names.insert(NAME);
-    }
-
-    t = parser->get_raw_token();
-    if (t.kind == caviar::interpreter::Kind::eol)
-    {
-    }
-    else if (t.kind == caviar::interpreter::Kind::eof)
-    {
-      in_file = false;
-    }
-    else if (t.kind == caviar::interpreter::Kind::assign)
-    {
-      // int NAME = SOMETHING_INT
-      r = parser->get_int();
-    }
-    else
-    {
-      // int NAME SOMETHING_INT
-      parser->keep_current_token();
-      r = parser->get_int();
+      return in_file;
     }
 
-    int index = object_container->int_variable.size();
-    object_container->int_variable.emplace_back(r);
-    object_handler::Dictionary dict(object_handler::gdst("int_variable"), index);
-    object_container->dictionary.insert(std::make_pair(NAME, dict));
-
-    return in_file;
-  }
-
-  bool Object_creator::real_variable(Parser *parser)
-  {
-    std::string this_object_full_type = __func__;
-    output->info_create(this_object_full_type);
-    std::string NAME = "";
-    bool in_file = true;
-    double r = 0;
-    // there are four different cases of creation of a real varable:
-    // 'real '
-    // 'real NAME'
-    // 'real NAME SOMETHING_REAL '
-    // 'real NAME=SOMETHING_REAL '
-
-    auto t = parser->get_val_token();
-    // 'real '
-    if (t.kind == caviar::interpreter::Kind::eol)
+    bool Object_creator::real_variable(Parser *parser)
     {
-      return true;
-    }
-    if (t.kind == caviar::interpreter::Kind::eof)
-    {
-      return false;
-    }
+      std::string this_object_full_type = __func__;
+      output->info_create(this_object_full_type);
+      std::string NAME = "";
+      bool in_file = true;
+      double r = 0;
+      // there are four different cases of creation of a real varable:
+      // 'real '
+      // 'real NAME'
+      // 'real NAME SOMETHING_REAL '
+      // 'real NAME=SOMETHING_REAL '
 
-    // 'real NAME'
-    if (t.kind == caviar::interpreter::Kind::identifier)
-    {
-      NAME_ASSIGN_CHECK(t)
-      NAME = t.string_value;
-      object_container->all_names.insert(NAME);
-    }
+      auto t = parser->get_val_token();
+      // 'real '
+      if (t.kind == caviar::interpreter::Kind::eol)
+      {
+        return true;
+      }
+      if (t.kind == caviar::interpreter::Kind::eof)
+      {
+        return false;
+      }
 
-    t = parser->get_raw_token();
-    if (t.kind == caviar::interpreter::Kind::eol)
-    {
-    }
-    else if (t.kind == caviar::interpreter::Kind::eof)
-    {
-      in_file = false;
-    }
-    else if (t.kind == caviar::interpreter::Kind::assign)
-    {
-      // real NAME = SOMETHING_REAL
-      r = parser->get_real();
-    }
-    else
-    {
-      // real NAME SOMETHING_REAL
-      parser->keep_current_token();
-      r = parser->get_real();
-    }
+      // 'real NAME'
+      if (t.kind == caviar::interpreter::Kind::identifier)
+      {
+        NAME_ASSIGN_CHECK(t)
+        NAME = t.string_value;
+        object_container->all_names.insert(NAME);
+      }
 
-    int index = object_container->real_variable.size();
-    object_container->real_variable.emplace_back(r);
+      t = parser->get_raw_token();
+      if (t.kind == caviar::interpreter::Kind::eol)
+      {
+      }
+      else if (t.kind == caviar::interpreter::Kind::eof)
+      {
+        in_file = false;
+      }
+      else if (t.kind == caviar::interpreter::Kind::assign)
+      {
+        // real NAME = SOMETHING_REAL
+        r = parser->get_real();
+      }
+      else
+      {
+        // real NAME SOMETHING_REAL
+        parser->keep_current_token();
+        r = parser->get_real();
+      }
 
-    object_handler::Dictionary dict(object_handler::gdst("real_variable"), index);
-    object_container->dictionary.insert(std::make_pair(NAME, dict));
+      int index = object_container->real_variable.size();
+      object_container->real_variable.emplace_back(r);
 
-    return in_file;
-  }
+      object_handler::Dictionary dict(object_handler::gdst("real_variable"), index);
+      object_container->dictionary.insert(std::make_pair(NAME, dict));
 
-  bool Object_creator::int_2d_vector(Parser *parser)
-  {
-    std::string this_object_full_type = __func__;
-    output->info_create(this_object_full_type);
-    std::string NAME = "";
-
-    bool in_file = true;
-    Vector2D<int> r{0, 0};
-
-    // there are four different cases of creation of a int_3d_vector:
-    // 'int3d '
-    // 'int3d NAME'
-    // 'int3d NAME SOMETHING.x SOMETHING.y SOMETHING.z '
-    // 'int3d NAME=SOMETHING.x SOMETHING.y SOMETHING.z  '
-
-    auto t = parser->get_val_token();
-    // 'int3d '
-    if (t.kind == caviar::interpreter::Kind::eol)
-    {
-      return true;
-    }
-    if (t.kind == caviar::interpreter::Kind::eof)
-    {
-      return false;
+      return in_file;
     }
 
-    // 'int3d NAME'
-    if (t.kind == caviar::interpreter::Kind::identifier)
+    bool Object_creator::int_2d_vector(Parser *parser)
     {
-      NAME_ASSIGN_CHECK(t)
-      NAME = t.string_value;
-      object_container->all_names.insert(NAME);
+      std::string this_object_full_type = __func__;
+      output->info_create(this_object_full_type);
+      std::string NAME = "";
+
+      bool in_file = true;
+      Vector2D<int> r{0, 0};
+
+      // there are four different cases of creation of a int_3d_vector:
+      // 'int3d '
+      // 'int3d NAME'
+      // 'int3d NAME SOMETHING.x SOMETHING.y SOMETHING.z '
+      // 'int3d NAME=SOMETHING.x SOMETHING.y SOMETHING.z  '
+
+      auto t = parser->get_val_token();
+      // 'int3d '
+      if (t.kind == caviar::interpreter::Kind::eol)
+      {
+        return true;
+      }
+      if (t.kind == caviar::interpreter::Kind::eof)
+      {
+        return false;
+      }
+
+      // 'int3d NAME'
+      if (t.kind == caviar::interpreter::Kind::identifier)
+      {
+        NAME_ASSIGN_CHECK(t)
+        NAME = t.string_value;
+        object_container->all_names.insert(NAME);
+      }
+
+      t = parser->get_raw_token();
+      if (t.kind == caviar::interpreter::Kind::eol)
+      {
+      }
+      else if (t.kind == caviar::interpreter::Kind::eof)
+      {
+        in_file = false;
+      }
+      else if (t.kind == caviar::interpreter::Kind::assign)
+      {
+        // int3d NAME = SOMETHING.x SOMETHING.y SOMETHING.z
+        r.x = parser->get_int();
+        r.y = parser->get_int();
+      }
+      else
+      {
+        // int3d NAME SOMETHING.x SOMETHING.y SOMETHING.z
+        parser->keep_current_token();
+        r.x = parser->get_int();
+        r.y = parser->get_int();
+      }
+
+      int index = object_container->int_2d_vector.size();
+      object_container->int_2d_vector.emplace_back(r);
+
+      object_handler::Dictionary dict(object_handler::gdst("int_2d_vector"), index);
+      object_container->dictionary.insert(std::make_pair(NAME, dict));
+
+      // std::cout <<"i3d: " << v << std::endl;
+      return in_file; // WARNING
     }
 
-    t = parser->get_raw_token();
-    if (t.kind == caviar::interpreter::Kind::eol)
+    bool Object_creator::real_2d_vector(Parser *parser)
     {
-    }
-    else if (t.kind == caviar::interpreter::Kind::eof)
-    {
-      in_file = false;
-    }
-    else if (t.kind == caviar::interpreter::Kind::assign)
-    {
-      // int3d NAME = SOMETHING.x SOMETHING.y SOMETHING.z
-      r.x = parser->get_int();
-      r.y = parser->get_int();
-    }
-    else
-    {
-      // int3d NAME SOMETHING.x SOMETHING.y SOMETHING.z
-      parser->keep_current_token();
-      r.x = parser->get_int();
-      r.y = parser->get_int();
-    }
+      std::string this_object_full_type = __func__;
+      output->info_create(this_object_full_type);
+      std::string NAME = "";
 
-    int index = object_container->int_2d_vector.size();
-    object_container->int_2d_vector.emplace_back(r);
+      bool in_file = true;
+      Vector2D<double> r{0, 0};
 
-    object_handler::Dictionary dict(object_handler::gdst("int_2d_vector"), index);
-    object_container->dictionary.insert(std::make_pair(NAME, dict));
+      // there are four different cases of creation of a real_3d_vector:
+      // 'real3d '
+      // 'real3d NAME'
+      // 'real3d NAME SOMETHING.x SOMETHING.y SOMETHING.z '
+      // 'real3d NAME=SOMETHING.x SOMETHING.y SOMETHING.z  '
 
-    // std::cout <<"i3d: " << v << std::endl;
-    return in_file; // WARNING
-  }
+      auto t = parser->get_val_token();
+      // 'real3d '
+      if (t.kind == caviar::interpreter::Kind::eol)
+      {
+        return true;
+      }
+      if (t.kind == caviar::interpreter::Kind::eof)
+      {
+        return false;
+      }
 
-  bool Object_creator::real_2d_vector(Parser *parser)
-  {
-    std::string this_object_full_type = __func__;
-    output->info_create(this_object_full_type);
-    std::string NAME = "";
+      // 'real3d NAME'
+      if (t.kind == caviar::interpreter::Kind::identifier)
+      {
+        NAME_ASSIGN_CHECK(t)
+        NAME = t.string_value;
+        object_container->all_names.insert(NAME);
+      }
 
-    bool in_file = true;
-    Vector2D<double> r{0, 0};
+      t = parser->get_raw_token();
+      if (t.kind == caviar::interpreter::Kind::eol)
+      {
+      }
+      else if (t.kind == caviar::interpreter::Kind::eof)
+      {
+        in_file = false;
+      }
+      else if (t.kind == caviar::interpreter::Kind::assign)
+      {
+        // real3d NAME = SOMETHING.x SOMETHING.y SOMETHING.z
+        r.x = parser->get_real();
+        r.y = parser->get_real();
+      }
+      else
+      {
+        // real3d NAME SOMETHING.x SOMETHING.y SOMETHING.z
+        parser->keep_current_token();
+        r.x = parser->get_real();
+        r.y = parser->get_real();
+      }
 
-    // there are four different cases of creation of a real_3d_vector:
-    // 'real3d '
-    // 'real3d NAME'
-    // 'real3d NAME SOMETHING.x SOMETHING.y SOMETHING.z '
-    // 'real3d NAME=SOMETHING.x SOMETHING.y SOMETHING.z  '
+      int index = object_container->real_2d_vector.size();
+      object_container->real_2d_vector.emplace_back(r);
 
-    auto t = parser->get_val_token();
-    // 'real3d '
-    if (t.kind == caviar::interpreter::Kind::eol)
-    {
-      return true;
-    }
-    if (t.kind == caviar::interpreter::Kind::eof)
-    {
-      return false;
-    }
+      object_handler::Dictionary dict(object_handler::gdst("real_2d_vector"), index);
+      object_container->dictionary.insert(std::make_pair(NAME, dict));
 
-    // 'real3d NAME'
-    if (t.kind == caviar::interpreter::Kind::identifier)
-    {
-      NAME_ASSIGN_CHECK(t)
-      NAME = t.string_value;
-      object_container->all_names.insert(NAME);
-    }
-
-    t = parser->get_raw_token();
-    if (t.kind == caviar::interpreter::Kind::eol)
-    {
-    }
-    else if (t.kind == caviar::interpreter::Kind::eof)
-    {
-      in_file = false;
-    }
-    else if (t.kind == caviar::interpreter::Kind::assign)
-    {
-      // real3d NAME = SOMETHING.x SOMETHING.y SOMETHING.z
-      r.x = parser->get_real();
-      r.y = parser->get_real();
-    }
-    else
-    {
-      // real3d NAME SOMETHING.x SOMETHING.y SOMETHING.z
-      parser->keep_current_token();
-      r.x = parser->get_real();
-      r.y = parser->get_real();
+      // std::cout <<"r3d: " << v << std::endl;
+      return in_file; // WARNING
     }
 
-    int index = object_container->real_2d_vector.size();
-    object_container->real_2d_vector.emplace_back(r);
-
-    object_handler::Dictionary dict(object_handler::gdst("real_2d_vector"), index);
-    object_container->dictionary.insert(std::make_pair(NAME, dict));
-
-    // std::cout <<"r3d: " << v << std::endl;
-    return in_file; // WARNING
-  }
-
-  bool Object_creator::int_3d_vector(Parser *parser)
-  {
-    std::string this_object_full_type = __func__;
-    output->info_create(this_object_full_type);
-    std::string NAME = "";
-
-    bool in_file = true;
-    Vector<int> r{0, 0, 0};
-
-    // there are four different cases of creation of a int_3d_vector:
-    // 'int3d '
-    // 'int3d NAME'
-    // 'int3d NAME SOMETHING.x SOMETHING.y SOMETHING.z '
-    // 'int3d NAME=SOMETHING.x SOMETHING.y SOMETHING.z  '
-
-    auto t = parser->get_val_token();
-    // 'int3d '
-    if (t.kind == caviar::interpreter::Kind::eol)
+    bool Object_creator::int_3d_vector(Parser *parser)
     {
-      return true;
-    }
-    if (t.kind == caviar::interpreter::Kind::eof)
-    {
-      return false;
-    }
+      std::string this_object_full_type = __func__;
+      output->info_create(this_object_full_type);
+      std::string NAME = "";
 
-    // 'int3d NAME'
-    if (t.kind == caviar::interpreter::Kind::identifier)
-    {
-      NAME_ASSIGN_CHECK(t)
-      NAME = t.string_value;
-      object_container->all_names.insert(NAME);
-    }
+      bool in_file = true;
+      Vector<int> r{0, 0, 0};
 
-    t = parser->get_raw_token();
-    if (t.kind == caviar::interpreter::Kind::eol)
-    {
-    }
-    else if (t.kind == caviar::interpreter::Kind::eof)
-    {
-      in_file = false;
-    }
-    else if (t.kind == caviar::interpreter::Kind::assign)
-    {
-      // int3d NAME = SOMETHING.x SOMETHING.y SOMETHING.z
-      r.x = parser->get_int();
-      r.y = parser->get_int();
-      r.z = parser->get_int();
-    }
-    else
-    {
-      // int3d NAME SOMETHING.x SOMETHING.y SOMETHING.z
-      parser->keep_current_token();
-      r.x = parser->get_int();
-      r.y = parser->get_int();
-      r.z = parser->get_int();
-    }
+      // there are four different cases of creation of a int_3d_vector:
+      // 'int3d '
+      // 'int3d NAME'
+      // 'int3d NAME SOMETHING.x SOMETHING.y SOMETHING.z '
+      // 'int3d NAME=SOMETHING.x SOMETHING.y SOMETHING.z  '
 
-    int index = object_container->int_3d_vector.size();
-    object_container->int_3d_vector.emplace_back(r);
+      auto t = parser->get_val_token();
+      // 'int3d '
+      if (t.kind == caviar::interpreter::Kind::eol)
+      {
+        return true;
+      }
+      if (t.kind == caviar::interpreter::Kind::eof)
+      {
+        return false;
+      }
 
-    object_handler::Dictionary dict(object_handler::gdst("int_3d_vector"), index);
-    object_container->dictionary.insert(std::make_pair(NAME, dict));
+      // 'int3d NAME'
+      if (t.kind == caviar::interpreter::Kind::identifier)
+      {
+        NAME_ASSIGN_CHECK(t)
+        NAME = t.string_value;
+        object_container->all_names.insert(NAME);
+      }
 
-    // std::cout <<"i3d: " << v << std::endl;
-    return in_file; // WARNING
-  }
+      t = parser->get_raw_token();
+      if (t.kind == caviar::interpreter::Kind::eol)
+      {
+      }
+      else if (t.kind == caviar::interpreter::Kind::eof)
+      {
+        in_file = false;
+      }
+      else if (t.kind == caviar::interpreter::Kind::assign)
+      {
+        // int3d NAME = SOMETHING.x SOMETHING.y SOMETHING.z
+        r.x = parser->get_int();
+        r.y = parser->get_int();
+        r.z = parser->get_int();
+      }
+      else
+      {
+        // int3d NAME SOMETHING.x SOMETHING.y SOMETHING.z
+        parser->keep_current_token();
+        r.x = parser->get_int();
+        r.y = parser->get_int();
+        r.z = parser->get_int();
+      }
 
-  bool Object_creator::real_3d_vector(Parser *parser)
-  {
-    std::string this_object_full_type = __func__;
-    output->info_create(this_object_full_type);
-    std::string NAME = "";
+      int index = object_container->int_3d_vector.size();
+      object_container->int_3d_vector.emplace_back(r);
 
-    bool in_file = true;
-    Vector<double> r{0, 0, 0};
+      object_handler::Dictionary dict(object_handler::gdst("int_3d_vector"), index);
+      object_container->dictionary.insert(std::make_pair(NAME, dict));
 
-    // there are four different cases of creation of a real_3d_vector:
-    // 'real3d '
-    // 'real3d NAME'
-    // 'real3d NAME SOMETHING.x SOMETHING.y SOMETHING.z '
-    // 'real3d NAME=SOMETHING.x SOMETHING.y SOMETHING.z  '
-
-    auto t = parser->get_val_token();
-    // 'real3d '
-    if (t.kind == caviar::interpreter::Kind::eol)
-    {
-      return true;
-    }
-    if (t.kind == caviar::interpreter::Kind::eof)
-    {
-      return false;
+      // std::cout <<"i3d: " << v << std::endl;
+      return in_file; // WARNING
     }
 
-    // 'real3d NAME'
-    if (t.kind == caviar::interpreter::Kind::identifier)
+    bool Object_creator::real_3d_vector(Parser *parser)
     {
-      NAME_ASSIGN_CHECK(t)
-      NAME = t.string_value;
-      object_container->all_names.insert(NAME);
-    }
+      std::string this_object_full_type = __func__;
+      output->info_create(this_object_full_type);
+      std::string NAME = "";
 
-    t = parser->get_raw_token();
-    if (t.kind == caviar::interpreter::Kind::eol)
-    {
-    }
-    else if (t.kind == caviar::interpreter::Kind::eof)
-    {
-      in_file = false;
-    }
-    else if (t.kind == caviar::interpreter::Kind::assign)
-    {
-      // real3d NAME = SOMETHING.x SOMETHING.y SOMETHING.z
-      r.x = parser->get_real();
-      r.y = parser->get_real();
-      r.z = parser->get_real();
-    }
-    else
-    {
-      // real3d NAME SOMETHING.x SOMETHING.y SOMETHING.z
-      parser->keep_current_token();
-      r.x = parser->get_real();
-      r.y = parser->get_real();
-      r.z = parser->get_real();
-    }
+      bool in_file = true;
+      Vector<double> r{0, 0, 0};
 
-    int index = object_container->real_3d_vector.size();
-    object_container->real_3d_vector.emplace_back(r);
+      // there are four different cases of creation of a real_3d_vector:
+      // 'real3d '
+      // 'real3d NAME'
+      // 'real3d NAME SOMETHING.x SOMETHING.y SOMETHING.z '
+      // 'real3d NAME=SOMETHING.x SOMETHING.y SOMETHING.z  '
 
-    object_handler::Dictionary dict(object_handler::gdst("real_3d_vector"), index);
-    object_container->dictionary.insert(std::make_pair(NAME, dict));
+      auto t = parser->get_val_token();
+      // 'real3d '
+      if (t.kind == caviar::interpreter::Kind::eol)
+      {
+        return true;
+      }
+      if (t.kind == caviar::interpreter::Kind::eof)
+      {
+        return false;
+      }
 
-    // std::cout <<"r3d: " << v << std::endl;
-    return in_file; // WARNING
-  }
-} // interpreter
-CAVIAR_NAMESPACE_CLOSE
+      // 'real3d NAME'
+      if (t.kind == caviar::interpreter::Kind::identifier)
+      {
+        NAME_ASSIGN_CHECK(t)
+        NAME = t.string_value;
+        object_container->all_names.insert(NAME);
+      }
+
+      t = parser->get_raw_token();
+      if (t.kind == caviar::interpreter::Kind::eol)
+      {
+      }
+      else if (t.kind == caviar::interpreter::Kind::eof)
+      {
+        in_file = false;
+      }
+      else if (t.kind == caviar::interpreter::Kind::assign)
+      {
+        // real3d NAME = SOMETHING.x SOMETHING.y SOMETHING.z
+        r.x = parser->get_real();
+        r.y = parser->get_real();
+        r.z = parser->get_real();
+      }
+      else
+      {
+        // real3d NAME SOMETHING.x SOMETHING.y SOMETHING.z
+        parser->keep_current_token();
+        r.x = parser->get_real();
+        r.y = parser->get_real();
+        r.z = parser->get_real();
+      }
+
+      int index = object_container->real_3d_vector.size();
+      object_container->real_3d_vector.emplace_back(r);
+
+      object_handler::Dictionary dict(object_handler::gdst("real_3d_vector"), index);
+      object_container->dictionary.insert(std::make_pair(NAME, dict));
+
+      // std::cout <<"r3d: " << v << std::endl;
+      return in_file; // WARNING
+    }
+  } // interpreter
+}

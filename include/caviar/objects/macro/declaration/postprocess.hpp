@@ -19,9 +19,10 @@ FC_GENERAL_CLASSNAME_MACRO(Postprocess, postprocess, Postprocess)
 #endif
 
 #ifdef FC_COMPLETE_FORWARD_DECLERATION
-CAVIAR_NAMESPACE_OPEN
+namespace caviar
+{
 
-class Postprocess;
+  class Postprocess;
 
-CAVIAR_NAMESPACE_CLOSE
+}
 #endif

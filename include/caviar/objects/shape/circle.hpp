@@ -18,36 +18,37 @@
 
 #include "caviar/objects/shape.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace shape
+namespace caviar
 {
 
-  /**
-   * This class has a circle shape in 3D.
-   *
-   *
-   */
-  class Circle : public Shape
+  namespace shape
   {
-  public:
-    Circle(class CAVIAR *);
-    ~Circle();
 
-    // there are different ways to define a circle: 3 points on it, centre and one point on it, centre and radius and normal,...
-    bool read(class caviar::interpreter::Parser *);
-    double radius;
-    double flatness_tol;
-    Vector<double> center;
-    Vector<double> normal;
-    bool on_the_plane(const Vector<double> &v);
-    bool is_inside(const Vector<double> &v);
-    bool is_inside(const Vector<double> &, const double rad);
-    bool in_contact(const Vector<double> &, const double rad, Vector<double> &contact_vector);
+    /**
+     * This class has a circle shape in 3D.
+     *
+     *
+     */
+    class Circle : public Shape
+    {
+    public:
+      Circle(class CAVIAR *);
+      ~Circle();
 
-    bool make_basis_vectors();
-  };
+      // there are different ways to define a circle: 3 points on it, centre and one point on it, centre and radius and normal,...
+      bool read(class caviar::interpreter::Parser *);
+      double radius;
+      double flatness_tol;
+      Vector<double> center;
+      Vector<double> normal;
+      bool on_the_plane(const Vector<double> &v);
+      bool is_inside(const Vector<double> &v);
+      bool is_inside(const Vector<double> &, const double rad);
+      bool in_contact(const Vector<double> &, const double rad, Vector<double> &contact_vector);
 
-} // shape
+      bool make_basis_vectors();
+    };
 
-CAVIAR_NAMESPACE_CLOSE
+  } // shape
+
+}

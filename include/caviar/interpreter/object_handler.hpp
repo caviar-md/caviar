@@ -20,28 +20,29 @@
 #include <string>
 #include <map>
 
-CAVIAR_NAMESPACE_OPEN
-namespace interpreter
+namespace caviar
 {
-  class Parser;
-  using CommandFunc_object_handler = bool (Object_handler::*)(class caviar::interpreter::Parser *); // a pointer to boolean function of ...
-
-  /**
-   * This class is a way to call all the created objects.
-   *
-   *
-   */
-  class Object_handler : public Pointers
+  namespace interpreter
   {
-  public:
-    Object_handler(class CAVIAR *);
-    ~Object_handler();
+    class Parser;
+    using CommandFunc_object_handler = bool (Object_handler::*)(class caviar::interpreter::Parser *); // a pointer to boolean function of ...
 
-    const static std::map<std::string, CommandFunc_object_handler> commands_map;
+    /**
+     * This class is a way to call all the created objects.
+     *
+     *
+     */
+    class Object_handler : public Pointers
+    {
+    public:
+      Object_handler(class CAVIAR *);
+      ~Object_handler();
 
-    bool read_object(Parser *, const std::string);
+      const static std::map<std::string, CommandFunc_object_handler> commands_map;
 
-  public:
-  };
-} // interpreter
-CAVIAR_NAMESPACE_CLOSE
+      bool read_object(Parser *, const std::string);
+
+    public:
+    };
+  } // interpreter
+}

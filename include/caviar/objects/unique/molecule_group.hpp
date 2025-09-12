@@ -19,43 +19,44 @@
 #include "caviar/objects/unique.hpp"
 #include "caviar/objects/unique/molecule.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-class Atom_data;
-namespace unique
+namespace caviar
 {
 
-  /**
-   * This class creates group of molecules.
-   * groups create copies of the molecules.
-   */
-  class Molecule_group : public Unique
+  class Atom_data;
+  namespace unique
   {
-  public:
-    Molecule_group(class CAVIAR *);
-    Molecule_group(const Molecule_group &);
-    Molecule_group();
-    ~Molecule_group();
 
-    bool read(caviar::interpreter::Parser *);
-    void verify_settings();
+    /**
+     * This class creates group of molecules.
+     * groups create copies of the molecules.
+     */
+    class Molecule_group : public Unique
+    {
+    public:
+      Molecule_group(class CAVIAR *);
+      Molecule_group(const Molecule_group &);
+      Molecule_group();
+      ~Molecule_group();
 
-    Vector<double> pos_tot() const;
-    Vector<double> vel_tot() const;
+      bool read(caviar::interpreter::Parser *);
+      void verify_settings();
 
-    void add_molecule(const unique::Molecule &);
-    void add_molecule(const unique::Molecule &,
-                      caviar::Vector<double> p = caviar::Vector<double>{0, 0, 0},
-                      caviar::Vector<double> v = caviar::Vector<double>{0, 0, 0});
+      Vector<double> pos_tot() const;
+      Vector<double> vel_tot() const;
 
-    std::vector<unique::Molecule> molecules;
+      void add_molecule(const unique::Molecule &);
+      void add_molecule(const unique::Molecule &,
+                        caviar::Vector<double> p = caviar::Vector<double>{0, 0, 0},
+                        caviar::Vector<double> v = caviar::Vector<double>{0, 0, 0});
 
-    bool part_of_a_molecule_group;
-    Molecule_group *upper_level_molecule_group;
+      std::vector<unique::Molecule> molecules;
 
-    Vector<double> position, velocity;
-  };
+      bool part_of_a_molecule_group;
+      Molecule_group *upper_level_molecule_group;
 
-} // unique
+      Vector<double> position, velocity;
+    };
 
-CAVIAR_NAMESPACE_CLOSE
+  } // unique
+
+}

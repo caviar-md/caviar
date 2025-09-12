@@ -25,7 +25,8 @@
    // MPI_Datatype mpi_fc_vector_type;
 #endif
 
-CAVIAR_NAMESPACE_OPEN
+namespace caviar
+{
 namespace interpreter
 {
 
@@ -51,4 +52,4 @@ namespace interpreter
     int me, nprocs; // MPI process rank and number of processes
   };
 } // interpreter
-CAVIAR_NAMESPACE_CLOSE
+}

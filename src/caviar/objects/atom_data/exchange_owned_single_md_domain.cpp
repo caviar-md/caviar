@@ -21,45 +21,46 @@
 
 #include <algorithm>
 
-CAVIAR_NAMESPACE_OPEN
-
-//======================================================
-//                                                    ||
-//                                                    ||
-//======================================================
-
-bool Atom_data::exchange_owned_single_md_domain(long) // timestep
+namespace caviar
 {
-  if (domain == nullptr)
-    error->all("Atom_data::exchange_owned: domain = nullptr");
+
+  //======================================================
+  //                                                    ||
+  //                                                    ||
+  //======================================================
+
+  bool Atom_data::exchange_owned_single_md_domain(long) // timestep
+  {
+    if (domain == nullptr)
+      error->all("Atom_data::exchange_owned: domain = nullptr");
 
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
-  if (domain->me != 0)
-    return false;
+    if (domain->me != 0)
+      return false;
 #endif
 
-  bool update_verlet_list = false;
+    bool update_verlet_list = false;
 
-  auto &pos = atom_struct_owned.position;
+    auto &pos = atom_struct_owned.position;
 
-  auto pos_size = pos.size();
+    auto pos_size = pos.size();
 
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
 #endif
-  for (unsigned int i = 0; i < pos_size; ++i)
-  {
-    caviar::Vector<int> msd {0,0,0};
-    pos[i] = domain->fix_position(pos[i], msd, update_verlet_list);
+    for (unsigned int i = 0; i < pos_size; ++i)
+    {
+      caviar::Vector<int> msd{0, 0, 0};
+      pos[i] = domain->fix_position(pos[i], msd, update_verlet_list);
 
-    if (msd_process)
-      atom_struct_owned.msd_domain_cross[i] +=  msd;
+      if (msd_process)
+        atom_struct_owned.msd_domain_cross[i] += msd;
+    }
+    return update_verlet_list;
   }
-  return update_verlet_list;
-}
-//======================================================
-//                                                    ||
-//                                                    ||
-//======================================================
+  //======================================================
+  //                                                    ||
+  //                                                    ||
+  //======================================================
 
-CAVIAR_NAMESPACE_CLOSE
+}

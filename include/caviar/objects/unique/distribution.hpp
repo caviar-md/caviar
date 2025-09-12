@@ -18,48 +18,49 @@
 
 #include "caviar/objects/unique.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-class Shape;
-class Atom_data;
-namespace unique
+namespace caviar
 {
-  class Molecule;
-  class Molecule_group;
-  class Atom;
-  class Atom_group;
-  class Grid_1D;
-  class Random_1D;
 
-  /**
-   * This class creates initial arrangement of the particles using user's inputs.
-   * It can put the atoms and molecules inside shapes.
-   */
-  class Distribution : public Unique
+  class Shape;
+  class Atom_data;
+  namespace unique
   {
-  public:
-    Distribution(class CAVIAR *);
-    ~Distribution();
-    bool read(caviar::interpreter::Parser *);
-    void verify_settings();
-    bool distribute_grid_3D();
-    bool distribute_random_3D(const int num, const double r);
+    class Molecule;
+    class Molecule_group;
+    class Atom;
+    class Atom_group;
+    class Grid_1D;
+    class Random_1D;
 
-    bool check_radius;
+    /**
+     * This class creates initial arrangement of the particles using user's inputs.
+     * It can put the atoms and molecules inside shapes.
+     */
+    class Distribution : public Unique
+    {
+    public:
+      Distribution(class CAVIAR *);
+      ~Distribution();
+      bool read(caviar::interpreter::Parser *);
+      void verify_settings();
+      bool distribute_grid_3D();
+      bool distribute_random_3D(const int num, const double r);
 
-    class Atom_data *atom_data;
-    class Shape *boundary_shape;
-    class Atom *atom;
-    class Atom_group *atom_group;
-    class Molecule *molecule;
-    class Molecule_group *molecule_group;
+      bool check_radius;
 
-    class Grid_1D *grid_1d_x, *grid_1d_y, *grid_1d_z;
-    class Random_1D *random_1d_x, *random_1d_y, *random_1d_z;
+      class Atom_data *atom_data;
+      class Shape *boundary_shape;
+      class Atom *atom;
+      class Atom_group *atom_group;
+      class Molecule *molecule;
+      class Molecule_group *molecule_group;
 
-    std::vector<double> radius_vector;
-  };
+      class Grid_1D *grid_1d_x, *grid_1d_y, *grid_1d_z;
+      class Random_1D *random_1d_x, *random_1d_y, *random_1d_z;
 
-} // unique
+      std::vector<double> radius_vector;
+    };
 
-CAVIAR_NAMESPACE_CLOSE
+  } // unique
+
+}

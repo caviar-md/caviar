@@ -18,41 +18,42 @@
 
 #include "caviar/objects/force_field.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace force_field
+namespace caviar
 {
 
-  /**
-   * This class electrostatic elwald real space force-field.
-   *
-   *
-   */
-  class Electrostatic_ewald_r : public Force_field
+  namespace force_field
   {
-  public:
-    Electrostatic_ewald_r(class CAVIAR *);
-    ~Electrostatic_ewald_r(){};
 
-    double potential(const Vector<double> &);
-    double potential(const int);
+    /**
+     * This class electrostatic elwald real space force-field.
+     *
+     *
+     */
+    class Electrostatic_ewald_r : public Force_field
+    {
+    public:
+      Electrostatic_ewald_r(class CAVIAR *);
+      ~Electrostatic_ewald_r() {};
 
-    Vector<double> field(const Vector<double> &);
-    Vector<double> field(const int);
+      double potential(const Vector<double> &);
+      double potential(const int);
 
-    bool read(class caviar::interpreter::Parser *);
-    void verify_settings();
-    void calculate_acceleration();
+      Vector<double> field(const Vector<double> &);
+      Vector<double> field(const int);
 
-    double energy();
+      bool read(class caviar::interpreter::Parser *);
+      void verify_settings();
+      void calculate_acceleration();
 
-  public:
-    std::vector<std::vector<Real_t>> lambda;
-    bool lambda_is_set = false;
-    double k_electrostatic, alpha;
-    Vector<double> external_field;
-  };
+      double energy();
 
-} // force_field
+    public:
+      std::vector<std::vector<Real_t>> lambda;
+      bool lambda_is_set = false;
+      double k_electrostatic, alpha;
+      Vector<double> external_field;
+    };
 
-CAVIAR_NAMESPACE_CLOSE
+  } // force_field
+
+}

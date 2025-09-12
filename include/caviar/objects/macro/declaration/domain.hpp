@@ -19,9 +19,10 @@ FC_GENERAL_CLASSNAME_MACRO(Domain, domain, Domain)
 #endif
 
 #ifdef FC_COMPLETE_FORWARD_DECLERATION
-CAVIAR_NAMESPACE_OPEN
+namespace caviar
+{
 
-class Domain;
+  class Domain;
 
-CAVIAR_NAMESPACE_CLOSE
+}
 #endif

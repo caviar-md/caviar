@@ -18,27 +18,28 @@
 
 #include "caviar/utility/caviar_config.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-namespace interpreter
+namespace caviar
 {
-  namespace object_handler
+  namespace interpreter
   {
-
-    /**
-     * This class is a simple structure relating object types and index.
-     *
-     *
-     */
-    class Dictionary
+    namespace object_handler
     {
-    public:
-      Dictionary(){};
-      Dictionary(int t, int i) : type(t), index(i){};
-      ~Dictionary(){};
-      int type;
-      int index;
-    };
 
-  } // object_handler
-} // interpreter
-CAVIAR_NAMESPACE_CLOSE
+      /**
+       * This class is a simple structure relating object types and index.
+       *
+       *
+       */
+      class Dictionary
+      {
+      public:
+        Dictionary() {};
+        Dictionary(int t, int i) : type(t), index(i) {};
+        ~Dictionary() {};
+        int type;
+        int index;
+      };
+
+    } // object_handler
+  } // interpreter
+}

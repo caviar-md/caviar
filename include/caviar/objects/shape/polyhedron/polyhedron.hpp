@@ -22,96 +22,97 @@
 #include <vector>
 #include <map>
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace shape
+namespace caviar
 {
-  namespace polyhedron
+
+  namespace shape
   {
-    struct Polyhedron
+    namespace polyhedron
     {
+      struct Polyhedron
+      {
 
-      Polyhedron() : nx_part{1}, ny_part{1}, nz_part{1}, grid_tol{0.0}, thickness{1.0} {}
+        Polyhedron() : nx_part{1}, ny_part{1}, nz_part{1}, grid_tol{0.0}, thickness{1.0} {}
 
-      /**
-       * contains cartesian coordinates
-       */
-      std::vector<Vector<Real_t>> vertex;
+        /**
+         * contains cartesian coordinates
+         */
+        std::vector<Vector<Real_t>> vertex;
 
-      /**
-       * made in "merge_vertices()" it's a map to the index of possible similar
-       * vertex with the lower index
-       */
-      std::vector<std::vector<unsigned int>> vertex_map;
+        /**
+         * made in "merge_vertices()" it's a map to the index of possible similar
+         * vertex with the lower index
+         */
+        std::vector<std::vector<unsigned int>> vertex_map;
 
-      /**
-       * contains vertex indices of ngons
-       */
-      std::vector<std::vector<unsigned int>> face;
+        /**
+         * contains vertex indices of ngons
+         */
+        std::vector<std::vector<unsigned int>> face;
 
-      /**
-       * contains indices of the faces. It can be imported from UNV files or set...
-       * The number '-1' is the default and invalid face_id.
-       */
-      std::vector<int> face_id;
+        /**
+         * contains indices of the faces. It can be imported from UNV files or set...
+         * The number '-1' is the default and invalid face_id.
+         */
+        std::vector<int> face_id;
 
-      /**
-       * normal of faces. The direction has to be set by the user
-       */
-      std::vector<Vector<Real_t>> normal;
+        /**
+         * normal of faces. The direction has to be set by the user
+         */
+        std::vector<Vector<Real_t>> normal;
 
-      /**
-       *
-       * addition of normals of neighborlist faces for each edge
-       *  Locally Defined
-       * std::vector<std::vector<Vector<Real_t>>> edge_norms1;
-       *
-       * face[][j]-face[][j+1]
-       *  Locally Defined
-       * std::vector<std::vector<Vector<Real_t>>> edge_norms2;
-       *
-       * edge_norms1 cross edge_norms2
-       */
-      std::vector<std::vector<Vector<Real_t>>> edge_norms3;
+        /**
+         *
+         * addition of normals of neighborlist faces for each edge
+         *  Locally Defined
+         * std::vector<std::vector<Vector<Real_t>>> edge_norms1;
+         *
+         * face[][j]-face[][j+1]
+         *  Locally Defined
+         * std::vector<std::vector<Vector<Real_t>>> edge_norms2;
+         *
+         * edge_norms1 cross edge_norms2
+         */
+        std::vector<std::vector<Vector<Real_t>>> edge_norms3;
 
-      /**
-       * first: the edge that has vertex[i],vertex[j] ... second: face[m],face[n]
-       * that has this edge
-       */
-      std::map<std::vector<unsigned int>, std::vector<unsigned int>> edges;
+        /**
+         * first: the edge that has vertex[i],vertex[j] ... second: face[m],face[n]
+         * that has this edge
+         */
+        std::map<std::vector<unsigned int>, std::vector<unsigned int>> edges;
 
-      /**
-       * contains face indices within the grid;
-       */
-      std::vector<std::vector<std::vector<std::vector<unsigned int>>>> grid;
+        /**
+         * contains face indices within the grid;
+         */
+        std::vector<std::vector<std::vector<std::vector<unsigned int>>>> grid;
 
-      /**
-       * highest and lowest coordinates of vertices; used in grid;
-       */
-      Real_t xlo, ylo, zlo, xhi, yhi, zhi;
+        /**
+         * highest and lowest coordinates of vertices; used in grid;
+         */
+        Real_t xlo, ylo, zlo, xhi, yhi, zhi;
 
-      /**
-       * used in grid;
-       */
-      Real_t dx_part, dy_part, dz_part;
+        /**
+         * used in grid;
+         */
+        Real_t dx_part, dy_part, dz_part;
 
-      /**
-       * used in grid;
-       */
-      unsigned int nx_part, ny_part, nz_part;
+        /**
+         * used in grid;
+         */
+        unsigned int nx_part, ny_part, nz_part;
 
-      /**
-       * a tolerance value used in grid;
-       */
-      Real_t grid_tol;
+        /**
+         * a tolerance value used in grid;
+         */
+        Real_t grid_tol;
 
-      /*
-       * it defines the maximum thickness of each surface. If a particle go farther
-       * than it inside, it won't be inside anymore.
-       */
-      Real_t thickness;
-    };
-  } // polyhedron
-} // shape
+        /*
+         * it defines the maximum thickness of each surface. If a particle go farther
+         * than it inside, it won't be inside anymore.
+         */
+        Real_t thickness;
+      };
+    } // polyhedron
+  } // shape
 
-CAVIAR_NAMESPACE_CLOSE
+}

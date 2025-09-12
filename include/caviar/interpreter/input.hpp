@@ -20,116 +20,117 @@
 #include <istream>
 #include <map>
 
-CAVIAR_NAMESPACE_OPEN
-
-// a pointer to boolean function of Input class.
-// using InputCommandFunc = bool (Input::*) (class caviar::interpreter::Parser *);
-namespace interpreter
+namespace caviar
 {
-  using InputCommandFunc = char (Input::*)(class caviar::interpreter::Parser *);
 
-  /**
-   * This class contains input streams lexer and parser and handles the
-   * basic commands of CAVIAR scripting languages.
-   *
-   */
-  class Input : public Pointers
+  // a pointer to boolean function of Input class.
+  // using InputCommandFunc = bool (Input::*) (class caviar::interpreter::Parser *);
+  namespace interpreter
   {
-  public:
-    /**
-     * Constructor.
-     */
-    Input(class CAVIAR *);
+    using InputCommandFunc = char (Input::*)(class caviar::interpreter::Parser *);
 
     /**
-     * Constructor.
+     * This class contains input streams lexer and parser and handles the
+     * basic commands of CAVIAR scripting languages.
+     *
      */
-    Input(class CAVIAR *, int argc, char **argv);
+    class Input : public Pointers
+    {
+    public:
+      /**
+       * Constructor.
+       */
+      Input(class CAVIAR *);
 
-    /**
-     * Constructor with a input file name @p filename
-     */
-    Input(class CAVIAR *, const std::string &filename);
+      /**
+       * Constructor.
+       */
+      Input(class CAVIAR *, int argc, char **argv);
 
-    /**
-     * Constructor with a string stream
-     */
-    Input(class CAVIAR *, std::istringstream &stream);
-    ~Input();
+      /**
+       * Constructor with a input file name @p filename
+       */
+      Input(class CAVIAR *, const std::string &filename);
 
-    /**
-     *  the function to start reading
-     */
-    void read();
+      /**
+       * Constructor with a string stream
+       */
+      Input(class CAVIAR *, std::istringstream &stream);
+      ~Input();
 
-  public:
-    class caviar::interpreter::Parser *parser;
-    class CAVIAR *fptr;
+      /**
+       *  the function to start reading
+       */
+      void read();
 
-    const static std::map<std::string, InputCommandFunc> commands_map;
+    public:
+      class caviar::interpreter::Parser *parser;
+      class CAVIAR *fptr;
 
-    std::string input_file_directory = "";
+      const static std::map<std::string, InputCommandFunc> commands_map;
 
-    bool read(caviar::interpreter::Parser *);
+      std::string input_file_directory = "";
 
-    bool read_command(Parser *);
+      bool read(caviar::interpreter::Parser *);
 
-    // commands
+      bool read_command(Parser *);
 
-    char command_output(Parser *);
-    char command_object_container(Parser *);
-    char command_read_script_from_file(Parser *);
-    char command_exit_program(Parser *);
-    char command_echo(Parser *);
-    char command_print(Parser *);
-    char command_fprint(Parser *);
+      // commands
 
-    char command_for(Parser *);
-    char command_next(Parser *);
+      char command_output(Parser *);
+      char command_object_container(Parser *);
+      char command_read_script_from_file(Parser *);
+      char command_exit_program(Parser *);
+      char command_echo(Parser *);
+      char command_print(Parser *);
+      char command_fprint(Parser *);
 
-    char command_while(Parser *);
-    char command_do(Parser *);
-    char command_end_do(Parser *);
+      char command_for(Parser *);
+      char command_next(Parser *);
 
-    char command_break(Parser *);
-    char command_continue(Parser *);
+      char command_while(Parser *);
+      char command_do(Parser *);
+      char command_end_do(Parser *);
 
-    char command_if(Parser *);
-    char command_else_if(Parser *);
-    char command_else(Parser *);
-    char command_end_if(Parser *);
+      char command_break(Parser *);
+      char command_continue(Parser *);
 
-    char command_evaluate(Parser *);
-    char command_evaluate(const std::string &);
+      char command_if(Parser *);
+      char command_else_if(Parser *);
+      char command_else(Parser *);
+      char command_end_if(Parser *);
 
-    char command_calculate(Parser *);
-    char command_calculate(const std::string &);
+      char command_evaluate(Parser *);
+      char command_evaluate(const std::string &);
 
-    char command_compare_string(Parser *);
-    char command_compare_string(const std::string &);
-    char command_compare_real(Parser *);
-    char command_compare_real(const std::string &);
-    char command_compare_int(Parser *);
-    char command_compare_int(const std::string &);
-    char command_compare(Parser *);
-    char command_compare(const std::string &);
+      char command_calculate(Parser *);
+      char command_calculate(const std::string &);
 
-    char command_delete_object(Parser *);
-    char command_delete_object(const std::string &);
+      char command_compare_string(Parser *);
+      char command_compare_string(const std::string &);
+      char command_compare_real(Parser *);
+      char command_compare_real(const std::string &);
+      char command_compare_int(Parser *);
+      char command_compare_int(const std::string &);
+      char command_compare(Parser *);
+      char command_compare(const std::string &);
 
-    char command_help(Parser *);
-    char command_exit(Parser *);
-    char command_delete(Parser *);
+      char command_delete_object(Parser *);
+      char command_delete_object(const std::string &);
 
-    char command_include(Parser *);
-    char command_import(Parser *);
-    char command_read(caviar::interpreter::Parser *);
+      char command_help(Parser *);
+      char command_exit(Parser *);
+      char command_delete(Parser *);
 
-    char command_function(Parser *);
-    char command_end_function(Parser *);
+      char command_include(Parser *);
+      char command_import(Parser *);
+      char command_read(caviar::interpreter::Parser *);
 
-    char command_class(Parser *);
-    char command_end_class(Parser *);
-  };
-} // interpreter
-CAVIAR_NAMESPACE_CLOSE
+      char command_function(Parser *);
+      char command_end_function(Parser *);
+
+      char command_class(Parser *);
+      char command_end_class(Parser *);
+    };
+  } // interpreter
+}

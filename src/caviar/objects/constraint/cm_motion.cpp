@@ -18,89 +18,90 @@
 #include "caviar/objects/atom_data.hpp"
 #include "caviar/utility/interpreter_io_headers.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace constraint
+namespace caviar
 {
 
-  Cm_motion::Cm_motion(CAVIAR *fptr) : Constraint{fptr}
+  namespace constraint
   {
-    FC_OBJECT_INITIALIZE_INFO
-    velocity_steps = -1;
-    angular_momentum_steps = -1;
-    constraint_type = Constraint_t::Cm_motion;
-  }
 
-  Cm_motion::~Cm_motion() {}
-
-  bool Cm_motion::read(caviar::interpreter::Parser *parser)
-  {
-    FC_OBJECT_READ_INFO
-    bool in_file = true;
-    while (true)
+    Cm_motion::Cm_motion(CAVIAR *fptr) : Constraint{fptr}
     {
-      GET_A_TOKEN_FOR_CREATION
-      auto t = token.string_value;
-      FC_OBJECT_READ_INFO_STR
-      if (string_cmp(t, "set_atom_data") || string_cmp(t, "atom_data"))
-      {
-        FIND_OBJECT_BY_NAME(atom_data, it)
-        atom_data = object_container->atom_data[it->second.index];
-      }
-      else if (string_cmp(t, "velocity_steps"))
-      {
-        GET_OR_CHOOSE_A_INT(velocity_steps, "", "")
-        if (velocity_steps < 1)
-          error->all(FC_FILE_LINE_FUNC_PARSE, "velocity_steps have to be non-negative.");
-      }
-      else if (string_cmp(t, "angular_momentum_steps"))
-      {
-        GET_OR_CHOOSE_A_INT(angular_momentum_steps, "", "")
-        if (angular_momentum_steps < 1)
-          error->all(FC_FILE_LINE_FUNC_PARSE, "angular_momentum_steps have to be non-negative.");
-      }
-      else
-      {
-        error->all(FC_FILE_LINE_FUNC_PARSE, "Unknown variable or command");
-      }
-    }
-    return in_file;
-  }
-
-  void Cm_motion::fix_velocity(int64_t steps, bool &recalculate_temperature)
-  { // step I
-    // XXX there may be two cases. 1: all of particles, 2: a particle of a type
-
-    FC_NULLPTR_CHECK(atom_data)
-
-    if (steps % velocity_steps == 0)
-    {
-      recalculate_temperature = true;
-      fix_linear_momentum();
+      FC_OBJECT_INITIALIZE_INFO
+      velocity_steps = -1;
+      angular_momentum_steps = -1;
+      constraint_type = Constraint_t::Cm_motion;
     }
 
-    if (steps % angular_momentum_steps == 0)
+    Cm_motion::~Cm_motion() {}
+
+    bool Cm_motion::read(caviar::interpreter::Parser *parser)
     {
-      recalculate_temperature = true;
-      fix_angular_momentum();
+      FC_OBJECT_READ_INFO
+      bool in_file = true;
+      while (true)
+      {
+        GET_A_TOKEN_FOR_CREATION
+        auto t = token.string_value;
+        FC_OBJECT_READ_INFO_STR
+        if (string_cmp(t, "set_atom_data") || string_cmp(t, "atom_data"))
+        {
+          FIND_OBJECT_BY_NAME(atom_data, it)
+          atom_data = object_container->atom_data[it->second.index];
+        }
+        else if (string_cmp(t, "velocity_steps"))
+        {
+          GET_OR_CHOOSE_A_INT(velocity_steps, "", "")
+          if (velocity_steps < 1)
+            error->all(FC_FILE_LINE_FUNC_PARSE, "velocity_steps have to be non-negative.");
+        }
+        else if (string_cmp(t, "angular_momentum_steps"))
+        {
+          GET_OR_CHOOSE_A_INT(angular_momentum_steps, "", "")
+          if (angular_momentum_steps < 1)
+            error->all(FC_FILE_LINE_FUNC_PARSE, "angular_momentum_steps have to be non-negative.");
+        }
+        else
+        {
+          error->all(FC_FILE_LINE_FUNC_PARSE, "Unknown variable or command");
+        }
+      }
+      return in_file;
     }
-  }
 
-  void Cm_motion::fix_linear_momentum()
-  {
-    auto v_cm = atom_data->owned_velocity_cm();
-    for (auto &&v : atom_data->atom_struct_owned.velocity)
+    void Cm_motion::fix_velocity(int64_t steps, bool &recalculate_temperature)
+    { // step I
+      // XXX there may be two cases. 1: all of particles, 2: a particle of a type
+
+      FC_NULLPTR_CHECK(atom_data)
+
+      if (steps % velocity_steps == 0)
+      {
+        recalculate_temperature = true;
+        fix_linear_momentum();
+      }
+
+      if (steps % angular_momentum_steps == 0)
+      {
+        recalculate_temperature = true;
+        fix_angular_momentum();
+      }
+    }
+
+    void Cm_motion::fix_linear_momentum()
     {
-      v -= v_cm;
+      auto v_cm = atom_data->owned_velocity_cm();
+      for (auto &&v : atom_data->atom_struct_owned.velocity)
+      {
+        v -= v_cm;
+      }
     }
-  }
 
-  void Cm_motion::fix_angular_momentum()
-  {
-    error->all(FC_FILE_LINE_FUNC, "not implemented.");
-    // auto v_cm = atom_data->owned_angular_momentum_cm();
-  }
+    void Cm_motion::fix_angular_momentum()
+    {
+      error->all(FC_FILE_LINE_FUNC, "not implemented.");
+      // auto v_cm = atom_data->owned_angular_momentum_cm();
+    }
 
-} // constraint
+  } // constraint
 
-CAVIAR_NAMESPACE_CLOSE
+}

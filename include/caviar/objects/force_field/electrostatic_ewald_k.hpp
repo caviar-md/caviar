@@ -20,78 +20,79 @@
 
 #include <complex>
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace force_field
+namespace caviar
 {
 
-  /**
-   * This class is electrostatic ewald in k-space force-field.
-   *
-   *
-   */
-  class Electrostatic_ewald_k : public Force_field
+  namespace force_field
   {
-  public:
-    Electrostatic_ewald_k(class CAVIAR *);
-    ~Electrostatic_ewald_k(){};
 
-    bool read(class caviar::interpreter::Parser *);
-    void verify_settings();
-    void calculate_acceleration();
-    double energy();
+    /**
+     * This class is electrostatic ewald in k-space force-field.
+     *
+     *
+     */
+    class Electrostatic_ewald_k : public Force_field
+    {
+    public:
+      Electrostatic_ewald_k(class CAVIAR *);
+      ~Electrostatic_ewald_k() {};
 
-  public:
-    double self_energy();
-    double dipole_energy();
-    double k_space_energy();
+      bool read(class caviar::interpreter::Parser *);
+      void verify_settings();
+      void calculate_acceleration();
+      double energy();
 
-    double potential(const Vector<double> &);
-    double potential(const int);
-    double k_space_potential(const Vector<double> &);
-    double k_space_potential(const int);
-    double dipole_potential(const Vector<double> &);
-    double dipole_potential(const int);
+    public:
+      double self_energy();
+      double dipole_energy();
+      double k_space_energy();
 
-    Vector<double> field(const Vector<double> &);
-    Vector<double> field(const int);
-    Vector<double> k_space_field(const Vector<double> &);
-    Vector<double> k_space_field(const int);
-    Vector<double> dipole_field();
+      double potential(const Vector<double> &);
+      double potential(const int);
+      double k_space_potential(const Vector<double> &);
+      double k_space_potential(const int);
+      double dipole_potential(const Vector<double> &);
+      double dipole_potential(const int);
 
-    int n_k_vectors;
-    bool initialized, calculated_once;
-    void initialize();
-    void make_k_vectors();
-    void calculate_alpha();
-    void calculate_dipole_sum();
+      Vector<double> field(const Vector<double> &);
+      Vector<double> field(const int);
+      Vector<double> k_space_field(const Vector<double> &);
+      Vector<double> k_space_field(const int);
+      Vector<double> dipole_field();
 
-    double k_electrostatic, alpha;
-    Vector<double> external_field;
+      int n_k_vectors;
+      bool initialized, calculated_once;
+      void initialize();
+      void make_k_vectors();
+      void calculate_alpha();
+      void calculate_dipole_sum();
 
-    // simulation box lengths and its product
-    double lx, lx_inv, ly, ly_inv, lz, lz_inv, l_xyz_inv;
+      double k_electrostatic, alpha;
+      Vector<double> external_field;
 
-    int kx_max, ky_max, kz_max;
-    //  std::vector<std::vector<std::vector<double>>> k_coef;
+      // simulation box lengths and its product
+      double lx, lx_inv, ly, ly_inv, lz, lz_inv, l_xyz_inv;
 
-    std::vector<Vector<double>> k_vector;
-    std::vector<double> k_vector_sq;
-    std::vector<double> field_k_coef; //, potential_k_coef;
+      int kx_max, ky_max, kz_max;
+      //  std::vector<std::vector<std::vector<double>>> k_coef;
 
-    std::vector<std::complex<double>> potential_k_coef_cmplx; // depends on the positions...
-    void calculate_potential_k_coef_cmplx();                  // ...of the particles in each time step
+      std::vector<Vector<double>> k_vector;
+      std::vector<double> k_vector_sq;
+      std::vector<double> field_k_coef; //, potential_k_coef;
 
-    bool dipole;
-    double epsilon_dipole;
-    double dipole_coef;                             // defined as k_electrostatic * 4PI/(1+2e')L^3
-    Vector<double> dipole_field_vector, dipole_sum; // dipole_sum: Sum_j(q_j vec(r_j))
+      std::vector<std::complex<double>> potential_k_coef_cmplx; // depends on the positions...
+      void calculate_potential_k_coef_cmplx();                  // ...of the particles in each time step
 
-    bool slab_geometry;
-    int slab_normal_axis;
-    double slab_lz;
-  };
+      bool dipole;
+      double epsilon_dipole;
+      double dipole_coef;                             // defined as k_electrostatic * 4PI/(1+2e')L^3
+      Vector<double> dipole_field_vector, dipole_sum; // dipole_sum: Sum_j(q_j vec(r_j))
 
-} // force_field
+      bool slab_geometry;
+      int slab_normal_axis;
+      double slab_lz;
+    };
 
-CAVIAR_NAMESPACE_CLOSE
+  } // force_field
+
+}

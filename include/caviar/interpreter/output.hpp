@@ -18,39 +18,40 @@
 
 #include "caviar/utility/pointers.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-namespace interpreter
+namespace caviar
 {
-
-  /**
-   * This class does all of the output massages.
-   *
-   *
-   */
-  class Output : public Pointers
+  namespace interpreter
   {
-  public:
-    Output(class CAVIAR *);
 
-    void comment(const std::string &, const bool endline = true);
-    void comment(const char *, const bool endline = true);
+    /**
+     * This class does all of the output massages.
+     *
+     *
+     */
+    class Output : public Pointers
+    {
+    public:
+      Output(class CAVIAR *);
 
-    void info(const std::string &, const int level = 0, const bool endline = true);
-    void info(const char *, const int level = 0, const bool endline = true);
+      void comment(const std::string &, const bool endline = true);
+      void comment(const char *, const bool endline = true);
 
-    void info_create(const std::string &, const int level = 1, const bool endline = true);
-    void info_create(const char *, const int level = 1, const bool endline = true);
+      void info(const std::string &, const int level = 0, const bool endline = true);
+      void info(const char *, const int level = 0, const bool endline = true);
 
-    void info_read(const std::string &, const int level = 1, const bool endline = true);
-    void info_read(const char *, const int level = 1, const bool endline = true);
+      void info_create(const std::string &, const int level = 1, const bool endline = true);
+      void info_create(const char *, const int level = 1, const bool endline = true);
 
-    void warning(const std::string &, const int level = 0, const bool endline = true);
-    void warning(const char *, const int level = 0, const bool endline = true);
+      void info_read(const std::string &, const int level = 1, const bool endline = true);
+      void info_read(const char *, const int level = 1, const bool endline = true);
 
-    bool read(class caviar::interpreter::Parser *);
+      void warning(const std::string &, const int level = 0, const bool endline = true);
+      void warning(const char *, const int level = 0, const bool endline = true);
 
-    bool output_info[5], output_warning[5];
-  };
+      bool read(class caviar::interpreter::Parser *);
 
-} // interpreter
-CAVIAR_NAMESPACE_CLOSE
+      bool output_info[5], output_warning[5];
+    };
+
+  } // interpreter
+}

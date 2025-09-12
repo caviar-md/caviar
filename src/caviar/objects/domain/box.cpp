@@ -15,21 +15,22 @@
 //========================================================================
 
 #include "caviar/objects/domain/box.hpp"
-//#include "caviar/interpreter/communicator.hpp"
+// #include "caviar/interpreter/communicator.hpp"
 #include "caviar/utility/interpreter_io_headers.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace domain
+namespace caviar
 {
 
-  Box::Box(CAVIAR *fptr) : Domain{fptr}
+  namespace domain
   {
-    FC_OBJECT_INITIALIZE_INFO
-  } 
 
-  Box::~Box() {}
+    Box::Box(CAVIAR *fptr) : Domain{fptr} {
+                                 FC_OBJECT_INITIALIZE_INFO}
 
-} // domain
+                             Box::~Box()
+    {
+    }
 
-CAVIAR_NAMESPACE_CLOSE
+  } // domain
+
+}

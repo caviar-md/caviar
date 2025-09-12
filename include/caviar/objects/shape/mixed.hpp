@@ -18,36 +18,37 @@
 
 #include "caviar/objects/shape.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace shape
+namespace caviar
 {
 
-  /**
-   * This class creates mixes of different shapes in order to define new shapes.
-   *
-   */
-  class Mixed : public caviar::Shape
+  namespace shape
   {
-  public:
-    Mixed(class CAVIAR *);
-    ~Mixed();
-    //    bool read (caviar::interpreter::Parser *, class Object_container *);
-    bool read(class caviar::interpreter::Parser *);
-    void satisfy_Mixed();
 
-    bool inside_check;
+    /**
+     * This class creates mixes of different shapes in order to define new shapes.
+     *
+     */
+    class Mixed : public caviar::Shape
+    {
+    public:
+      Mixed(class CAVIAR *);
+      ~Mixed();
+      //    bool read (caviar::interpreter::Parser *, class Object_container *);
+      bool read(class caviar::interpreter::Parser *);
+      void satisfy_Mixed();
 
-    bool is_inside(const Vector<double> &);
-    bool is_inside(const Vector<double> &, const double r);
-    bool in_contact(const Vector<double> &v, const double r, Vector<double> &contact_vector);
+      bool inside_check;
 
-    // bool is_all (const Vector<double> &); //checks 'is_inside()' if 'inside_check==true'
+      bool is_inside(const Vector<double> &);
+      bool is_inside(const Vector<double> &, const double r);
+      bool in_contact(const Vector<double> &v, const double r, Vector<double> &contact_vector);
 
-    std::vector<caviar::Shape *> shapes;
-    std::vector<int> operators; // 1:and_inside, -1:and_outside, 2:or_inside, -2:or_outside
-    bool shape_add;
-  };
-} // shape
+      // bool is_all (const Vector<double> &); //checks 'is_inside()' if 'inside_check==true'
 
-CAVIAR_NAMESPACE_CLOSE
+      std::vector<caviar::Shape *> shapes;
+      std::vector<int> operators; // 1:and_inside, -1:and_outside, 2:or_inside, -2:or_outside
+      bool shape_add;
+    };
+  } // shape
+
+}

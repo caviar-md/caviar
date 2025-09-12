@@ -20,35 +20,35 @@
 
 #include <cmath>
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace force_field
+namespace caviar
 {
 
-  double Electrostatic_ewald1d::energy()
+  namespace force_field
   {
-    // /* // XXX scheme using potential formula.
-    const auto &pos = atom_data->atom_struct_owned.position;
-    double energy_r = 0;
-#ifdef CAVIAR_WITH_OPENMP
-#pragma omp parallel for reduction(+ \
-                                   : energy_r)
-#endif
-    for (unsigned int j = 0; j < pos.size(); ++j)
+
+    double Electrostatic_ewald1d::energy()
     {
-#ifdef CAVIAR_WITH_MPI
-      if (atom_data->atom_struct_owned.mpi_rank[j] != my_mpi_rank)
-        continue;
+      // /* // XXX scheme using potential formula.
+      const auto &pos = atom_data->atom_struct_owned.position;
+      double energy_r = 0;
+#ifdef CAVIAR_WITH_OPENMP
+#pragma omp parallel for reduction(+ : energy_r)
 #endif
-      const auto type_j = atom_data->atom_struct_owned.type[j];
-      const auto charge_j = atom_data->atom_type_params.charge[type_j];
-      //    energy_r += charge_j * potential(j); //
-      energy_r += charge_j * potential(pos[j]); //
+      for (unsigned int j = 0; j < pos.size(); ++j)
+      {
+#ifdef CAVIAR_WITH_MPI
+        if (atom_data->atom_struct_owned.mpi_rank[j] != my_mpi_rank)
+          continue;
+#endif
+        const auto type_j = atom_data->atom_struct_owned.type[j];
+        const auto charge_j = atom_data->atom_type_params.charge[type_j];
+        //    energy_r += charge_j * potential(j); //
+        energy_r += charge_j * potential(pos[j]); //
+      }
+      return 0.5 * energy_r;
+      // */
     }
-    return 0.5 * energy_r;
-    // */
-  }
 
-} // force_field
+  } // force_field
 
-CAVIAR_NAMESPACE_CLOSE
+}

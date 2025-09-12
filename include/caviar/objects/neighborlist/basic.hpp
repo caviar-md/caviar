@@ -18,23 +18,24 @@
 
 #include "caviar/objects/neighborlist.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace neighborlist
+namespace caviar
 {
 
-   /**
-    * This class has the basic class implementation for Neighborlist
-    *
-    *
-    */
-   class Basic : public Neighborlist
+   namespace neighborlist
    {
-   public:
-      Basic(class CAVIAR *);
-      ~Basic();
-   };
 
-} // neighborlist
+      /**
+       * This class has the basic class implementation for Neighborlist
+       *
+       *
+       */
+      class Basic : public Neighborlist
+      {
+      public:
+         Basic(class CAVIAR *);
+         ~Basic();
+      };
 
-CAVIAR_NAMESPACE_CLOSE
+   } // neighborlist
+
+}

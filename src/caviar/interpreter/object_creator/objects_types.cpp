@@ -18,9 +18,10 @@
 #include "caviar/utility/interpreter_io_headers.hpp"
 #include "caviar/objects/all_derived_classes.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-namespace interpreter
+namespace caviar
 {
+  namespace interpreter
+  {
 
 #define FC_OBJECT_CREATOR_DEFAULT_FUNCTION(VAR1) \
   bool Object_creator::VAR1(Parser *parser)
@@ -62,5 +63,5 @@ namespace interpreter
 #undef FC_GET_OBJECT_TYPE_AND_NAME
 #undef FC_ADD_OBJECT_TO_CONTAINER
 
-} // interpreter
-CAVIAR_NAMESPACE_CLOSE
+  } // interpreter
+}

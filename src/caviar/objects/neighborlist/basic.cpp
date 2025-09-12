@@ -16,24 +16,23 @@
 
 #include "caviar/objects/neighborlist/basic.hpp"
 #include "caviar/utility/interpreter_io_headers.hpp"
-//#include "caviar/utility/time_utility.hpp"
+// #include "caviar/utility/time_utility.hpp"
 #include "caviar/interpreter/communicator.hpp"
-//#include <ctime>
+// #include <ctime>
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace neighborlist
+namespace caviar
 {
 
-  Basic::Basic(CAVIAR *fptr) : Neighborlist{fptr} 
+  namespace neighborlist
   {
-    FC_OBJECT_INITIALIZE_INFO
-  }
 
-  Basic::~Basic()
-  {
-  }
+    Basic::Basic(CAVIAR *fptr) : Neighborlist{fptr} {
+                                     FC_OBJECT_INITIALIZE_INFO}
 
-} // md_simulator
+                                 Basic::~Basic()
+    {
+    }
 
-CAVIAR_NAMESPACE_CLOSE
+  } // md_simulator
+
+}

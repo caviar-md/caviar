@@ -18,24 +18,25 @@
 
 #include "caviar/objects/atom_data.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace atom_data
+namespace caviar
 {
 
-  /**
-   * This class has the basic class implementation for Atom_data
-   *
-   *
-   */
-  class Basic : public Atom_data
+  namespace atom_data
   {
-  public:
-    Basic(class CAVIAR *);
 
-    ~Basic();
-  };
+    /**
+     * This class has the basic class implementation for Atom_data
+     *
+     *
+     */
+    class Basic : public Atom_data
+    {
+    public:
+      Basic(class CAVIAR *);
 
-} // atom_data
+      ~Basic();
+    };
 
-CAVIAR_NAMESPACE_CLOSE
+  } // atom_data
+
+}

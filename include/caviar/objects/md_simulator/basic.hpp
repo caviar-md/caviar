@@ -18,23 +18,24 @@
 
 #include "caviar/objects/md_simulator.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace md_simulator
+namespace caviar
 {
 
-   /**
-    * This class has the basic class implementation for md_simulator
-    *
-    *
-    */
-   class Basic : public Md_simulator
+   namespace md_simulator
    {
-   public:
-      Basic(class CAVIAR *);
-      ~Basic();
-   };
 
-} // md_simulator
+      /**
+       * This class has the basic class implementation for md_simulator
+       *
+       *
+       */
+      class Basic : public Md_simulator
+      {
+      public:
+         Basic(class CAVIAR *);
+         ~Basic();
+      };
 
-CAVIAR_NAMESPACE_CLOSE
+   } // md_simulator
+
+}

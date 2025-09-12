@@ -25,7 +25,8 @@
 
 #include "caviar/utility/common_template_functions.hpp"
 
-CAVIAR_NAMESPACE_OPEN
+namespace caviar
+{
 
 namespace interpreter
 {
@@ -86,4 +87,4 @@ public:
   bool interpreter_continue_called;
 };
 
-CAVIAR_NAMESPACE_CLOSE
+}

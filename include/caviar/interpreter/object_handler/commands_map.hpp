@@ -18,18 +18,19 @@
 
 #include "caviar/interpreter/object_handler.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-namespace interpreter
+namespace caviar
 {
-    // using CommandFunc_object_handler = bool (Object_handler::*) (Parser *); // a pointer to boolean function of ...
+    namespace interpreter
+    {
+        // using CommandFunc_object_handler = bool (Object_handler::*) (Parser *); // a pointer to boolean function of ...
 
-    /**
-     * A map between command names and the related functions.
-     *
-     *
-     */
-    const std::map<std::string, CommandFunc_object_handler> Object_handler::commands_map = {
+        /**
+         * A map between command names and the related functions.
+         *
+         *
+         */
+        const std::map<std::string, CommandFunc_object_handler> Object_handler::commands_map = {
 
-    };
-} // interpreter
-CAVIAR_NAMESPACE_CLOSE
+        };
+    } // interpreter
+}

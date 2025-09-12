@@ -16,108 +16,72 @@
 
 #include "caviar/interpreter/error.hpp"
 #if defined(CAVIAR_WITH_MPI)
-#include<mpi.h>
+#include <mpi.h>
 #endif
-CAVIAR_NAMESPACE_OPEN
-namespace interpreter
+namespace caviar
 {
-  Error::Error(CAVIAR *fptr) : Pointers{fptr} {}
-
-  // All procs must call this else there would be a deadlock
-  void Error::all(const std::string &str)
+  namespace interpreter
   {
-    err << "[ERR] " << str << std::endl;
-    exit(1);
-  }
+    Error::Error(CAVIAR *fptr) : Pointers{fptr} {}
 
-  void Error::all(const char *file, int line, const char *func, const std::string &parsing_line, unsigned int col, const char *str)
-  {
-    int me = 0;
-#ifdef CAVIAR_WITH_MPI
-    MPI_Comm_rank(MPI_COMM_WORLD, &me);
-    MPI_Barrier(MPI_COMM_WORLD);
-#endif
-    if (me == 0)
-    {
-      if (err_flag)
-      {
-        err << "[ERR] " << str << std::endl;
-        err << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
-        err << parsing_line << std::endl;
-        for (unsigned int i = 0; i < col; ++i)
-          err << ' ';
-        err << '^' << std::endl;
-      }
-      if (log_flag)
-      {
-        log << "[ERR] " << str << std::endl;
-        log << " '" << file << ':' << line << " in '" << func << "'." << std::endl;
-        log << parsing_line << std::endl;
-        for (unsigned int i = 0; i < col; ++i)
-          log << ' ';
-        log << '^' << std::endl;
-      }
-      if (log_flag)
-        log.close();
-    }
-#ifdef CAVIAR_WITH_MPI
-    MPI_Finalize();
-#endif
-    exit(1);
-  }
-
-  // One proc calling this will abort all
-
-  void Error::one(const char *file, int line, const char *func, const std::string &parsing_line, unsigned int col, const char *str)
-  {
-#ifdef CAVIAR_WITH_MPI
-    int me;
-    MPI_Comm_rank(MPI_COMM_WORLD, &me);
-    if (err_flag)
+    // All procs must call this else there would be a deadlock
+    void Error::all(const std::string &str)
     {
       err << "[ERR] " << str << std::endl;
-      err << " MPI rank " << me << std::endl;
-      err << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
-      
-
-      err << parsing_line << std::endl;
-      for (unsigned i = 0; i < col; ++i)
-        err << ' ';
-      err << '^' << std::endl;
+      exit(1);
     }
-    if (log_flag)
+
+    void Error::all(const char *file, int line, const char *func, const std::string &parsing_line, unsigned int col, const char *str)
     {
-      log << "[ERR] " << str << std::endl;
-      err << " MPI rank " << me << std::endl;
-      log << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
-      log << parsing_line << std::endl;
-      for (unsigned i = 0; i < col; ++i)
-        log << ' ';
-      log << '^' << std::endl;
-    }
-    MPI_Abort(MPI_COMM_WORLD, 1);
-#else
-    all(file, line, func, parsing_line, col, str);
-#endif
-  }
-
-  void Error::all(const char *file, int line, const char *func, const std::string &parsing_line, unsigned int col, const std::string &str)
-  {
-    int me = 0;
+      int me = 0;
 #ifdef CAVIAR_WITH_MPI
-    MPI_Comm_rank(MPI_COMM_WORLD, &me);
-    MPI_Barrier(MPI_COMM_WORLD);
+      MPI_Comm_rank(MPI_COMM_WORLD, &me);
+      MPI_Barrier(MPI_COMM_WORLD);
 #endif
-    //  /*
-    if (me == 0)
+      if (me == 0)
+      {
+        if (err_flag)
+        {
+          err << "[ERR] " << str << std::endl;
+          err << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+          err << parsing_line << std::endl;
+          for (unsigned int i = 0; i < col; ++i)
+            err << ' ';
+          err << '^' << std::endl;
+        }
+        if (log_flag)
+        {
+          log << "[ERR] " << str << std::endl;
+          log << " '" << file << ':' << line << " in '" << func << "'." << std::endl;
+          log << parsing_line << std::endl;
+          for (unsigned int i = 0; i < col; ++i)
+            log << ' ';
+          log << '^' << std::endl;
+        }
+        if (log_flag)
+          log.close();
+      }
+#ifdef CAVIAR_WITH_MPI
+      MPI_Finalize();
+#endif
+      exit(1);
+    }
+
+    // One proc calling this will abort all
+
+    void Error::one(const char *file, int line, const char *func, const std::string &parsing_line, unsigned int col, const char *str)
     {
+#ifdef CAVIAR_WITH_MPI
+      int me;
+      MPI_Comm_rank(MPI_COMM_WORLD, &me);
       if (err_flag)
       {
         err << "[ERR] " << str << std::endl;
         err << " MPI rank " << me << std::endl;
         err << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+
         err << parsing_line << std::endl;
-        for (unsigned int i = 0; i < col; ++i)
+        for (unsigned i = 0; i < col; ++i)
           err << ' ';
         err << '^' << std::endl;
       }
@@ -127,102 +91,138 @@ namespace interpreter
         err << " MPI rank " << me << std::endl;
         log << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
         log << parsing_line << std::endl;
-        for (unsigned int i = 0; i < col; ++i)
+        for (unsigned i = 0; i < col; ++i)
           log << ' ';
         log << '^' << std::endl;
       }
-      if (log_flag)
-        log.close();
+      MPI_Abort(MPI_COMM_WORLD, 1);
+#else
+      all(file, line, func, parsing_line, col, str);
+#endif
     }
+
+    void Error::all(const char *file, int line, const char *func, const std::string &parsing_line, unsigned int col, const std::string &str)
+    {
+      int me = 0;
+#ifdef CAVIAR_WITH_MPI
+      MPI_Comm_rank(MPI_COMM_WORLD, &me);
+      MPI_Barrier(MPI_COMM_WORLD);
+#endif
+      //  /*
+      if (me == 0)
+      {
+        if (err_flag)
+        {
+          err << "[ERR] " << str << std::endl;
+          err << " MPI rank " << me << std::endl;
+          err << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+          err << parsing_line << std::endl;
+          for (unsigned int i = 0; i < col; ++i)
+            err << ' ';
+          err << '^' << std::endl;
+        }
+        if (log_flag)
+        {
+          log << "[ERR] " << str << std::endl;
+          err << " MPI rank " << me << std::endl;
+          log << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+          log << parsing_line << std::endl;
+          for (unsigned int i = 0; i < col; ++i)
+            log << ' ';
+          log << '^' << std::endl;
+        }
+        if (log_flag)
+          log.close();
+      }
 //  */
 #ifdef CAVIAR_WITH_MPI
-    MPI_Finalize();
+      MPI_Finalize();
 #endif
-    exit(1);
-  }
-
-  void Error::one(const char *file, int line, const char *func, const std::string &parsing_line, unsigned int col, const std::string &str)
-  {
-#ifdef CAVIAR_WITH_MPI
-    int me;
-    MPI_Comm_rank(MPI_COMM_WORLD, &me);
-    if (err_flag)
-    {
-      err << "[ERR] " << str << std::endl;
-      err << " MPI rank " << me << std::endl;
-      err << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
-      err << parsing_line << std::endl;
-      for (unsigned i = 0; i < col; ++i)
-        err << ' ';
-      err << '^' << std::endl;
+      exit(1);
     }
-    if (log_flag)
-    {
-      log << "[ERR] " << str << std::endl;
-      err << " MPI rank " << me << std::endl;
-      log << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
-      log << parsing_line << std::endl;
-      for (unsigned i = 0; i < col; ++i)
-        log << ' ';
-      log << '^' << std::endl;
-    }
-    MPI_Abort(MPI_COMM_WORLD, 1);
-#else
-    all(file, line, func, parsing_line, col, str);
-#endif
-  }
 
-  void Error::all(const char *file, int line, const char *func, const std::string &str)
-  {
-    int me = 0;
+    void Error::one(const char *file, int line, const char *func, const std::string &parsing_line, unsigned int col, const std::string &str)
+    {
 #ifdef CAVIAR_WITH_MPI
-    MPI_Comm_rank(MPI_COMM_WORLD, &me);
-    MPI_Barrier(MPI_COMM_WORLD);
-#endif
-
-    if (me == 0)
-    {
+      int me;
+      MPI_Comm_rank(MPI_COMM_WORLD, &me);
       if (err_flag)
       {
         err << "[ERR] " << str << std::endl;
+        err << " MPI rank " << me << std::endl;
+        err << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+        err << parsing_line << std::endl;
+        for (unsigned i = 0; i < col; ++i)
+          err << ' ';
+        err << '^' << std::endl;
+      }
+      if (log_flag)
+      {
+        log << "[ERR] " << str << std::endl;
+        err << " MPI rank " << me << std::endl;
+        log << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+        log << parsing_line << std::endl;
+        for (unsigned i = 0; i < col; ++i)
+          log << ' ';
+        log << '^' << std::endl;
+      }
+      MPI_Abort(MPI_COMM_WORLD, 1);
+#else
+      all(file, line, func, parsing_line, col, str);
+#endif
+    }
+
+    void Error::all(const char *file, int line, const char *func, const std::string &str)
+    {
+      int me = 0;
+#ifdef CAVIAR_WITH_MPI
+      MPI_Comm_rank(MPI_COMM_WORLD, &me);
+      MPI_Barrier(MPI_COMM_WORLD);
+#endif
+
+      if (me == 0)
+      {
+        if (err_flag)
+        {
+          err << "[ERR] " << str << std::endl;
+          err << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+        }
+        if (log_flag)
+        {
+          log << "[ERR] " << str << std::endl;
+          log << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
+        }
+        if (log_flag)
+          log.close();
+      }
+
+#ifdef CAVIAR_WITH_MPI
+      MPI_Finalize();
+#endif
+      exit(1);
+    }
+
+    void Error::one(const char *file, int line, const char *func, const std::string &str)
+    {
+#ifdef CAVIAR_WITH_MPI
+      int me;
+      MPI_Comm_rank(MPI_COMM_WORLD, &me);
+      if (err_flag)
+      {
+        err << "[ERR] " << str << std::endl;
+        err << " MPI rank " << me << std::endl;
         err << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
       }
       if (log_flag)
       {
         log << "[ERR] " << str << std::endl;
+        log << " MPI rank " << me << std::endl;
         log << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
       }
-      if (log_flag)
-        log.close();
-    }
-
-#ifdef CAVIAR_WITH_MPI
-    MPI_Finalize();
-#endif
-    exit(1);
-  }
-
-  void Error::one(const char *file, int line, const char *func, const std::string &str)
-  {
-#ifdef CAVIAR_WITH_MPI
-    int me;
-    MPI_Comm_rank(MPI_COMM_WORLD, &me);
-    if (err_flag)
-    {
-      err << "[ERR] " << str << std::endl;
-      err << " MPI rank " << me << std::endl;
-      err << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
-    }
-    if (log_flag)
-    {
-      log << "[ERR] " << str << std::endl;
-      log << " MPI rank " << me << std::endl;
-      log << " '" << file << ':' << line << "' in '" << func << "'." << std::endl;
-    }
-    MPI_Abort(MPI_COMM_WORLD, 1);
+      MPI_Abort(MPI_COMM_WORLD, 1);
 #else
-    all(file, line, func, str);
+      all(file, line, func, str);
 #endif
-  }
-} // interpreter
-CAVIAR_NAMESPACE_CLOSE
+    }
+  } // interpreter
+}

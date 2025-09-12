@@ -21,26 +21,27 @@
 #include <string>
 #include <map>
 
-CAVIAR_NAMESPACE_OPEN
-namespace interpreter
+namespace caviar
 {
-  class Parser;
-  using CommandFunc_object_creator = bool (Object_creator::*)(Parser *); // a pointer to boolean function of ...
-
-  /**
-   * This class handles the object creations.
-   *
-   *
-   */
-  class Object_creator : public Pointers
+  namespace interpreter
   {
-  public:
-    Object_creator(class CAVIAR *);
-    ~Object_creator();
+    class Parser;
+    using CommandFunc_object_creator = bool (Object_creator::*)(Parser *); // a pointer to boolean function of ...
 
-    const static std::map<std::string, CommandFunc_object_creator> commands_map;
+    /**
+     * This class handles the object creations.
+     *
+     *
+     */
+    class Object_creator : public Pointers
+    {
+    public:
+      Object_creator(class CAVIAR *);
+      ~Object_creator();
 
-    // objects creator function declerations.
+      const static std::map<std::string, CommandFunc_object_creator> commands_map;
+
+      // objects creator function declerations.
 
 #define FC_GENERAL_CLASSNAME_MACRO(VAR1, VAR2, VAR3) \
   bool VAR2(Parser *);
@@ -52,7 +53,7 @@ namespace interpreter
 #undef FC_GENERAL_CLASSNAME_MACRO_ACTIVATED
 #undef FC_GENERAL_CLASSNAME_MACRO
 
-    // basic types creator function declerations.
+      // basic types creator function declerations.
 
 #define FC_BASIC_TYPES_MACRO(VAR1) \
   bool VAR1(Parser *);
@@ -64,7 +65,7 @@ namespace interpreter
 #undef FC_BASIC_TYPES_MACRO_ACTIVATED
 #undef FC_BASIC_TYPES_MACRO
 
-  public:
-  };
-} // interpreter
-CAVIAR_NAMESPACE_CLOSE
+    public:
+    };
+  } // interpreter
+}

@@ -19,44 +19,45 @@
 #include "caviar/utility/pointers.hpp"
 #include "caviar/utility/vector.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace shape
+namespace caviar
 {
-  namespace polyhedron
+
+  namespace shape
   {
-
-    struct Polyhedron;
-    /**
-     * a utility class for polyhedrons
-     */
-    class Utility : public Pointers
+    namespace polyhedron
     {
-    public:
-      Utility(class CAVIAR *);
-      ~Utility();
 
+      struct Polyhedron;
       /**
-       * after reading polyhedron file, it calculates normal vectors
+       * a utility class for polyhedrons
        */
-      void make_normal(shape::polyhedron::Polyhedron &);
+      class Utility : public Pointers
+      {
+      public:
+        Utility(class CAVIAR *);
+        ~Utility();
 
-      /**
-       * makes normals of faces made of edges and other normals used in check_inside() algorithm.
-       */
-      void make_edge_norms(shape::polyhedron::Polyhedron &);
+        /**
+         * after reading polyhedron file, it calculates normal vectors
+         */
+        void make_normal(shape::polyhedron::Polyhedron &);
 
-      /**
-       * multiply all the normal Vectors with -1
-       */
-      void invert_normals(shape::polyhedron::Polyhedron &);
+        /**
+         * makes normals of faces made of edges and other normals used in check_inside() algorithm.
+         */
+        void make_edge_norms(shape::polyhedron::Polyhedron &);
 
-      /**
-       * does what it says by using an inside point.
-       */
-      bool normals_are_pointing_outside(shape::polyhedron::Polyhedron &p_object, const Vector<double> &);
-    };
-  } // polyhedron
-} // shape
+        /**
+         * multiply all the normal Vectors with -1
+         */
+        void invert_normals(shape::polyhedron::Polyhedron &);
 
-CAVIAR_NAMESPACE_CLOSE
+        /**
+         * does what it says by using an inside point.
+         */
+        bool normals_are_pointing_outside(shape::polyhedron::Polyhedron &p_object, const Vector<double> &);
+      };
+    } // polyhedron
+  } // shape
+
+}

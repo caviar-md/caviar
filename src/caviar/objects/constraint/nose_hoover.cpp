@@ -18,166 +18,167 @@
 #include "caviar/objects/atom_data.hpp"
 #include "caviar/utility/interpreter_io_headers.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace constraint
+namespace caviar
 {
 
-  Nose_hoover::Nose_hoover(CAVIAR *fptr) : Constraint{fptr}
+  namespace constraint
   {
-    FC_OBJECT_INITIALIZE_INFO
-    dt = -1.0;
-    settings_verified = false;
-    kb = 1.0;
-    mass = -1.0;
-    tau = -1.0;
-    type = 1;
-    constraint_type = Constraint_t::Nose_hoover;
-  }
 
-  Nose_hoover::~Nose_hoover() {}
-
-  bool Nose_hoover::read(caviar::interpreter::Parser *parser)
-  {
-    FC_OBJECT_READ_INFO
-    bool in_file = true;
-    while (true)
+    Nose_hoover::Nose_hoover(CAVIAR *fptr) : Constraint{fptr}
     {
-      GET_A_TOKEN_FOR_CREATION
-      auto t = token.string_value;
-      FC_OBJECT_READ_INFO_STR
-      if (string_cmp(t, "mass"))
+      FC_OBJECT_INITIALIZE_INFO
+      dt = -1.0;
+      settings_verified = false;
+      kb = 1.0;
+      mass = -1.0;
+      tau = -1.0;
+      type = 1;
+      constraint_type = Constraint_t::Nose_hoover;
+    }
+
+    Nose_hoover::~Nose_hoover() {}
+
+    bool Nose_hoover::read(caviar::interpreter::Parser *parser)
+    {
+      FC_OBJECT_READ_INFO
+      bool in_file = true;
+      while (true)
       {
-        GET_OR_CHOOSE_A_REAL(mass, "", "")
-        if (mass <= 0.0)
-          error->all(FC_FILE_LINE_FUNC_PARSE, "mass have to non-negative.");
+        GET_A_TOKEN_FOR_CREATION
+        auto t = token.string_value;
+        FC_OBJECT_READ_INFO_STR
+        if (string_cmp(t, "mass"))
+        {
+          GET_OR_CHOOSE_A_REAL(mass, "", "")
+          if (mass <= 0.0)
+            error->all(FC_FILE_LINE_FUNC_PARSE, "mass have to non-negative.");
+        }
+        else if (string_cmp(t, "dt"))
+        {
+          GET_OR_CHOOSE_A_REAL(dt, "", "")
+          if (dt <= 0.0)
+            error->all(FC_FILE_LINE_FUNC_PARSE, "dt have to non-negative.");
+        }
+        else if (string_cmp(t, "tau"))
+        {
+          GET_OR_CHOOSE_A_REAL(tau, "", "")
+          if (tau <= 0.0)
+            error->all(FC_FILE_LINE_FUNC_PARSE, "dt have to non-negative.");
+        }
+        else if (string_cmp(t, "type"))
+        {
+          GET_OR_CHOOSE_A_INT(type, "", "")
+          if (type <= 0.0)
+            error->all(FC_FILE_LINE_FUNC_PARSE, "type have to non-negative.");
+        }
+        else if (string_cmp(t, "kb"))
+        {
+          GET_OR_CHOOSE_A_REAL(kb, "", "")
+          if (kb <= 0.0)
+            error->all(FC_FILE_LINE_FUNC_PARSE, "kb have to non-negative.");
+        }
+        else if (string_cmp(t, "temperature"))
+        {
+          GET_OR_CHOOSE_A_REAL(temperature, "", "")
+          if (temperature <= 0.0)
+            error->all(FC_FILE_LINE_FUNC_PARSE, "Temperature have to non-negative.");
+        }
+        else if (string_cmp(t, "set_atom_data") || string_cmp(t, "atom_data"))
+        {
+          FIND_OBJECT_BY_NAME(atom_data, it)
+          atom_data = object_container->atom_data[it->second.index];
+        }
+        else
+        {
+          error->all(FC_FILE_LINE_FUNC_PARSE, "Unknown variable or command");
+        }
       }
-      else if (string_cmp(t, "dt"))
+      return in_file;
+    }
+
+    void Nose_hoover::verify_settings()
+    {
+      FC_NULLPTR_CHECK(atom_data)
+
+      if (dt < 0.0)
+        error->all(FC_FILE_LINE_FUNC, "dt is not set.");
+
+      switch (type)
       {
-        GET_OR_CHOOSE_A_REAL(dt, "", "")
-        if (dt <= 0.0)
-          error->all(FC_FILE_LINE_FUNC_PARSE, "dt have to non-negative.");
-      }
-      else if (string_cmp(t, "tau"))
+      case (1):
       {
-        GET_OR_CHOOSE_A_REAL(tau, "", "")
-        if (tau <= 0.0)
-          error->all(FC_FILE_LINE_FUNC_PARSE, "dt have to non-negative.");
+        if (mass < 0.0)
+          error->all(FC_FILE_LINE_FUNC, "mass is not set.");
       }
-      else if (string_cmp(t, "type"))
+      break;
+
+      case (2):
       {
-        GET_OR_CHOOSE_A_INT(type, "", "")
-        if (type <= 0.0)
-          error->all(FC_FILE_LINE_FUNC_PARSE, "type have to non-negative.");
+        if (tau < 0.0)
+          error->all(FC_FILE_LINE_FUNC, "tau is not set.");
       }
-      else if (string_cmp(t, "kb"))
+      break;
+
+      default:
+        error->all(FC_FILE_LINE_FUNC, "this Nose-Hoover type is not implemented.  Expected type 1 or 2");
+      }
+      settings_verified = true;
+    }
+
+    void Nose_hoover::apply_thermostat(int64_t timestep, bool &recalculate_temperature)
+    { // step I
+      if (!settings_verified)
+        verify_settings();
+      recalculate_temperature = true;
+      auto n_df = atom_data->degree_of_freedoms();
+
+      // Nose formalism (real-time)
+      auto g = n_df;
+
+      // Nose-Hoover formalism (virtual-time)
+      // auto g = n_df + 1;
+
+      auto temp_inst = atom_data->temperature();
+
+      if (temp_inst == 0)
       {
-        GET_OR_CHOOSE_A_REAL(kb, "", "")
-        if (kb <= 0.0)
-          error->all(FC_FILE_LINE_FUNC_PARSE, "kb have to non-negative.");
+        output->warning("Temperature = 0. Nose_hoover thermostat step is ignored at " + std::to_string(timestep));
       }
-      else if (string_cmp(t, "temperature"))
+
+      switch (type)
       {
-        GET_OR_CHOOSE_A_REAL(temperature, "", "")
-        if (temperature <= 0.0)
-          error->all(FC_FILE_LINE_FUNC_PARSE, "Temperature have to non-negative.");
-      }
-      else if (string_cmp(t, "set_atom_data") || string_cmp(t, "atom_data"))
+      case (1):
       {
-        FIND_OBJECT_BY_NAME(atom_data, it)
-        atom_data = object_container->atom_data[it->second.index];
+        zeta_dot = (-kb * n_df * temp_inst / mass) * ((g * temperature / (n_df * temp_inst)) - 1.0);
       }
-      else
+      break;
+
+      case (2):
       {
-        error->all(FC_FILE_LINE_FUNC_PARSE, "Unknown variable or command");
+        zeta_dot = (-1.0 / tau) * ((g * temperature / (n_df * temp_inst)) - 1.0);
+      }
+      break;
+
+      default:
+        error->all(FC_FILE_LINE_FUNC, "this Nose-Hoover type is not implemented. Expected type 1 or 2");
+      }
+
+      // a simple euler integration.
+      zeta += dt * zeta_dot;
+
+      // ------------------------------- // step II
+      // We can put both of these function (step_I and step_II) into one if the Euler
+      // integration is used.
+
+      auto &vel = atom_data->atom_struct_owned.velocity;
+      auto &acc = atom_data->atom_struct_owned.acceleration;
+      auto psize = acc.size();
+      for (unsigned int i = 0; i < psize; ++i)
+      {
+        acc[i] += -zeta * vel[i];
       }
     }
-    return in_file;
-  }
 
-  void Nose_hoover::verify_settings()
-  {
-    FC_NULLPTR_CHECK(atom_data)
+  } // constraint
 
-    if (dt < 0.0)
-      error->all(FC_FILE_LINE_FUNC, "dt is not set.");
-
-    switch (type)
-    {
-    case (1):
-    {
-      if (mass < 0.0)
-        error->all(FC_FILE_LINE_FUNC, "mass is not set.");
-    }
-    break;
-
-    case (2):
-    {
-      if (tau < 0.0)
-        error->all(FC_FILE_LINE_FUNC, "tau is not set.");
-    }
-    break;
-
-    default:
-      error->all(FC_FILE_LINE_FUNC, "this Nose-Hoover type is not implemented.  Expected type 1 or 2");
-    }
-    settings_verified = true;
-  }
-
-  void Nose_hoover::apply_thermostat(int64_t timestep,  bool &recalculate_temperature)
-  { // step I
-    if (!settings_verified)
-      verify_settings();
-    recalculate_temperature = true;
-    auto n_df = atom_data->degree_of_freedoms();
-
-    // Nose formalism (real-time)
-    auto g = n_df;
-
-    // Nose-Hoover formalism (virtual-time)
-    // auto g = n_df + 1;
-
-    auto temp_inst = atom_data->temperature();
-
-    if (temp_inst == 0)
-    {
-      output->warning("Temperature = 0. Nose_hoover thermostat step is ignored at "+ std::to_string (timestep));
-    }
-
-    switch (type)
-    {
-    case (1):
-    {
-      zeta_dot = (-kb * n_df * temp_inst / mass) * ((g * temperature / (n_df * temp_inst)) - 1.0);
-    }
-    break;
-
-    case (2):
-    {
-      zeta_dot = (-1.0 / tau) * ((g * temperature / (n_df * temp_inst)) - 1.0);
-    }
-    break;
-
-    default:
-      error->all(FC_FILE_LINE_FUNC, "this Nose-Hoover type is not implemented. Expected type 1 or 2");
-    }
-
-    // a simple euler integration.
-    zeta += dt * zeta_dot;
-
-    // ------------------------------- // step II
-    // We can put both of these function (step_I and step_II) into one if the Euler
-    // integration is used.
-
-    auto &vel = atom_data->atom_struct_owned.velocity;
-    auto &acc = atom_data->atom_struct_owned.acceleration;
-    auto psize = acc.size();
-    for (unsigned int i = 0; i < psize; ++i)
-    {
-      acc[i] += -zeta * vel[i];
-    }
-  }
-
-} // constraint
-
-CAVIAR_NAMESPACE_CLOSE
+}

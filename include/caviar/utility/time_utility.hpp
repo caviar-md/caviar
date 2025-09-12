@@ -15,10 +15,11 @@
 //========================================================================
 #include "caviar/utility/caviar_config.hpp"
 
-CAVIAR_NAMESPACE_OPEN
+namespace caviar
+{
 
-double get_wall_time();
+  double get_wall_time();
 
-double get_cpu_time();
+  double get_cpu_time();
 
-CAVIAR_NAMESPACE_CLOSE
+}

@@ -18,31 +18,32 @@
 
 #include "caviar/utility/pointers.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace shape
+namespace caviar
 {
-  namespace polyhedron
+
+  namespace shape
   {
-    struct Polyhedron;
-    class Postprocess : public Pointers
+    namespace polyhedron
     {
-    public:
-      Postprocess(class CAVIAR *);
-      ~Postprocess();
+      struct Polyhedron;
+      class Postprocess : public Pointers
+      {
+      public:
+        Postprocess(class CAVIAR *);
+        ~Postprocess();
 
-      /**
-       * contains the faces neccesary to check
-       * make_grid has to be called after lowest_highest_coord()
-       */
-      void make_grid(shape::polyhedron::Polyhedron &);
+        /**
+         * contains the faces neccesary to check
+         * make_grid has to be called after lowest_highest_coord()
+         */
+        void make_grid(shape::polyhedron::Polyhedron &);
 
-      /**
-       * calculates gxlo, gxhi, gylo...
-       */
-      void lowest_highest_coord(shape::polyhedron::Polyhedron &);
-    };
-  } // polyhedron
-} // shape
+        /**
+         * calculates gxlo, gxhi, gylo...
+         */
+        void lowest_highest_coord(shape::polyhedron::Polyhedron &);
+      };
+    } // polyhedron
+  } // shape
 
-CAVIAR_NAMESPACE_CLOSE
+}

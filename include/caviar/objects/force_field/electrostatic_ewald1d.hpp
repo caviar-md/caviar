@@ -18,54 +18,55 @@
 
 #include "caviar/objects/force_field.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace force_field
+namespace caviar
 {
 
-  /**
-   * This class has a one-dimentional-periodic electrostatic ewald force-field.
-   *
-   *
-   */
-  class Electrostatic_ewald1d : public Force_field
+  namespace force_field
   {
-  public:
-    Electrostatic_ewald1d(class CAVIAR *);
-    ~Electrostatic_ewald1d(){};
-    double potential(const Vector<double> &);
-    double potential(const int);
 
-    double potential_r(const Vector<double> &);
-    double potential_r(const int);
+    /**
+     * This class has a one-dimentional-periodic electrostatic ewald force-field.
+     *
+     *
+     */
+    class Electrostatic_ewald1d : public Force_field
+    {
+    public:
+      Electrostatic_ewald1d(class CAVIAR *);
+      ~Electrostatic_ewald1d() {};
+      double potential(const Vector<double> &);
+      double potential(const int);
 
-    double potential_k(const Vector<double> &);
-    double potential_k(const int);
+      double potential_r(const Vector<double> &);
+      double potential_r(const int);
 
-    Vector<double> field(const Vector<double> &);
-    Vector<double> field(const int);
+      double potential_k(const Vector<double> &);
+      double potential_k(const int);
 
-    Vector<double> field_r(const Vector<double> &);
-    Vector<double> field_r(const int);
+      Vector<double> field(const Vector<double> &);
+      Vector<double> field(const int);
 
-    Vector<double> field_k(const Vector<double> &);
-    Vector<double> field_k(const int);
+      Vector<double> field_r(const Vector<double> &);
+      Vector<double> field_r(const int);
 
-    double energy();
+      Vector<double> field_k(const Vector<double> &);
+      Vector<double> field_k(const int);
 
-    bool read(class caviar::interpreter::Parser *);
-    void verify_settings();
-    void calculate_acceleration();
+      double energy();
 
-  public:
-    std::vector<std::vector<Real_t>> lambda;
-    bool lambda_is_set = false;
-    double k_electrostatic;
-    double sigma; //   smoothing-out parameter
-    std::vector<Vector<double>> lattice_vec;
-    int num_mirrors;
-  };
+      bool read(class caviar::interpreter::Parser *);
+      void verify_settings();
+      void calculate_acceleration();
 
-} // force_field
+    public:
+      std::vector<std::vector<Real_t>> lambda;
+      bool lambda_is_set = false;
+      double k_electrostatic;
+      double sigma; //   smoothing-out parameter
+      std::vector<Vector<double>> lattice_vec;
+      int num_mirrors;
+    };
 
-CAVIAR_NAMESPACE_CLOSE
+  } // force_field
+
+}

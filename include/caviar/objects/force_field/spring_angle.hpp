@@ -18,30 +18,32 @@
 
 #include "caviar/objects/force_field.hpp"
 
-CAVIAR_NAMESPACE_OPEN
+namespace caviar
+{
 
-namespace force_field {
+  namespace force_field
+  {
 
-/**
- * This class does a spring angle force-field on the molecular bonds
- *  
- */
-class Spring_angle : public Force_field {
-public:
-  Spring_angle (class CAVIAR *);
-  ~Spring_angle () {};
+    /**
+     * This class does a spring angle force-field on the molecular bonds
+     *
+     */
+    class Spring_angle : public Force_field
+    {
+    public:
+      Spring_angle(class CAVIAR *);
+      ~Spring_angle() {};
 
-  //double energy();
+      // double energy();
 
-  bool read (class caviar::interpreter::Parser *);
-  void verify_settings ();
-  void calculate_acceleration ();
-public:
+      bool read(class caviar::interpreter::Parser *);
+      void verify_settings();
+      void calculate_acceleration();
 
-  std::vector<Real_t> elastic_coef, dissip_coef;
- 
-};
+    public:
+      std::vector<Real_t> elastic_coef, dissip_coef;
+    };
 
-} //force_field
+  } // force_field
 
-CAVIAR_NAMESPACE_CLOSE
+}

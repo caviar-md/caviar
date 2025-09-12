@@ -22,36 +22,37 @@
 #include <string>
 #include <fstream>
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace shape
+namespace caviar
 {
-  namespace polyhedron
+
+  namespace shape
   {
-
-    Input::Input(CAVIAR *fptr) : Pointers{fptr} {}
-
-    Input::~Input() {}
-
-    void Input::read_vtk(shape::polyhedron::Polyhedron &p_object, const std::string &file_name)
+    namespace polyhedron
     {
-      class Format_vtk_reader fvr(fptr);
-      fvr.read_polyhedron(p_object, file_name);
-    }
 
-    void Input::read_stl(shape::polyhedron::Polyhedron &p_object, const std::string &file_name)
-    {
-      class Format_stl_reader fvr(fptr);
-      fvr.read_polyhedron(p_object, file_name);
-    }
+      Input::Input(CAVIAR *fptr) : Pointers{fptr} {}
 
-    void Input::read_unv(shape::polyhedron::Polyhedron &p_object, const std::string &file_name)
-    {
-      class Format_unv_reader fvr(fptr);
-      fvr.read_polyhedron(p_object, file_name);
-    }
+      Input::~Input() {}
 
-  } // polyhedron
-} // shape
+      void Input::read_vtk(shape::polyhedron::Polyhedron &p_object, const std::string &file_name)
+      {
+        class Format_vtk_reader fvr(fptr);
+        fvr.read_polyhedron(p_object, file_name);
+      }
 
-CAVIAR_NAMESPACE_CLOSE
+      void Input::read_stl(shape::polyhedron::Polyhedron &p_object, const std::string &file_name)
+      {
+        class Format_stl_reader fvr(fptr);
+        fvr.read_polyhedron(p_object, file_name);
+      }
+
+      void Input::read_unv(shape::polyhedron::Polyhedron &p_object, const std::string &file_name)
+      {
+        class Format_unv_reader fvr(fptr);
+        fvr.read_polyhedron(p_object, file_name);
+      }
+
+    } // polyhedron
+  } // shape
+
+}

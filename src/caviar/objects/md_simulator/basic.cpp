@@ -24,18 +24,19 @@
 
 #include <ctime>
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace md_simulator
+namespace caviar
 {
 
-  Basic::Basic(CAVIAR *fptr) : Md_simulator{fptr} {
-                                   FC_OBJECT_INITIALIZE_INFO}
-
-                               Basic::~Basic()
+  namespace md_simulator
   {
-  }
 
-} // md_simulator
+    Basic::Basic(CAVIAR *fptr) : Md_simulator{fptr} {
+                                     FC_OBJECT_INITIALIZE_INFO}
 
-CAVIAR_NAMESPACE_CLOSE
+                                 Basic::~Basic()
+    {
+    }
+
+  } // md_simulator
+
+}

@@ -89,19 +89,19 @@ inline std::string join_path(const std::string &directory, const std::string &fi
 
 inline std::string get_current_directory()
 {
-   char cwd[PATH_MAX];
-   std::string st = "";
-   if (getcwd(cwd, sizeof(cwd)) != NULL) 
-   {
-       //printf("Current working dir: %s\n", cwd);
-       st = cwd;
-   } 
-   else 
-   {
-       //perror("getcwd() error");
-       //return 1;
-   }
-   return st;
+    char cwd[PATH_MAX];
+    std::string st = "";
+    if (getcwd(cwd, sizeof(cwd)) != NULL)
+    {
+        // printf("Current working dir: %s\n", cwd);
+        st = cwd;
+    }
+    else
+    {
+        // perror("getcwd() error");
+        // return 1;
+    }
+    return st;
 }
 
 inline bool is_absolute_path(const std::string &path)

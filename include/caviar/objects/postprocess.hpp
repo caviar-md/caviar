@@ -18,22 +18,23 @@
 
 #include "caviar/utility/objects_common_headers.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-/**
- * This class is the base class for all the post process related functions.
- * The postprocess means that after the caviar physics runs, one can analyze
- * the simulation results, or re-run the code at special timesteps and re-run
- * the code for sampling something like potential  values at higher resolutions.
- */
-class Postprocess : public Pointers
+namespace caviar
 {
-public:
-  Postprocess(class CAVIAR *);
-  virtual ~Postprocess();
-  virtual bool read(class caviar::interpreter::Parser *) = 0;
 
-  FC_BASE_OBJECT_COMMON_TOOLS
-};
+  /**
+   * This class is the base class for all the post process related functions.
+   * The postprocess means that after the caviar physics runs, one can analyze
+   * the simulation results, or re-run the code at special timesteps and re-run
+   * the code for sampling something like potential  values at higher resolutions.
+   */
+  class Postprocess : public Pointers
+  {
+  public:
+    Postprocess(class CAVIAR *);
+    virtual ~Postprocess();
+    virtual bool read(class caviar::interpreter::Parser *) = 0;
 
-CAVIAR_NAMESPACE_CLOSE
+    FC_BASE_OBJECT_COMMON_TOOLS
+  };
+
+}

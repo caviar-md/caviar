@@ -20,202 +20,201 @@
 
 #include <algorithm>
 
-
-CAVIAR_NAMESPACE_OPEN
-
-void Atom_data::exchange_ghost_single_md_domain(long) // timestep
+namespace caviar
 {
+
+  void Atom_data::exchange_ghost_single_md_domain(long) // timestep
+  {
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
-  if (domain->me != 0)
-    return;
+    if (domain->me != 0)
+      return;
 #endif
 
-  atom_struct_ghost.position.clear();
-  atom_struct_ghost.velocity.clear();
-  atom_struct_ghost.id.clear();
-  atom_struct_ghost.type.clear();
-  atom_struct_ghost.molecule_index.clear();
+    atom_struct_ghost.position.clear();
+    atom_struct_ghost.velocity.clear();
+    atom_struct_ghost.id.clear();
+    atom_struct_ghost.type.clear();
+    atom_struct_ghost.molecule_index.clear();
 
-  const auto bc = domain->boundary_condition;
+    const auto bc = domain->boundary_condition;
 
-  const auto x_llow = domain->lower_global.x + ghost_cutoff;
-  const auto x_lupp = domain->upper_global.x - ghost_cutoff;
-  const auto y_llow = domain->lower_global.y + ghost_cutoff;
-  const auto y_lupp = domain->upper_global.y - ghost_cutoff;
-  const auto z_llow = domain->lower_global.z + ghost_cutoff;
-  const auto z_lupp = domain->upper_global.z - ghost_cutoff;
+    const auto x_llow = domain->lower_global.x + ghost_cutoff;
+    const auto x_lupp = domain->upper_global.x - ghost_cutoff;
+    const auto y_llow = domain->lower_global.y + ghost_cutoff;
+    const auto y_lupp = domain->upper_global.y - ghost_cutoff;
+    const auto z_llow = domain->lower_global.z + ghost_cutoff;
+    const auto z_lupp = domain->upper_global.z - ghost_cutoff;
 
-  const auto x_width = domain->size_global.x;
-  const auto y_width = domain->size_global.y;
-  const auto z_width = domain->size_global.z;
+    const auto x_width = domain->size_global.x;
+    const auto y_width = domain->size_global.y;
+    const auto z_width = domain->size_global.z;
 
-  auto &pos = atom_struct_owned.position;
-  auto &vel = atom_struct_owned.velocity;
-  auto &id = atom_struct_owned.id;
-  auto &type = atom_struct_owned.type;
-  auto &m_index = atom_struct_owned.molecule_index;
+    auto &pos = atom_struct_owned.position;
+    auto &vel = atom_struct_owned.velocity;
+    auto &id = atom_struct_owned.id;
+    auto &type = atom_struct_owned.type;
+    auto &m_index = atom_struct_owned.molecule_index;
 
-  auto &g_pos = atom_struct_ghost.position;
-  auto &g_vel = atom_struct_ghost.velocity;
-  auto &g_id = atom_struct_ghost.id;
-  auto &g_type = atom_struct_ghost.type;
-  auto &g_m_index = atom_struct_ghost.molecule_index;
+    auto &g_pos = atom_struct_ghost.position;
+    auto &g_vel = atom_struct_ghost.velocity;
+    auto &g_id = atom_struct_ghost.id;
+    auto &g_type = atom_struct_ghost.type;
+    auto &g_m_index = atom_struct_ghost.molecule_index;
 
-  unsigned int num_local_atoms = atom_struct_owned.id.size();
+    unsigned int num_local_atoms = atom_struct_owned.id.size();
 
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
 #endif
-  for (unsigned int i = 0; i < num_local_atoms; ++i)
-  {
-    const auto xlc = pos[i].x < x_llow;
-    const auto xuc = pos[i].x > x_lupp;
-    const auto ylc = pos[i].y < y_llow;
-    const auto yuc = pos[i].y > y_lupp;
-    const auto zlc = pos[i].z < z_llow;
-    const auto zuc = pos[i].z > z_lupp;
-
-    int x_val, y_val, z_val;
-    if (xlc)
-      x_val = -1;
-    else if (xuc)
-      x_val = +1;
-    else
-      x_val = 0;
-
-    if (ylc)
-      y_val = -1;
-    else if (yuc)
-      y_val = +1;
-    else
-      y_val = 0;
-
-    if (zlc)
-      z_val = -1;
-    else if (zuc)
-      z_val = +1;
-    else
-      z_val = 0;
-
-    x_val *= bc.x;
-    y_val *= bc.y;
-    z_val *= bc.z; // boundary condition
-
-    // not sure if this 'make_ghost_velocity' condition makes much change in the
-    // serial code or for low number of particles.
-    if (make_ghost_velocity)
+    for (unsigned int i = 0; i < num_local_atoms; ++i)
     {
-      if (x_val != 0)
+      const auto xlc = pos[i].x < x_llow;
+      const auto xuc = pos[i].x > x_lupp;
+      const auto ylc = pos[i].y < y_llow;
+      const auto yuc = pos[i].y > y_lupp;
+      const auto zlc = pos[i].z < z_llow;
+      const auto zuc = pos[i].z > z_lupp;
+
+      int x_val, y_val, z_val;
+      if (xlc)
+        x_val = -1;
+      else if (xuc)
+        x_val = +1;
+      else
+        x_val = 0;
+
+      if (ylc)
+        y_val = -1;
+      else if (yuc)
+        y_val = +1;
+      else
+        y_val = 0;
+
+      if (zlc)
+        z_val = -1;
+      else if (zuc)
+        z_val = +1;
+      else
+        z_val = 0;
+
+      x_val *= bc.x;
+      y_val *= bc.y;
+      z_val *= bc.z; // boundary condition
+
+      // not sure if this 'make_ghost_velocity' condition makes much change in the
+      // serial code or for low number of particles.
+      if (make_ghost_velocity)
       {
-        g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y, pos[i].z);
-        g_vel.emplace_back(vel[i].x, vel[i].y, vel[i].z);
-        g_id.emplace_back(id[i]);
-        g_type.emplace_back(type[i]);
-        g_m_index.emplace_back(m_index[i]);
+        if (x_val != 0)
+        {
+          g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y, pos[i].z);
+          g_vel.emplace_back(vel[i].x, vel[i].y, vel[i].z);
+          g_id.emplace_back(id[i]);
+          g_type.emplace_back(type[i]);
+          g_m_index.emplace_back(m_index[i]);
+        }
+        if (y_val != 0)
+        {
+          g_pos.emplace_back(pos[i].x, pos[i].y - y_val * y_width, pos[i].z);
+          g_vel.emplace_back(vel[i].x, vel[i].y, vel[i].z);
+          g_id.emplace_back(id[i]);
+          g_type.emplace_back(type[i]);
+          g_m_index.emplace_back(m_index[i]);
+        }
+        if (z_val != 0)
+        {
+          g_pos.emplace_back(pos[i].x, pos[i].y, pos[i].z - z_val * z_width);
+          g_vel.emplace_back(vel[i].x, vel[i].y, vel[i].z);
+          g_id.emplace_back(id[i]);
+          g_type.emplace_back(type[i]);
+          g_m_index.emplace_back(m_index[i]);
+        }
+        if (x_val != 0 && y_val != 0)
+        {
+          g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y - y_val * y_width, pos[i].z);
+          g_vel.emplace_back(vel[i].x, vel[i].y, vel[i].z);
+          g_id.emplace_back(id[i]);
+          g_type.emplace_back(type[i]);
+          g_m_index.emplace_back(m_index[i]);
+        }
+        if (x_val != 0 && z_val != 0)
+        {
+          g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y, pos[i].z - z_val * z_width);
+          g_vel.emplace_back(vel[i].x, vel[i].y, vel[i].z);
+          g_id.emplace_back(id[i]);
+          g_type.emplace_back(type[i]);
+          g_m_index.emplace_back(m_index[i]);
+        }
+        if (y_val != 0 && z_val != 0)
+        {
+          g_pos.emplace_back(pos[i].x, pos[i].y - y_val * y_width, pos[i].z - z_val * z_width);
+          g_vel.emplace_back(vel[i].x, vel[i].y, vel[i].z);
+          g_id.emplace_back(id[i]);
+          g_type.emplace_back(type[i]);
+          g_m_index.emplace_back(m_index[i]);
+        }
+        if (x_val != 0 && y_val != 0 && z_val != 0)
+        {
+          g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y - y_val * y_width, pos[i].z - z_val * z_width);
+          g_vel.emplace_back(vel[i].x, vel[i].y, vel[i].z);
+          g_id.emplace_back(id[i]);
+          g_type.emplace_back(type[i]);
+          g_m_index.emplace_back(m_index[i]);
+        }
       }
-      if (y_val != 0)
+      else
       {
-        g_pos.emplace_back(pos[i].x, pos[i].y - y_val * y_width, pos[i].z);
-        g_vel.emplace_back(vel[i].x, vel[i].y, vel[i].z);
-        g_id.emplace_back(id[i]);
-        g_type.emplace_back(type[i]);
-        g_m_index.emplace_back(m_index[i]);
-      }
-      if (z_val != 0)
-      {
-        g_pos.emplace_back(pos[i].x, pos[i].y, pos[i].z - z_val * z_width);
-        g_vel.emplace_back(vel[i].x, vel[i].y, vel[i].z);
-        g_id.emplace_back(id[i]);
-        g_type.emplace_back(type[i]);
-        g_m_index.emplace_back(m_index[i]);
-      }
-      if (x_val != 0 && y_val != 0)
-      {
-        g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y - y_val * y_width, pos[i].z);
-        g_vel.emplace_back(vel[i].x, vel[i].y, vel[i].z);
-        g_id.emplace_back(id[i]);
-        g_type.emplace_back(type[i]);
-        g_m_index.emplace_back(m_index[i]);
-      }
-      if (x_val != 0 && z_val != 0)
-      {
-        g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y, pos[i].z - z_val * z_width);
-        g_vel.emplace_back(vel[i].x, vel[i].y, vel[i].z);
-        g_id.emplace_back(id[i]);
-        g_type.emplace_back(type[i]);
-        g_m_index.emplace_back(m_index[i]);
-      }
-      if (y_val != 0 && z_val != 0)
-      {
-        g_pos.emplace_back(pos[i].x, pos[i].y - y_val * y_width, pos[i].z - z_val * z_width);
-        g_vel.emplace_back(vel[i].x, vel[i].y, vel[i].z);
-        g_id.emplace_back(id[i]);
-        g_type.emplace_back(type[i]);
-        g_m_index.emplace_back(m_index[i]);
-      }
-      if (x_val != 0 && y_val != 0 && z_val != 0)
-      {
-        g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y - y_val * y_width, pos[i].z - z_val * z_width);
-        g_vel.emplace_back(vel[i].x, vel[i].y, vel[i].z);
-        g_id.emplace_back(id[i]);
-        g_type.emplace_back(type[i]);
-        g_m_index.emplace_back(m_index[i]);
-      }
-    }
-    else
-    {
-      if (x_val != 0)
-      {
-        g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y, pos[i].z);
-        g_id.emplace_back(id[i]);
-        g_type.emplace_back(type[i]);
-        g_m_index.emplace_back(m_index[i]);
-      }
-      if (y_val != 0)
-      {
-        g_pos.emplace_back(pos[i].x, pos[i].y - y_val * y_width, pos[i].z);
-        g_id.emplace_back(id[i]);
-        g_type.emplace_back(type[i]);
-        g_m_index.emplace_back(m_index[i]);
-      }
-      if (z_val != 0)
-      {
-        g_pos.emplace_back(pos[i].x, pos[i].y, pos[i].z - z_val * z_width);
-        g_id.emplace_back(id[i]);
-        g_type.emplace_back(type[i]);
-        g_m_index.emplace_back(m_index[i]);
-      }
-      if (x_val != 0 && y_val != 0)
-      {
-        g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y - y_val * y_width, pos[i].z);
-        g_id.emplace_back(id[i]);
-        g_type.emplace_back(type[i]);
-        g_m_index.emplace_back(m_index[i]);
-      }
-      if (x_val != 0 && z_val != 0)
-      {
-        g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y, pos[i].z - z_val * z_width);
-        g_id.emplace_back(id[i]);
-        g_type.emplace_back(type[i]);
-        g_m_index.emplace_back(m_index[i]);
-      }
-      if (y_val != 0 && z_val != 0)
-      {
-        g_pos.emplace_back(pos[i].x, pos[i].y - y_val * y_width, pos[i].z - z_val * z_width);
-        g_id.emplace_back(id[i]);
-        g_type.emplace_back(type[i]);
-        g_m_index.emplace_back(m_index[i]);
-      }
-      if (x_val != 0 && y_val != 0 && z_val != 0)
-      {
-        g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y - y_val * y_width, pos[i].z - z_val * z_width);
-        g_id.emplace_back(id[i]);
-        g_type.emplace_back(type[i]);
-        g_m_index.emplace_back(m_index[i]);
+        if (x_val != 0)
+        {
+          g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y, pos[i].z);
+          g_id.emplace_back(id[i]);
+          g_type.emplace_back(type[i]);
+          g_m_index.emplace_back(m_index[i]);
+        }
+        if (y_val != 0)
+        {
+          g_pos.emplace_back(pos[i].x, pos[i].y - y_val * y_width, pos[i].z);
+          g_id.emplace_back(id[i]);
+          g_type.emplace_back(type[i]);
+          g_m_index.emplace_back(m_index[i]);
+        }
+        if (z_val != 0)
+        {
+          g_pos.emplace_back(pos[i].x, pos[i].y, pos[i].z - z_val * z_width);
+          g_id.emplace_back(id[i]);
+          g_type.emplace_back(type[i]);
+          g_m_index.emplace_back(m_index[i]);
+        }
+        if (x_val != 0 && y_val != 0)
+        {
+          g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y - y_val * y_width, pos[i].z);
+          g_id.emplace_back(id[i]);
+          g_type.emplace_back(type[i]);
+          g_m_index.emplace_back(m_index[i]);
+        }
+        if (x_val != 0 && z_val != 0)
+        {
+          g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y, pos[i].z - z_val * z_width);
+          g_id.emplace_back(id[i]);
+          g_type.emplace_back(type[i]);
+          g_m_index.emplace_back(m_index[i]);
+        }
+        if (y_val != 0 && z_val != 0)
+        {
+          g_pos.emplace_back(pos[i].x, pos[i].y - y_val * y_width, pos[i].z - z_val * z_width);
+          g_id.emplace_back(id[i]);
+          g_type.emplace_back(type[i]);
+          g_m_index.emplace_back(m_index[i]);
+        }
+        if (x_val != 0 && y_val != 0 && z_val != 0)
+        {
+          g_pos.emplace_back(pos[i].x - x_val * x_width, pos[i].y - y_val * y_width, pos[i].z - z_val * z_width);
+          g_id.emplace_back(id[i]);
+          g_type.emplace_back(type[i]);
+          g_m_index.emplace_back(m_index[i]);
+        }
       }
     }
   }
+
 }
-
-
-CAVIAR_NAMESPACE_CLOSE

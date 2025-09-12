@@ -18,29 +18,30 @@
 
 #include "caviar/objects/force_field.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace force_field
+namespace caviar
 {
 
-  /**
-   * This class calculates LJ potential for the particles in the mpi mode
-   *
-   */
-  class Lj_mpi : public Force_field
+  namespace force_field
   {
-  public:
-    Lj_mpi(class CAVIAR *);
-    ~Lj_mpi(){};
 
-    bool read(class caviar::interpreter::Parser *);
-    void verify_settings();
-    void calculate_acceleration();
+    /**
+     * This class calculates LJ potential for the particles in the mpi mode
+     *
+     */
+    class Lj_mpi : public Force_field
+    {
+    public:
+      Lj_mpi(class CAVIAR *);
+      ~Lj_mpi() {};
 
-  public:
-    std::vector<std::vector<Real_t>> epsilon, sigma;
-  };
+      bool read(class caviar::interpreter::Parser *);
+      void verify_settings();
+      void calculate_acceleration();
 
-} // force_field
+    public:
+      std::vector<std::vector<Real_t>> epsilon, sigma;
+    };
 
-CAVIAR_NAMESPACE_CLOSE
+  } // force_field
+
+}

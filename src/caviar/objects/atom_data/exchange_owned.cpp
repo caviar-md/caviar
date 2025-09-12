@@ -19,26 +19,25 @@
 #include "caviar/interpreter/error.hpp"
 #include "caviar/objects/domain.hpp"
 
-
-CAVIAR_NAMESPACE_OPEN
-
-
-bool Atom_data::exchange_owned(long i) // timestep
+namespace caviar
 {
+
+  bool Atom_data::exchange_owned(long i) // timestep
+  {
 #if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
 
-  return exchange_owned_single_md_domain();
+    return exchange_owned_single_md_domain();
 
 #elif defined(CAVIAR_WITH_MPI)
 
-  return exchange_owned_mpi_shared_atoms(i);
-  // return exchange_owned_mpi(i);
+    return exchange_owned_mpi_shared_atoms(i);
+    // return exchange_owned_mpi(i);
 
 #else
 
-  return exchange_owned_single_md_domain(i);
+    return exchange_owned_single_md_domain(i);
 
 #endif
-}
+  }
 
-CAVIAR_NAMESPACE_CLOSE
+}

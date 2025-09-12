@@ -24,18 +24,19 @@
 #include "caviar/objects/unique/molecule_list.hpp"
 #include "caviar/interpreter/object_handler/preprocessors_new.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace atom_data
+namespace caviar
 {
 
-  Basic::Basic(CAVIAR *fptr) : Atom_data{fptr} {
-                                   FC_OBJECT_INITIALIZE_INFO}
-
-                               Basic::~Basic()
+  namespace atom_data
   {
-  }
 
-} // atom_data
+    Basic::Basic(CAVIAR *fptr) : Atom_data{fptr} {
+                                     FC_OBJECT_INITIALIZE_INFO}
 
-CAVIAR_NAMESPACE_CLOSE
+                                 Basic::~Basic()
+    {
+    }
+
+  } // atom_data
+
+}

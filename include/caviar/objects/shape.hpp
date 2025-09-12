@@ -18,45 +18,46 @@
 
 #include "caviar/utility/objects_common_headers.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-inline void normalize(Vector<Real_t> &v)
+namespace caviar
 {
-  v /= std::sqrt(v * v);
+
+  inline void normalize(Vector<Real_t> &v)
+  {
+    v /= std::sqrt(v * v);
+  }
+
+  /**
+   * This class is the base class for all the shapes.
+   *
+   *
+   */
+  class Shape : public Pointers
+  {
+  public:
+    /**
+     * Constructor.
+     */
+    Shape(class CAVIAR *);
+
+    /**
+     * Destructor.
+     */
+    virtual ~Shape();
+
+    virtual bool read(class caviar::interpreter::Parser *) = 0;
+    virtual bool is_inside(const Vector<double> &) = 0;
+    virtual bool is_outside(const Vector<double> &);
+    virtual bool is_inside(const Vector<double> &, const double rad) = 0;
+    virtual bool is_outside(const Vector<double> &, const double rad);
+    virtual bool in_contact(const Vector<double> &, const double rad, Vector<double> &contact_vector) = 0;
+
+    /**
+     * Used in barostat scaling for geometrical forces.
+     *
+     */
+    virtual void scale_position(double scale_ratio, caviar::Vector<int> scale_axis);
+
+    FC_BASE_OBJECT_COMMON_TOOLS
+  };
+
 }
-
-/**
- * This class is the base class for all the shapes.
- *
- *
- */
-class Shape : public Pointers
-{
-public:
-  /**
-   * Constructor.
-   */
-  Shape(class CAVIAR *);
-
-  /**
-   * Destructor.
-   */
-  virtual ~Shape();
-
-  virtual bool read(class caviar::interpreter::Parser *) = 0;
-  virtual bool is_inside(const Vector<double> &) = 0;
-  virtual bool is_outside(const Vector<double> &);
-  virtual bool is_inside(const Vector<double> &, const double rad) = 0;
-  virtual bool is_outside(const Vector<double> &, const double rad);
-  virtual bool in_contact(const Vector<double> &, const double rad, Vector<double> &contact_vector) = 0;
-
-  /**
-   * Used in barostat scaling for geometrical forces.
-   * 
-  */   
-  virtual void scale_position(double scale_ratio, caviar::Vector<int> scale_axis);
-  
-  FC_BASE_OBJECT_COMMON_TOOLS
-};
-
-CAVIAR_NAMESPACE_CLOSE

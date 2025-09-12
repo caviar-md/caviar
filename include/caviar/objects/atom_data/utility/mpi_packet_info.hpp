@@ -18,28 +18,29 @@
 
 #include "caviar/utility/objects_common_headers.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace atom_data
+namespace caviar
 {
-  // Angle contain data for rigid atomic angles which may be used in
-  // constraint algorithms or soft atomic angles in spring_angle force_fields
-  struct MPI_packet_info
-  {
-    bool initialized = false;
-    int total = 0; // 
 
-    int id;
-    int type;
-    int pos;
-    int vel;
-    int acc;
-    int pos_o;
-    int vel_o;
-    int acc_o;
-    int msd;
-    int mol_ind;
-    int atomic_bc;
-  } ;
+  namespace atom_data
+  {
+    // Angle contain data for rigid atomic angles which may be used in
+    // constraint algorithms or soft atomic angles in spring_angle force_fields
+    struct MPI_packet_info
+    {
+      bool initialized = false;
+      int total = 0; //
+
+      int id;
+      int type;
+      int pos;
+      int vel;
+      int acc;
+      int pos_o;
+      int vel_o;
+      int acc_o;
+      int msd;
+      int mol_ind;
+      int atomic_bc;
+    };
+  }
 }
-CAVIAR_NAMESPACE_CLOSE

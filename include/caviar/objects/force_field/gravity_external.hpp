@@ -18,36 +18,37 @@
 
 #include "caviar/objects/force_field.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace unique
-{
-  class Time_function_3d;
-}
-namespace force_field
+namespace caviar
 {
 
-  /**
-   * This class makes an external acceleration as an gravitation force-field.
-   * If 'non_inertia_reference_frame_acc' is set, 'direction' and 'amplitude' will be ignored.
-   *
-   */
-  class Gravity_external : public Force_field
+  namespace unique
   {
-  public:
-    Gravity_external(class CAVIAR *);
-    ~Gravity_external(){};
+    class Time_function_3d;
+  }
+  namespace force_field
+  {
 
-    bool read(class caviar::interpreter::Parser *);
-    void verify_settings();
-    void calculate_acceleration();
+    /**
+     * This class makes an external acceleration as an gravitation force-field.
+     * If 'non_inertia_reference_frame_acc' is set, 'direction' and 'amplitude' will be ignored.
+     *
+     */
+    class Gravity_external : public Force_field
+    {
+    public:
+      Gravity_external(class CAVIAR *);
+      ~Gravity_external() {};
 
-  public:
-    double amplitude;
-    Vector<double> direction;
-    unique::Time_function_3d *non_inertia_reference_frame_acc = nullptr;
-  };
+      bool read(class caviar::interpreter::Parser *);
+      void verify_settings();
+      void calculate_acceleration();
 
-} // force_field
+    public:
+      double amplitude;
+      Vector<double> direction;
+      unique::Time_function_3d *non_inertia_reference_frame_acc = nullptr;
+    };
 
-CAVIAR_NAMESPACE_CLOSE
+  } // force_field
+
+}

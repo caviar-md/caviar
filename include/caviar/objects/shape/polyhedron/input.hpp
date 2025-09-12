@@ -18,24 +18,25 @@
 
 #include "caviar/utility/pointers.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace shape
+namespace caviar
 {
-  namespace polyhedron
+
+  namespace shape
   {
-    struct Polyhedron;
-    class Input : public Pointers
+    namespace polyhedron
     {
-    public:
-      Input(class CAVIAR *);
-      ~Input();
+      struct Polyhedron;
+      class Input : public Pointers
+      {
+      public:
+        Input(class CAVIAR *);
+        ~Input();
 
-      void read_unv(shape::polyhedron::Polyhedron &, const std::string &);
-      void read_vtk(shape::polyhedron::Polyhedron &, const std::string &);
-      void read_stl(shape::polyhedron::Polyhedron &, const std::string &);
-    };
-  } // polyhedron
-} // shape
+        void read_unv(shape::polyhedron::Polyhedron &, const std::string &);
+        void read_vtk(shape::polyhedron::Polyhedron &, const std::string &);
+        void read_stl(shape::polyhedron::Polyhedron &, const std::string &);
+      };
+    } // polyhedron
+  } // shape
 
-CAVIAR_NAMESPACE_CLOSE
+}

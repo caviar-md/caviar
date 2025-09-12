@@ -19,9 +19,10 @@ FC_GENERAL_CLASSNAME_MACRO(Atom_data, atom_data, Atom_data)
 #endif
 
 #ifdef FC_COMPLETE_FORWARD_DECLERATION
-CAVIAR_NAMESPACE_OPEN
+namespace caviar
+{
 
-class Atom_data;
+  class Atom_data;
 
-CAVIAR_NAMESPACE_CLOSE
+}
 #endif

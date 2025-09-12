@@ -16,17 +16,18 @@
 
 #include "caviar/objects/unique.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-Unique::Unique(CAVIAR *fptr) : Pointers{fptr} {
-                                   FC_OBJECT_INITIALIZE}
-
-                               Unique::~Unique()
+namespace caviar
 {
-}
 
-void Unique::verify_settings()
-{
-}
+    Unique::Unique(CAVIAR *fptr) : Pointers{fptr} {
+                                       FC_OBJECT_INITIALIZE}
 
-CAVIAR_NAMESPACE_CLOSE
+                                   Unique::~Unique()
+    {
+    }
+
+    void Unique::verify_settings()
+    {
+    }
+
+}

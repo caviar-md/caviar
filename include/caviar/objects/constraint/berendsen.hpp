@@ -18,48 +18,50 @@
 
 #include "caviar/objects/constraint.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace constraint
+namespace caviar
 {
 
-    /**
-     * This class has Brendsen thermostat implemented.
-     * It is implemented according to
-     * 'Berendsen and Nose-Hoover thermostats Victor Ruhle August 8, 2007'
-     *
-     */
-    class Berendsen : public Constraint
+    namespace constraint
     {
-    public:
-        Berendsen(class CAVIAR *);
-        ~Berendsen();
-        bool read(class caviar::interpreter::Parser *);
-
-        void apply_thermostat(int64_t, bool &recalculate_temperature);
-
-        void verify_settings();
-
-        double coupling;
-        double dt;
-        double temperature;
-        /**
-         * Apply after each 'step' of timesteps passed
-        */
-        int step = 1;
 
         /**
-         * minimum value of lambda
-        */
-        double lambda_min = 0.8;
+         * This class has Brendsen thermostat implemented.
+         * It is implemented according to
+         * 'Berendsen and Nose-Hoover thermostats Victor Ruhle August 8, 2007'
+         *
+         */
+        class Berendsen : public Constraint
+        {
+        public:
+            Berendsen(class CAVIAR *);
+            ~Berendsen();
+            bool read(class caviar::interpreter::Parser *);
 
-        /**
-         * maximum value of lambda
-        */
-        double lambda_max = 1.25;
-    public:
-    };
+            void apply_thermostat(int64_t, bool &recalculate_temperature);
 
-} // constraint
+            void verify_settings();
 
-CAVIAR_NAMESPACE_CLOSE
+            double coupling;
+            double dt;
+            double temperature;
+            /**
+             * Apply after each 'step' of timesteps passed
+             */
+            int step = 1;
+
+            /**
+             * minimum value of lambda
+             */
+            double lambda_min = 0.8;
+
+            /**
+             * maximum value of lambda
+             */
+            double lambda_max = 1.25;
+
+        public:
+        };
+
+    } // constraint
+
+}

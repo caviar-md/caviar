@@ -20,59 +20,60 @@
 #include "caviar/utility/interpreter_io_headers.hpp"
 #include "caviar/interpreter/object_handler/preprocessors_new.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace unique
+namespace caviar
 {
 
-  Atom_list::Atom_list(CAVIAR *fptr) : Unique{fptr} {
-                                           FC_OBJECT_INITIALIZE_INFO}
-
-                                       Atom_list::~Atom_list()
+  namespace unique
   {
-  }
 
-  void Atom_list::verify_settings()
-  {
-  }
+    Atom_list::Atom_list(CAVIAR *fptr) : Unique{fptr} {
+                                             FC_OBJECT_INITIALIZE_INFO}
 
-  Atom_list::Atom_list(const Atom_list &a) : Unique{a}
-  {
-  }
-
-  bool Atom_list::read(caviar::interpreter::Parser *parser)
-  {
-    FC_OBJECT_READ_INFO
-
-    while (true)
+                                         Atom_list::~Atom_list()
     {
-      FC_IF_RAW_TOKEN_EOF_EOL
-      FC_OBJECT_READ_INFO_STR
-      if (string_cmp(t, "add_atom"))
-      {
-        FIND_OBJECT_BY_NAME(unique, it)
-        FC_CHECK_OBJECT_CLASS_NAME(unique, it, atom)
-        auto a = dynamic_cast<unique::Atom *>(object_container->unique[it->second.index]);
-
-        atoms.push_back(a);
-        continue;
-      }
-      else if (string_cmp(t, "clear"))
-      {
-        atoms.clear();
-        continue;
-      }
-      else
-        FC_ERR_UNDEFINED_VAR(t)
     }
 
-    return true;
-  }
+    void Atom_list::verify_settings()
+    {
+    }
 
-  void Atom_list::add_atom(const unique::Atom &)
-  {
-  }
+    Atom_list::Atom_list(const Atom_list &a) : Unique{a}
+    {
+    }
 
-} // unique
+    bool Atom_list::read(caviar::interpreter::Parser *parser)
+    {
+      FC_OBJECT_READ_INFO
 
-CAVIAR_NAMESPACE_CLOSE
+      while (true)
+      {
+        FC_IF_RAW_TOKEN_EOF_EOL
+        FC_OBJECT_READ_INFO_STR
+        if (string_cmp(t, "add_atom"))
+        {
+          FIND_OBJECT_BY_NAME(unique, it)
+          FC_CHECK_OBJECT_CLASS_NAME(unique, it, atom)
+          auto a = dynamic_cast<unique::Atom *>(object_container->unique[it->second.index]);
+
+          atoms.push_back(a);
+          continue;
+        }
+        else if (string_cmp(t, "clear"))
+        {
+          atoms.clear();
+          continue;
+        }
+        else
+          FC_ERR_UNDEFINED_VAR(t)
+      }
+
+      return true;
+    }
+
+    void Atom_list::add_atom(const unique::Atom &)
+    {
+    }
+
+  } // unique
+
+}

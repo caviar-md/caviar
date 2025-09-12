@@ -17,22 +17,23 @@
 #include "caviar/objects/shape/mixed.hpp"
 #include "caviar/utility/interpreter_io_headers.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace shape
+namespace caviar
 {
 
-  Mixed::Mixed(CAVIAR *fptr) : Shape{fptr} {
-                                   FC_OBJECT_INITIALIZE_INFO}
-
-                               Mixed::~Mixed()
+  namespace shape
   {
-  }
 
-  bool Mixed::read(caviar::interpreter::Parser *parser)
-  {
-    FC_OBJECT_READ_INFO
-    bool in_file = true;
+    Mixed::Mixed(CAVIAR *fptr) : Shape{fptr} {
+                                     FC_OBJECT_INITIALIZE_INFO}
+
+                                 Mixed::~Mixed()
+    {
+    }
+
+    bool Mixed::read(caviar::interpreter::Parser *parser)
+    {
+      FC_OBJECT_READ_INFO
+      bool in_file = true;
 
 #define AND_OR_INSIDE_OUTSIDE                                                                               \
   if (shapes.size() == 0)                                                                                   \
@@ -55,133 +56,133 @@ namespace shape
   else                                                                                                      \
     error->all(FC_FILE_LINE_FUNC_PARSE, "expected a SHAPE NAME.");
 
-    while (true)
-    {
+      while (true)
+      {
 
-      GET_A_TOKEN_FOR_CREATION
-      auto t = token.string_value;
-      FC_OBJECT_READ_INFO_STR
-      if (string_cmp(t, "inside"))
-      {
-        AND_OR_INSIDE_OUTSIDE
-        operators.push_back(0); // inside_check = true
+        GET_A_TOKEN_FOR_CREATION
+        auto t = token.string_value;
+        FC_OBJECT_READ_INFO_STR
+        if (string_cmp(t, "inside"))
+        {
+          AND_OR_INSIDE_OUTSIDE
+          operators.push_back(0); // inside_check = true
+        }
+        else if (string_cmp(t, "outside"))
+        {
+          AND_OR_INSIDE_OUTSIDE
+          operators.push_back(0); // inside_check = flase
+        }
+        else if (string_cmp(t, "and_inside"))
+        {
+          AND_OR_INSIDE_OUTSIDE
+          operators.push_back(1);
+        }
+        else if (string_cmp(t, "and_outside"))
+        {
+          AND_OR_INSIDE_OUTSIDE
+          operators.push_back(-1);
+        }
+        else if (string_cmp(t, "or_inside"))
+        {
+          AND_OR_INSIDE_OUTSIDE
+          operators.push_back(2);
+        }
+        else if (string_cmp(t, "or_outside"))
+        {
+          AND_OR_INSIDE_OUTSIDE
+          operators.push_back(-2);
+        }
+        else
+          error->all(FC_FILE_LINE_FUNC_PARSE, "Mixed Read: Unknown variable or command ");
       }
-      else if (string_cmp(t, "outside"))
-      {
-        AND_OR_INSIDE_OUTSIDE
-        operators.push_back(0); // inside_check = flase
-      }
-      else if (string_cmp(t, "and_inside"))
-      {
-        AND_OR_INSIDE_OUTSIDE
-        operators.push_back(1);
-      }
-      else if (string_cmp(t, "and_outside"))
-      {
-        AND_OR_INSIDE_OUTSIDE
-        operators.push_back(-1);
-      }
-      else if (string_cmp(t, "or_inside"))
-      {
-        AND_OR_INSIDE_OUTSIDE
-        operators.push_back(2);
-      }
-      else if (string_cmp(t, "or_outside"))
-      {
-        AND_OR_INSIDE_OUTSIDE
-        operators.push_back(-2);
-      }
-      else
-        error->all(FC_FILE_LINE_FUNC_PARSE, "Mixed Read: Unknown variable or command ");
-    }
-    return in_file;
-    ;
+      return in_file;
+      ;
 #undef AND_OR_INSIDE_OUTSIDE
-  }
-
-  bool Mixed::is_inside(const Vector<double> &v)
-  {
-    bool tmp;
-
-    if (inside_check)
-      tmp = shapes[0]->is_inside(v);
-    else
-      tmp = !shapes[0]->is_inside(v);
-
-    for (unsigned int i = 1; i < operators.size(); ++i)
-    {
-      switch (operators[i])
-      {
-      case 1:
-        tmp = (shapes[i]->is_inside(v) && tmp);
-        break;
-
-      case -1:
-        tmp = (shapes[i]->is_outside(v) && tmp);
-        break;
-
-      case 2:
-        tmp = (shapes[i]->is_inside(v) || tmp);
-        break;
-
-      case -2:
-        tmp = (shapes[i]->is_outside(v) || tmp);
-        break;
-
-      default:
-        // error->all(FC_FILE_LINE_FUNC_PARSE,"Mixed is_inside: undefined boolean operator. ");        XXX
-        break;
-      }
     }
-    return tmp;
-  }
 
-  bool Mixed::is_inside(const Vector<double> &v, const double r)
-  {
-    bool tmp;
-
-    if (inside_check)
-      tmp = shapes[0]->is_inside(v, r);
-    else
-      tmp = !shapes[0]->is_inside(v, r);
-
-    for (unsigned int i = 1; i < operators.size(); ++i)
+    bool Mixed::is_inside(const Vector<double> &v)
     {
-      switch (operators[i])
+      bool tmp;
+
+      if (inside_check)
+        tmp = shapes[0]->is_inside(v);
+      else
+        tmp = !shapes[0]->is_inside(v);
+
+      for (unsigned int i = 1; i < operators.size(); ++i)
       {
-      case 1:
-        tmp = (shapes[i]->is_inside(v, r) && tmp);
-        break;
+        switch (operators[i])
+        {
+        case 1:
+          tmp = (shapes[i]->is_inside(v) && tmp);
+          break;
 
-      case -1:
-        tmp = (shapes[i]->is_outside(v, r) && tmp);
-        break;
+        case -1:
+          tmp = (shapes[i]->is_outside(v) && tmp);
+          break;
 
-      case 2:
-        tmp = (shapes[i]->is_inside(v, r) || tmp);
-        break;
+        case 2:
+          tmp = (shapes[i]->is_inside(v) || tmp);
+          break;
 
-      case -2:
-        tmp = (shapes[i]->is_outside(v, r) || tmp);
-        break;
+        case -2:
+          tmp = (shapes[i]->is_outside(v) || tmp);
+          break;
 
-      default:
-        // error->all(FC_FILE_LINE_FUNC_PARSE,"Mixed is_inside: undefined boolean operator. ");    XXX
-        break;
+        default:
+          // error->all(FC_FILE_LINE_FUNC_PARSE,"Mixed is_inside: undefined boolean operator. ");        XXX
+          break;
+        }
       }
+      return tmp;
     }
-    return tmp;
-  }
 
-  bool Mixed::in_contact(const Vector<double> &v, const double r, Vector<double> &contact_vector)
-  {
-    std::string s = "incomplete function:";
-    s += __FILE__ + std::to_string(__LINE__) + __func__;
-    output->warning(s);
-    std::cout << "  " << v << r << contact_vector << std::endl;
-    return false;
-  }
+    bool Mixed::is_inside(const Vector<double> &v, const double r)
+    {
+      bool tmp;
 
-} // shape
+      if (inside_check)
+        tmp = shapes[0]->is_inside(v, r);
+      else
+        tmp = !shapes[0]->is_inside(v, r);
 
-CAVIAR_NAMESPACE_CLOSE
+      for (unsigned int i = 1; i < operators.size(); ++i)
+      {
+        switch (operators[i])
+        {
+        case 1:
+          tmp = (shapes[i]->is_inside(v, r) && tmp);
+          break;
+
+        case -1:
+          tmp = (shapes[i]->is_outside(v, r) && tmp);
+          break;
+
+        case 2:
+          tmp = (shapes[i]->is_inside(v, r) || tmp);
+          break;
+
+        case -2:
+          tmp = (shapes[i]->is_outside(v, r) || tmp);
+          break;
+
+        default:
+          // error->all(FC_FILE_LINE_FUNC_PARSE,"Mixed is_inside: undefined boolean operator. ");    XXX
+          break;
+        }
+      }
+      return tmp;
+    }
+
+    bool Mixed::in_contact(const Vector<double> &v, const double r, Vector<double> &contact_vector)
+    {
+      std::string s = "incomplete function:";
+      s += __FILE__ + std::to_string(__LINE__) + __func__;
+      output->warning(s);
+      std::cout << "  " << v << r << contact_vector << std::endl;
+      return false;
+    }
+
+  } // shape
+
+}

@@ -22,56 +22,56 @@
 
 #include <vector>
 
-CAVIAR_NAMESPACE_OPEN
-
-class Domain;
-namespace constraint
+namespace caviar
 {
 
-  /**
-   * This class fixes atomic bonds using M-Shake method
-   *
-   *
-   */
-  class M_shake : public Constraint
+  class Domain;
+  namespace constraint
   {
-  public:
-    M_shake(class CAVIAR *);
-    ~M_shake();
-    bool read(class caviar::interpreter::Parser *);
-
-    void apply_shake(int64_t);
-
-    void update_velocity_after_shake(int64_t);
-
-    void bond_fix();
-
-    void verify_settings();
-
-    inline double reset_distance(double);
-
-    static inline int delta(int a, int b)
-    {
-      if (a == b)
-        return 1;
-      else
-        return 0;
-    }
-
-    class Domain *domain = nullptr;
 
     /**
-     * The molecule bond types which will be included in the algorithm
-    */    
-    std::vector<int> bond_type;
-    
-    double dt;
-    double error_tolerance;
-    bool initialized;
-    int iteration_max = 100;
+     * This class fixes atomic bonds using M-Shake method
+     *
+     *
+     */
+    class M_shake : public Constraint
+    {
+    public:
+      M_shake(class CAVIAR *);
+      ~M_shake();
+      bool read(class caviar::interpreter::Parser *);
 
-  };
+      void apply_shake(int64_t);
 
-} // constraint
+      void update_velocity_after_shake(int64_t);
 
-CAVIAR_NAMESPACE_CLOSE
+      void bond_fix();
+
+      void verify_settings();
+
+      inline double reset_distance(double);
+
+      static inline int delta(int a, int b)
+      {
+        if (a == b)
+          return 1;
+        else
+          return 0;
+      }
+
+      class Domain *domain = nullptr;
+
+      /**
+       * The molecule bond types which will be included in the algorithm
+       */
+      std::vector<int> bond_type;
+
+      double dt;
+      double error_tolerance;
+      bool initialized;
+      int iteration_max = 100;
+    };
+
+  } // constraint
+
+}

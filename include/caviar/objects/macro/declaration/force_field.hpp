@@ -19,9 +19,10 @@ FC_GENERAL_CLASSNAME_MACRO(Force_field, force_field, Force_field)
 #endif
 
 #ifdef FC_COMPLETE_FORWARD_DECLERATION
-CAVIAR_NAMESPACE_OPEN
+namespace caviar
+{
 
-class Force_field;
+  class Force_field;
 
-CAVIAR_NAMESPACE_CLOSE
+}
 #endif

@@ -16,16 +16,3 @@
 
 #pragma once
 
-#define CAVIAR_MAJOR_VERSION 1
-// #define CAVIAR_MINOR_VERSION 0
-// #define CAVIAR_PATCH_VERSION 0
-#define CAVIAR_MINOR_VERSION x
-#define CAVIAR_PATCH_VERSION y
-
-// #define CAVIAR_SCRIPT_COMMAND_CASE_INSENSITIVE
-
-#define CAVIAR_NAMESPACE_OPEN \
-    namespace caviar          \
-    {
-#define CAVIAR_NAMESPACE_CLOSE }
-

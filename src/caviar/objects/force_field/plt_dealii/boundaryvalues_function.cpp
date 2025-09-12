@@ -30,52 +30,53 @@
 #include <cmath>
 #include <iomanip>
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace force_field
+namespace caviar
 {
 
-  namespace plt_dealii
+  namespace force_field
   {
 
-    // for ewald in dealii_poisson:
-    // if We want to change from Cell List to Verlet List, we have to implement a new
-    // function for DealII, similar to what it does in 'interpolate_boundary_condition'
-
-    double BoundaryValues::potential_of_free_charges(const dealii::Point<3> &p) const
+    namespace plt_dealii
     {
-      const Vector<double> r = {p[0], p[1], p[2]};
 
-      double potential = 0.0;
-      if (deal_force->position_offset == nullptr)
-        for (auto &&f : deal_force->force_field_custom)
-          potential += f->potential(r);
-      else
-        for (auto &&f : deal_force->force_field_custom)
-          potential += f->potential(r + deal_force->position_offset->current_value);
+      // for ewald in dealii_poisson:
+      // if We want to change from Cell List to Verlet List, we have to implement a new
+      // function for DealII, similar to what it does in 'interpolate_boundary_condition'
 
-      return potential;
-    }
+      double BoundaryValues::potential_of_free_charges(const dealii::Point<3> &p) const
+      {
+        const Vector<double> r = {p[0], p[1], p[2]};
 
-    double BoundaryValues::value(const Point<3> &p, const unsigned int) const
-    {
+        double potential = 0.0;
+        if (deal_force->position_offset == nullptr)
+          for (auto &&f : deal_force->force_field_custom)
+            potential += f->potential(r);
+        else
+          for (auto &&f : deal_force->force_field_custom)
+            potential += f->potential(r + deal_force->position_offset->current_value);
+
+        return potential;
+      }
+
+      double BoundaryValues::value(const Point<3> &p, const unsigned int) const
+      {
 #ifdef CAVIAR_WITH_MPI
-      double total_potential_of_free_charges = 0;
-      double local_potential_of_free_charges = potential_of_free_charges(p);
-      //  MPI_Barrier (mpi_communicator); // XXX is it nessecary?
+        double total_potential_of_free_charges = 0;
+        double local_potential_of_free_charges = potential_of_free_charges(p);
+        //  MPI_Barrier (mpi_communicator); // XXX is it nessecary?
 
-      MPI_Allreduce(&local_potential_of_free_charges,
-                    &total_potential_of_free_charges,
-                    1, MPI::DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+        MPI_Allreduce(&local_potential_of_free_charges,
+                      &total_potential_of_free_charges,
+                      1, MPI::DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 
-      return total_potential - total_potential_of_free_charges;
+        return total_potential - total_potential_of_free_charges;
 #else
-      return total_potential - potential_of_free_charges(p);
+        return total_potential - potential_of_free_charges(p);
 #endif
-    }
+      }
 
-  } // plt_dealii
-} // force_field
+    } // plt_dealii
+  } // force_field
 
-CAVIAR_NAMESPACE_CLOSE
+}
 #endif

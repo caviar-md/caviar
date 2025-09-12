@@ -19,28 +19,29 @@
 #include "caviar/objects/unique.hpp"
 #include "caviar/objects/unique/atom.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace unique
+namespace caviar
 {
 
-  /**
-   * This class creates list of atoms.
-   * list contains references of the atoms.
-   */
-  class Atom_list : public Unique
+  namespace unique
   {
-  public:
-    Atom_list(class CAVIAR *);
-    Atom_list(const Atom_list &);
-    Atom_list();
-    ~Atom_list();
-    bool read(caviar::interpreter::Parser *);
-    void verify_settings();
-    void add_atom(const unique::Atom &);
-    std::vector<unique::Atom *> atoms;
-  };
 
-} // unique
+    /**
+     * This class creates list of atoms.
+     * list contains references of the atoms.
+     */
+    class Atom_list : public Unique
+    {
+    public:
+      Atom_list(class CAVIAR *);
+      Atom_list(const Atom_list &);
+      Atom_list();
+      ~Atom_list();
+      bool read(caviar::interpreter::Parser *);
+      void verify_settings();
+      void add_atom(const unique::Atom &);
+      std::vector<unique::Atom *> atoms;
+    };
 
-CAVIAR_NAMESPACE_CLOSE
+  } // unique
+
+}

@@ -16,12 +16,13 @@
 
 #include "caviar/interpreter/object_handler/dictionary.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-namespace interpreter
+namespace caviar
 {
-    namespace object_handler
+    namespace interpreter
     {
+        namespace object_handler
+        {
 
-    } // object_handler
-} // interpreter
-CAVIAR_NAMESPACE_CLOSE
+        } // object_handler
+    } // interpreter
+}

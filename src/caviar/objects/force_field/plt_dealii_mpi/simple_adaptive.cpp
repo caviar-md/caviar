@@ -77,156 +77,157 @@
 #include <cmath>
 #include <iomanip>
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace force_field
+namespace caviar
 {
 
-  void Plt_dealii_mpi::sa_setup_system()
+  namespace force_field
   {
 
-    dof_handler.distribute_dofs(fe);
-
-    locally_owned_dofs = dof_handler.locally_owned_dofs();
-    DoFTools::extract_locally_relevant_dofs(dof_handler,
-                                            locally_relevant_dofs);
-
-    locally_relevant_solution.reinit(locally_owned_dofs,
-                                     locally_relevant_dofs, mpi_comm);
-    system_rhs.reinit(locally_owned_dofs, mpi_comm);
-
-    constraints.clear();
-    constraints.reinit(locally_relevant_dofs);
-    DoFTools::make_hanging_node_constraints(dof_handler, constraints);
-
-    std::map<types::global_dof_index, double> boundary_values;
-
-    for (auto &&i : boundary_id_value)
+    void Plt_dealii_mpi::sa_setup_system()
     {
 
-      VectorTools::interpolate_boundary_values(dof_handler,
-                                               i.first,
-                                               plt_dealii_mpi::BoundaryValues(i.second, this),
-                                               constraints);
-    }
+      dof_handler.distribute_dofs(fe);
 
-    constraints.close();
+      locally_owned_dofs = dof_handler.locally_owned_dofs();
+      DoFTools::extract_locally_relevant_dofs(dof_handler,
+                                              locally_relevant_dofs);
 
-    DynamicSparsityPattern dsp(locally_relevant_dofs);
+      locally_relevant_solution.reinit(locally_owned_dofs,
+                                       locally_relevant_dofs, mpi_comm);
+      system_rhs.reinit(locally_owned_dofs, mpi_comm);
 
-    DoFTools::make_sparsity_pattern(dof_handler, dsp,
-                                    constraints, false);
-    SparsityTools::distribute_sparsity_pattern(dsp,
-                                               dof_handler.n_locally_owned_dofs_per_processor(),
-                                               mpi_comm,
-                                               locally_relevant_dofs);
+      constraints.clear();
+      constraints.reinit(locally_relevant_dofs);
+      DoFTools::make_hanging_node_constraints(dof_handler, constraints);
 
-    system_matrix.reinit(locally_owned_dofs,
-                         locally_owned_dofs,
-                         dsp,
-                         mpi_comm);
-  }
+      std::map<types::global_dof_index, double> boundary_values;
 
-  //==================================================
-  //==================================================
-  //==================================================
-
-  void Plt_dealii_mpi::sa_assemble_system()
-  {
-
-    const QGauss<3> quadrature_formula(num_quadrature_points);
-
-    // FEValues<3> fe_values (fe, quadrature_formula,
-    //                          update_values    |  update_gradients |
-    //                          update_quadrature_points |
-    //                          update_JxW_values);
-
-    FEValues<3> fe_values(fe, quadrature_formula,
-                          update_gradients | update_JxW_values);
-
-    const unsigned int dofs_per_cell = fe.dofs_per_cell;
-    const unsigned int n_q_points = quadrature_formula.size();
-
-    FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
-    dealii::Vector<double> cell_rhs(dofs_per_cell);
-    cell_rhs = 0;
-
-    std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-
-    typename DoFHandler<3>::active_cell_iterator
-        cell = dof_handler.begin_active(),
-        endc = dof_handler.end();
-    for (; cell != endc; ++cell)
-      if (cell->is_locally_owned())
+      for (auto &&i : boundary_id_value)
       {
-        cell_matrix = 0;
 
-        fe_values.reinit(cell);
-
-        for (unsigned int q_point = 0; q_point < n_q_points; ++q_point)
-        {
-
-          for (unsigned int i = 0; i < dofs_per_cell; ++i)
-          {
-            for (unsigned int j = 0; j < dofs_per_cell; ++j)
-              cell_matrix(i, j) += (fe_values.shape_grad(i, q_point) *
-                                    fe_values.shape_grad(j, q_point) *
-                                    fe_values.JxW(q_point));
-          }
-        }
-
-        cell->get_dof_indices(local_dof_indices);
-        constraints.distribute_local_to_global(cell_matrix,
-                                               cell_rhs,
-                                               local_dof_indices,
-                                               system_matrix,
-                                               system_rhs);
+        VectorTools::interpolate_boundary_values(dof_handler,
+                                                 i.first,
+                                                 plt_dealii_mpi::BoundaryValues(i.second, this),
+                                                 constraints);
       }
 
-    system_matrix.compress(VectorOperation::add);
-    system_rhs.compress(VectorOperation::add);
-  }
+      constraints.close();
 
-  //==================================================
-  //==================================================
-  //==================================================
+      DynamicSparsityPattern dsp(locally_relevant_dofs);
 
-  void Plt_dealii_mpi::sa_solve()
-  {
+      DoFTools::make_sparsity_pattern(dof_handler, dsp,
+                                      constraints, false);
+      SparsityTools::distribute_sparsity_pattern(dsp,
+                                                 dof_handler.n_locally_owned_dofs_per_processor(),
+                                                 mpi_comm,
+                                                 locally_relevant_dofs);
 
-    LA::MPI::Vector
-        completely_distributed_solution(locally_owned_dofs, mpi_comm);
+      system_matrix.reinit(locally_owned_dofs,
+                           locally_owned_dofs,
+                           dsp,
+                           mpi_comm);
+    }
 
-    SolverControl solver_control(dof_handler.n_dofs(), solver_control_tolerance);
+    //==================================================
+    //==================================================
+    //==================================================
+
+    void Plt_dealii_mpi::sa_assemble_system()
+    {
+
+      const QGauss<3> quadrature_formula(num_quadrature_points);
+
+      // FEValues<3> fe_values (fe, quadrature_formula,
+      //                          update_values    |  update_gradients |
+      //                          update_quadrature_points |
+      //                          update_JxW_values);
+
+      FEValues<3> fe_values(fe, quadrature_formula,
+                            update_gradients | update_JxW_values);
+
+      const unsigned int dofs_per_cell = fe.dofs_per_cell;
+      const unsigned int n_q_points = quadrature_formula.size();
+
+      FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
+      dealii::Vector<double> cell_rhs(dofs_per_cell);
+      cell_rhs = 0;
+
+      std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+
+      typename DoFHandler<3>::active_cell_iterator
+          cell = dof_handler.begin_active(),
+          endc = dof_handler.end();
+      for (; cell != endc; ++cell)
+        if (cell->is_locally_owned())
+        {
+          cell_matrix = 0;
+
+          fe_values.reinit(cell);
+
+          for (unsigned int q_point = 0; q_point < n_q_points; ++q_point)
+          {
+
+            for (unsigned int i = 0; i < dofs_per_cell; ++i)
+            {
+              for (unsigned int j = 0; j < dofs_per_cell; ++j)
+                cell_matrix(i, j) += (fe_values.shape_grad(i, q_point) *
+                                      fe_values.shape_grad(j, q_point) *
+                                      fe_values.JxW(q_point));
+            }
+          }
+
+          cell->get_dof_indices(local_dof_indices);
+          constraints.distribute_local_to_global(cell_matrix,
+                                                 cell_rhs,
+                                                 local_dof_indices,
+                                                 system_matrix,
+                                                 system_rhs);
+        }
+
+      system_matrix.compress(VectorOperation::add);
+      system_rhs.compress(VectorOperation::add);
+    }
+
+    //==================================================
+    //==================================================
+    //==================================================
+
+    void Plt_dealii_mpi::sa_solve()
+    {
+
+      LA::MPI::Vector
+          completely_distributed_solution(locally_owned_dofs, mpi_comm);
+
+      SolverControl solver_control(dof_handler.n_dofs(), solver_control_tolerance);
 
 #ifdef USE_PETSC_LA
-    LA::SolverCG solver(solver_control, mpi_comm);
+      LA::SolverCG solver(solver_control, mpi_comm);
 #else
-    LA::SolverCG solver(solver_control);
+      LA::SolverCG solver(solver_control);
 #endif
 
-    LA::MPI::PreconditionAMG preconditioner;
+      LA::MPI::PreconditionAMG preconditioner;
 
-    LA::MPI::PreconditionAMG::AdditionalData data;
+      LA::MPI::PreconditionAMG::AdditionalData data;
 
 #ifdef USE_PETSC_LA
-    data.symmetric_operator = true;
+      data.symmetric_operator = true;
 #else
-    /* Trilinos defaults are good */
+      /* Trilinos defaults are good */
 #endif
-    preconditioner.initialize(system_matrix, data);
+      preconditioner.initialize(system_matrix, data);
 
-    solver.solve(system_matrix, completely_distributed_solution, system_rhs,
-                 preconditioner);
+      solver.solve(system_matrix, completely_distributed_solution, system_rhs,
+                   preconditioner);
 
-    // pcout << "   Solved in " << solver_control.last_step() << " iterations." << std::endl;
+      // pcout << "   Solved in " << solver_control.last_step() << " iterations." << std::endl;
 
-    constraints.distribute(completely_distributed_solution);
+      constraints.distribute(completely_distributed_solution);
 
-    locally_relevant_solution = completely_distributed_solution;
-  }
+      locally_relevant_solution = completely_distributed_solution;
+    }
 
-} // force_field
+  } // force_field
 
-CAVIAR_NAMESPACE_CLOSE
+}
 #endif

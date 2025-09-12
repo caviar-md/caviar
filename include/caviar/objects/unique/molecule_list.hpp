@@ -19,30 +19,31 @@
 #include "caviar/objects/unique.hpp"
 #include "caviar/objects/unique/molecule.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-class Atom_data;
-namespace unique
+namespace caviar
 {
 
-  /**
-   * This class creates list of molecules.
-   * list contains references of the molecules.
-   */
-  class Molecule_list : public Unique
+  class Atom_data;
+  namespace unique
   {
-  public:
-    Molecule_list(class CAVIAR *);
-    Molecule_list(const Molecule_list &);
-    Molecule_list();
-    ~Molecule_list();
 
-    bool read(caviar::interpreter::Parser *);
-    void verify_settings();
-    void add_molecule(const unique::Molecule &);
-    std::vector<unique::Molecule *> molecules;
-  };
+    /**
+     * This class creates list of molecules.
+     * list contains references of the molecules.
+     */
+    class Molecule_list : public Unique
+    {
+    public:
+      Molecule_list(class CAVIAR *);
+      Molecule_list(const Molecule_list &);
+      Molecule_list();
+      ~Molecule_list();
 
-} // unique
+      bool read(caviar::interpreter::Parser *);
+      void verify_settings();
+      void add_molecule(const unique::Molecule &);
+      std::vector<unique::Molecule *> molecules;
+    };
 
-CAVIAR_NAMESPACE_CLOSE
+  } // unique
+
+}

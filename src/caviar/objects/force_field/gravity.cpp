@@ -21,7 +21,8 @@
 #include <cmath>
 #include <iomanip>
 
-CAVIAR_NAMESPACE_OPEN
+namespace caviar
+{
 
 namespace force_field
 {
@@ -131,4 +132,4 @@ namespace force_field
 
 } // force_field
 
-CAVIAR_NAMESPACE_CLOSE
+}

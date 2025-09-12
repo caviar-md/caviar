@@ -21,59 +21,116 @@
 
 #include <cmath>
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace force_field
+namespace caviar
 {
 
-  //======= total potential
-
-  double Electrostatic_ewald1d::potential(const Vector<double> &r)
+  namespace force_field
   {
-    FC_OBJECT_VERIFY_SETTINGS
-    return potential_r(r) + potential_k(r);
-  }
 
-  double Electrostatic_ewald1d::potential(const int i)
-  {
-    FC_OBJECT_VERIFY_SETTINGS
-    return potential_r(i) + potential_k(i);
-  }
+    //======= total potential
 
-  //======= short range
+    double Electrostatic_ewald1d::potential(const Vector<double> &r)
+    {
+      FC_OBJECT_VERIFY_SETTINGS
+      return potential_r(r) + potential_k(r);
+    }
 
-  // using binlist
-  double Electrostatic_ewald1d::potential_r(const Vector<double> &r)
-  {
-    double potential_value = 0;
+    double Electrostatic_ewald1d::potential(const int i)
+    {
+      FC_OBJECT_VERIFY_SETTINGS
+      return potential_r(i) + potential_k(i);
+    }
 
-    const auto &pos = atom_data->atom_struct_owned.position;
-    const auto &binlist = neighborlist->binlist;
-    const auto &nb = neighborlist->neigh_bin;
-    const auto nb_i = neighborlist->neigh_bin_index(r);
-    const int pos_size = pos.size();
+    //======= short range
 
-    const auto pos_i = r;
-    const auto sigma_sq = sigma * sigma;
+    // using binlist
+    double Electrostatic_ewald1d::potential_r(const Vector<double> &r)
+    {
+      double potential_value = 0;
+
+      const auto &pos = atom_data->atom_struct_owned.position;
+      const auto &binlist = neighborlist->binlist;
+      const auto &nb = neighborlist->neigh_bin;
+      const auto nb_i = neighborlist->neigh_bin_index(r);
+      const int pos_size = pos.size();
+
+      const auto pos_i = r;
+      const auto sigma_sq = sigma * sigma;
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for reduction(+ : potential_value)
 #endif
-    for (unsigned nb_j = 0; nb_j < nb[nb_i].size(); ++nb_j)
-    {
-      const auto &nb_ij = nb[nb_i][nb_j];
-
-      for (unsigned i = 0; i < binlist[nb_ij.x][nb_ij.y][nb_ij.z].size(); ++i)
+      for (unsigned nb_j = 0; nb_j < nb[nb_i].size(); ++nb_j)
       {
+        const auto &nb_ij = nb[nb_i][nb_j];
 
-        int j = binlist[nb_ij.x][nb_ij.y][nb_ij.z][i];
+        for (unsigned i = 0; i < binlist[nb_ij.x][nb_ij.y][nb_ij.z].size(); ++i)
+        {
 
+          int j = binlist[nb_ij.x][nb_ij.y][nb_ij.z][i];
+
+          bool is_ghost = j >= pos_size;
+
+          Vector<Real_t> pos_j;
+          Real_t type_j;
+          if (is_ghost)
+          {
+
+            j -= pos_size;
+            pos_j = atom_data->atom_struct_ghost.position[j];
+            type_j = atom_data->atom_struct_ghost.type[j];
+          }
+          else
+          {
+            pos_j = atom_data->atom_struct_owned.position[j];
+            type_j = atom_data->atom_struct_owned.type[j];
+          }
+
+          const auto charge_j = atom_data->atom_type_params.charge[type_j];
+          const auto r_ij = pos_i - pos_j;
+
+          if (r_ij.x == 0 && r_ij.y == 0 && r_ij.z == 0)
+            continue;
+
+          const auto r_ij_sq = r_ij * r_ij;
+          const auto d1 = 1.0 / std::sqrt(r_ij_sq);
+          const auto d2 = 1.0 / std::sqrt(r_ij_sq + sigma_sq);
+          potential_value += charge_j * (d1 - d2);
+        }
+      }
+      return potential_value * k_electrostatic;
+      ;
+    }
+
+    //  using neighlist
+    double Electrostatic_ewald1d::potential_r(const int i)
+    {
+
+      // XXX not checked
+      error->all("not implemented. needs fixs for neighlist or maybe impossible.");
+
+      double potential_value = 0;
+      const auto &pos = atom_data->atom_struct_owned.position;
+      const auto &nlist = neighborlist->neighlist;
+
+      const unsigned pos_size = pos.size();
+
+      const auto &pos_i = atom_data->atom_struct_owned.position[i];
+      const auto sigma_sq = sigma * sigma;
+#ifdef CAVIAR_WITH_OPENMP
+#pragma omp parallel for reduction(+ : potential_value)
+#endif
+      // for (auto j : nlist[i]) {
+      for (unsigned int k = 0; k < nlist[i].size(); ++k)
+      {
+        auto j = nlist[i][k];
+        double coef = 2.0; // ewald: 'coef=2' for owned in 'neighlist'. Not for binlist.
         bool is_ghost = j >= pos_size;
 
         Vector<Real_t> pos_j;
         Real_t type_j;
         if (is_ghost)
         {
-
+          coef = 1.0; // ewald:'coef=1' for ghost in 'neighlist'. Not for binlist.
           j -= pos_size;
           pos_j = atom_data->atom_struct_ghost.position[j];
           type_j = atom_data->atom_struct_ghost.type[j];
@@ -93,134 +150,78 @@ namespace force_field
         const auto r_ij_sq = r_ij * r_ij;
         const auto d1 = 1.0 / std::sqrt(r_ij_sq);
         const auto d2 = 1.0 / std::sqrt(r_ij_sq + sigma_sq);
-        potential_value += charge_j * (d1 - d2);
+        potential_value += coef * charge_j * (d1 - d2);
       }
+
+      return potential_value * k_electrostatic;
     }
-    return potential_value * k_electrostatic;
-    ;
-  }
 
-  //  using neighlist
-  double Electrostatic_ewald1d::potential_r(const int i)
-  {
+    //====== long rang
 
-    // XXX not checked
-    error->all("not implemented. needs fixs for neighlist or maybe impossible.");
-
-    double potential_value = 0;
-    const auto &pos = atom_data->atom_struct_owned.position;
-    const auto &nlist = neighborlist->neighlist;
-
-    const unsigned pos_size = pos.size();
-
-    const auto &pos_i = atom_data->atom_struct_owned.position[i];
-    const auto sigma_sq = sigma * sigma;
+    double Electrostatic_ewald1d::potential_k(const Vector<double> &r)
+    {
+      double potential_value = 0;
+      const auto &pos = atom_data->atom_struct_owned.position;
+      const auto lattice_vec_size = lattice_vec.size();
+      const auto sigma_sq = sigma * sigma;
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for reduction(+ : potential_value)
 #endif
-    // for (auto j : nlist[i]) {
-    for (unsigned int k = 0; k < nlist[i].size(); ++k)
-    {
-      auto j = nlist[i][k];
-      double coef = 2.0; // ewald: 'coef=2' for owned in 'neighlist'. Not for binlist.
-      bool is_ghost = j >= pos_size;
-
-      Vector<Real_t> pos_j;
-      Real_t type_j;
-      if (is_ghost)
+      for (unsigned int j = 0; j < pos.size(); ++j)
       {
-        coef = 1.0; // ewald:'coef=1' for ghost in 'neighlist'. Not for binlist.
-        j -= pos_size;
-        pos_j = atom_data->atom_struct_ghost.position[j];
-        type_j = atom_data->atom_struct_ghost.type[j];
-      }
-      else
-      {
-        pos_j = atom_data->atom_struct_owned.position[j];
-        type_j = atom_data->atom_struct_owned.type[j];
-      }
-
-      const auto charge_j = atom_data->atom_type_params.charge[type_j];
-      const auto r_ij = pos_i - pos_j;
-
-      if (r_ij.x == 0 && r_ij.y == 0 && r_ij.z == 0)
-        continue;
-
-      const auto r_ij_sq = r_ij * r_ij;
-      const auto d1 = 1.0 / std::sqrt(r_ij_sq);
-      const auto d2 = 1.0 / std::sqrt(r_ij_sq + sigma_sq);
-      potential_value += coef * charge_j * (d1 - d2);
-    }
-
-    return potential_value * k_electrostatic;
-  }
-
-  //====== long rang
-
-  double Electrostatic_ewald1d::potential_k(const Vector<double> &r)
-  {
-    double potential_value = 0;
-    const auto &pos = atom_data->atom_struct_owned.position;
-    const auto lattice_vec_size = lattice_vec.size();
-    const auto sigma_sq = sigma * sigma;
-#ifdef CAVIAR_WITH_OPENMP
-#pragma omp parallel for reduction(+ : potential_value)
-#endif
-    for (unsigned int j = 0; j < pos.size(); ++j)
-    {
 #ifdef CAVIAR_WITH_MPI
-      if (atom_data->atom_struct_owned.mpi_rank[j] != my_mpi_rank)
-        continue;
+        if (atom_data->atom_struct_owned.mpi_rank[j] != my_mpi_rank)
+          continue;
 #endif
-      const auto type_j = atom_data->atom_struct_owned.type[j];
-      const auto charge_j = atom_data->atom_type_params.charge[type_j];
+        const auto type_j = atom_data->atom_struct_owned.type[j];
+        const auto charge_j = atom_data->atom_type_params.charge[type_j];
 
-      double sum = 0;
-      for (unsigned int k = 0; k < lattice_vec_size; ++k)
-      {
-        const auto dr = r - pos[j] + lattice_vec[k];
-        const auto dr_sq = dr * dr;
-        // if (dr_sq == 0.0) continue; //XXX removing self potential?
-        sum += 1.0 / std::sqrt(dr_sq + sigma_sq);
+        double sum = 0;
+        for (unsigned int k = 0; k < lattice_vec_size; ++k)
+        {
+          const auto dr = r - pos[j] + lattice_vec[k];
+          const auto dr_sq = dr * dr;
+          // if (dr_sq == 0.0) continue; //XXX removing self potential?
+          sum += 1.0 / std::sqrt(dr_sq + sigma_sq);
+        }
+
+        potential_value += charge_j * sum;
       }
-
-      potential_value += charge_j * sum;
+      return potential_value * k_electrostatic;
     }
-    return potential_value * k_electrostatic;
-  }
 
-  double Electrostatic_ewald1d::potential_k(const int i)
-  {
-    double potential_value = 0;
-    const auto &pos = atom_data->atom_struct_owned.position;
-    const auto lattice_vec_size = lattice_vec.size();
-    const auto sigma_sq = sigma * sigma;
+    double Electrostatic_ewald1d::potential_k(const int i)
+    {
+      double potential_value = 0;
+      const auto &pos = atom_data->atom_struct_owned.position;
+      const auto lattice_vec_size = lattice_vec.size();
+      const auto sigma_sq = sigma * sigma;
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for reduction(+ : potential_value)
 #endif
-    for (unsigned int j = 0; j < pos.size(); ++j)
-    {
-#ifdef CAVIAR_WITH_MPI
-      if (atom_data->atom_struct_owned.mpi_rank[j] != my_mpi_rank)
-        continue;
-#endif
-      const auto type_j = atom_data->atom_struct_owned.type[j];
-      const auto charge_j = atom_data->atom_type_params.charge[type_j];
-
-      double sum = 0;
-      for (unsigned int k = 0; k < lattice_vec_size; ++k)
+      for (unsigned int j = 0; j < pos.size(); ++j)
       {
-        const auto dr = pos[i] - pos[j] + lattice_vec[k];
-        const auto dr_sq = dr * dr;
-        // if (dr_sq == 0.0) continue; //XXX removing self potential?
-        sum += 1.0 / std::sqrt(dr_sq + sigma_sq);
+#ifdef CAVIAR_WITH_MPI
+        if (atom_data->atom_struct_owned.mpi_rank[j] != my_mpi_rank)
+          continue;
+#endif
+        const auto type_j = atom_data->atom_struct_owned.type[j];
+        const auto charge_j = atom_data->atom_type_params.charge[type_j];
+
+        double sum = 0;
+        for (unsigned int k = 0; k < lattice_vec_size; ++k)
+        {
+          const auto dr = pos[i] - pos[j] + lattice_vec[k];
+          const auto dr_sq = dr * dr;
+          // if (dr_sq == 0.0) continue; //XXX removing self potential?
+          sum += 1.0 / std::sqrt(dr_sq + sigma_sq);
+        }
+
+        potential_value += charge_j * sum;
       }
-
-      potential_value += charge_j * sum;
+      return potential_value * k_electrostatic;
     }
-    return potential_value * k_electrostatic;
-  }
 
-} // force_field
+  } // force_field
 
-CAVIAR_NAMESPACE_CLOSE
+}

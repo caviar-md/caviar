@@ -23,359 +23,360 @@
 #include <cmath>
 #include <fstream>
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace force_field
+namespace caviar
 {
 
-  Geometry_lj::Geometry_lj(CAVIAR *fptr) : Force_field{fptr}
+  namespace force_field
   {
-    FC_OBJECT_INITIALIZE_INFO
-    wca = false;
-    cutoff_list_activated = false;
-    force_coef = 1.0;
-  }
 
-  Geometry_lj::~Geometry_lj()
-  {
-  }
-
-  bool Geometry_lj::read(class caviar::interpreter::Parser *parser)
-  {
-    FC_OBJECT_READ_INFO
-    bool in_file = true;
-
-    while (true)
+    Geometry_lj::Geometry_lj(CAVIAR *fptr) : Force_field{fptr}
     {
-      GET_A_TOKEN_FOR_CREATION
-      auto t = token.string_value;
-      if (string_cmp(t, "cutoff"))
-      {
-        GET_OR_CHOOSE_A_REAL(cutoff, "", "")
-        if (cutoff < 0.0)
-          error->all(FC_FILE_LINE_FUNC_PARSE, "Force field cutoff have to non-negative.");
-      }
-      else if (string_cmp(t, "cutoff_list"))
-      {
-        GET_A_STDVECTOR_STDVECTOR_REAL_ELEMENT(cutoff_list)
-        cutoff_list_activated = true;
-        if (vector_value < 0)
-          error->all(FC_FILE_LINE_FUNC_PARSE, "Epsilon have to be non-negative.");
-      }
-      else if (string_cmp(t, "wca"))
-      {
-        wca = true;
-        cutoff_list_activated = true;
-      }
-      else if (string_cmp(t, "add_shape"))
-      {
-        FIND_OBJECT_BY_NAME(shape, it)
-        shape.push_back(object_container->shape[it->second.index]);
-        shape_type.push_back(0);
-      }
-      else if (string_cmp(t, "shape_type"))
-      {
-        unsigned int i = 0, t = 0;
-        GET_OR_CHOOSE_A_INT(i, "", "")
-        GET_OR_CHOOSE_A_INT(t, "", "")
-        if (shape_type.size() < (unsigned int)i + 1)
-          shape_type.resize(i + 1, 0);
-        shape_type[i] = t;
-      }
-      else if (string_cmp(t, "force_coef"))
-      {
-        GET_OR_CHOOSE_A_REAL(force_coef, "", "")
-      }
-      else if (string_cmp(t, "epsilon_atom"))
-      {
-        GET_A_STDVECTOR_REAL_ELEMENT(epsilon_atom)
-      }
-      else if (string_cmp(t, "epsilon_wall"))
-      {
-        GET_A_STDVECTOR_REAL_ELEMENT(epsilon_wall)
-      }
-      else if (string_cmp(t, "sigma_atom"))
-      {
-        GET_A_STDVECTOR_REAL_ELEMENT(sigma_atom)
-      }
-      else if (string_cmp(t, "sigma_wall"))
-      {
-        GET_A_STDVECTOR_REAL_ELEMENT(sigma_wall)
-      } /*else if (string_cmp(t,"epsilon")) {
-        GET_A_STDVECTOR_STDVECTOR_REAL_ELEMENT(epsilon)
-        if (vector_value < 0)  error->all (FC_FILE_LINE_FUNC_PARSE, "Epsilon have to be non-negative.");
-      } else if (string_cmp(t,"sigma")) {
-        GET_A_STDVECTOR_STDVECTOR_REAL_ELEMENT(sigma)
-        if (vector_value < 0)  error->all (FC_FILE_LINE_FUNC_PARSE, "Sigma have to be non-negative.");
-      } */
-      else if (string_cmp(t, "set_atom_data") || string_cmp(t, "atom_data"))
-      {
-        FIND_OBJECT_BY_NAME(atom_data, it)
-        atom_data = object_container->atom_data[it->second.index];
-      }
-      else if (string_cmp(t, "set_position_offset"))
-      {
-        FIND_OBJECT_BY_NAME(unique, it)
-        FC_CHECK_OBJECT_CLASS_NAME(unique, it, time_function_3d)
-        unique::Time_function_3d *a = dynamic_cast<unique::Time_function_3d *>(object_container->unique[it->second.index]);
-        position_offset = a;
-      }
-      else
-        FC_ERR_UNDEFINED_VAR(t)
+      FC_OBJECT_INITIALIZE_INFO
+      wca = false;
+      cutoff_list_activated = false;
+      force_coef = 1.0;
     }
 
-    return in_file;
-  }
-
-  void Geometry_lj::verify_settings()
-  {
-    FC_NULLPTR_CHECK(atom_data)
-    my_mpi_rank = atom_data->get_mpi_rank();
-    auto shape_size = shape.size();
-    if (shape_size == 0)
+    Geometry_lj::~Geometry_lj()
     {
-      output->warning("Geometry_lj:: shape.size()==0");
     }
 
-    auto epsilon_wall_size = epsilon_wall.size();
-    auto sigma_wall_size = sigma_wall.size();
-    auto wall_max_size = (epsilon_wall_size > sigma_wall_size ? epsilon_wall_size : sigma_wall_size);
-    if (epsilon_wall_size != sigma_wall_size)
+    bool Geometry_lj::read(class caviar::interpreter::Parser *parser)
     {
-      output->warning("Geometry_lj:: (epsilon_wall_size != sigma_wall_size)");
-      if (epsilon_wall_size != wall_max_size)
+      FC_OBJECT_READ_INFO
+      bool in_file = true;
+
+      while (true)
       {
-        epsilon_wall.resize(wall_max_size, 0);
-      }
-      else
-      {
-        sigma_wall.resize(wall_max_size, 0);
-      }
-    }
-
-    unsigned shape_type_max = 0;
-    for (auto &&t : shape_type)
-    {
-      if ((int)shape_type_max < t)
-        shape_type_max = t;
-    }
-
-    if (wall_max_size < shape_type_max)
-    {
-      output->warning("Geometry_lj:: (wall_max_size < shape_type_max)");
-      epsilon_wall.resize(shape_type_max, 0);
-      sigma_wall.resize(shape_type_max, 0);
-      wall_max_size = shape_type_max;
-    }
-
-    auto epsilon_atom_size = epsilon_atom.size();
-    auto sigma_atom_size = sigma_atom.size();
-    auto atom_max_size = (epsilon_atom_size > sigma_atom_size ? epsilon_atom_size : sigma_atom_size);
-    if (epsilon_atom_size != sigma_atom_size)
-    {
-      output->warning("Geometry_lj:: (epsilon_atom_size != sigma_atom_size)");
-      if (epsilon_atom_size != atom_max_size)
-      {
-        epsilon_atom.resize(atom_max_size, 0);
-      }
-      else
-      {
-        sigma_atom.resize(atom_max_size, 0);
-      }
-    }
-
-    unsigned atom_data_type_max = 0;
-    for (auto &&t : atom_data->atom_struct_owned.type)
-    {
-      if (atom_data_type_max < t)
-        atom_data_type_max = t;
-    }
-
-    if (atom_max_size < atom_data_type_max + 1)
-    {
-      output->warning("Geometry_lj:: (atom_max_size < atom_data_type_max + 1)");
-      epsilon_atom.resize(atom_data_type_max + 1, 0);
-      sigma_atom.resize(atom_data_type_max + 1, 0);
-      atom_max_size = atom_data_type_max + 1;
-    }
-
-    epsilon.resize(wall_max_size);
-    sigma.resize(wall_max_size);
-
-    for (auto &&e : epsilon)
-      e.resize(atom_max_size, 0);
-
-    for (auto &&s : sigma)
-      s.resize(atom_max_size, 0);
-
-    if (true)
-    {
-      for (unsigned int i = 0; i < wall_max_size; ++i)
-      {
-        for (unsigned int j = 0; j < atom_max_size; ++j)
+        GET_A_TOKEN_FOR_CREATION
+        auto t = token.string_value;
+        if (string_cmp(t, "cutoff"))
         {
-          auto sigma_ij = 0.5 * (sigma_wall[i] + sigma_atom[j]);
-          auto epsilon_ij = std::sqrt(epsilon_wall[i] * epsilon_atom[j]);
-          sigma[i][j] = sigma_ij;
-          epsilon[i][j] = epsilon_ij;
+          GET_OR_CHOOSE_A_REAL(cutoff, "", "")
+          if (cutoff < 0.0)
+            error->all(FC_FILE_LINE_FUNC_PARSE, "Force field cutoff have to non-negative.");
+        }
+        else if (string_cmp(t, "cutoff_list"))
+        {
+          GET_A_STDVECTOR_STDVECTOR_REAL_ELEMENT(cutoff_list)
+          cutoff_list_activated = true;
+          if (vector_value < 0)
+            error->all(FC_FILE_LINE_FUNC_PARSE, "Epsilon have to be non-negative.");
+        }
+        else if (string_cmp(t, "wca"))
+        {
+          wca = true;
+          cutoff_list_activated = true;
+        }
+        else if (string_cmp(t, "add_shape"))
+        {
+          FIND_OBJECT_BY_NAME(shape, it)
+          shape.push_back(object_container->shape[it->second.index]);
+          shape_type.push_back(0);
+        }
+        else if (string_cmp(t, "shape_type"))
+        {
+          unsigned int i = 0, t = 0;
+          GET_OR_CHOOSE_A_INT(i, "", "")
+          GET_OR_CHOOSE_A_INT(t, "", "")
+          if (shape_type.size() < (unsigned int)i + 1)
+            shape_type.resize(i + 1, 0);
+          shape_type[i] = t;
+        }
+        else if (string_cmp(t, "force_coef"))
+        {
+          GET_OR_CHOOSE_A_REAL(force_coef, "", "")
+        }
+        else if (string_cmp(t, "epsilon_atom"))
+        {
+          GET_A_STDVECTOR_REAL_ELEMENT(epsilon_atom)
+        }
+        else if (string_cmp(t, "epsilon_wall"))
+        {
+          GET_A_STDVECTOR_REAL_ELEMENT(epsilon_wall)
+        }
+        else if (string_cmp(t, "sigma_atom"))
+        {
+          GET_A_STDVECTOR_REAL_ELEMENT(sigma_atom)
+        }
+        else if (string_cmp(t, "sigma_wall"))
+        {
+          GET_A_STDVECTOR_REAL_ELEMENT(sigma_wall)
+        } /*else if (string_cmp(t,"epsilon")) {
+          GET_A_STDVECTOR_STDVECTOR_REAL_ELEMENT(epsilon)
+          if (vector_value < 0)  error->all (FC_FILE_LINE_FUNC_PARSE, "Epsilon have to be non-negative.");
+        } else if (string_cmp(t,"sigma")) {
+          GET_A_STDVECTOR_STDVECTOR_REAL_ELEMENT(sigma)
+          if (vector_value < 0)  error->all (FC_FILE_LINE_FUNC_PARSE, "Sigma have to be non-negative.");
+        } */
+        else if (string_cmp(t, "set_atom_data") || string_cmp(t, "atom_data"))
+        {
+          FIND_OBJECT_BY_NAME(atom_data, it)
+          atom_data = object_container->atom_data[it->second.index];
+        }
+        else if (string_cmp(t, "set_position_offset"))
+        {
+          FIND_OBJECT_BY_NAME(unique, it)
+          FC_CHECK_OBJECT_CLASS_NAME(unique, it, time_function_3d)
+          unique::Time_function_3d *a = dynamic_cast<unique::Time_function_3d *>(object_container->unique[it->second.index]);
+          position_offset = a;
+        }
+        else
+          FC_ERR_UNDEFINED_VAR(t)
+      }
+
+      return in_file;
+    }
+
+    void Geometry_lj::verify_settings()
+    {
+      FC_NULLPTR_CHECK(atom_data)
+      my_mpi_rank = atom_data->get_mpi_rank();
+      auto shape_size = shape.size();
+      if (shape_size == 0)
+      {
+        output->warning("Geometry_lj:: shape.size()==0");
+      }
+
+      auto epsilon_wall_size = epsilon_wall.size();
+      auto sigma_wall_size = sigma_wall.size();
+      auto wall_max_size = (epsilon_wall_size > sigma_wall_size ? epsilon_wall_size : sigma_wall_size);
+      if (epsilon_wall_size != sigma_wall_size)
+      {
+        output->warning("Geometry_lj:: (epsilon_wall_size != sigma_wall_size)");
+        if (epsilon_wall_size != wall_max_size)
+        {
+          epsilon_wall.resize(wall_max_size, 0);
+        }
+        else
+        {
+          sigma_wall.resize(wall_max_size, 0);
         }
       }
-    }
 
-    // Week-Chandler-Anderson (WCA) potential activated.
-    if (wca)
-    {
-      auto cut_coef = std::pow(2.0, 1.0 / 6.0); // ONLY for LJ 6-12
-
-      cutoff_list.resize(wall_max_size);
-      for (auto &&c : cutoff_list)
-        c.resize(atom_max_size, 0);
-
-      for (unsigned int i = 0; i < wall_max_size; ++i)
+      unsigned shape_type_max = 0;
+      for (auto &&t : shape_type)
       {
-        auto type_s = shape_type[i];
-        for (unsigned int j = 0; j < atom_max_size; ++j)
+        if ((int)shape_type_max < t)
+          shape_type_max = t;
+      }
+
+      if (wall_max_size < shape_type_max)
+      {
+        output->warning("Geometry_lj:: (wall_max_size < shape_type_max)");
+        epsilon_wall.resize(shape_type_max, 0);
+        sigma_wall.resize(shape_type_max, 0);
+        wall_max_size = shape_type_max;
+      }
+
+      auto epsilon_atom_size = epsilon_atom.size();
+      auto sigma_atom_size = sigma_atom.size();
+      auto atom_max_size = (epsilon_atom_size > sigma_atom_size ? epsilon_atom_size : sigma_atom_size);
+      if (epsilon_atom_size != sigma_atom_size)
+      {
+        output->warning("Geometry_lj:: (epsilon_atom_size != sigma_atom_size)");
+        if (epsilon_atom_size != atom_max_size)
         {
-          auto cut = cut_coef * sigma[type_s][j];
-          std::cout << cut << "\n";
-          cutoff_list[type_s][j] = cut;
+          epsilon_atom.resize(atom_max_size, 0);
+        }
+        else
+        {
+          sigma_atom.resize(atom_max_size, 0);
         }
       }
-    }
-    else if (cutoff_list_activated)
-    {
-      if (cutoff_list.size() < shape_type_max)
+
+      unsigned atom_data_type_max = 0;
+      for (auto &&t : atom_data->atom_struct_owned.type)
       {
-        cutoff_list.resize(shape_type_max);
-        output->warning("Geometry_lj:: (cutoff_list.size() < shape_type_max)");
+        if (atom_data_type_max < t)
+          atom_data_type_max = t;
       }
-      for (auto &&c : cutoff_list)
+
+      if (atom_max_size < atom_data_type_max + 1)
       {
-        if (c.size() < atom_max_size)
+        output->warning("Geometry_lj:: (atom_max_size < atom_data_type_max + 1)");
+        epsilon_atom.resize(atom_data_type_max + 1, 0);
+        sigma_atom.resize(atom_data_type_max + 1, 0);
+        atom_max_size = atom_data_type_max + 1;
+      }
+
+      epsilon.resize(wall_max_size);
+      sigma.resize(wall_max_size);
+
+      for (auto &&e : epsilon)
+        e.resize(atom_max_size, 0);
+
+      for (auto &&s : sigma)
+        s.resize(atom_max_size, 0);
+
+      if (true)
+      {
+        for (unsigned int i = 0; i < wall_max_size; ++i)
         {
+          for (unsigned int j = 0; j < atom_max_size; ++j)
+          {
+            auto sigma_ij = 0.5 * (sigma_wall[i] + sigma_atom[j]);
+            auto epsilon_ij = std::sqrt(epsilon_wall[i] * epsilon_atom[j]);
+            sigma[i][j] = sigma_ij;
+            epsilon[i][j] = epsilon_ij;
+          }
+        }
+      }
+
+      // Week-Chandler-Anderson (WCA) potential activated.
+      if (wca)
+      {
+        auto cut_coef = std::pow(2.0, 1.0 / 6.0); // ONLY for LJ 6-12
+
+        cutoff_list.resize(wall_max_size);
+        for (auto &&c : cutoff_list)
           c.resize(atom_max_size, 0);
-          output->warning("Geometry_lj:: (cc.size() < atom_max_size)");
+
+        for (unsigned int i = 0; i < wall_max_size; ++i)
+        {
+          auto type_s = shape_type[i];
+          for (unsigned int j = 0; j < atom_max_size; ++j)
+          {
+            auto cut = cut_coef * sigma[type_s][j];
+            std::cout << cut << "\n";
+            cutoff_list[type_s][j] = cut;
+          }
+        }
+      }
+      else if (cutoff_list_activated)
+      {
+        if (cutoff_list.size() < shape_type_max)
+        {
+          cutoff_list.resize(shape_type_max);
+          output->warning("Geometry_lj:: (cutoff_list.size() < shape_type_max)");
+        }
+        for (auto &&c : cutoff_list)
+        {
+          if (c.size() < atom_max_size)
+          {
+            c.resize(atom_max_size, 0);
+            output->warning("Geometry_lj:: (cc.size() < atom_max_size)");
+          }
         }
       }
     }
-  }
 
-  void Geometry_lj::calculate_acceleration()
-  {
-    FC_OBJECT_VERIFY_SETTINGS
+    void Geometry_lj::calculate_acceleration()
+    {
+      FC_OBJECT_VERIFY_SETTINGS
 
-    Vector<double> p_o{0, 0, 0};
-    if (position_offset != nullptr)
-      p_o = position_offset->current_value;
+      Vector<double> p_o{0, 0, 0};
+      if (position_offset != nullptr)
+        p_o = position_offset->current_value;
 
-    const auto &pos = atom_data->atom_struct_owned.position;
-    auto &acc = atom_data->atom_struct_owned.acceleration;
-    double virialLocal = 0;
+      const auto &pos = atom_data->atom_struct_owned.position;
+      auto &acc = atom_data->atom_struct_owned.acceleration;
+      double virialLocal = 0;
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
 #endif
-    for (unsigned int i = 0; i < pos.size(); ++i)
-    {
-#ifdef CAVIAR_WITH_MPI
-      if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
-        continue;
-#endif
-      const auto type_i = atom_data->atom_struct_owned.type[i];
-      const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
-
-      for (unsigned int j = 0; j < shape.size(); ++j)
+      for (unsigned int i = 0; i < pos.size(); ++i)
       {
-        auto type_s = shape_type[j];
+#ifdef CAVIAR_WITH_MPI
+        if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+          continue;
+#endif
+        const auto type_i = atom_data->atom_struct_owned.type[i];
+        const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
 
-        Vector<Real_t> contact_vector{0, 0, 0};
-
-        double c = cutoff;
-
-        if (cutoff_list_activated)
-          c = cutoff_list[type_s][type_i];
-
-        bool is_in_contact = shape[j]->in_contact(pos[i] - p_o, c, contact_vector);
-
-        // if distance to the wall is less than cutoff.
-        if (is_in_contact)
+        for (unsigned int j = 0; j < shape.size(); ++j)
         {
+          auto type_s = shape_type[j];
 
-          auto contact_vector_sq = contact_vector * contact_vector;
+          Vector<Real_t> contact_vector{0, 0, 0};
 
-          // TODO not efficient. Fix it. maybe import it from in_contact()
-          auto contact_vector_sqrt = std::sqrt(contact_vector_sq);
+          double c = cutoff;
 
-          auto contact_vector_unit = contact_vector / contact_vector_sqrt;
-          auto d = c - contact_vector_sqrt; // distance between wall's atom and atom.
+          if (cutoff_list_activated)
+            c = cutoff_list[type_s][type_i];
 
-          auto dr = contact_vector_unit * d;
-          auto dr_sq = dr * dr;
+          bool is_in_contact = shape[j]->in_contact(pos[i] - p_o, c, contact_vector);
 
-          auto eps_ij = epsilon[type_s][type_i];
-          auto sigma_ij = sigma[type_s][type_i];
+          // if distance to the wall is less than cutoff.
+          if (is_in_contact)
+          {
 
-          /*  //  XXX lj 10-4
+            auto contact_vector_sq = contact_vector * contact_vector;
 
-                  auto eps_ij = epsilon [0][type_i];
-                  auto sig_ij = sigma   [0][type_i];
-                  auto sig_ij_inv = 1.0 / sig_ij;
-                  auto force_coef = 2.0 * 3.141592653589 * eps_ij * sig_ij * sig_ij * force_coef;
+            // TODO not efficient. Fix it. maybe import it from in_contact()
+            auto contact_vector_sqrt = std::sqrt(contact_vector_sq);
 
-                  auto dr_sq     = contact_vector * contact_vector;
-          //      auto dr_sq_inv = 1.0 / dr_sq;
-                  auto r_norm   = std::sqrt (dr_sq);
-                  auto r_inv    = 1.0 / r_norm;
+            auto contact_vector_unit = contact_vector / contact_vector_sqrt;
+            auto d = c - contact_vector_sqrt; // distance between wall's atom and atom.
 
-                  if (dr_sq > c*c) continue;
+            auto dr = contact_vector_unit * d;
+            auto dr_sq = dr * dr;
 
-                  auto rho      = sig_ij * r_inv;
-                  auto rho_sq   = rho * rho;
-                  auto rho_5    = rho_sq * rho_sq * rho;
+            auto eps_ij = epsilon[type_s][type_i];
+            auto sigma_ij = sigma[type_s][type_i];
 
-                  auto r_cut        = c;
-          //      auto r_cut_sq     = r_cut * r_cut;
-          //      auto r_cut_sq_inv = 1.0 / r_cut_sq;
-                  auto r_cut_norm   = r_cut;
-                  auto r_cut_inv    = 1.0 / r_cut_norm;
+            /*  //  XXX lj 10-4
 
-                  auto rho_cut      = sig_ij * r_cut_inv;
-                  auto rho_cut_inv  = 1.0 / rho_cut;
-                  auto rho_cut_sq   = rho_cut * rho_cut;
-                  auto rho_cut_5    = rho_cut_sq * rho_cut_sq * rho_cut;
+                    auto eps_ij = epsilon [0][type_i];
+                    auto sig_ij = sigma   [0][type_i];
+                    auto sig_ij_inv = 1.0 / sig_ij;
+                    auto force_coef = 2.0 * 3.141592653589 * eps_ij * sig_ij * sig_ij * force_coef;
 
-                  auto force_norm     = force_coef * 4.0 *  ( - (rho_5*rho_5*r_inv)               + (rho_5*sig_ij_inv));
-                  auto force_norm_cut = force_coef * 4.0 *  ( - (rho_cut_5*rho_cut_5*rho_cut_inv) + (rho_cut_5*sig_ij_inv));
+                    auto dr_sq     = contact_vector * contact_vector;
+            //      auto dr_sq_inv = 1.0 / dr_sq;
+                    auto r_norm   = std::sqrt (dr_sq);
+                    auto r_inv    = 1.0 / r_norm;
 
-                  auto force = (force_norm - force_norm_cut) * r_inv * contact_vector;
+                    if (dr_sq > c*c) continue;
 
-                  acc[i] += force*mass_inv_i;
-          */
+                    auto rho      = sig_ij * r_inv;
+                    auto rho_sq   = rho * rho;
+                    auto rho_5    = rho_sq * rho_sq * rho;
 
-          // XXX lj 6-12
+                    auto r_cut        = c;
+            //      auto r_cut_sq     = r_cut * r_cut;
+            //      auto r_cut_sq_inv = 1.0 / r_cut_sq;
+                    auto r_cut_norm   = r_cut;
+                    auto r_cut_inv    = 1.0 / r_cut_norm;
 
-          auto r_c_sq_inv = 1 / (c * c);
-          auto rho_c_sq_inv = sigma_ij * sigma_ij * r_c_sq_inv;
-          auto rho_c_6_inv = rho_c_sq_inv * rho_c_sq_inv * rho_c_sq_inv;
-          auto rho_c_12_inv = rho_c_6_inv * rho_c_6_inv;
+                    auto rho_cut      = sig_ij * r_cut_inv;
+                    auto rho_cut_inv  = 1.0 / rho_cut;
+                    auto rho_cut_sq   = rho_cut * rho_cut;
+                    auto rho_cut_5    = rho_cut_sq * rho_cut_sq * rho_cut;
 
-          auto dr_sq_inv = 1 / dr_sq;
-          auto rho_sq_inv = sigma_ij * sigma_ij * dr_sq_inv;
-          auto rho_6_inv = rho_sq_inv * rho_sq_inv * rho_sq_inv;
-          auto rho_12_inv = rho_6_inv * rho_6_inv;
+                    auto force_norm     = force_coef * 4.0 *  ( - (rho_5*rho_5*r_inv)               + (rho_5*sig_ij_inv));
+                    auto force_norm_cut = force_coef * 4.0 *  ( - (rho_cut_5*rho_cut_5*rho_cut_inv) + (rho_cut_5*sig_ij_inv));
 
-          auto force = force_coef * 4 * eps_ij * (-12 * rho_12_inv * dr_sq_inv + 6 * rho_6_inv * dr_sq_inv + +12 * rho_c_12_inv * r_c_sq_inv - 6 * rho_c_6_inv * r_c_sq_inv) * dr;
-          // std::cout << "f : " << force << "\n";
+                    auto force = (force_norm - force_norm_cut) * r_inv * contact_vector;
 
-          acc[i] += force * mass_inv_i;
+                    acc[i] += force*mass_inv_i;
+            */
 
-          // if (atom_data->pressure_process)
-          //   atom_data->add_to_pressure(force*contact_vector);   
+            // XXX lj 6-12
+
+            auto r_c_sq_inv = 1 / (c * c);
+            auto rho_c_sq_inv = sigma_ij * sigma_ij * r_c_sq_inv;
+            auto rho_c_6_inv = rho_c_sq_inv * rho_c_sq_inv * rho_c_sq_inv;
+            auto rho_c_12_inv = rho_c_6_inv * rho_c_6_inv;
+
+            auto dr_sq_inv = 1 / dr_sq;
+            auto rho_sq_inv = sigma_ij * sigma_ij * dr_sq_inv;
+            auto rho_6_inv = rho_sq_inv * rho_sq_inv * rho_sq_inv;
+            auto rho_12_inv = rho_6_inv * rho_6_inv;
+
+            auto force = force_coef * 4 * eps_ij * (-12 * rho_12_inv * dr_sq_inv + 6 * rho_6_inv * dr_sq_inv + +12 * rho_c_12_inv * r_c_sq_inv - 6 * rho_c_6_inv * r_c_sq_inv) * dr;
+            // std::cout << "f : " << force << "\n";
+
+            acc[i] += force * mass_inv_i;
+
+            // if (atom_data->pressure_process)
+            //   atom_data->add_to_pressure(force*contact_vector);
+          }
         }
       }
+      atom_data->virialForce += virialLocal;
     }
-    atom_data->virialForce += virialLocal;
-  }
 
-} // force_field
+  } // force_field
 
-CAVIAR_NAMESPACE_CLOSE
+}

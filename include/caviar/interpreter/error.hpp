@@ -22,33 +22,34 @@
 #define FC_FILE_LINE_FUNC_PARSE __FILE__, __LINE__, __func__, parser->line, parser->col
 #define FC_FILE_LINE_FUNC __FILE__, __LINE__, __func__
 
-CAVIAR_NAMESPACE_OPEN
-namespace interpreter
+namespace caviar
 {
-
-  /**
-   * This class does all the error handling outputs.
-   * It has different types of error calls.
-   *
-   */
-  class Error : public Pointers
+  namespace interpreter
   {
-  public:
+
     /**
-     * Constructor.
+     * This class does all the error handling outputs.
+     * It has different types of error calls.
+     *
      */
-    Error(CAVIAR *);
+    class Error : public Pointers
+    {
+    public:
+      /**
+       * Constructor.
+       */
+      Error(CAVIAR *);
 
-    void all(const std::string &);
+      void all(const std::string &);
 
-    void all(const char *, int, const char *, const std::string &, unsigned int, const char *);
-    void one(const char *, int, const char *, const std::string &, unsigned int, const char *);
+      void all(const char *, int, const char *, const std::string &, unsigned int, const char *);
+      void one(const char *, int, const char *, const std::string &, unsigned int, const char *);
 
-    void all(const char *, int, const char *, const std::string &, unsigned int, const std::string &);
-    void one(const char *, int, const char *, const std::string &, unsigned int, const std::string &);
+      void all(const char *, int, const char *, const std::string &, unsigned int, const std::string &);
+      void one(const char *, int, const char *, const std::string &, unsigned int, const std::string &);
 
-    void all(const char *, int, const char *, const std::string &);
-    void one(const char *, int, const char *, const std::string &);
-  };
-} // interpreter
-CAVIAR_NAMESPACE_CLOSE
+      void all(const char *, int, const char *, const std::string &);
+      void one(const char *, int, const char *, const std::string &);
+    };
+  } // interpreter
+}

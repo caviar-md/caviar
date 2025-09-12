@@ -24,41 +24,42 @@ namespace mu
   class Parser;
 }
 
-CAVIAR_NAMESPACE_OPEN
-class Parser;
-
-namespace unique
+namespace caviar
 {
+  class Parser;
 
-  /**
-   * This class defines a function of time that can be used in other objects such as force_fields
-   *
-   */
-  class Time_function : public Unique
+  namespace unique
   {
-  public:
-    Time_function();
-    Time_function(class CAVIAR *);
-    ~Time_function();
-    bool read(caviar::interpreter::Parser *);
-    void generate_export_file();
-    void generate_formula();
-    void verify_settings();
-    double value() { return current_value; };
-    void update_time_variable(double t);
-    void calculate();
 
-    std::string function_definition;
-    double time_variable;
-    double current_value;
-    bool export_values_to_file;
-    bool export_file_append;
-    std::string export_file_name;
-    std::ofstream ofs_time_value;
+    /**
+     * This class defines a function of time that can be used in other objects such as force_fields
+     *
+     */
+    class Time_function : public Unique
+    {
+    public:
+      Time_function();
+      Time_function(class CAVIAR *);
+      ~Time_function();
+      bool read(caviar::interpreter::Parser *);
+      void generate_export_file();
+      void generate_formula();
+      void verify_settings();
+      double value() { return current_value; };
+      void update_time_variable(double t);
+      void calculate();
 
-    mu::Parser *muParser;
-  };
+      std::string function_definition;
+      double time_variable;
+      double current_value;
+      bool export_values_to_file;
+      bool export_file_append;
+      std::string export_file_name;
+      std::ofstream ofs_time_value;
 
-} // unique
+      mu::Parser *muParser;
+    };
 
-CAVIAR_NAMESPACE_CLOSE
+  } // unique
+
+}

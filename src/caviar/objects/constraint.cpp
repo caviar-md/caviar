@@ -16,25 +16,26 @@
 
 #include "caviar/objects/constraint.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-Constraint::Constraint(CAVIAR *fptr) : Pointers{fptr}, atom_data{nullptr} {
-                                                           FC_OBJECT_INITIALIZE}
-
-                                       Constraint::~Constraint()
+namespace caviar
 {
+
+  Constraint::Constraint(CAVIAR *fptr) : Pointers{fptr}, atom_data{nullptr} {
+                                                             FC_OBJECT_INITIALIZE}
+
+                                         Constraint::~Constraint()
+  {
+  }
+
+  void Constraint::verify_settings()
+  {
+  }
+
+  void Constraint::apply(int64_t) {}
+  void Constraint::apply_shake(int64_t) {}
+  void Constraint::fix_position(int64_t) {}
+  void Constraint::fix_velocity(int64_t, bool &) {}
+  void Constraint::apply_barostat(int64_t, bool &) {}
+  void Constraint::apply_thermostat(int64_t, bool &) {}
+  void Constraint::fix_acceleration(int64_t) {}
+
 }
-
-void Constraint::verify_settings()
-{
-}
-
-void Constraint::apply(int64_t) {}
-void Constraint::apply_shake(int64_t) {}
-void Constraint::fix_position(int64_t) {}
-void Constraint::fix_velocity(int64_t, bool &) {}
-void Constraint::apply_barostat(int64_t, bool &) {}
-void Constraint::apply_thermostat(int64_t, bool &) {}
-void Constraint::fix_acceleration(int64_t) {}
-
-CAVIAR_NAMESPACE_CLOSE

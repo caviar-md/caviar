@@ -18,31 +18,32 @@
 
 #include "caviar/objects/force_field.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace force_field
+namespace caviar
 {
 
-  /**
-   * This class has a simple external electrostatic force-field.
-   *
-   *
-   */
-  class Electrostatic_external : public Force_field
+  namespace force_field
   {
-  public:
-    Electrostatic_external(class CAVIAR *);
-    ~Electrostatic_external(){};
 
-    bool read(class caviar::interpreter::Parser *);
-    void verify_settings();
-    void calculate_acceleration();
+    /**
+     * This class has a simple external electrostatic force-field.
+     *
+     *
+     */
+    class Electrostatic_external : public Force_field
+    {
+    public:
+      Electrostatic_external(class CAVIAR *);
+      ~Electrostatic_external() {};
 
-  public:
-    double amplitude;
-    Vector<double> direction;
-  };
+      bool read(class caviar::interpreter::Parser *);
+      void verify_settings();
+      void calculate_acceleration();
 
-} // force_field
+    public:
+      double amplitude;
+      Vector<double> direction;
+    };
 
-CAVIAR_NAMESPACE_CLOSE
+  } // force_field
+
+}

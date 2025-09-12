@@ -18,39 +18,40 @@
 
 #include "caviar/objects/force_field.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-class Shape;
-namespace unique
-{
-  class Time_function_3d;
-}
-namespace force_field
+namespace caviar
 {
 
-  /**
-   * This class creates a spring force-field for the shape geometries
-   *
-   */
-  class Geometry : public Force_field
+  class Shape;
+  namespace unique
   {
-  public:
-    Geometry(class CAVIAR *);
-    ~Geometry();
+    class Time_function_3d;
+  }
+  namespace force_field
+  {
 
-    bool read(class caviar::interpreter::Parser *);
-    void verify_settings();
-    void calculate_acceleration();
+    /**
+     * This class creates a spring force-field for the shape geometries
+     *
+     */
+    class Geometry : public Force_field
+    {
+    public:
+      Geometry(class CAVIAR *);
+      ~Geometry();
 
-  public:
-    unique::Time_function_3d *position_offset = nullptr;
-    unique::Time_function_3d *velocity_offset = nullptr;
-    std::vector<caviar::Shape *> shape;
-    bool shape_size_warning;
-    std::vector<double> radius;
-    double young_modulus, dissip_coef;
-  };
+      bool read(class caviar::interpreter::Parser *);
+      void verify_settings();
+      void calculate_acceleration();
 
-} // force_field
+    public:
+      unique::Time_function_3d *position_offset = nullptr;
+      unique::Time_function_3d *velocity_offset = nullptr;
+      std::vector<caviar::Shape *> shape;
+      bool shape_size_warning;
+      std::vector<double> radius;
+      double young_modulus, dissip_coef;
+    };
 
-CAVIAR_NAMESPACE_CLOSE
+  } // force_field
+
+}

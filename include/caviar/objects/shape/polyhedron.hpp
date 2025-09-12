@@ -18,39 +18,40 @@
 
 #include "caviar/objects/shape.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace shape
+namespace caviar
 {
-  namespace polyhedron
+
+  namespace shape
   {
-    class Handler;
-  }
+    namespace polyhedron
+    {
+      class Handler;
+    }
 
-  /**
-   * This class has a polyhedron shape.
-   * the shape must be imported in a geomety format such as vtk or stl
-   *
-   */
-  class Polyhedron : public Shape
-  {
-  public:
-    Polyhedron(class CAVIAR *);
-    ~Polyhedron();
+    /**
+     * This class has a polyhedron shape.
+     * the shape must be imported in a geomety format such as vtk or stl
+     *
+     */
+    class Polyhedron : public Shape
+    {
+    public:
+      Polyhedron(class CAVIAR *);
+      ~Polyhedron();
 
-    bool read(class caviar::interpreter::Parser *);
+      bool read(class caviar::interpreter::Parser *);
 
-    bool is_inside(const Vector<double> &v);
-    bool is_inside(const Vector<double> &, const double rad);
-    bool in_contact(const Vector<double> &, const double rad, Vector<double> &contact_vector);
+      bool is_inside(const Vector<double> &v);
+      bool is_inside(const Vector<double> &, const double rad);
+      bool in_contact(const Vector<double> &, const double rad, Vector<double> &contact_vector);
 
-  public:
-    void command_parameters(class caviar::interpreter::Parser *);
-    void command_generate();
+    public:
+      void command_parameters(class caviar::interpreter::Parser *);
+      void command_generate();
 
-    class shape::polyhedron::Handler *polyhedron_handler;
-    bool polyhedron_add;
-  };
-} // shape
+      class shape::polyhedron::Handler *polyhedron_handler;
+      bool polyhedron_add;
+    };
+  } // shape
 
-CAVIAR_NAMESPACE_CLOSE
+}

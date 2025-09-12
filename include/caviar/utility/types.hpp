@@ -20,7 +20,8 @@
 
 #include <limits>
 
-CAVIAR_NAMESPACE_OPEN
+namespace caviar
+{
 
 using LocalID_t = unsigned int;  // changing these doesn't affect MPI_SEND and MPI_Recv MPI_DATA_TYPES yet
 using GlobalID_t = unsigned int; // //
@@ -29,4 +30,4 @@ using Real_t = double;           // //
 
 constexpr auto max_GlobalID = std::numeric_limits<GlobalID_t>::max();
 
-CAVIAR_NAMESPACE_CLOSE
+}

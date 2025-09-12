@@ -18,118 +18,121 @@
 
 #include "caviar/objects/force_field.hpp"
 
-CAVIAR_NAMESPACE_OPEN
+namespace caviar
+{
 
-namespace force_field {
+  namespace force_field
+  {
 
-/**
- * This class does a spring force-field on the molecular bonds
- *  
- */
-class Umbrella_sampling : public Force_field {
-public:
-  Umbrella_sampling (class CAVIAR *);
-  ~Umbrella_sampling () {};
+    /**
+     * This class does a spring force-field on the molecular bonds
+     *
+     */
+    class Umbrella_sampling : public Force_field
+    {
+    public:
+      Umbrella_sampling(class CAVIAR *);
+      ~Umbrella_sampling() {};
 
-  //double energy();
+      // double energy();
 
-  bool read (class caviar::interpreter::Parser *);
-  void verify_settings ();
-  void calculate_acceleration ();
-public:
-  void init_production();
+      bool read(class caviar::interpreter::Parser *);
+      void verify_settings();
+      void calculate_acceleration();
 
-  void production_function();
+    public:
+      void init_production();
 
-  void finish_production();
+      void production_function();
 
-  void init_metadata();
+      void finish_production();
 
-  void finish_metadata();
+      void init_metadata();
 
-  /**
-   * If true, the metadata is written in the file
-  */
-  bool metadata_mode = false;
+      void finish_metadata();
 
-  /**
-   * If true, the data is written in the file
-  */
-  bool production_mode = false;
+      /**
+       * If true, the metadata is written in the file
+       */
+      bool metadata_mode = false;
 
-  /**
-   * The elastic coefficient of the force
-  */
-  double elastic_coef = 0;
+      /**
+       * If true, the data is written in the file
+       */
+      bool production_mode = false;
 
-  /**
-   * The atom_id in which the force is acted on
-  */
-  int atom_id = -1;
+      /**
+       * The elastic coefficient of the force
+       */
+      double elastic_coef = 0;
 
-  /**
-   * The anchor point position, i.e., the constraint position
-  */
-  caviar::Vector<double> position {0,0,0};
+      /**
+       * The atom_id in which the force is acted on
+       */
+      int atom_id = -1;
 
-  /**
-   * The spring 
-  */
-  caviar::Vector<double> dr;
+      /**
+       * The anchor point position, i.e., the constraint position
+       */
+      caviar::Vector<double> position{0, 0, 0};
 
-  /**
-   * Count number of files which is produced
-  */
-  int file_counter = 0;
+      /**
+       * The spring
+       */
+      caviar::Vector<double> dr;
 
-  /**
-   * Count the number of steps locally in order to use in skipping frames
-  */
-  int step_counter = 0;
+      /**
+       * Count number of files which is produced
+       */
+      int file_counter = 0;
 
-  /**
-   * Count the number of steps locally in order to use in skipping frames
-  */
-  char reaction_coordinate = 'x';
+      /**
+       * Count the number of steps locally in order to use in skipping frames
+       */
+      int step_counter = 0;
 
-  /**
-   * Every number of 'step' the data is written in the file
-  */
-  int step = 1;
+      /**
+       * Count the number of steps locally in order to use in skipping frames
+       */
+      char reaction_coordinate = 'x';
 
-  /**
-   * set temperature to be outputted in the file
-  */
-  double temperature = 1;
+      /**
+       * Every number of 'step' the data is written in the file
+       */
+      int step = 1;
 
-  /**
-   * set temperature 
-  */
-  bool temperature_is_set = false;
+      /**
+       * set temperature to be outputted in the file
+       */
+      double temperature = 1;
 
-  /**
-   * Make an absolute path for the metadata file
-  */
-  void fix_file_prefix();
+      /**
+       * set temperature
+       */
+      bool temperature_is_set = false;
 
-  double position_min = 0;
-  double position_mean = 0;
-  int position_mean_count = 0;
-  double position_max = 0;
+      /**
+       * Make an absolute path for the metadata file
+       */
+      void fix_file_prefix();
 
-  std::vector<double> session_data;
+      double position_min = 0;
+      double position_mean = 0;
+      int position_mean_count = 0;
+      double position_max = 0;
 
-  std::ofstream ofs_data;
-  std::ofstream ofs_metadata;
-  std::ofstream ofs_stat;
+      std::vector<double> session_data;
 
-  std::string file_name_data = "o_umbr_";
-  std::string file_name_metadata = "o_umbr_metadata";
-  std::string file_name_stat = "o_umbr_stat";
-  std::string file_prefix = "";
+      std::ofstream ofs_data;
+      std::ofstream ofs_metadata;
+      std::ofstream ofs_stat;
 
-};
+      std::string file_name_data = "o_umbr_";
+      std::string file_name_metadata = "o_umbr_metadata";
+      std::string file_name_stat = "o_umbr_stat";
+      std::string file_prefix = "";
+    };
 
-} //force_field
+  } // force_field
 
-CAVIAR_NAMESPACE_CLOSE
+}

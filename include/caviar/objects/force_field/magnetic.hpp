@@ -18,30 +18,31 @@
 
 #include "caviar/objects/force_field.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace force_field
+namespace caviar
 {
 
-  /**
-   * This class calculates a very simple magnetic force-field for the charged
-   *  particles with velocity as 'F = q V x B'
-   */
-  class Magnetic : public Force_field
+  namespace force_field
   {
-  public:
-    Magnetic(class CAVIAR *);
-    ~Magnetic(){};
 
-    bool read(class caviar::interpreter::Parser *);
-    void verify_settings();
-    void calculate_acceleration();
+    /**
+     * This class calculates a very simple magnetic force-field for the charged
+     *  particles with velocity as 'F = q V x B'
+     */
+    class Magnetic : public Force_field
+    {
+    public:
+      Magnetic(class CAVIAR *);
+      ~Magnetic() {};
 
-  public:
-    double amplitude;
-    Vector<double> direction;
-  };
+      bool read(class caviar::interpreter::Parser *);
+      void verify_settings();
+      void calculate_acceleration();
 
-} // force_field
+    public:
+      double amplitude;
+      Vector<double> direction;
+    };
 
-CAVIAR_NAMESPACE_CLOSE
+  } // force_field
+
+}

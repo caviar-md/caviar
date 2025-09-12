@@ -19,42 +19,43 @@
 #include <Windows.h>
 #include "caviar/utility/caviar_config.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-double get_wall_time()
+namespace caviar
 {
-    LARGE_INTEGER time, freq;
-    if (!QueryPerformanceFrequency(&freq))
-    {
-        //  Handle error
-        return 0;
-    }
-    if (!QueryPerformanceCounter(&time))
-    {
-        //  Handle error
-        return 0;
-    }
-    return (double)time.QuadPart / freq.QuadPart;
-}
 
-double get_cpu_time()
-{
-    FILETIME a, b, c, d;
-    if (GetProcessTimes(GetCurrentProcess(), &a, &b, &c, &d) != 0)
+    double get_wall_time()
     {
-        //  Returns total user time.
-        //  Can be tweaked to include kernel times as well.
-        return (double)(d.dwLowDateTime |
-                        ((unsigned long long)d.dwHighDateTime << 32)) *
-               0.0000001;
+        LARGE_INTEGER time, freq;
+        if (!QueryPerformanceFrequency(&freq))
+        {
+            //  Handle error
+            return 0;
+        }
+        if (!QueryPerformanceCounter(&time))
+        {
+            //  Handle error
+            return 0;
+        }
+        return (double)time.QuadPart / freq.QuadPart;
     }
-    else
+
+    double get_cpu_time()
     {
-        //  Handle error
-        return 0;
+        FILETIME a, b, c, d;
+        if (GetProcessTimes(GetCurrentProcess(), &a, &b, &c, &d) != 0)
+        {
+            //  Returns total user time.
+            //  Can be tweaked to include kernel times as well.
+            return (double)(d.dwLowDateTime |
+                            ((unsigned long long)d.dwHighDateTime << 32)) *
+                   0.0000001;
+        }
+        else
+        {
+            //  Handle error
+            return 0;
+        }
     }
 }
-CAVIAR_NAMESPACE_CLOSE
 
 //  Posix/Linux
 #else
@@ -63,24 +64,25 @@ CAVIAR_NAMESPACE_CLOSE
 #include <sys/time.h>
 #include "caviar/utility/caviar_config.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-double get_wall_time()
+namespace caviar
 {
-    struct timeval time;
-    if (gettimeofday(&time, NULL))
+
+    double get_wall_time()
     {
-        //  Handle error
-        return 0;
+        struct timeval time;
+        if (gettimeofday(&time, NULL))
+        {
+            //  Handle error
+            return 0;
+        }
+        return (double)time.tv_sec + (double)time.tv_usec * .000001;
     }
-    return (double)time.tv_sec + (double)time.tv_usec * .000001;
-}
 
-double get_cpu_time()
-{
-    return (double)clock() / CLOCKS_PER_SEC;
+    double get_cpu_time()
+    {
+        return (double)clock() / CLOCKS_PER_SEC;
+    }
 }
-CAVIAR_NAMESPACE_CLOSE
 #endif
 
 /*

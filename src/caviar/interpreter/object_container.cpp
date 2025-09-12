@@ -18,14 +18,15 @@
 #include "caviar/utility/interpreter_io_headers.hpp"
 #include "caviar/objects/all.hpp" // used in deletion
 
-CAVIAR_NAMESPACE_OPEN
-namespace interpreter
+namespace caviar
 {
-
-  Object_container::Object_container(CAVIAR *fptr) : Pointers{fptr} {}
-
-  Object_container::~Object_container()
+  namespace interpreter
   {
+
+    Object_container::Object_container(CAVIAR *fptr) : Pointers{fptr} {}
+
+    Object_container::~Object_container()
+    {
 
 #define FC_GENERAL_CLASSNAME_MACRO(VAR1, VAR2, VAR3) \
   for (unsigned int i = 0; i < VAR2.size(); i++)     \
@@ -40,35 +41,35 @@ namespace interpreter
 
 #undef FC_GENERAL_CLASSNAME_MACRO_ACTIVATED
 #undef FC_GENERAL_CLASSNAME_MACRO
-  }
-
-  bool Object_container::read(caviar::interpreter::Parser *parser)
-  {
-    output->info("object_container read");
-    bool in_file = true;
-
-    while (true)
-    {
-      GET_A_TOKEN_FOR_CREATION
-      auto t = token.string_value;
-      if (string_cmp(t, "report"))
-      {
-        report();
-      }
-      else
-        error->all(FC_FILE_LINE_FUNC_PARSE, "Unknown variable or command");
     }
 
-    return in_file;
-  }
+    bool Object_container::read(caviar::interpreter::Parser *parser)
+    {
+      output->info("object_container read");
+      bool in_file = true;
 
-  void Object_container::report()
-  {
-    output->info("object_container report:");
-    std::unordered_set<std::string>::iterator it;
-    for (it = all_names.begin(); it != all_names.end(); ++it)
-      std::cout << *it << std::endl;
-  }
+      while (true)
+      {
+        GET_A_TOKEN_FOR_CREATION
+        auto t = token.string_value;
+        if (string_cmp(t, "report"))
+        {
+          report();
+        }
+        else
+          error->all(FC_FILE_LINE_FUNC_PARSE, "Unknown variable or command");
+      }
 
-} // interpreter
-CAVIAR_NAMESPACE_CLOSE
+      return in_file;
+    }
+
+    void Object_container::report()
+    {
+      output->info("object_container report:");
+      std::unordered_set<std::string>::iterator it;
+      for (it = all_names.begin(); it != all_names.end(); ++it)
+        std::cout << *it << std::endl;
+    }
+
+  } // interpreter
+}

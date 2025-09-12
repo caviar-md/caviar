@@ -15,19 +15,18 @@
 //========================================================================
 #pragma once
 /**
- * More sharing results in less MPI overhead and probably faster MPI simulation. However, simulation will take more RAM. 
+ * More sharing results in less MPI overhead and probably faster MPI simulation. However, simulation will take more RAM.
  * For large number of processors and particles, it must be tested.
-*/
-CAVIAR_NAMESPACE_OPEN
-
-enum class MpiOptimization
+ */
+namespace caviar
 {
-  None,
-  SingleMdDomain,
-  ShareAtoms,
-  ShareMolecules,
-  ShareAtomsAndMolecules,
-};
-CAVIAR_NAMESPACE_CLOSE
 
-
+  enum class MpiOptimization
+  {
+    None,
+    SingleMdDomain,
+    ShareAtoms,
+    ShareMolecules,
+    ShareAtomsAndMolecules,
+  };
+}

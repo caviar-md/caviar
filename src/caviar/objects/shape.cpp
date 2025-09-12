@@ -16,32 +16,33 @@
 
 #include "caviar/objects/shape.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-Shape::Shape(CAVIAR *fptr) : Pointers{fptr} {
-                                 FC_OBJECT_INITIALIZE}
-
-                             Shape::~Shape()
+namespace caviar
 {
-}
 
-void Shape::verify_settings()
-{
-}
+  Shape::Shape(CAVIAR *fptr) : Pointers{fptr} {
+                                   FC_OBJECT_INITIALIZE}
 
-bool Shape::is_outside(const Vector<double> &v)
-{
-  return !is_inside(v);
-}
+                               Shape::~Shape()
+  {
+  }
 
-bool Shape::is_outside(const Vector<double> &v, const double r)
-{
-  return !is_inside(v, r);
-}
+  void Shape::verify_settings()
+  {
+  }
 
-void Shape::scale_position(double, caviar::Vector<int>)
-{
-  //error->all(FC_FILE_LINE_FUNC, "The scale_position of this force_field is not implemented");
-}
+  bool Shape::is_outside(const Vector<double> &v)
+  {
+    return !is_inside(v);
+  }
 
-CAVIAR_NAMESPACE_CLOSE
+  bool Shape::is_outside(const Vector<double> &v, const double r)
+  {
+    return !is_inside(v, r);
+  }
+
+  void Shape::scale_position(double, caviar::Vector<int>)
+  {
+    // error->all(FC_FILE_LINE_FUNC, "The scale_position of this force_field is not implemented");
+  }
+
+}

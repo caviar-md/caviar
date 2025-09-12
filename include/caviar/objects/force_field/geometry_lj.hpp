@@ -18,56 +18,57 @@
 
 #include "caviar/objects/force_field.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-class Shape;
-namespace unique
-{
-  class Time_function_3d;
-}
-namespace force_field
+namespace caviar
 {
 
-  /**
-   * This class makes a LJ force-field for geometry shapes
-   *
-   */
-  class Geometry_lj : public Force_field
+  class Shape;
+  namespace unique
   {
-  public:
-    Geometry_lj(class CAVIAR *);
-    ~Geometry_lj();
+    class Time_function_3d;
+  }
+  namespace force_field
+  {
 
-    bool read(class caviar::interpreter::Parser *);
-    void verify_settings();
-    void calculate_acceleration();
+    /**
+     * This class makes a LJ force-field for geometry shapes
+     *
+     */
+    class Geometry_lj : public Force_field
+    {
+    public:
+      Geometry_lj(class CAVIAR *);
+      ~Geometry_lj();
 
-  public:
-    std::vector<caviar::Shape *> shape;
+      bool read(class caviar::interpreter::Parser *);
+      void verify_settings();
+      void calculate_acceleration();
 
-    unique::Time_function_3d *position_offset = nullptr;
+    public:
+      std::vector<caviar::Shape *> shape;
 
-    // contains the type of epsilon_wall-sigma_wall. This is the case when we have
-    // more than one shape objects but we want to have the same parameters.
-    std::vector<int> shape_type;
+      unique::Time_function_3d *position_offset = nullptr;
 
-    // epsilon - sigma of a single type. inter-type values will be deduced using these
-    std::vector<Real_t> epsilon_atom, sigma_atom;
-    std::vector<Real_t> epsilon_wall, sigma_wall;
+      // contains the type of epsilon_wall-sigma_wall. This is the case when we have
+      // more than one shape objects but we want to have the same parameters.
+      std::vector<int> shape_type;
 
-    // the epsilon-sigma of a LJ potential. first number is the shape index.
-    // sigma[2][3] is the sigma of shape_2 and atom_type_3
-    std::vector<std::vector<Real_t>> epsilon, sigma;
+      // epsilon - sigma of a single type. inter-type values will be deduced using these
+      std::vector<Real_t> epsilon_atom, sigma_atom;
+      std::vector<Real_t> epsilon_wall, sigma_wall;
 
-    // a force_coef in case we need a total shift of the forces.
-    Real_t force_coef;
+      // the epsilon-sigma of a LJ potential. first number is the shape index.
+      // sigma[2][3] is the sigma of shape_2 and atom_type_3
+      std::vector<std::vector<Real_t>> epsilon, sigma;
 
-    bool wca; // Week-Chandler-Anderson (WCA) potential activated.
-    bool cutoff_list_activated;
-    std::vector<std::vector<Real_t>> cutoff_list; // list of cutoffs when it is needed.
-                                                  // for example in WCA potentials
-  };
+      // a force_coef in case we need a total shift of the forces.
+      Real_t force_coef;
 
-} // force_field
+      bool wca; // Week-Chandler-Anderson (WCA) potential activated.
+      bool cutoff_list_activated;
+      std::vector<std::vector<Real_t>> cutoff_list; // list of cutoffs when it is needed.
+                                                    // for example in WCA potentials
+    };
 
-CAVIAR_NAMESPACE_CLOSE
+  } // force_field
+
+}

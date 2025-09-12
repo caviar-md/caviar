@@ -20,70 +20,71 @@
 #include "caviar/utility/vector.hpp"
 #include <vector>
 
-CAVIAR_NAMESPACE_OPEN
-
-class Atom_data;
-class Md_simulator;
-class Force_field;
-
-namespace unique
-{
-  class Grid_1D;
-}
-
-namespace postprocess
+namespace caviar
 {
 
-  /**
-   * This class reads an xyz file, re-runs some frames, then sample
-   * the potential values in the given 3D grid, and output them.
-   */
+  class Atom_data;
+  class Md_simulator;
+  class Force_field;
 
-  class Potential_sampler : public Postprocess
+  namespace unique
   {
-  public:
-    Potential_sampler(class CAVIAR *);
+    class Grid_1D;
+  }
 
-    ~Potential_sampler();
+  namespace postprocess
+  {
 
-    bool read(caviar::interpreter::Parser *);
+    /**
+     * This class reads an xyz file, re-runs some frames, then sample
+     * the potential values in the given 3D grid, and output them.
+     */
 
-    std::vector<caviar::Vector<double>> sampling_position;
-    std::vector<caviar::Vector<int>> sampling_position_index;
+    class Potential_sampler : public Postprocess
+    {
+    public:
+      Potential_sampler(class CAVIAR *);
 
-    void run();
+      ~Potential_sampler();
 
-    // this function reads the next frame of the input file and
-    // set the coordinates of the atoms into the atom_data
-    int read_next_frame(bool set_the_frame, bool read_velocity);
+      bool read(caviar::interpreter::Parser *);
 
-    void sample_potential();
+      std::vector<caviar::Vector<double>> sampling_position;
+      std::vector<caviar::Vector<int>> sampling_position_index;
 
-    void set_positions_vectors();
+      void run();
 
-    int step_current;
+      // this function reads the next frame of the input file and
+      // set the coordinates of the atoms into the atom_data
+      int read_next_frame(bool set_the_frame, bool read_velocity);
 
-    int step_start;
-    int step_end;
-    int step_increment;
+      void sample_potential();
 
-    bool read_velocity;
+      void set_positions_vectors();
 
-    std::string input_xyz_file_name;
-    std::string output_file_name;
+      int step_current;
 
-    class caviar::Atom_data *atom_data;
-    class caviar::Md_simulator *md_simulator;
+      int step_start;
+      int step_end;
+      int step_increment;
 
-    std::vector<Force_field *> force_field;
+      bool read_velocity;
 
-    class caviar::unique::Grid_1D *grid_x;
-    class caviar::unique::Grid_1D *grid_y;
-    class caviar::unique::Grid_1D *grid_z;
+      std::string input_xyz_file_name;
+      std::string output_file_name;
 
-    std::ofstream ofs_out;
-  };
+      class caviar::Atom_data *atom_data;
+      class caviar::Md_simulator *md_simulator;
 
-} // postproces
+      std::vector<Force_field *> force_field;
 
-CAVIAR_NAMESPACE_CLOSE
+      class caviar::unique::Grid_1D *grid_x;
+      class caviar::unique::Grid_1D *grid_y;
+      class caviar::unique::Grid_1D *grid_z;
+
+      std::ofstream ofs_out;
+    };
+
+  } // postproces
+
+}

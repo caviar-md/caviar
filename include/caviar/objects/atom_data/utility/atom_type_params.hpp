@@ -17,46 +17,44 @@
 #pragma once
 
 #include "caviar/utility/objects_common_headers.hpp"
-//#include "caviar/objects/atom_data/utility/bond.hpp"
-//#include "caviar/objects/atom_data/utility/angle.hpp"
-//#include "caviar/objects/atom_data/utility/proper_dihedral.hpp"
+// #include "caviar/objects/atom_data/utility/bond.hpp"
+// #include "caviar/objects/atom_data/utility/angle.hpp"
+// #include "caviar/objects/atom_data/utility/proper_dihedral.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace atom_data
+namespace caviar
 {
- /**
-   * It contains all the physical data of atoms types.
-   */
-  struct Atom_type_params  
-  {    
 
+  namespace atom_data
+  {
     /**
-     * 'mass' of an atom defined by the type. The mass may be used in
-     * center-of-mass calculations and other functions. Do not depercate it.
+     * It contains all the physical data of atoms types.
      */
-    std::vector<Real_t> mass;
+    struct Atom_type_params
+    {
 
-    /**
-     * simply the inverse value of 'mass' of an atom defined by the type.
-     * since mass inverse is used in acceleration calculations.
-     *
-     */
-    std::vector<Real_t> mass_inv;
+      /**
+       * 'mass' of an atom defined by the type. The mass may be used in
+       * center-of-mass calculations and other functions. Do not depercate it.
+       */
+      std::vector<Real_t> mass;
 
-    /**
-     * 'charge' of an atom defined by the type.
-     */
-    std::vector<Real_t> charge;
+      /**
+       * simply the inverse value of 'mass' of an atom defined by the type.
+       * since mass inverse is used in acceleration calculations.
+       *
+       */
+      std::vector<Real_t> mass_inv;
 
-    /**
-     * 'radius' of an atom defined by the type. The user and the developers are
-     * free to use this variable (for now!).
-     */
-    std::vector<Real_t> radius;
-   
+      /**
+       * 'charge' of an atom defined by the type.
+       */
+      std::vector<Real_t> charge;
 
-
-  };
+      /**
+       * 'radius' of an atom defined by the type. The user and the developers are
+       * free to use this variable (for now!).
+       */
+      std::vector<Real_t> radius;
+    };
+  }
 }
-CAVIAR_NAMESPACE_CLOSE

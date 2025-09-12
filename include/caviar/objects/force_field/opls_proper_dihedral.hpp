@@ -18,31 +18,32 @@
 
 #include "caviar/objects/force_field.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-namespace force_field
+namespace caviar
 {
 
-  /**
-   * This class does a harmonic dihedral force-field on the molecular bonds
-   *
-   */
-  class Opls_proper_dihedral : public Force_field
+  namespace force_field
   {
-  public:
-    Opls_proper_dihedral(class CAVIAR *);
-    ~Opls_proper_dihedral(){};
 
-    // double energy();
+    /**
+     * This class does a harmonic dihedral force-field on the molecular bonds
+     *
+     */
+    class Opls_proper_dihedral : public Force_field
+    {
+    public:
+      Opls_proper_dihedral(class CAVIAR *);
+      ~Opls_proper_dihedral() {};
 
-    bool read(class caviar::interpreter::Parser *);
-    void verify_settings();
-    void calculate_acceleration();
+      // double energy();
 
-  public:
-    std::vector<Real_t> dihedral_coef1, dihedral_coef2, dihedral_coef3, dihedral_coef4;
-  };
+      bool read(class caviar::interpreter::Parser *);
+      void verify_settings();
+      void calculate_acceleration();
 
-} // force_field
+    public:
+      std::vector<Real_t> dihedral_coef1, dihedral_coef2, dihedral_coef3, dihedral_coef4;
+    };
 
-CAVIAR_NAMESPACE_CLOSE
+  } // force_field
+
+}

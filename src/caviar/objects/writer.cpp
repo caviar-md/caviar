@@ -17,26 +17,27 @@
 #include "caviar/objects/writer.hpp"
 #include "caviar/interpreter/communicator.hpp"
 
-CAVIAR_NAMESPACE_OPEN
-
-Writer::Writer(CAVIAR *fptr) : Pointers{fptr}, initialized{false}, my_mpi_rank{comm->me},
-                               mpi_world_size{comm->nprocs} {
-                                   FC_OBJECT_INITIALIZE}
-
-                               Writer::~Writer()
+namespace caviar
 {
+
+    Writer::Writer(CAVIAR *fptr) : Pointers{fptr}, initialized{false}, my_mpi_rank{comm->me},
+                                   mpi_world_size{comm->nprocs} {
+                                       FC_OBJECT_INITIALIZE}
+
+                                   Writer::~Writer()
+    {
+    }
+
+    void Writer::verify_settings()
+    {
+    }
+
+    void Writer::initialize() {}
+    void Writer::write(int64_t, double) {}         // time_step and time
+    void Writer::start_new_files() {}              // add_time_to_previous
+    void Writer::start_new_files(std::string &) {} // add_time_to_previous
+    void Writer::open_files() {}
+    void Writer::close_files() {}
+    void Writer::generate() {}
+
 }
-
-void Writer::verify_settings()
-{
-}
-
-void Writer::initialize() {}
-void Writer::write(int64_t, double) {}         // time_step and time
-void Writer::start_new_files() {}              // add_time_to_previous
-void Writer::start_new_files(std::string &) {} // add_time_to_previous
-void Writer::open_files() {}
-void Writer::close_files() {}
-void Writer::generate() {}
-
-CAVIAR_NAMESPACE_CLOSE
