@@ -18,6 +18,7 @@
 
 #include "caviar/objects/writer.hpp"
 #include "caviar/objects/atom_data/utility/mpi_packet_info.hpp"
+#include <fstream>
 
 namespace caviar
 {

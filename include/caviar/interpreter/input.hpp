@@ -16,7 +16,8 @@
 
 #pragma once
 
-#include "caviar/utility/pointers.hpp"
+#include "caviar/utility/interpreter_common_headers.hpp"
+
 #include <istream>
 #include <map>
 
@@ -34,7 +35,7 @@ namespace caviar
      * basic commands of CAVIAR scripting languages.
      *
      */
-    class Input : public Pointers
+    class Input 
     {
     public:
       /**
@@ -56,7 +57,8 @@ namespace caviar
        * Constructor with a string stream
        */
       Input(class CAVIAR *, std::istringstream &stream);
-      ~Input();
+      
+      virtual ~Input();
 
       /**
        *  the function to start reading
@@ -65,7 +67,7 @@ namespace caviar
 
     public:
       class caviar::interpreter::Parser *parser;
-      class CAVIAR *fptr;
+      //class CAVIAR *fptr;
 
       const static std::map<std::string, InputCommandFunc> commands_map;
 
@@ -131,6 +133,7 @@ namespace caviar
 
       char command_class(Parser *);
       char command_end_class(Parser *);
+      FC_BASE_OBJECT_COMMON_TOOLS
     };
   } // interpreter
 }

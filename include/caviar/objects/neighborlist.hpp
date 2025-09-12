@@ -32,7 +32,7 @@ namespace caviar
    * cell list usage is in the potential calculation of electrostatic_ewald_r force_field
    * on the finite_element mesh boundaries,
    */
-  class Neighborlist : public Pointers
+  class Neighborlist 
   {
   public:
     Neighborlist(class CAVIAR *);

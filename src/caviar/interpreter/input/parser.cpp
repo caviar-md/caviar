@@ -13,7 +13,8 @@
 // the top level of the CAVIAR distribution.
 //
 //========================================================================
-
+#include "caviar/CAVIAR.hpp"
+#include "caviar/interpreter/all.hpp"
 #include "caviar/interpreter/input/parser.hpp"
 #include "caviar/interpreter/input/lexer.hpp"
 #include "caviar/interpreter/error.hpp"
@@ -79,21 +80,63 @@ namespace caviar
       return out << s;
     }
 
-    Parser::Parser(CAVIAR *fptr) : Pointers{fptr}, token_stream{new Token_stream{fptr}}, get_new_token{true}, line{token_stream->line}, col{token_stream->col}
+    Parser::Parser(CAVIAR *fptr) :  token_stream{new Token_stream{fptr}}, get_new_token{true}, line{token_stream->line}, col{token_stream->col},caviar_{fptr},
+                                   comm{fptr->comm},
+                                   error{fptr->error},
+                                   output{fptr->output},
+                                   input{fptr->input},
+                                   object_handler{fptr->object_handler},
+                                   object_container{fptr->object_container},
+                                   object_creator{fptr->object_creator},
+                                   log{fptr->log},
+                                   in{fptr->in},
+                                   out{fptr->out},
+                                   err{fptr->err},
+                                   log_flag{fptr->log_flag},
+                                   out_flag{fptr->out_flag},
+                                   err_flag{fptr->err_flag}
     {
 #ifdef DEBUG_ME
       std::cout << "DEBUG_ME: PARSER constructor t1" << std::endl;
 #endif
     }
 
-    Parser::Parser(CAVIAR *fptr, const std::string &file) : Pointers{fptr}, token_stream{new Token_stream{fptr, file}}, get_new_token{true}, line{token_stream->line}, col{token_stream->col}
+    Parser::Parser(CAVIAR *fptr, const std::string &file) : token_stream{new Token_stream{fptr, file}}, get_new_token{true}, line{token_stream->line}, col{token_stream->col},  caviar_{fptr},
+                                   comm{fptr->comm},
+                                   error{fptr->error},
+                                   output{fptr->output},
+                                   input{fptr->input},
+                                   object_handler{fptr->object_handler},
+                                   object_container{fptr->object_container},
+                                   object_creator{fptr->object_creator},
+                                   log{fptr->log},
+                                   in{fptr->in},
+                                   out{fptr->out},
+                                   err{fptr->err},
+                                   log_flag{fptr->log_flag},
+                                   out_flag{fptr->out_flag},
+                                   err_flag{fptr->err_flag}
     {
 #ifdef DEBUG_ME
       std::cout << "DEBUG_ME: PARSER constructor t2" << std::endl;
 #endif
     }
 
-    Parser::Parser(CAVIAR *fptr, std::istringstream &iss) : Pointers{fptr}, token_stream{new Token_stream{fptr, iss}}, get_new_token{true}, line{token_stream->line}, col{token_stream->col}
+    Parser::Parser(CAVIAR *fptr, std::istringstream &iss) : token_stream{new Token_stream{fptr, iss}}, get_new_token{true}, line{token_stream->line}, col{token_stream->col},  caviar_{fptr},
+                                   comm{fptr->comm},
+                                   error{fptr->error},
+                                   output{fptr->output},
+                                   input{fptr->input},
+                                   object_handler{fptr->object_handler},
+                                   object_container{fptr->object_container},
+                                   object_creator{fptr->object_creator},
+                                   log{fptr->log},
+                                   in{fptr->in},
+                                   out{fptr->out},
+                                   err{fptr->err},
+                                   log_flag{fptr->log_flag},
+                                   out_flag{fptr->out_flag},
+                                   err_flag{fptr->err_flag}
     {
 #ifdef DEBUG_ME
       std::cout << "DEBUG_ME: PARSER constructor t3" << std::endl;
@@ -107,7 +150,7 @@ namespace caviar
 #endif
       delete token_stream;
     }
-
+    void Parser::verify_settings() {}
     bool Parser::end_of_line()
     {
       Token token = get_raw_token();
@@ -380,14 +423,14 @@ namespace caviar
       return int(expression(true));
     }
 
-    Real_t Parser::get_real()
+    double Parser::get_real()
     {
       return expression(true);
     }
 
-    Real_t Parser::get_positive_real()
+    double Parser::get_positive_real()
     {
-      Real_t i = get_real();
+      double i = get_real();
       if (i < 0.0)
         error->all(FC_FILE_LINE_FUNC_LINE_COL, "expected a positive real value.");
       return int(expression(true));
@@ -400,7 +443,7 @@ namespace caviar
     }
 
 
-    Vector<Real_t> Parser::get_real_3d () {
+    Vector<double> Parser::get_real_3d () {
       return expression_3d (true);
     }
     */
@@ -540,7 +583,7 @@ namespace caviar
       return 0; //-Wreturn-type
     }
 
-    Real_t Parser::get_literal_real()
+    double Parser::get_literal_real()
     {
       auto token = get_val_token();
       switch (token.kind)
@@ -701,9 +744,9 @@ namespace caviar
 
     // TODO: To be developed
     /*
-    Vector<Real_t> Parser::expression_3d (bool get) {
+    Vector<double> Parser::expression_3d (bool get) {
 
-      Vector<Real_t> left = term_3d(get);
+      Vector<double> left = term_3d(get);
       for (;;) {
         switch (token_stream->current().kind) {
           case Kind::plus:
@@ -720,7 +763,7 @@ namespace caviar
       return 0;//WARNING
     }
 
-    Vector<Real_t> Parser::term_3d (bool get) {
+    Vector<double> Parser::term_3d (bool get) {
 
       double left = primary_3d(get);
       for (;;) {
@@ -755,7 +798,7 @@ namespace caviar
 
     }
 
-    Vector<Real_t> Parser::primary_3d (bool get) {
+    Vector<double> Parser::primary_3d (bool get) {
 
       if (get) get_raw_token ();
       switch (token_stream->current().kind) {

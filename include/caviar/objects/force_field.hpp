@@ -30,7 +30,7 @@ namespace caviar
    * The  child object does not need to have all of the virtual function implemented.
    * Except the abstract ones.
    */
-  class Force_field : public Pointers
+  class Force_field //
   {
   public:
     Force_field(class CAVIAR *);
@@ -58,6 +58,7 @@ namespace caviar
      */
     int my_mpi_rank = -1;
     FC_BASE_OBJECT_COMMON_TOOLS
+
   };
 
 }

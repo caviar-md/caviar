@@ -67,8 +67,8 @@ namespace caviar
             double coef = 2.0;
             bool is_ghost = j >= pos_size;
 
-            Vector<Real_t> pos_j;
-            Real_t type_j;
+            Vector<double> pos_j;
+            double type_j;
             if (is_ghost) {
               coef = 1.0;
               j -= pos_size;

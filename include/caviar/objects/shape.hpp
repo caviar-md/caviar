@@ -21,7 +21,7 @@
 namespace caviar
 {
 
-  inline void normalize(Vector<Real_t> &v)
+  inline void normalize(Vector<double> &v)
   {
     v /= std::sqrt(v * v);
   }
@@ -31,7 +31,7 @@ namespace caviar
    *
    *
    */
-  class Shape : public Pointers
+  class Shape 
   {
   public:
     /**

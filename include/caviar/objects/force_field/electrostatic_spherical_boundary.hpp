@@ -75,10 +75,10 @@ namespace caviar
 
       struct
       {
-        std::vector<Real_t> charge; // note that the charge can be different for
+        std::vector<double> charge; // note that the charge can be different for
                                     // each of images. So the charge in this struct
                                     // is different from Atom_data's owned charge.
-        std::vector<Vector<Real_t>> position;
+        std::vector<Vector<double>> position;
       } image;
     };
 

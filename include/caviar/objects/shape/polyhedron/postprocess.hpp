@@ -16,7 +16,9 @@
 
 #pragma once
 
-#include "caviar/utility/pointers.hpp"
+#include <string>
+#include "caviar/utility/objects_common_headers.hpp"
+#include "caviar/objects/shape/polyhedron.hpp"
 
 namespace caviar
 {
@@ -26,11 +28,11 @@ namespace caviar
     namespace polyhedron
     {
       struct Polyhedron;
-      class Postprocess : public Pointers
+      class Postprocess 
       {
       public:
         Postprocess(class CAVIAR *);
-        ~Postprocess();
+        virtual ~Postprocess();
 
         /**
          * contains the faces neccesary to check
@@ -42,6 +44,7 @@ namespace caviar
          * calculates gxlo, gxhi, gylo...
          */
         void lowest_highest_coord(shape::polyhedron::Polyhedron &);
+        FC_BASE_OBJECT_COMMON_TOOLS
       };
     } // polyhedron
   } // shape

@@ -144,10 +144,10 @@ namespace caviar
         const auto mass_inv_i = atom_data->atom_type_params.mass_inv[type_i];
         // const auto r = radius [ type_i ];
         const auto r = a_radius[type_i];
-        // Vector <Real_t> contact_vector {0,0,0};
+        // Vector <double> contact_vector {0,0,0};
         for (unsigned int j = 0; j < shape.size(); ++j)
         {
-          Vector<Real_t> contact_vector{0, 0, 0};
+          Vector<double> contact_vector{0, 0, 0};
           if (shape[j]->in_contact(pos[i] - p_o, r, contact_vector))
           {
             acc[i] -= mass_inv_i * contact_vector * (young_modulus + ((vel[i] - v_o) * contact_vector) * dissip_coef / (contact_vector * contact_vector));

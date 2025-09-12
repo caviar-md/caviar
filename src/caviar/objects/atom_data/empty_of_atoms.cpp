@@ -26,7 +26,7 @@
 namespace caviar
 {
 
-  bool Atom_data::empty_of_atoms(const Vector<Real_t> p, double radius)
+  bool Atom_data::empty_of_atoms(const Vector<double> p, double radius)
   {
     double radius_sq = radius * radius;
     for (unsigned int i = 0; i < atom_struct_owned.position.size(); ++i)
@@ -39,7 +39,7 @@ namespace caviar
     return true;
   }
 
-  bool Atom_data::empty_of_atoms(const Vector<Real_t>, int)
+  bool Atom_data::empty_of_atoms(const Vector<double>, int)
   {
 
     error->all(FC_FILE_LINE_FUNC, "not implemented");

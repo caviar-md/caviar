@@ -16,7 +16,8 @@
 
 #pragma once
 
-#include "caviar/utility/pointers.hpp"
+#include "caviar/utility/interpreter_common_headers.hpp"
+
 
 #include <string>
 #include <map>
@@ -33,11 +34,11 @@ namespace caviar
      *
      *
      */
-    class Object_creator : public Pointers
+    class Object_creator 
     {
     public:
       Object_creator(class CAVIAR *);
-      ~Object_creator();
+      virtual ~Object_creator();
 
       const static std::map<std::string, CommandFunc_object_creator> commands_map;
 
@@ -66,6 +67,7 @@ namespace caviar
 #undef FC_BASIC_TYPES_MACRO
 
     public:
+    FC_BASE_OBJECT_COMMON_TOOLS
     };
   } // interpreter
 }

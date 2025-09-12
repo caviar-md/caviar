@@ -41,7 +41,7 @@ namespace caviar
       void calculate_acceleration();
 
     public:
-      std::vector<Real_t> dihedral_coef1, dihedral_coef2, dihedral_coef3, dihedral_coef4;
+      std::vector<double> dihedral_coef1, dihedral_coef2, dihedral_coef3, dihedral_coef4;
     };
 
   } // force_field

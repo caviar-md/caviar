@@ -17,6 +17,7 @@
 #pragma once
 
 #include "caviar/objects/force_field.hpp"
+#include <fstream>
 
 namespace caviar
 {

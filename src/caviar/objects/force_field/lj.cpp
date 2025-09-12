@@ -389,8 +389,8 @@ namespace caviar
         for (auto j : nlist[i])
         {
           bool is_ghost = j >= nlist.size();
-          Vector<Real_t> pos_j;
-          Real_t type_j, mass_inv_j;
+          Vector<double> pos_j;
+          double type_j, mass_inv_j;
           int id_j;
           int mol_index_j;
 

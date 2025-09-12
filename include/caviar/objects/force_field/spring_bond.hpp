@@ -41,7 +41,7 @@ namespace caviar
       void calculate_acceleration();
 
     public:
-      std::vector<Real_t> elastic_coef, dissip_coef;
+      std::vector<double> elastic_coef, dissip_coef;
     };
 
   } // force_field

@@ -13,7 +13,8 @@
 // the top level of the CAVIAR distribution.
 //
 //========================================================================
-
+#include "caviar/CAVIAR.hpp"
+#include "caviar/interpreter/all.hpp"
 #include "caviar/interpreter/error.hpp"
 #if defined(CAVIAR_WITH_MPI)
 #include <mpi.h>
@@ -22,15 +23,29 @@ namespace caviar
 {
   namespace interpreter
   {
-    Error::Error(CAVIAR *fptr) : Pointers{fptr} {}
-
+    Error::Error(CAVIAR *fptr) : caviar_{fptr},
+                                   comm{fptr->comm},
+                                   error{fptr->error},
+                                   output{fptr->output},
+                                   input{fptr->input},
+                                   object_handler{fptr->object_handler},
+                                   object_container{fptr->object_container},
+                                   object_creator{fptr->object_creator},
+                                   log{fptr->log},
+                                   in{fptr->in},
+                                   out{fptr->out},
+                                   err{fptr->err},
+                                   log_flag{fptr->log_flag},
+                                   out_flag{fptr->out_flag},
+                                   err_flag{fptr->err_flag} {}
+Error::~Error(){}
     // All procs must call this else there would be a deadlock
     void Error::all(const std::string &str)
     {
       err << "[ERR] " << str << std::endl;
       exit(1);
     }
-
+    void Error::verify_settings() {}
     void Error::all(const char *file, int line, const char *func, const std::string &parsing_line, unsigned int col, const char *str)
     {
       int me = 0;

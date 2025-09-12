@@ -18,7 +18,7 @@
 
 #include "caviar/objects/unique.hpp"
 #include <random>
-
+#include <fstream>
 namespace mu
 {
   class Parser;

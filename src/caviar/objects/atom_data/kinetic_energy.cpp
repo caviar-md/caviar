@@ -87,7 +87,7 @@ namespace caviar
         std::array<std::array<double, 3>, 3> I_cm_inverse = {{{0.0, 0.0, 0.0},
                                                               {0.0, 0.0, 0.0},
                                                               {0.0, 0.0, 0.0}}};
-        Vector<Real_t> I_i_L(0, 0, 0);
+        Vector<double> I_i_L(0, 0, 0);
         bool correct_result = false;
         if (matrix_inverse_3d(I_cm, I_cm_inverse) != 0)
         {
@@ -346,7 +346,7 @@ namespace caviar
     pressure_ = p1 + p2_total;
   }
 
-  Vector<Real_t> Atom_data::owned_position_cm()
+  Vector<double> Atom_data::owned_position_cm()
   {
     double p_cm_f[3] = {0.0, 0.0, 0.0};
     double mass_sum = 0.0;
@@ -383,15 +383,15 @@ namespace caviar
 #else
 
 #endif
-    Vector<Real_t> p_cm{p_cm_f[0], p_cm_f[1], p_cm_f[2]};
+    Vector<double> p_cm{p_cm_f[0], p_cm_f[1], p_cm_f[2]};
 
     p_cm = p_cm / mass_sum;
     return p_cm;
   }
 
-  Vector<Real_t> Atom_data::owned_position_cm_mpi_domain()
+  Vector<double> Atom_data::owned_position_cm_mpi_domain()
   {
-    Vector<Real_t> p_cm{0.0, 0.0, 0.0};
+    Vector<double> p_cm{0.0, 0.0, 0.0};
     double mass_sum = 0.0;
     auto p_size = atom_struct_owned.position.size(); // MPI check
 #ifdef CAVIAR_WITH_OPENMP
@@ -411,7 +411,7 @@ namespace caviar
     return p_cm;
   }
 
-  Vector<Real_t> Atom_data::owned_velocity_cm()
+  Vector<double> Atom_data::owned_velocity_cm()
   {
     double v_cm_f[3] = {0.0, 0.0, 0.0};
 
@@ -451,15 +451,15 @@ namespace caviar
 #else
 
 #endif
-    Vector<Real_t> v_cm{v_cm_f[0], v_cm_f[1], v_cm_f[2]};
+    Vector<double> v_cm{v_cm_f[0], v_cm_f[1], v_cm_f[2]};
 
     v_cm = v_cm / mass_sum;
     return v_cm;
   }
 
-  Vector<Real_t> Atom_data::owned_velocity_cm_mpi_domain()
+  Vector<double> Atom_data::owned_velocity_cm_mpi_domain()
   {
-    Vector<Real_t> v_cm{0.0, 0.0, 0.0};
+    Vector<double> v_cm{0.0, 0.0, 0.0};
     double mass_sum = 0.0;
     auto p_size = atom_struct_owned.velocity.size(); // MPI check
 #ifdef CAVIAR_WITH_OPENMP

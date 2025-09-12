@@ -40,8 +40,8 @@ namespace caviar
       void calculate_acceleration();
 
     public:
-      std::vector<Real_t> elastic_coef, dissip_coef, radius;
-      Vector<Real_t> gravity;
+      std::vector<double> elastic_coef, dissip_coef, radius;
+      Vector<double> gravity;
       int force_type;
     };
 

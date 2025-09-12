@@ -28,6 +28,7 @@
 #include "caviar/objects/shape/polyhedron/format_unv_reader.hpp"
 
 #include "caviar/utility/file_utility.hpp"
+#include "caviar/CAVIAR.hpp"
 
 #include <string>
 #include <cmath>
@@ -41,7 +42,7 @@ namespace caviar
     namespace polyhedron
     {
 
-      Handler::Handler(CAVIAR *fptr) : Pointers{fptr},
+      Handler::Handler(CAVIAR *fptr) : 
                                        polyhedron_input{new shape::polyhedron::Input{fptr}},
                                        polyhedron_preprocess{new shape::polyhedron::Preprocess{fptr}},
                                        polyhedron_postprocess{new shape::polyhedron::Postprocess{fptr}},
@@ -57,8 +58,22 @@ namespace caviar
                                        invert_normals{false},
                                        correct_normals{false},
                                        use_grid{false},
-                                       an_inside_point_is_set{false}
-
+                                       an_inside_point_is_set{false},
+caviar_{fptr},
+                                   comm{fptr->comm},
+                                   error{fptr->error},
+                                   output{fptr->output},
+                                   input{fptr->input},
+                                   object_handler{fptr->object_handler},
+                                   object_container{fptr->object_container},
+                                   object_creator{fptr->object_creator},
+                                   log{fptr->log},
+                                   in{fptr->in},
+                                   out{fptr->out},
+                                   err{fptr->err},
+                                   log_flag{fptr->log_flag},
+                                   out_flag{fptr->out_flag},
+                                   err_flag{fptr->err_flag}
       {
         radius_max = -1.0;
       }
@@ -72,7 +87,7 @@ namespace caviar
         delete polyhedron_point_inside;
         delete polyhedron_output;
       }
-
+      void Handler::verify_settings() {}
       bool Handler::read(class caviar::interpreter::Parser *parser)
       {
         output->info("Polyhedron read:");
@@ -87,7 +102,7 @@ namespace caviar
             const auto token = parser->get_val_token();
             const auto file_name = token.string_value;
 
-            std::string file_name_full = join_path(fptr->input_file_directory, file_name);
+            std::string file_name_full = join_path(caviar_->input_file_directory, file_name);
             if (!file_exists_1(file_name_full))
               error->all(FC_FILE_LINE_FUNC_PARSE, "file does not exist : " + file_name_full);
 
@@ -101,7 +116,7 @@ namespace caviar
             const auto token = parser->get_val_token();
             const auto file_name = token.string_value;
 
-            std::string file_name_full = join_path(fptr->input_file_directory, file_name);
+            std::string file_name_full = join_path(caviar_->input_file_directory, file_name);
             if (!file_exists_1(file_name_full))
               error->all(FC_FILE_LINE_FUNC_PARSE, "file does not exist : " + file_name_full);
 
@@ -115,7 +130,7 @@ namespace caviar
             const auto token = parser->get_val_token();
             const auto file_name = token.string_value;
 
-            std::string file_name_full = join_path(fptr->input_file_directory, file_name);
+            std::string file_name_full = join_path(caviar_->input_file_directory, file_name);
             if (!file_exists_1(file_name_full))
               error->all(FC_FILE_LINE_FUNC_PARSE, "file does not exist : " + file_name_full);
 
@@ -158,17 +173,17 @@ namespace caviar
           }
           else if (string_cmp(t, "write_unv"))
           {
-            class Format_unv_reader fvr(fptr);
+            class Format_unv_reader fvr(caviar_);
             fvr.write_unv(polyhedron);
           }
           else if (string_cmp(t, "write_unstructured_vtk"))
           {
-            class Format_vtk_reader fvr(fptr);
+            class Format_vtk_reader fvr(caviar_);
             fvr.write_unstructured_vtk4(polyhedron);
           }
           else if (string_cmp(t, "write_polydata_vtk"))
           {
-            class Format_vtk_reader fvr(fptr);
+            class Format_vtk_reader fvr(caviar_);
             fvr.write_polydata_vtk4(polyhedron);
           }
           else if (string_cmp(t, "point_is_inside_method"))

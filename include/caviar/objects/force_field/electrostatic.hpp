@@ -47,8 +47,8 @@ namespace caviar
       void calculate_acceleration();
 
     public:
-      // std::vector<std::vector<Real_t>> epsilon, sigma;
-      std::vector<std::vector<Real_t>> lambda;
+      // std::vector<std::vector<double>> epsilon, sigma;
+      std::vector<std::vector<double>> lambda;
       bool lambda_is_set = false;
       double k_electrostatic;
       Vector<double> external_field;

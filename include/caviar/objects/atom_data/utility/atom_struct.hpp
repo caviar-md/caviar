@@ -39,33 +39,33 @@ namespace caviar
       /**
        * 'id' is a global and unique number assigned to an atom.
        */
-      std::vector<GlobalID_t> id;
+      std::vector<size_t> id;
 
       // /**
       //  * A tag to be done on the atoms.
       //  */
-      // std::vector<AtomType_t> tag;
+      // std::vector<size_t> tag;
 
       /**
        * Atom type decides the charge, mass and any other property shared between
        * a defined type (for example, Elements).
        */
-      std::vector<AtomType_t> type;
+      std::vector<size_t> type;
 
       /**
        * Different by atom_id. Can be changed in simulation (it is needed to be sent-recv. by MPI)
        */
-      std::vector<Real_t> charge_atom;
+      std::vector<double> charge_atom;
 
       /**
        * Different by atom_id. Can be changed in simulation (it is needed to be sent-recv. by MPI)
        */
-      std::vector<Real_t> mass_atom;
+      std::vector<double> mass_atom;
 
       /**
        * Atom kinematic properties in the current time-step.
        */
-      std::vector<Vector<Real_t>> position, velocity, acceleration;
+      std::vector<Vector<double>> position, velocity, acceleration;
 
       /**
        * This vectors are used in some integrator schemes and constraint methods.
@@ -75,13 +75,13 @@ namespace caviar
        * This function may be needed to have MPI_send-recv. process in these case.
        * look up to it.
        */
-      std::vector<Vector<Real_t>> position_old, velocity_old, acceleration_old;
+      std::vector<Vector<double>> position_old, velocity_old, acceleration_old;
 
       /**
        * Coordinates before applying any constraints. It can be used to calculate constraint forces which is needed
        * in pressure calculations.
        */
-      // std::vector<Vector<Real_t>> position_no_constraint, velocity_no_constraint, acceleration_no_constraint;
+      // std::vector<Vector<double>> position_no_constraint, velocity_no_constraint, acceleration_no_constraint;
 
       /**
        * this vector is meaningful when there's one domain. We can calculate MSD

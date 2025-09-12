@@ -39,7 +39,7 @@ namespace caviar
       void calculate_acceleration();
 
     public:
-      // std::vector<std::vector<Real_t>> epsilon,sigma;
+      // std::vector<std::vector<double>> epsilon,sigma;
       double k_gravity;
       Vector<double> external_field;
     };

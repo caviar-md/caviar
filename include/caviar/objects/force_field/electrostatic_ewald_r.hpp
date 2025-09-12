@@ -48,7 +48,7 @@ namespace caviar
       double energy();
 
     public:
-      std::vector<std::vector<Real_t>> lambda;
+      std::vector<std::vector<double>> lambda;
       bool lambda_is_set = false;
       double k_electrostatic, alpha;
       Vector<double> external_field;

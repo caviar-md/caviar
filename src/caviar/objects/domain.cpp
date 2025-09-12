@@ -17,6 +17,7 @@
 #include "caviar/objects/domain.hpp"
 #include "caviar/interpreter/communicator.hpp"
 #include "caviar/utility/interpreter_io_headers.hpp"
+#include "caviar/CAVIAR.hpp"
 
 #include <array>
 #ifdef CAVIAR_WITH_MPI
@@ -26,10 +27,24 @@
 namespace caviar
 {
 
-  Domain::Domain(CAVIAR *fptr) : Pointers{fptr},
+  Domain::Domain(CAVIAR *fptr) : 
                                  boundary_condition{Vector<int>{0, 0, 0}},
                                  grid_index_x{0}, grid_index_y{0}, grid_index_z{0},
-                                 nprocs_x{1}, nprocs_y{1}, nprocs_z{1}, me{0}, nprocs{1}
+                                 nprocs_x{1}, nprocs_y{1}, nprocs_z{1}, me{0}, nprocs{1}, caviar_{fptr},
+                                   comm{fptr->comm},
+                                   error{fptr->error},
+                                   output{fptr->output},
+                                   input{fptr->input},
+                                   object_handler{fptr->object_handler},
+                                   object_container{fptr->object_container},
+                                   object_creator{fptr->object_creator},
+                                   log{fptr->log},
+                                   in{fptr->in},
+                                   out{fptr->out},
+                                   err{fptr->err},
+                                   log_flag{fptr->log_flag},
+                                   out_flag{fptr->out_flag},
+                                   err_flag{fptr->err_flag}
   {
     FC_OBJECT_INITIALIZE
 #if defined(CAVIAR_WITH_MPI)
@@ -153,9 +168,9 @@ namespace caviar
   // note that this force cannot be used when one is using neighborlist loop.
   // currently its main usage is when one is using Shake like algorithms.
   // or Spring_bond or Spring_angle force_fields.
-  Vector<Real_t> Domain::periodic_distance(const Vector<Real_t> v)
+  Vector<double> Domain::periodic_distance(const Vector<double> v)
   {
-    caviar::Vector<Real_t> vf = v;
+    caviar::Vector<double> vf = v;
     static caviar::Vector<double> domain_dh = {0.5 * (upper_global.x - lower_global.x),
                                                0.5 * (upper_global.y - lower_global.y),
                                                0.5 * (upper_global.z - lower_global.z)};

@@ -18,6 +18,7 @@
 #include "caviar/objects/shape/polyhedron/polyhedron.hpp"
 #include "caviar/objects/shape/polyhedron/preprocess.hpp"
 #include "caviar/utility/interpreter_io_headers.hpp"
+#include "caviar/CAVIAR.hpp"
 
 namespace caviar
 {
@@ -27,13 +28,27 @@ namespace caviar
     namespace polyhedron
     {
 
-      Format_vtk_reader::Format_vtk_reader(CAVIAR *fptr) : Pointers{fptr} {}
+      Format_vtk_reader::Format_vtk_reader(CAVIAR *fptr) : caviar_{fptr},
+                                   comm{fptr->comm},
+                                   error{fptr->error},
+                                   output{fptr->output},
+                                   input{fptr->input},
+                                   object_handler{fptr->object_handler},
+                                   object_container{fptr->object_container},
+                                   object_creator{fptr->object_creator},
+                                   log{fptr->log},
+                                   in{fptr->in},
+                                   out{fptr->out},
+                                   err{fptr->err},
+                                   log_flag{fptr->log_flag},
+                                   out_flag{fptr->out_flag},
+                                   err_flag{fptr->err_flag} {}
 
       Format_vtk_reader::~Format_vtk_reader() {}
-
+      void Format_vtk_reader::verify_settings() {}
       void Format_vtk_reader::read_polyhedron(shape::polyhedron::Polyhedron &p_object, const std::string &file)
       {
-        class caviar::interpreter::Parser *parser = new caviar::interpreter::Parser{fptr, file};
+        class caviar::interpreter::Parser *parser = new caviar::interpreter::Parser{caviar_, file};
         std::cout << "[INF] Vtk_file: reading a Vtk_file vtk file: " << file << std::endl;
 
         auto &vertex = p_object.vertex;
@@ -67,7 +82,7 @@ namespace caviar
               parser->get_val_token();
               parser->end_of_line();
               int xyz = 0;
-              Real_t x = 0, y = 0, z = 0;
+              double x = 0, y = 0, z = 0;
               while (true)
               {
                 t1 = parser->get_val_token();
@@ -97,14 +112,14 @@ namespace caviar
                     z = t1.int_value;
                   else
                     z = t1.real_value;
-                  vertex.push_back(Vector<Real_t>{x, y, z});
+                  vertex.push_back(Vector<double>{x, y, z});
                 }
                 ++xyz;
                 if (xyz == 3)
                   xyz = 0;
               }
 
-              polyhedron::Preprocess p_pre(fptr);
+              polyhedron::Preprocess p_pre(caviar_);
               p_pre.merge_vertices(p_object);
             }
           }

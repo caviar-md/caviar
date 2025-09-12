@@ -16,7 +16,9 @@
 
 #pragma once
 
-#include "caviar/utility/pointers.hpp"
+#include <string>
+#include "caviar/utility/objects_common_headers.hpp"
+#include "caviar/objects/shape/polyhedron.hpp"
 
 namespace caviar
 {
@@ -26,11 +28,11 @@ namespace caviar
     namespace polyhedron
     {
       struct Polyhedron;
-      class Format_stl_reader : public Pointers
+      class Format_stl_reader 
       {
       public:
         Format_stl_reader(class CAVIAR *);
-        ~Format_stl_reader();
+        virtual ~Format_stl_reader();
 
         void read_polyhedron(shape::polyhedron::Polyhedron &, const std::string &);
 
@@ -38,6 +40,7 @@ namespace caviar
         // Then makes a map of all vertices to the similar
         // ones with the lower index, then clear
         // void merge_vertices (int);
+        FC_BASE_OBJECT_COMMON_TOOLS
       };
     } // polyhedron
   } // shape

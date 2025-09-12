@@ -13,7 +13,8 @@
 // the top level of the CAVIAR distribution.
 //
 //========================================================================
-
+#include "caviar/CAVIAR.hpp"
+#include "caviar/interpreter/all.hpp"
 #include "caviar/interpreter/input/lexer.hpp"
 #include "caviar/interpreter/communicator.hpp"
 #include "caviar/interpreter/error.hpp"
@@ -26,18 +27,46 @@ namespace caviar
   {
     static constexpr size_t max_buffer_size = 1024;
 
-    Token_stream::Token_stream(CAVIAR *fptr) : Pointers{fptr},
+    Token_stream::Token_stream(CAVIAR *fptr) : 
                                                input_stream{&std::cin}, stream_is_file{false}, get_new_line{true},
-                                               multiline_comment{false}
+                                               multiline_comment{false}, caviar_{fptr},
+                                   comm{fptr->comm},
+                                   error{fptr->error},
+                                   output{fptr->output},
+                                   input{fptr->input},
+                                   object_handler{fptr->object_handler},
+                                   object_container{fptr->object_container},
+                                   object_creator{fptr->object_creator},
+                                   log{fptr->log},
+                                   in{fptr->in},
+                                   out{fptr->out},
+                                   err{fptr->err},
+                                   log_flag{fptr->log_flag},
+                                   out_flag{fptr->out_flag},
+                                   err_flag{fptr->err_flag}
     {
 #ifdef DEBUG_ME
       std::cout << "DEBUG_ME: LEXER constructor t1" << std::endl;
 #endif
     }
 
-    Token_stream::Token_stream(CAVIAR *fptr, const std::string &file) : Pointers{fptr},
+    Token_stream::Token_stream(CAVIAR *fptr, const std::string &file) : 
                                                                         input_stream{new std::ifstream{file}}, stream_is_file{true},
-                                                                        get_new_line{true}, multiline_comment{false}
+                                                                        get_new_line{true}, multiline_comment{false}, caviar_{fptr},
+                                   comm{fptr->comm},
+                                   error{fptr->error},
+                                   output{fptr->output},
+                                   input{fptr->input},
+                                   object_handler{fptr->object_handler},
+                                   object_container{fptr->object_container},
+                                   object_creator{fptr->object_creator},
+                                   log{fptr->log},
+                                   in{fptr->in},
+                                   out{fptr->out},
+                                   err{fptr->err},
+                                   log_flag{fptr->log_flag},
+                                   out_flag{fptr->out_flag},
+                                   err_flag{fptr->err_flag}
     {
 #ifdef DEBUG_ME
       std::cout << "DEBUG_ME: LEXER constructor t2" << std::endl;
@@ -51,7 +80,21 @@ namespace caviar
       }
     }
 
-    Token_stream::Token_stream(CAVIAR *fptr, std::istringstream &iss) : Pointers{fptr}, input_stream{&iss}, stream_is_file{false}, get_new_line{true}
+    Token_stream::Token_stream(CAVIAR *fptr, std::istringstream &iss) : input_stream{&iss}, stream_is_file{false}, get_new_line{true}, caviar_{fptr},
+                                   comm{fptr->comm},
+                                   error{fptr->error},
+                                   output{fptr->output},
+                                   input{fptr->input},
+                                   object_handler{fptr->object_handler},
+                                   object_container{fptr->object_container},
+                                   object_creator{fptr->object_creator},
+                                   log{fptr->log},
+                                   in{fptr->in},
+                                   out{fptr->out},
+                                   err{fptr->err},
+                                   log_flag{fptr->log_flag},
+                                   out_flag{fptr->out_flag},
+                                   err_flag{fptr->err_flag}
     {
 #ifdef DEBUG_ME
       std::cout << "DEBUG_ME: LEXER constructor t3" << std::endl;
@@ -66,7 +109,7 @@ namespace caviar
       if (stream_is_file)
         delete input_stream;
     }
-
+    void Token_stream::verify_settings(){}
     void Token_stream::getline()
     {
       col = 0;
@@ -526,5 +569,7 @@ namespace caviar
 
       return ct;
     }
+
+    Token::~Token() {}
   } // interpreter
 }

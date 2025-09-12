@@ -143,8 +143,8 @@ namespace caviar
         for (auto j : nlist[i])
         {
           bool is_ghost = j >= pos_size;
-          Vector<Real_t> pos_j;
-          Real_t type_j;
+          Vector<double> pos_j;
+          double type_j;
           int id_j;
           int mol_index_j;
 
@@ -256,8 +256,8 @@ namespace caviar
             //
 
             bool is_ghost = j >= pos_size;
-            Vector<Real_t> pos_j;
-            Real_t type_j;
+            Vector<double> pos_j;
+            double type_j;
             if (is_ghost) {
               j -= pos_size;
               pos_j = atom_data->atom_struct_ghost.position [j];

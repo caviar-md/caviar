@@ -16,7 +16,8 @@
 
 #pragma once
 
-#include "caviar/utility/pointers.hpp"
+#include "caviar/utility/interpreter_common_headers.hpp"
+
 
 #define FC_FILE_LINE_FUNC_LINE_COL __FILE__, __LINE__, __func__, line, col
 #define FC_FILE_LINE_FUNC_PARSE __FILE__, __LINE__, __func__, parser->line, parser->col
@@ -32,13 +33,15 @@ namespace caviar
      * It has different types of error calls.
      *
      */
-    class Error : public Pointers
+    class Error 
     {
     public:
       /**
        * Constructor.
        */
       Error(CAVIAR *);
+
+      virtual ~Error();
 
       void all(const std::string &);
 
@@ -50,6 +53,7 @@ namespace caviar
 
       void all(const char *, int, const char *, const std::string &);
       void one(const char *, int, const char *, const std::string &);
+      FC_BASE_OBJECT_COMMON_TOOLS
     };
   } // interpreter
 }

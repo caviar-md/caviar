@@ -13,7 +13,8 @@
 // the top level of the CAVIAR distribution.
 //
 //========================================================================
-
+#include "caviar/CAVIAR.hpp"
+#include "caviar/interpreter/all.hpp"
 #include "caviar/interpreter/communicator.hpp"
 #include "caviar/utility/vector.hpp"
 #if defined(CAVIAR_WITH_MPI)
@@ -24,7 +25,21 @@ namespace caviar
 {
   namespace interpreter
   {
-    Communicator::Communicator(CAVIAR *fptr) : Pointers{fptr}
+    Communicator::Communicator(CAVIAR *fptr) : caviar_{fptr},
+                                   comm{fptr->comm},
+                                   error{fptr->error},
+                                   output{fptr->output},
+                                   input{fptr->input},
+                                   object_handler{fptr->object_handler},
+                                   object_container{fptr->object_container},
+                                   object_creator{fptr->object_creator},
+                                   log{fptr->log},
+                                   in{fptr->in},
+                                   out{fptr->out},
+                                   err{fptr->err},
+                                   log_flag{fptr->log_flag},
+                                   out_flag{fptr->out_flag},
+                                   err_flag{fptr->err_flag}
     {
 #if defined(CAVIAR_WITH_MPI)
 
@@ -48,7 +63,8 @@ namespace caviar
       */
 #endif
     }
-
+    Communicator::~Communicator() {}
+    void Communicator::verify_settings() {}
     void Communicator::broadcast(bool &flag)
     {
 #if defined(CAVIAR_WITH_MPI)

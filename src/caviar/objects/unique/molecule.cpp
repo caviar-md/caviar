@@ -19,6 +19,7 @@
 #include "caviar/objects/unique/atom.hpp"
 #include "caviar/interpreter/object_handler/preprocessors_new.hpp"
 #include "caviar/objects/unique/molecule_group.hpp"
+#include <fstream>
 
 namespace caviar
 {

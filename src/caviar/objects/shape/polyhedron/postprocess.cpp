@@ -16,6 +16,7 @@
 
 #include "caviar/objects/shape/polyhedron/postprocess.hpp"
 #include "caviar/objects/shape/polyhedron/polyhedron.hpp"
+#include "caviar/CAVIAR.hpp"
 
 #include <string>
 #include <cmath>
@@ -34,10 +35,24 @@ namespace caviar
         return (int)(x + 100000) - 100000;
       }
 
-      Postprocess::Postprocess(CAVIAR *fptr) : Pointers{fptr} {}
+      Postprocess::Postprocess(CAVIAR *fptr) : caviar_{fptr},
+                                   comm{fptr->comm},
+                                   error{fptr->error},
+                                   output{fptr->output},
+                                   input{fptr->input},
+                                   object_handler{fptr->object_handler},
+                                   object_container{fptr->object_container},
+                                   object_creator{fptr->object_creator},
+                                   log{fptr->log},
+                                   in{fptr->in},
+                                   out{fptr->out},
+                                   err{fptr->err},
+                                   log_flag{fptr->log_flag},
+                                   out_flag{fptr->out_flag},
+                                   err_flag{fptr->err_flag} {}
 
       Postprocess::~Postprocess() {}
-
+      void Postprocess::verify_settings() {}
       void Postprocess::lowest_highest_coord(shape::polyhedron::Polyhedron &p_object)
       {
 
@@ -137,11 +152,11 @@ namespace caviar
 
         for (unsigned int i = 0; i < face.size(); ++i)
         {
-          Real_t fxlo = vertex[face[i][0]].x,
+          double fxlo = vertex[face[i][0]].x,
                  fylo = vertex[face[i][0]].y,
                  fzlo = vertex[face[i][0]].z;
 
-          Real_t fxhi = fxlo,
+          double fxhi = fxlo,
                  fyhi = fylo,
                  fzhi = fzlo;
 
@@ -204,7 +219,7 @@ namespace caviar
 
         /*
           for (unsigned int i=0;i<face.size();++i) {
-            Real_t fxlo = vertex[face[i][0]].x - toll,
+            double fxlo = vertex[face[i][0]].x - toll,
                    fxhi = vertex[face[i][0]].x + toll,
                    fylo = vertex[face[i][0]].y - toll,
                    fyhi = vertex[face[i][0]].y + toll,

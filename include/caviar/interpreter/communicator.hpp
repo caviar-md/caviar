@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "caviar/utility/pointers.hpp"
+#include "caviar/utility/interpreter_common_headers.hpp"
 // #if defined(CAVIAR_WITH_MPI)
 // #include<mpi.h>
 // #endif
@@ -34,10 +34,11 @@ namespace interpreter
    * This class handles MPI process base communications.
    *
    */
-  class Communicator : public Pointers
+  class Communicator 
   {
   public:
     Communicator(CAVIAR *);
+    virtual ~Communicator();
 
     // broadcast a variable from the root process to others
     void broadcast(bool &);
@@ -50,6 +51,7 @@ namespace interpreter
 #endif
 
     int me, nprocs; // MPI process rank and number of processes
+    FC_BASE_OBJECT_COMMON_TOOLS
   };
 } // interpreter
 }

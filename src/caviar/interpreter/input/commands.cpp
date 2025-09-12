@@ -13,7 +13,8 @@
 // the top level of the CAVIAR distribution.
 //
 //========================================================================
-
+#include "caviar/CAVIAR.hpp"
+#include "caviar/interpreter/all.hpp"
 #include "caviar/interpreter/input.hpp"
 #include "caviar/interpreter/object_creator.hpp"
 #include "caviar/interpreter/object_handler.hpp"
@@ -49,7 +50,7 @@ namespace caviar
 #ifdef DEBUG_ME
       std::cout << "DEBUG_ME: Input::command_read_script_from_file : create INPUT" << std::endl;
 #endif
-      caviar::interpreter::Input inp(fptr, file_name);
+      caviar::interpreter::Input inp(caviar_, file_name);
       inp.read();
 #ifdef DEBUG_ME
       std::cout << "DEBUG_ME: Input::command_read_script_from_file : delete INPUT" << std::endl;
@@ -189,7 +190,7 @@ namespace caviar
 #ifdef DEBUG_ME
       std::cout << "DEBUG_ME: Input::command_evaluate : create INPUT" << std::endl;
 #endif
-      caviar::interpreter::Input inp(fptr, iss);
+      caviar::interpreter::Input inp(caviar_, iss);
       inp.read();
 #ifdef DEBUG_ME
       std::cout << "DEBUG_ME: Input::command_evaluate : delete INPUT" << std::endl;
@@ -212,7 +213,7 @@ namespace caviar
     char Input::command_compare_real(const std::string &st)
     {
       std::istringstream iss(st);
-      Parser p(fptr, iss);
+      Parser p(caviar_, iss);
       // std::cout << "X: " << st << " , result: " << p.compare_real() << std::endl;
       return p.compare_real();
     }
@@ -221,7 +222,7 @@ namespace caviar
     {
       std::string st = parser->rest_of_line();
       std::istringstream iss(st);
-      Parser p(fptr, iss);
+      Parser p(caviar_, iss);
       bool result = p.compare_real();
       // std::cout << "X: " << st << " , result: " << result << std::endl;
       parser->go_to_next_line();
@@ -242,7 +243,7 @@ namespace caviar
 #ifdef DEBUG_ME
       std::cout << "DEBUG_ME: Input::command_calculate : create INPUT" << std::endl;
 #endif
-      caviar::interpreter::Input inp(fptr, iss);
+      caviar::interpreter::Input inp(caviar_, iss);
       inp.read();
 #ifdef DEBUG_ME
       std::cout << "DEBUG_ME: Input::command_calculate : delete INPUT" << std::endl;

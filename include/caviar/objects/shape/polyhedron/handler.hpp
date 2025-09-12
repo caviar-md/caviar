@@ -16,9 +16,11 @@
 
 #pragma once
 
-#include "caviar/utility/pointers.hpp"
+
 #include "caviar/utility/vector.hpp"
 #include "caviar/objects/shape/polyhedron/polyhedron.hpp"
+#include "caviar/utility/objects_common_headers.hpp"
+
 #include <vector>
 
 namespace caviar
@@ -34,11 +36,11 @@ namespace caviar
       class Utility;
       class Point_Inside;
       class Output;
-      class Handler : public Pointers
+      class Handler 
       {
       public:
         Handler(class CAVIAR *);
-        ~Handler();
+        virtual ~Handler();
 
         bool read(caviar::interpreter::Parser *);
         bool is_inside(const Vector<double> &v);
@@ -73,6 +75,7 @@ namespace caviar
          */
         Vector<double> an_inside_point;
         bool an_inside_point_is_set;
+        FC_BASE_OBJECT_COMMON_TOOLS
       };
     } // polyhedron
   } // shape

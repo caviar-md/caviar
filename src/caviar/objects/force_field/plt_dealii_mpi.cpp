@@ -658,7 +658,7 @@ namespace caviar
 
       static std::vector<int> pos_in_mesh(pos_size, 0);
 
-      static std::vector<caviar::Vector<Real_t>> acc_found(pos_size, caviar::Vector<Real_t>{0, 0, 0});
+      static std::vector<caviar::Vector<double>> acc_found(pos_size, caviar::Vector<double>{0, 0, 0});
 
       // additional acceleration calculation for each domain
 

@@ -16,7 +16,8 @@
 
 #pragma once
 
-#include "caviar/utility/pointers.hpp"
+#include "caviar/utility/interpreter_common_headers.hpp"
+
 #include "caviar/utility/vector.hpp"
 
 namespace caviar
@@ -34,14 +35,14 @@ namespace caviar
      * does. Input class also gives unknown commands to 'Object_creator', 'Object_handler'
      * and 'Object_container' classes to check if it is their Command.
      */
-    class Parser : public Pointers
+    class Parser 
     {
     public:
       Parser(class CAVIAR *);
       Parser(class CAVIAR *, const std::string &);
       Parser(class CAVIAR *, std::istringstream &);
 
-      ~Parser();
+      virtual ~Parser();
 
       /**
        * Get a raw token and check if it is the end of line.
@@ -99,8 +100,8 @@ namespace caviar
        * returns a real value out of an expression with mathematical operators and
        * numeric variables.
        */
-      Real_t get_real();
-      Real_t get_positive_real();
+      double get_real();
+      double get_positive_real();
 
       /**
        * parses the conditional line to 'eol' and gives the result.
@@ -119,7 +120,7 @@ namespace caviar
        */
       bool get_literal_bool();
 
-      // Vector<Real_t> get_real3d ();
+      // Vector<double> get_real3d ();
       // Vector<int> get_int3d ();
 
       /**
@@ -135,7 +136,7 @@ namespace caviar
       /**
        * gets a real value in literal numbers. No variable!
        */
-      Real_t get_literal_real();
+      double get_literal_real();
 
       /**
        * gets a string value. It should be in qouts, i.e. " something "
@@ -165,9 +166,9 @@ namespace caviar
       /**
        * CAVIAR::Vector counterpart of the functions above
        */
-      // Vector<Real_t> expression_3d (bool);
-      // Vector<Real_t> term_3d (bool);
-      // Vector<Real_t> primary_3d (bool);
+      // Vector<double> expression_3d (bool);
+      // Vector<double> term_3d (bool);
+      // Vector<double> primary_3d (bool);
 
     public:
       /**
@@ -175,6 +176,7 @@ namespace caviar
        */
       std::string &line;
       unsigned int &col;
+      FC_BASE_OBJECT_COMMON_TOOLS
     };
   } // interpreter
 }

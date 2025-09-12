@@ -16,7 +16,6 @@
 
 #pragma once
 
-#include "caviar_config.hpp"
 #include "caviar/utility/vector.hpp"
 #include <algorithm>
 #include <vector>

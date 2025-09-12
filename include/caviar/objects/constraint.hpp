@@ -44,7 +44,7 @@ namespace caviar
    * different parts of the virtual functions to be called at the desired moments
    * see the md_simulator objects to understant the time of call.
    */
-  class Constraint : public Pointers
+  class Constraint 
   {
   public:
     Constraint(class CAVIAR *);

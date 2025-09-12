@@ -26,7 +26,7 @@ namespace caviar
    *
    *
    */
-  class Writer : public Pointers
+  class Writer //
   {
   public:
     Writer(class CAVIAR *);
@@ -39,7 +39,7 @@ namespace caviar
     virtual void open_files();
     virtual void close_files();
     virtual void generate();
-    bool initialized;
+    bool initialized = false;
     int64_t last_timestep;
     double last_time;
     double dt;

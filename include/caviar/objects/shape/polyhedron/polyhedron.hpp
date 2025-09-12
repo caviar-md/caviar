@@ -16,9 +16,11 @@
 
 #pragma once
 
-#include "caviar/utility/caviar_config.hpp"
+#include <string>
+#include "caviar/utility/objects_common_headers.hpp"
+#include "caviar/objects/shape/polyhedron.hpp"
 #include "caviar/utility/vector.hpp"
-#include "caviar/utility/types.hpp"
+
 #include <vector>
 #include <map>
 
@@ -37,7 +39,7 @@ namespace caviar
         /**
          * contains cartesian coordinates
          */
-        std::vector<Vector<Real_t>> vertex;
+        std::vector<Vector<double>> vertex;
 
         /**
          * made in "merge_vertices()" it's a map to the index of possible similar
@@ -59,21 +61,21 @@ namespace caviar
         /**
          * normal of faces. The direction has to be set by the user
          */
-        std::vector<Vector<Real_t>> normal;
+        std::vector<Vector<double>> normal;
 
         /**
          *
          * addition of normals of neighborlist faces for each edge
          *  Locally Defined
-         * std::vector<std::vector<Vector<Real_t>>> edge_norms1;
+         * std::vector<std::vector<Vector<double>>> edge_norms1;
          *
          * face[][j]-face[][j+1]
          *  Locally Defined
-         * std::vector<std::vector<Vector<Real_t>>> edge_norms2;
+         * std::vector<std::vector<Vector<double>>> edge_norms2;
          *
          * edge_norms1 cross edge_norms2
          */
-        std::vector<std::vector<Vector<Real_t>>> edge_norms3;
+        std::vector<std::vector<Vector<double>>> edge_norms3;
 
         /**
          * first: the edge that has vertex[i],vertex[j] ... second: face[m],face[n]
@@ -89,12 +91,12 @@ namespace caviar
         /**
          * highest and lowest coordinates of vertices; used in grid;
          */
-        Real_t xlo, ylo, zlo, xhi, yhi, zhi;
+        double xlo, ylo, zlo, xhi, yhi, zhi;
 
         /**
          * used in grid;
          */
-        Real_t dx_part, dy_part, dz_part;
+        double dx_part, dy_part, dz_part;
 
         /**
          * used in grid;
@@ -104,13 +106,14 @@ namespace caviar
         /**
          * a tolerance value used in grid;
          */
-        Real_t grid_tol;
+        double grid_tol;
 
         /*
          * it defines the maximum thickness of each surface. If a particle go farther
          * than it inside, it won't be inside anymore.
          */
-        Real_t thickness;
+        double thickness;
+        //FC_BASE_OBJECT_COMMON_TOOLS
       };
     } // polyhedron
   } // shape

@@ -42,8 +42,8 @@ namespace caviar
       void calculate_acceleration();
 
     public:
-      std::vector<std::vector<Real_t>> conserv_coef, dissip_coef;
-      Real_t temperature, kBoltzman;
+      std::vector<std::vector<double>> conserv_coef, dissip_coef;
+      double temperature, kBoltzman;
       int rnd_seed;
       std::mt19937 rnd_generator;
       std::normal_distribution<double> rnd_ndist; // stddev() == 1

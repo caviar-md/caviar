@@ -20,3 +20,4 @@
 #include "caviar/interpreter/output.hpp"
 #include "caviar/interpreter/object_handler/all.hpp" // accessing object finding functions
 #include "caviar/interpreter/object_container.hpp"
+#include "caviar/utility/common_template_functions.hpp"

@@ -288,7 +288,7 @@ namespace caviar
         {
           auto type_s = shape_type[j];
 
-          Vector<Real_t> contact_vector{0, 0, 0};
+          Vector<double> contact_vector{0, 0, 0};
 
           double c = cutoff;
 

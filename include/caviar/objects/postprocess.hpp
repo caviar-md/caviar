@@ -27,7 +27,7 @@ namespace caviar
    * the simulation results, or re-run the code at special timesteps and re-run
    * the code for sampling something like potential  values at higher resolutions.
    */
-  class Postprocess : public Pointers
+  class Postprocess 
   {
   public:
     Postprocess(class CAVIAR *);

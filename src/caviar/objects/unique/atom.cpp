@@ -19,6 +19,7 @@
 #include "caviar/objects/unique/molecule.hpp"
 #include "caviar/utility/interpreter_io_headers.hpp"
 #include "caviar/interpreter/object_handler/preprocessors_new.hpp"
+#include <fstream>
 
 namespace caviar
 {
@@ -74,7 +75,7 @@ namespace caviar
           GET_OR_CHOOSE_A_REAL(x, "", "")
           GET_OR_CHOOSE_A_REAL(y, "", "")
           GET_OR_CHOOSE_A_REAL(z, "", "")
-          position = Vector<Real_t>{x, y, z};
+          position = Vector<double>{x, y, z};
         }
         else if (string_cmp(t, "velocity"))
         {
@@ -82,7 +83,7 @@ namespace caviar
           GET_OR_CHOOSE_A_REAL(x, "", "")
           GET_OR_CHOOSE_A_REAL(y, "", "")
           GET_OR_CHOOSE_A_REAL(z, "", "")
-          velocity = Vector<Real_t>{x, y, z};
+          velocity = Vector<double>{x, y, z};
         }
         else if (string_cmp(t, "type"))
         {

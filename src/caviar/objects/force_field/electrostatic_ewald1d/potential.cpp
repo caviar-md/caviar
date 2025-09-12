@@ -70,8 +70,8 @@ namespace caviar
 
           bool is_ghost = j >= pos_size;
 
-          Vector<Real_t> pos_j;
-          Real_t type_j;
+          Vector<double> pos_j;
+          double type_j;
           if (is_ghost)
           {
 
@@ -126,8 +126,8 @@ namespace caviar
         double coef = 2.0; // ewald: 'coef=2' for owned in 'neighlist'. Not for binlist.
         bool is_ghost = j >= pos_size;
 
-        Vector<Real_t> pos_j;
-        Real_t type_j;
+        Vector<double> pos_j;
+        double type_j;
         if (is_ghost)
         {
           coef = 1.0; // ewald:'coef=1' for ghost in 'neighlist'. Not for binlist.

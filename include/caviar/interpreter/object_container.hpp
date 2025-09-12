@@ -16,7 +16,8 @@
 
 #pragma once
 
-#include "caviar/utility/pointers.hpp"
+#include "caviar/utility/interpreter_common_headers.hpp"
+
 #include "caviar/utility/vector.hpp"
 #include "caviar/utility/vector2D.hpp"
 #include "caviar/interpreter/object_handler/dictionary.hpp"
@@ -42,11 +43,11 @@ namespace caviar
      *
      *
      */
-    class Object_container : public Pointers
+    class Object_container //
     {
     public:
       Object_container(class CAVIAR *);
-      ~Object_container();
+      virtual ~Object_container();
       bool read(caviar::interpreter::Parser *);
       void report();
 
@@ -76,6 +77,9 @@ namespace caviar
       std::vector<std::shared_ptr<std::ofstream>> ofs_objects;
 
     public:
+
+    FC_BASE_OBJECT_COMMON_TOOLS
+
     };
   } // interpreter
 }

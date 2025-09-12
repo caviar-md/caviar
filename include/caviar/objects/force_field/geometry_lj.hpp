@@ -53,19 +53,19 @@ namespace caviar
       std::vector<int> shape_type;
 
       // epsilon - sigma of a single type. inter-type values will be deduced using these
-      std::vector<Real_t> epsilon_atom, sigma_atom;
-      std::vector<Real_t> epsilon_wall, sigma_wall;
+      std::vector<double> epsilon_atom, sigma_atom;
+      std::vector<double> epsilon_wall, sigma_wall;
 
       // the epsilon-sigma of a LJ potential. first number is the shape index.
       // sigma[2][3] is the sigma of shape_2 and atom_type_3
-      std::vector<std::vector<Real_t>> epsilon, sigma;
+      std::vector<std::vector<double>> epsilon, sigma;
 
       // a force_coef in case we need a total shift of the forces.
-      Real_t force_coef;
+      double force_coef;
 
       bool wca; // Week-Chandler-Anderson (WCA) potential activated.
       bool cutoff_list_activated;
-      std::vector<std::vector<Real_t>> cutoff_list; // list of cutoffs when it is needed.
+      std::vector<std::vector<double>> cutoff_list; // list of cutoffs when it is needed.
                                                     // for example in WCA potentials
     };
 

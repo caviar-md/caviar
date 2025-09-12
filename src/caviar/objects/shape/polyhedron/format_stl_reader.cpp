@@ -18,6 +18,7 @@
 #include "caviar/objects/shape/polyhedron/polyhedron.hpp"
 #include "caviar/objects/shape/polyhedron/preprocess.hpp"
 #include "caviar/utility/interpreter_io_headers.hpp"
+#include "caviar/CAVIAR.hpp"
 
 namespace caviar
 {
@@ -27,13 +28,27 @@ namespace caviar
     namespace polyhedron
     {
 
-      Format_stl_reader::Format_stl_reader(CAVIAR *fptr) : Pointers{fptr} {}
+      Format_stl_reader::Format_stl_reader(CAVIAR *fptr) : caviar_{fptr},
+                                   comm{fptr->comm},
+                                   error{fptr->error},
+                                   output{fptr->output},
+                                   input{fptr->input},
+                                   object_handler{fptr->object_handler},
+                                   object_container{fptr->object_container},
+                                   object_creator{fptr->object_creator},
+                                   log{fptr->log},
+                                   in{fptr->in},
+                                   out{fptr->out},
+                                   err{fptr->err},
+                                   log_flag{fptr->log_flag},
+                                   out_flag{fptr->out_flag},
+                                   err_flag{fptr->err_flag} {}
 
       Format_stl_reader::~Format_stl_reader() {}
-
+      void Format_stl_reader::verify_settings() {}
       void Format_stl_reader::read_polyhedron(shape::polyhedron::Polyhedron &p_object, const std::string &file)
       {
-        class caviar::interpreter::Parser *parser = new caviar::interpreter::Parser{fptr, file};
+        class caviar::interpreter::Parser *parser = new caviar::interpreter::Parser{caviar_, file};
         std::cout << "[INF] Stl_file: reading a Stl_file Stl file: " << file << std::endl;
 
         auto &vertex = p_object.vertex;
@@ -175,7 +190,7 @@ namespace caviar
         }
 
         // merge vertices and make the vertex_map out of it.
-        polyhedron::Preprocess p_pre(fptr);
+        polyhedron::Preprocess p_pre(caviar_);
         p_pre.merge_vertices(p_object);
 
         for (unsigned int i = 0; i < static_cast<unsigned int>(no_polygons); ++i)

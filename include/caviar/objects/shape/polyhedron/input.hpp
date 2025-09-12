@@ -16,7 +16,10 @@
 
 #pragma once
 
-#include "caviar/utility/pointers.hpp"
+#include <string>
+#include "caviar/utility/objects_common_headers.hpp"
+#include "caviar/objects/shape/polyhedron.hpp"
+
 
 namespace caviar
 {
@@ -26,15 +29,16 @@ namespace caviar
     namespace polyhedron
     {
       struct Polyhedron;
-      class Input : public Pointers
+      class Input 
       {
       public:
         Input(class CAVIAR *);
-        ~Input();
+        virtual ~Input();
 
         void read_unv(shape::polyhedron::Polyhedron &, const std::string &);
         void read_vtk(shape::polyhedron::Polyhedron &, const std::string &);
         void read_stl(shape::polyhedron::Polyhedron &, const std::string &);
+        FC_BASE_OBJECT_COMMON_TOOLS
       };
     } // polyhedron
   } // shape

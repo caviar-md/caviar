@@ -16,7 +16,9 @@
 
 #pragma once
 
-#include "caviar/utility/pointers.hpp"
+#include <string>
+#include "caviar/utility/objects_common_headers.hpp"
+#include "caviar/objects/shape/polyhedron.hpp"
 
 namespace caviar
 {
@@ -26,11 +28,11 @@ namespace caviar
     namespace polyhedron
     {
       struct Polyhedron;
-      class Output : public Pointers
+      class Output 
       {
       public:
         Output(class CAVIAR *);
-        ~Output();
+        virtual ~Output();
 
         void mesh_povray(const shape::polyhedron::Polyhedron &, std::string file = "o_mesh.pov");        // povray output mesh ".pov"
         void mesh_tcl(const shape::polyhedron::Polyhedron &, std::string file = "o_mesh.tcl");           // vfptr output mesh ".tcl"
@@ -42,6 +44,7 @@ namespace caviar
         //  void mesh_vfptr (const std::vector<polyhedron::Polyhedron> &); // vfptr output mesh ".tcl"
         //  void normals_vfptr (const std::vector<polyhedron::Polyhedron> &); // vfptr output normals ".tcl"
         // void edges_vfptr (const std::vector<polyhedron::Polyhedron> &); // vfptr output edges  ".tcl"
+        FC_BASE_OBJECT_COMMON_TOOLS
       };
     } // polyhedron
   } // shape

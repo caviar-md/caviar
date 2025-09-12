@@ -13,7 +13,8 @@
 // the top level of the CAVIAR distribution.
 //
 //========================================================================
-
+#include "caviar/CAVIAR.hpp"
+#include "caviar/interpreter/all.hpp"
 #include "caviar/interpreter/input.hpp"
 #include "caviar/interpreter/object_creator.hpp"
 #include "caviar/interpreter/input/commands_map.hpp"
@@ -45,7 +46,21 @@ namespace caviar
     */
     // 0     1     2
     // cav  -i  /dsaads/das
-    Input::Input(CAVIAR *fptr, int argc, char **argv) : Pointers{fptr}, fptr{fptr}
+    Input::Input(CAVIAR *fptr, int argc, char **argv) : caviar_{fptr},
+                                   comm{fptr->comm},
+                                   error{fptr->error},
+                                   output{fptr->output},
+                                   input{fptr->input},
+                                   object_handler{fptr->object_handler},
+                                   object_container{fptr->object_container},
+                                   object_creator{fptr->object_creator},
+                                   log{fptr->log},
+                                   in{fptr->in},
+                                   out{fptr->out},
+                                   err{fptr->err},
+                                   log_flag{fptr->log_flag},
+                                   out_flag{fptr->out_flag},
+                                   err_flag{fptr->err_flag}
     {
       fptr->interpreter_num_Input_class++;
 
@@ -89,27 +104,71 @@ namespace caviar
 #endif
     }
 
-    Input::Input(CAVIAR *fptr) : Pointers{fptr}, parser{new Parser{fptr}},
-                                 fptr{fptr}
+    Input::Input(CAVIAR *fptr) : caviar_{fptr},
+                                   comm{fptr->comm},
+                                   error{fptr->error},
+                                   output{fptr->output},
+                                   input{fptr->input},
+                                   object_handler{fptr->object_handler},
+                                   object_container{fptr->object_container},
+                                   object_creator{fptr->object_creator},
+                                   log{fptr->log},
+                                   in{fptr->in},
+                                   out{fptr->out},
+                                   err{fptr->err},
+                                   log_flag{fptr->log_flag},
+                                   out_flag{fptr->out_flag},
+                                   err_flag{fptr->err_flag}
     {
+      parser = new Parser(fptr);
       fptr->interpreter_num_Input_class++;
 #ifdef DEBUG_ME
       std::cout << "DEBUG_ME: INPUT constructor t1" << std::endl;
 #endif
     }
 
-    Input::Input(CAVIAR *fptr, const std::string &file) : Pointers{fptr},
-                                                          parser{new Parser{fptr, file}}, fptr{fptr}
+    Input::Input(CAVIAR *fptr, const std::string &file) : caviar_{fptr},
+                                   comm{fptr->comm},
+                                   error{fptr->error},
+                                   output{fptr->output},
+                                   input{fptr->input},
+                                   object_handler{fptr->object_handler},
+                                   object_container{fptr->object_container},
+                                   object_creator{fptr->object_creator},
+                                   log{fptr->log},
+                                   in{fptr->in},
+                                   out{fptr->out},
+                                   err{fptr->err},
+                                   log_flag{fptr->log_flag},
+                                   out_flag{fptr->out_flag},
+                                   err_flag{fptr->err_flag}
     {
+      
+      parser = new Parser(fptr, file);
       fptr->interpreter_num_Input_class++;
 #ifdef DEBUG_ME
       std::cout << "DEBUG_ME: INPUT constructor t2" << std::endl;
 #endif
     }
 
-    Input::Input(CAVIAR *fptr, std::istringstream &iss) : Pointers{fptr},
-                                                          parser{new Parser{fptr, iss}}, fptr{fptr}
+    Input::Input(CAVIAR *fptr, std::istringstream &iss) : caviar_{fptr},
+                                   comm{fptr->comm},
+                                   error{fptr->error},
+                                   output{fptr->output},
+                                   input{fptr->input},
+                                   object_handler{fptr->object_handler},
+                                   object_container{fptr->object_container},
+                                   object_creator{fptr->object_creator},
+                                   log{fptr->log},
+                                   in{fptr->in},
+                                   out{fptr->out},
+                                   err{fptr->err},
+                                   log_flag{fptr->log_flag},
+                                   out_flag{fptr->out_flag},
+                                   err_flag{fptr->err_flag}
+                                                          
     {
+      parser = new Parser(fptr, iss);
       fptr->interpreter_num_Input_class++;
 #ifdef DEBUG_ME
       std::cout << "DEBUG_ME: INPUT constructor t3" << std::endl;
@@ -118,25 +177,29 @@ namespace caviar
 
     Input::~Input()
     {
-      fptr->interpreter_num_Input_class--;
+      caviar_->interpreter_num_Input_class--;
 #ifdef DEBUG_ME
       std::cout << "DEBUG_ME: INPUT destructor " << std::endl;
 #endif
       delete parser;
     }
 
+    void Input::verify_settings()
+    {
+    }
+    
     // called by CAVIAR object at execute()
     void Input::read()
     {
       while (read_command(parser))
         ;
-      if (fptr->interpreter_num_Input_class == 1)
+      if (caviar_->interpreter_num_Input_class == 1)
       {
-        if (fptr->interpreter_break_called)
+        if (caviar_->interpreter_break_called)
         {
           error->all(FC_FILE_LINE_FUNC_PARSE, "stray 'break' command.");
         }
-        else if (fptr->interpreter_continue_called)
+        else if (caviar_->interpreter_continue_called)
         {
           error->all(FC_FILE_LINE_FUNC_PARSE, "stray 'continue' command.");
         }
@@ -156,7 +219,7 @@ namespace caviar
       // call. For example in cases there's an 'if' condition inside a 'do' loop.
       // In that case, the interpreter isn't allowed to do anything unless the command
       // is handled.
-      if (fptr->interpreter_break_called || fptr->interpreter_continue_called)
+      if (caviar_->interpreter_break_called || caviar_->interpreter_continue_called)
       {
         return false;
       }

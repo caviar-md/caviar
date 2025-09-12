@@ -39,18 +39,18 @@ namespace caviar
       void calculate_acceleration();
 
     public:
-      std::vector<std::vector<Real_t>> lambda_e;
-      std::vector<std::vector<Real_t>> lambda_s;
+      std::vector<std::vector<double>> lambda_e;
+      std::vector<std::vector<double>> lambda_s;
       bool lambda_e_is_set = false;
       bool lambda_s_is_set = false;
       bool ignore_intra_molecule = false;
       bool input_by_array;
-      std::vector<std::vector<Real_t>> epsilon, sigma;
+      std::vector<std::vector<double>> epsilon, sigma;
       bool make_off_diagonal_vectors;
 
       bool input_by_atom;
       // epsilon - sigma of a single type. inter-type values will be deduced using these
-      std::vector<Real_t> epsilon_atom, sigma_atom;
+      std::vector<double> epsilon_atom, sigma_atom;
 
       // some helper variables, used for debugging
       bool jump_fix, monitor_jump;
@@ -58,7 +58,7 @@ namespace caviar
 
       bool wca; // Week-Chandler-Anderson (WCA) potential activated.
       bool cutoff_list_activated;
-      std::vector<std::vector<Real_t>> cutoff_list; // list of cutoffs when it is needed.
+      std::vector<std::vector<double>> cutoff_list; // list of cutoffs when it is needed.
                                                     // for example in WCA potentials
     };
 

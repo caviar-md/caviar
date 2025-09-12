@@ -146,8 +146,8 @@ namespace caviar
           // std::cout << "j: " << j << std::endl;
           // std::cout << nlist[i].size()  << " " ;
           bool is_ghost = j >= nlist.size();
-          Vector<Real_t> pos_j, vel_j;
-          Real_t type_j, mass_inv_j;
+          Vector<double> pos_j, vel_j;
+          double type_j, mass_inv_j;
           if (is_ghost)
           {
             j -= nlist.size();

@@ -16,7 +16,9 @@
 
 #pragma once
 
-#include "caviar/utility/pointers.hpp"
+#include <string>
+#include "caviar/utility/objects_common_headers.hpp"
+#include "caviar/objects/shape/polyhedron.hpp"
 #include "caviar/utility/vector.hpp"
 
 namespace caviar
@@ -32,11 +34,11 @@ namespace caviar
        * A class to understant if a point is inside the polyhedron or if a particle is
        * in contact with it.
        */
-      class Point_Inside : public Pointers
+      class Point_Inside 
       {
       public:
         Point_Inside(class CAVIAR *);
-        ~Point_Inside();
+        virtual ~Point_Inside();
 
         /**
          *
@@ -48,8 +50,8 @@ namespace caviar
          * the grid one may be faster (depending on the number of the polygons) but prone to
          * bugs if the parameters are not correct.
          */
-        bool in_contact_grid(shape::polyhedron::Polyhedron &, const Vector<Real_t> &v1, const Real_t radius, Vector<double> &contact_vector);
-        bool in_contact_all(shape::polyhedron::Polyhedron &, const Vector<Real_t> &v1, const Real_t radius, Vector<double> &contact_vector);
+        bool in_contact_grid(shape::polyhedron::Polyhedron &, const Vector<double> &v1, const double radius, Vector<double> &contact_vector);
+        bool in_contact_all(shape::polyhedron::Polyhedron &, const Vector<double> &v1, const double radius, Vector<double> &contact_vector);
 
         /**
          * usage in particle initial distributions (random, grid or ...)
@@ -67,8 +69,8 @@ namespace caviar
          * when we just to know a sphere with radius r is contacted the surface and so
          * it is not permitted to be created.
          */
-        bool in_contact_grid(shape::polyhedron::Polyhedron &, const Vector<Real_t> &v1, const Real_t radius);
-        bool in_contact_all(shape::polyhedron::Polyhedron &, const Vector<Real_t> &v1, const Real_t radius);
+        bool in_contact_grid(shape::polyhedron::Polyhedron &, const Vector<double> &v1, const double radius);
+        bool in_contact_all(shape::polyhedron::Polyhedron &, const Vector<double> &v1, const double radius);
 
         /**
          * usage in particle initial distributions (random, grid or ...)
@@ -76,8 +78,10 @@ namespace caviar
          * checks if a point is inside polyhedron by using an imaginary beam and counting
          * how many times it crosses polygons of the polyhedron.
          */
-        bool ray_tells_point_is_inside(shape::polyhedron::Polyhedron &, const Vector<Real_t> &v1, const int ray_axis);
+        bool ray_tells_point_is_inside(shape::polyhedron::Polyhedron &, const Vector<double> &v1, const int ray_axis);
         int point_is_inside_method;
+
+        FC_BASE_OBJECT_COMMON_TOOLS
       };
     } // polyhedron
   } // shape

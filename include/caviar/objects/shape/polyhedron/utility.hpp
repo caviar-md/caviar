@@ -16,7 +16,9 @@
 
 #pragma once
 
-#include "caviar/utility/pointers.hpp"
+#include <string>
+#include "caviar/utility/objects_common_headers.hpp"
+#include "caviar/objects/shape/polyhedron.hpp"
 #include "caviar/utility/vector.hpp"
 
 namespace caviar
@@ -31,11 +33,11 @@ namespace caviar
       /**
        * a utility class for polyhedrons
        */
-      class Utility : public Pointers
+      class Utility 
       {
       public:
         Utility(class CAVIAR *);
-        ~Utility();
+        virtual ~Utility();
 
         /**
          * after reading polyhedron file, it calculates normal vectors
@@ -56,6 +58,7 @@ namespace caviar
          * does what it says by using an inside point.
          */
         bool normals_are_pointing_outside(shape::polyhedron::Polyhedron &p_object, const Vector<double> &);
+        FC_BASE_OBJECT_COMMON_TOOLS
       };
     } // polyhedron
   } // shape

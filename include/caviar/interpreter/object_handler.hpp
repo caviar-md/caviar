@@ -16,7 +16,8 @@
 
 #pragma once
 
-#include "caviar/utility/pointers.hpp"
+#include "caviar/utility/interpreter_common_headers.hpp"
+
 #include <string>
 #include <map>
 
@@ -32,17 +33,18 @@ namespace caviar
      *
      *
      */
-    class Object_handler : public Pointers
+    class Object_handler 
     {
     public:
       Object_handler(class CAVIAR *);
-      ~Object_handler();
+      virtual ~Object_handler();
 
       const static std::map<std::string, CommandFunc_object_handler> commands_map;
 
       bool read_object(Parser *, const std::string);
 
     public:
+    FC_BASE_OBJECT_COMMON_TOOLS
     };
   } // interpreter
 }

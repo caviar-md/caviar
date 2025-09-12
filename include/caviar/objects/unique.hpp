@@ -26,7 +26,7 @@ namespace caviar
    * These type of objects does not need a base class, but in order to have them
    * organized, we create them as the child of this class.
    */
-  class Unique : public Pointers
+  class Unique 
   {
   public:
     Unique(class CAVIAR *);

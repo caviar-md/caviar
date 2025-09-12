@@ -13,6 +13,7 @@
 // the top level of the CAVIAR distribution.
 //
 //========================================================================
+#include "caviar/CAVIAR.hpp"
 
 #include "caviar/objects/writer.hpp"
 #include "caviar/interpreter/communicator.hpp"
@@ -20,11 +21,30 @@
 namespace caviar
 {
 
-    Writer::Writer(CAVIAR *fptr) : Pointers{fptr}, initialized{false}, my_mpi_rank{comm->me},
-                                   mpi_world_size{comm->nprocs} {
-                                       FC_OBJECT_INITIALIZE}
+    Writer::Writer(CAVIAR *fptr) : caviar_{fptr},
+                                   comm{fptr->comm},
+                                   error{fptr->error},
+                                   output{fptr->output},
+                                   input{fptr->input},
+                                   object_handler{fptr->object_handler},
+                                   object_container{fptr->object_container},
+                                   object_creator{fptr->object_creator},
+                                   log{fptr->log},
+                                   in{fptr->in},
+                                   out{fptr->out},
+                                   err{fptr->err},
+                                   log_flag{fptr->log_flag},
+                                   out_flag{fptr->out_flag},
+                                   err_flag{fptr->err_flag}
 
-                                   Writer::~Writer()
+    {
+
+        FC_OBJECT_INITIALIZE
+        my_mpi_rank = fptr->comm->me;
+        mpi_world_size = fptr->comm->nprocs;
+    }
+
+    Writer::~Writer()
     {
     }
 

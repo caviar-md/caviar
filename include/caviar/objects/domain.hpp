@@ -26,7 +26,7 @@ namespace caviar
    * Domain contains the value of the simulation boxes.
    *
    */
-  class Domain : public Pointers
+  class Domain 
   {
   public:
     Domain(class CAVIAR *);
@@ -73,7 +73,7 @@ namespace caviar
      */
     virtual caviar::Vector<double> fix_position(caviar::Vector<double> v, caviar::Vector<int> &msd_value, bool &update_verlet_list);
 
-    virtual Vector<Real_t> periodic_distance(const Vector<Real_t>);
+    virtual Vector<double> periodic_distance(const Vector<double>);
 
     /**
      * Total volume of (mpi) local domain. In non-mpi simulations, local == global
@@ -90,10 +90,10 @@ namespace caviar
     int grid_index_x, grid_index_y, grid_index_z; // starts from (0) to (nprocs_i-1) ; i=x,y,z
     int nprocs_x, nprocs_y, nprocs_z;             // it can be at least (1) and at most (nprocs)
 
-    Vector<Real_t> lower_global, upper_global;
-    Vector<Real_t> lower_local, upper_local;
+    Vector<double> lower_global, upper_global;
+    Vector<double> lower_local, upper_local;
 
-    Vector<Real_t> size_local, size_global;
+    Vector<double> size_local, size_global;
 
     /**
      * used in MD_MPI case:
@@ -113,7 +113,7 @@ namespace caviar
      */
     std::vector<int> neighborlist_domains;
 
-    Vector<Real_t> half_edge;
+    Vector<double> half_edge;
 
   public:
     FC_BASE_OBJECT_COMMON_TOOLS

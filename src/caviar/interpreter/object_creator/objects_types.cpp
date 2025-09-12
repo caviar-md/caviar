@@ -17,6 +17,7 @@
 #include "caviar/interpreter/object_creator.hpp"
 #include "caviar/utility/interpreter_io_headers.hpp"
 #include "caviar/objects/all_derived_classes.hpp"
+#include "caviar/utility/common_template_functions.hpp"
 
 namespace caviar
 {
@@ -35,7 +36,7 @@ namespace caviar
   if ((!object_type_found) && string_cmp_i(object_type, #VAR2)) \
   {                                                             \
     object_type_found = true;                                   \
-    p_sh = new VAR3(fptr);                                      \
+    p_sh = new VAR3(caviar_);                                      \
   }
 
 #define FC_ADD_OBJECT_TO_CONTAINER(OBJECT_TYPE)                                                                              \

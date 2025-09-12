@@ -21,7 +21,8 @@
 #include <sstream>
 #include <vector>
 
-#include "caviar/utility/pointers.hpp"
+#include "caviar/utility/interpreter_common_headers.hpp"
+
 
 namespace caviar
 {
@@ -93,18 +94,19 @@ namespace caviar
     {
       Token() {}
       Token(Kind kind) : kind{kind} {}
+      virtual ~Token();
       Kind kind;
       // making this a union will complicate destructor and assignment operator b/c of std::string
       std::string string_value;
       std::vector<std::string> member;
       int int_value;
-      Real_t real_value;
+      double real_value;
     };
 
     /**
      * a class that gets a string stream and tokenize it for the parser.
      */
-    class Token_stream : public Pointers
+    class Token_stream 
     {
     public:
       // set's input_stream to std::cin
@@ -113,7 +115,7 @@ namespace caviar
       Token_stream(class CAVIAR *, const std::string &);
       // set's input_stream to std::stringstream.
       Token_stream(class CAVIAR *, std::istringstream &);
-      ~Token_stream();
+      virtual ~Token_stream();
       Token get();
 
       Token &current();
@@ -142,6 +144,7 @@ namespace caviar
       Token ct;
       bool stream_is_file, get_new_line, end_of_file;
       bool multiline_comment;
+      FC_BASE_OBJECT_COMMON_TOOLS
     };
 
   } // interpreter

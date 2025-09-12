@@ -16,7 +16,9 @@
 
 #pragma once
 
-#include "caviar/utility/pointers.hpp"
+#include <string>
+#include "caviar/utility/objects_common_headers.hpp"
+#include "caviar/objects/shape/polyhedron.hpp"
 
 namespace caviar
 {
@@ -27,11 +29,11 @@ namespace caviar
     {
 
       struct Polyhedron;
-      class Preprocess : public Pointers
+      class Preprocess 
       {
       public:
         Preprocess(class CAVIAR *);
-        ~Preprocess();
+        virtual ~Preprocess();
 
         /**
          * checks neighborlist faces and sorts the vertices so that their normal vectors would be alighned when created.
@@ -39,6 +41,7 @@ namespace caviar
         void pre_correct_normals(shape::polyhedron::Polyhedron &);
 
         void merge_vertices(shape::polyhedron::Polyhedron &);
+        FC_BASE_OBJECT_COMMON_TOOLS
       };
     } // polyhedron
   } // shape

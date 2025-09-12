@@ -13,7 +13,8 @@
 // the top level of the CAVIAR distribution.
 //
 //========================================================================
-
+#include "caviar/CAVIAR.hpp"
+#include "caviar/interpreter/all.hpp"
 #include "caviar/interpreter/input.hpp"
 #include "caviar/interpreter/object_creator.hpp"
 #include "caviar/interpreter/object_handler.hpp"
@@ -125,14 +126,14 @@ namespace caviar
             break;
 
         command_evaluate(loop_text);
-        if (fptr->interpreter_break_called)
+        if (caviar_->interpreter_break_called)
         {
-          fptr->interpreter_break_called = false;
+          caviar_->interpreter_break_called = false;
           break;
         }
-        if (fptr->interpreter_continue_called)
+        if (caviar_->interpreter_continue_called)
         {
-          fptr->interpreter_continue_called = false;
+          caviar_->interpreter_continue_called = false;
           continue;
         }
         // if (condition_type == +1)
@@ -156,13 +157,13 @@ namespace caviar
 
     char Input::command_break(Parser *)
     {
-      fptr->interpreter_break_called = true;
+      caviar_->interpreter_break_called = true;
       return false;
     }
 
     char Input::command_continue(Parser *)
     {
-      fptr->interpreter_continue_called = true;
+      caviar_->interpreter_continue_called = true;
       return false;
     }
 

@@ -16,7 +16,8 @@
 
 #pragma once
 
-#include "caviar/utility/pointers.hpp"
+#include "caviar/utility/interpreter_common_headers.hpp"
+
 
 namespace caviar
 {
@@ -28,10 +29,11 @@ namespace caviar
      *
      *
      */
-    class Output : public Pointers
+    class Output 
     {
     public:
       Output(class CAVIAR *);
+      virtual ~Output();
 
       void comment(const std::string &, const bool endline = true);
       void comment(const char *, const bool endline = true);
@@ -51,6 +53,7 @@ namespace caviar
       bool read(class caviar::interpreter::Parser *);
 
       bool output_info[5], output_warning[5];
+      FC_BASE_OBJECT_COMMON_TOOLS
     };
 
   } // interpreter

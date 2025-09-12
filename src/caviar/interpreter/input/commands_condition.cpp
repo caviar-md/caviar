@@ -13,7 +13,8 @@
 // the top level of the CAVIAR distribution.
 //
 //========================================================================
-
+#include "caviar/CAVIAR.hpp"
+#include "caviar/interpreter/all.hpp"
 #include "caviar/interpreter/input.hpp"
 #include "caviar/interpreter/object_creator.hpp"
 #include "caviar/interpreter/object_handler.hpp"

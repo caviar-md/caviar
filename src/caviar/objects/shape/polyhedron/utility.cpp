@@ -17,6 +17,7 @@
 #include "caviar/objects/shape/polyhedron/utility.hpp"
 #include "caviar/objects/shape/polyhedron/polyhedron.hpp"
 #include "caviar/utility/interpreter_io_headers.hpp"
+#include "caviar/CAVIAR.hpp"
 
 #include <string>
 #include <cmath>
@@ -30,10 +31,24 @@ namespace caviar
     namespace polyhedron
     {
 
-      Utility::Utility(CAVIAR *fptr) : Pointers{fptr} {}
+      Utility::Utility(CAVIAR *fptr) : caviar_{fptr},
+                                   comm{fptr->comm},
+                                   error{fptr->error},
+                                   output{fptr->output},
+                                   input{fptr->input},
+                                   object_handler{fptr->object_handler},
+                                   object_container{fptr->object_container},
+                                   object_creator{fptr->object_creator},
+                                   log{fptr->log},
+                                   in{fptr->in},
+                                   out{fptr->out},
+                                   err{fptr->err},
+                                   log_flag{fptr->log_flag},
+                                   out_flag{fptr->out_flag},
+                                   err_flag{fptr->err_flag} {}
 
       Utility::~Utility() {}
-
+      void Utility::verify_settings() {}
       void Utility::invert_normals(shape::polyhedron::Polyhedron &p_object)
       {
         auto &normal = p_object.normal;
@@ -49,7 +64,7 @@ namespace caviar
         const auto &normal = p_object.normal;
         auto &edge_norms3 = p_object.edge_norms3;
 
-        std::vector<std::vector<Vector<Real_t>>> edge_norms1, edge_norms2;
+        std::vector<std::vector<Vector<double>>> edge_norms1, edge_norms2;
         std::map<std::vector<unsigned int>, std::vector<unsigned int>>::const_iterator it_edges;
         const unsigned int fsize = face.size();
         edge_norms1.resize(fsize);
@@ -59,7 +74,7 @@ namespace caviar
         {
           for (unsigned int j = 0; j < face[i].size(); ++j)
           {
-            Vector<Real_t> n1 = normal[i];
+            Vector<double> n1 = normal[i];
             unsigned int k0 = j;
             unsigned int k1 = (j == face[i].size() - 1) ? 0 : j + 1;
             unsigned int v0 = face[i][k0];
@@ -78,11 +93,11 @@ namespace caviar
             n1 /= std::sqrt(n1 * n1); // it is not necessary
             edge_norms1[i].push_back(n1);
             //-------
-            Vector<Real_t> n2 = vertex[face[i][k1]] - vertex[face[i][k0]];
+            Vector<double> n2 = vertex[face[i][k1]] - vertex[face[i][k0]];
             n2 /= std::sqrt(n2 * n2); // it is not necessary
             edge_norms2[i].push_back(n2);
             //-------
-            Vector<Real_t> n3 = cross_product(n1, n2);
+            Vector<double> n3 = cross_product(n1, n2);
             n3 /= std::sqrt(n3 * n3); // it is not necessary
             edge_norms3[i].push_back(n3);
           }
@@ -102,11 +117,11 @@ namespace caviar
           // std::cout << i << " , v1: 1 " << face[i][1] << std::endl;
           // std::cout << i << " , v1: 2 " << face[i][2] << std::endl;
           // std::cout << i << " , v1: 0 " << face[i][0] << std::endl;
-          Vector<Real_t> v1 = vertex[face[i][1]] - vertex[face[i][0]];
-          Vector<Real_t> v2 = vertex[face[i][2]] - vertex[face[i][0]];
-          Vector<Real_t> n = cross_product(v1, v2);
+          Vector<double> v1 = vertex[face[i][1]] - vertex[face[i][0]];
+          Vector<double> v2 = vertex[face[i][2]] - vertex[face[i][0]];
+          Vector<double> n = cross_product(v1, v2);
           //    std::cout<<"v1: "<<v1 << " v2 :" << v2 << " v1*v2: "<< n <<std::endl;
-          Real_t n_lenght = sqrt(n.x * n.x + n.y * n.y + n.z * n.z);
+          double n_lenght = sqrt(n.x * n.x + n.y * n.y + n.z * n.z);
           n /= n_lenght;
           normal.push_back(n);
         }
@@ -125,7 +140,7 @@ namespace caviar
         {
 
           // center of the faces
-          Vector<Real_t> cr = {(vertex[face[i][0]].x + vertex[face[i][1]].x + vertex[face[i][2]].x) / 3.0,
+          Vector<double> cr = {(vertex[face[i][0]].x + vertex[face[i][1]].x + vertex[face[i][2]].x) / 3.0,
                                (vertex[face[i][0]].y + vertex[face[i][1]].y + vertex[face[i][2]].y) / 3.0,
                                (vertex[face[i][0]].z + vertex[face[i][1]].z + vertex[face[i][2]].z) / 3.0};
 
@@ -142,7 +157,7 @@ namespace caviar
           error->all(FC_FILE_LINE_FUNC, "'An_inside_point' is far from any polygons on the geometry");
 
         unsigned int i = nearest_index;
-        Vector<Real_t> cr = {(vertex[face[i][0]].x + vertex[face[i][1]].x + vertex[face[i][2]].x) / 3.0,
+        Vector<double> cr = {(vertex[face[i][0]].x + vertex[face[i][1]].x + vertex[face[i][2]].x) / 3.0,
                              (vertex[face[i][0]].y + vertex[face[i][1]].y + vertex[face[i][2]].y) / 3.0,
                              (vertex[face[i][0]].z + vertex[face[i][1]].z + vertex[face[i][2]].z) / 3.0};
 

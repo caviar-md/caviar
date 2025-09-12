@@ -16,7 +16,9 @@
 
 #pragma once
 
-#include "caviar/utility/pointers.hpp"
+#include <string>
+#include "caviar/utility/objects_common_headers.hpp"
+#include "caviar/objects/shape/polyhedron.hpp"
 
 namespace caviar
 {
@@ -26,11 +28,11 @@ namespace caviar
     namespace polyhedron
     {
       struct Polyhedron;
-      class Format_unv_reader : public Pointers
+      class Format_unv_reader 
       {
       public:
         Format_unv_reader(class CAVIAR *);
-        ~Format_unv_reader();
+        virtual ~Format_unv_reader();
 
         void read_polyhedron(shape::polyhedron::Polyhedron &, const std::string &);
 
@@ -50,6 +52,7 @@ namespace caviar
         std::vector<int> node_label_to_index;
         std::vector<int> face_label;
         std::vector<int> face_label_to_index;
+        FC_BASE_OBJECT_COMMON_TOOLS
       };
     } // polyhedron
   } // shape

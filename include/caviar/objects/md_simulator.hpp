@@ -181,7 +181,7 @@ namespace caviar
    * Ulf D. Schiller - 5th March 2008'.
    *
    */
-  class Md_simulator : public Pointers
+  class Md_simulator 
   {
   public:
     Md_simulator(class CAVIAR *);

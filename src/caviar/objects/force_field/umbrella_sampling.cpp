@@ -70,7 +70,7 @@ namespace caviar
           GET_OR_CHOOSE_A_REAL(x, "", "")
           GET_OR_CHOOSE_A_REAL(y, "", "")
           GET_OR_CHOOSE_A_REAL(z, "", "")
-          position = Vector<Real_t>{x, y, z};
+          position = Vector<double>{x, y, z};
         }
         else if (string_cmp(t, "set_position_x"))
         {

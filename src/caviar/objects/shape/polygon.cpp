@@ -76,9 +76,9 @@ namespace caviar
     {
       if (p_3D.size() > 1)
       {
-        Vector<Real_t> vec1 = p_3D[1] - p_3D[0];
-        Vector<Real_t> vec2 = p_3D[2] - p_3D[0];
-        std::vector<std::vector<Real_t>> mat_inv;
+        Vector<double> vec1 = p_3D[1] - p_3D[0];
+        Vector<double> vec2 = p_3D[2] - p_3D[0];
+        std::vector<std::vector<double>> mat_inv;
         n_vector = cross_product(vec1, vec2);
         u_vector = vec1;
         v_vector = cross_product(n_vector, u_vector);
@@ -92,9 +92,9 @@ namespace caviar
     {
       for (unsigned int i = 0; i < p_3D.size(); ++i)
       {
-        Vector<Real_t> dp = p_3D[i] - p_3D[0];
-        Real_t u_i = u_vector * dp;
-        Real_t v_i = v_vector * dp;
+        Vector<double> dp = p_3D[i] - p_3D[0];
+        double u_i = u_vector * dp;
+        double v_i = v_vector * dp;
         u_list.push_back(u_i);
         v_list.push_back(v_i);
       }
@@ -102,7 +102,7 @@ namespace caviar
 
     void Polygon::make_transform_matrix()
     {
-      Real_t m[3][3];
+      double m[3][3];
       m[0][0] = u_vector.x;
       m[0][1] = u_vector.y;
       m[0][2] = u_vector.z;
@@ -113,11 +113,11 @@ namespace caviar
       m[2][1] = n_vector.y;
       m[2][2] = n_vector.z;
 
-      Real_t det = m[0][0] * (m[1][1] * m[2][2] - m[2][1] * m[1][2]) -
+      double det = m[0][0] * (m[1][1] * m[2][2] - m[2][1] * m[1][2]) -
                    m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0]) +
                    m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]);
 
-      Real_t invdet = 1. / det;
+      double invdet = 1. / det;
 
       mat_inv[0][0] = (m[1][1] * m[2][2] - m[2][1] * m[1][2]) * invdet;
       mat_inv[0][1] = (m[0][2] * m[2][1] - m[0][1] * m[2][2]) * invdet;
@@ -130,16 +130,16 @@ namespace caviar
       mat_inv[2][2] = (m[0][0] * m[1][1] - m[1][0] * m[0][1]) * invdet;
     }
 
-    void Polygon::uv_to_xyz(Real_t u_i, Real_t v_i, Vector<Real_t> &p_i)
+    void Polygon::uv_to_xyz(double u_i, double v_i, Vector<double> &p_i)
     {
       p_i.x = mat_inv[0][0] * u_i + mat_inv[0][1] * v_i + p_3D[0].x;
       p_i.y = mat_inv[1][0] * u_i + mat_inv[1][1] * v_i + p_3D[0].y;
       p_i.z = mat_inv[2][0] * u_i + mat_inv[2][1] * v_i + p_3D[0].z;
     }
 
-    void Polygon::xyz_to_uv(const Vector<Real_t> &p_i, Real_t &u_i, Real_t &v_i)
+    void Polygon::xyz_to_uv(const Vector<double> &p_i, double &u_i, double &v_i)
     {
-      Vector<Real_t> dp = p_i - p_3D[0];
+      Vector<double> dp = p_i - p_3D[0];
       u_i = u_vector * dp;
       v_i = v_vector * dp;
     }

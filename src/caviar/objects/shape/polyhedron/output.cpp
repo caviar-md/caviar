@@ -16,6 +16,7 @@
 
 #include "caviar/objects/shape/polyhedron/output.hpp"
 #include "caviar/objects/shape/polyhedron/polyhedron.hpp"
+#include "caviar/CAVIAR.hpp"
 
 #include <string>
 #include <cmath>
@@ -29,9 +30,24 @@ namespace caviar
     namespace polyhedron
     {
 
-      Output::Output(CAVIAR *fptr) : Pointers{fptr} {}
+      Output::Output(CAVIAR *fptr) : caviar_{fptr},
+                                   comm{fptr->comm},
+                                   error{fptr->error},
+                                   output{fptr->output},
+                                   input{fptr->input},
+                                   object_handler{fptr->object_handler},
+                                   object_container{fptr->object_container},
+                                   object_creator{fptr->object_creator},
+                                   log{fptr->log},
+                                   in{fptr->in},
+                                   out{fptr->out},
+                                   err{fptr->err},
+                                   log_flag{fptr->log_flag},
+                                   out_flag{fptr->out_flag},
+                                   err_flag{fptr->err_flag} {}
 
       Output::~Output() {}
+      void Output::verify_settings() {}
 
       void Output::mesh_povray(const shape::polyhedron::Polyhedron &p_object, std::string file_name)
       {
@@ -64,23 +80,23 @@ namespace caviar
         const auto &face = p_object.face;
         const auto &normal = p_object.normal;
 
-        // Real_t vec_length = 0.5;
-        // Real_t vec_rad = 1.5;
+        // double vec_length = 0.5;
+        // double vec_rad = 1.5;
 
         for (unsigned int i = 0; i < face.size(); ++i)
         {
           // center of polygons
-          Vector<Real_t> cr = {(vertex[face[i][0]].x + vertex[face[i][1]].x + vertex[face[i][2]].x) / 3.0,
+          Vector<double> cr = {(vertex[face[i][0]].x + vertex[face[i][1]].x + vertex[face[i][2]].x) / 3.0,
                                (vertex[face[i][0]].y + vertex[face[i][1]].y + vertex[face[i][2]].y) / 3.0,
                                (vertex[face[i][0]].z + vertex[face[i][1]].z + vertex[face[i][2]].z) / 3.0};
 
           // I think there's two different type of vectors as for output
 
           // the first type is like this
-          // Vector<Real_t> di = cr + normal[i];
+          // Vector<double> di = cr + normal[i];
           // if one
           // this Type works for GNUPlot 'splot with vectors'
-          Vector<Real_t> di = normal[i];
+          Vector<double> di = normal[i];
 
           // one can have a scale done on the vectors using gnuplot
 
@@ -105,16 +121,16 @@ namespace caviar
         const auto &face = p_object.face;
         const auto &normal = p_object.normal;
 
-        Real_t vec_length = 5.0;
-        Real_t vec_rad = 1.5;
+        double vec_length = 5.0;
+        double vec_rad = 1.5;
 
         for (unsigned int i = 0; i < face.size(); ++i)
         {
-          Vector<Real_t> cr = {(vertex[face[i][0]].x + vertex[face[i][1]].x + vertex[face[i][2]].x) / 3.0,
+          Vector<double> cr = {(vertex[face[i][0]].x + vertex[face[i][1]].x + vertex[face[i][2]].x) / 3.0,
                                (vertex[face[i][0]].y + vertex[face[i][1]].y + vertex[face[i][2]].y) / 3.0,
                                (vertex[face[i][0]].z + vertex[face[i][1]].z + vertex[face[i][2]].z) / 3.0};
 
-          Vector<Real_t> di = cr + vec_length * normal[i];
+          Vector<double> di = cr + vec_length * normal[i];
           cr -= (vec_length / 10.0) * normal[i];
 
           vfptr_file << "graphics top cone ";
@@ -134,7 +150,7 @@ namespace caviar
         const auto &vertex = p_object.vertex;
         const auto &edges = p_object.edges;
 
-        Real_t frame_rad = 0.5;
+        double frame_rad = 0.5;
         std::map<std::vector<unsigned int>, std::vector<unsigned int>>::const_iterator it;
         for (it = edges.begin(); it != edges.end(); ++it)
         {
@@ -199,15 +215,15 @@ namespace caviar
           const auto & face = shapes[shape_index].face;
           const auto & normal = shapes[shape_index].normal;
 
-          Real_t vec_length = 5.0;
-          Real_t vec_rad = 1.5;
+          double vec_length = 5.0;
+          double vec_rad = 1.5;
 
           for (unsigned int i=0;i<face.size();++i) {
-            Vector<Real_t> cr = {(vertex[face[i][0]].x + vertex[face[i][1]].x + vertex[face[i][2]].x)/3.0,
+            Vector<double> cr = {(vertex[face[i][0]].x + vertex[face[i][1]].x + vertex[face[i][2]].x)/3.0,
                                   (vertex[face[i][0]].y + vertex[face[i][1]].y + vertex[face[i][2]].y)/3.0,
                                   (vertex[face[i][0]].z + vertex[face[i][1]].z + vertex[face[i][2]].z)/3.0};
 
-            Vector<Real_t> di = cr + vec_length*normal[i];
+            Vector<double> di = cr + vec_length*normal[i];
             cr -=  (vec_length/10.0) * normal[i];
 
             vfptr_file << "graphics top cone ";
@@ -226,7 +242,7 @@ namespace caviar
           const auto & vertex = shapes[shape_index].vertex;
           const auto & edges = shapes[shape_index].edges;
 
-          Real_t frame_rad = 0.5;
+          double frame_rad = 0.5;
           std::map<std::vector<unsigned int>,std::vector<unsigned int>>::const_iterator it;
           for (it = edges.begin(); it != edges.end(); ++it) {
 

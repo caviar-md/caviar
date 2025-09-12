@@ -23,6 +23,8 @@
 #include "caviar/objects/atom_data/utility/molecule_type_params.hpp"
 #include "caviar/objects/atom_data/utility/mpi_packet_info.hpp"
 #include "caviar/objects/atom_data/utility/mpi_optimization.hpp"
+#include <fstream>
+#include <array>
 
 namespace caviar
 {
@@ -44,7 +46,7 @@ namespace caviar
    * Atom_data contains all of the molecular and atomic data for a MD simulation.
    * It also handles data exchange between MPI domains.
    */
-  class Atom_data : public Pointers
+  class Atom_data 
   {
   public:
     Atom_data(class CAVIAR *);
@@ -79,7 +81,7 @@ namespace caviar
      * check if a position is empty of any atom. Usage in fixing number of atoms
      * or molarity when one wants to create atoms.
      */
-    virtual bool empty_of_atoms(const Vector<Real_t>, double radius);
+    virtual bool empty_of_atoms(const Vector<double>, double radius);
 
     /**
      * MPI case: Finds the correct MPI domain of the atoms
@@ -99,29 +101,29 @@ namespace caviar
     /**
      * checks by atom_type
      */
-    virtual bool empty_of_atoms(const Vector<Real_t>, int type);
+    virtual bool empty_of_atoms(const Vector<double>, int type);
     virtual bool empty_of_atoms(unique::Atom &a);
     virtual bool empty_of_atoms(unique::Molecule &m);
 
     /**
      *  position of the center of mass
      */
-    virtual Vector<Real_t> owned_position_cm();
+    virtual Vector<double> owned_position_cm();
 
     /**
      *  position of the center of mass
      */
-    virtual Vector<Real_t> owned_position_cm_mpi_domain();
+    virtual Vector<double> owned_position_cm_mpi_domain();
 
     /**
      *  velocity of the center of mass
      */
-    virtual Vector<Real_t> owned_velocity_cm();
+    virtual Vector<double> owned_velocity_cm();
 
     /**
      *  velocity of the center of mass
      */
-    virtual Vector<Real_t> owned_velocity_cm_mpi_domain();
+    virtual Vector<double> owned_velocity_cm_mpi_domain();
 
     /**
      *  angular momentum of the center of mass
@@ -180,12 +182,12 @@ namespace caviar
     /**
      * Initial setting of number of atoms.
      */
-    virtual void set_num_total_atoms(GlobalID_t);
+    virtual void set_num_total_atoms(size_t);
 
     // /**
     //  * Initial setting of number of atom types.
     //  */
-    // virtual void set_num_atom_types(AtomType_t n) { num_atom_types = n; }
+    // virtual void set_num_atom_types(size_t n) { num_atom_types = n; }
 
     /**
      * total number of system degree of freedom. For simple atomic simulations,
@@ -249,10 +251,10 @@ namespace caviar
     /**
      * gets the data and add it to the owned if it should be owned.
      */
-    virtual bool add_atom(GlobalID_t,
-                          AtomType_t,
-                          const Vector<Real_t> &,
-                          const Vector<Real_t> &vel = Vector<Real_t>{0.0, 0.0, 0.0});
+    virtual bool add_atom(size_t,
+                          size_t,
+                          const Vector<double> &,
+                          const Vector<double> &vel = Vector<double>{0.0, 0.0, 0.0});
 
     /**
      * add unique::Atom to the owned data
@@ -321,12 +323,12 @@ namespace caviar
     /**
      * sets the mass of an atom type
      */
-    virtual bool add_masses(unsigned int, Real_t);
+    virtual bool add_masses(unsigned int, double);
 
     /**
      * sets the charge of an atom type
      */
-    virtual bool add_charges(unsigned int, Real_t);
+    virtual bool add_charges(unsigned int, double);
 
     /**
      * does as it says.
@@ -576,9 +578,9 @@ namespace caviar
     // /**
     //  * what these variables do are obvious. 'est' is for estimation.
     //  */
-    // LocalID_t num_local_atoms, num_local_atoms_est;
-    // GlobalID_t num_total_atoms;
-    // AtomType_t num_atom_types;
+    // size_t num_local_atoms, num_local_atoms_est;
+    // size_t num_total_atoms;
+    // size_t num_atom_types;
 
     /**
      * if true, more than just atom position have to be synched in single domain mpi case

@@ -36,25 +36,25 @@ namespace caviar
        * 'mass' of an atom defined by the type. The mass may be used in
        * center-of-mass calculations and other functions. Do not depercate it.
        */
-      std::vector<Real_t> mass;
+      std::vector<double> mass;
 
       /**
        * simply the inverse value of 'mass' of an atom defined by the type.
        * since mass inverse is used in acceleration calculations.
        *
        */
-      std::vector<Real_t> mass_inv;
+      std::vector<double> mass_inv;
 
       /**
        * 'charge' of an atom defined by the type.
        */
-      std::vector<Real_t> charge;
+      std::vector<double> charge;
 
       /**
        * 'radius' of an atom defined by the type. The user and the developers are
        * free to use this variable (for now!).
        */
-      std::vector<Real_t> radius;
+      std::vector<double> radius;
     };
   }
 }

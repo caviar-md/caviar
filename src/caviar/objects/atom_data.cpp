@@ -35,15 +35,29 @@
 // #ifdef CAVIAR_WITH_MPI
 // #include <mpi.h>
 // #endif
+#include "caviar/CAVIAR.hpp"
 
 namespace caviar
 {
 
-  Atom_data::Atom_data(CAVIAR *fptr) : Pointers{fptr},
-                                       //  num_local_atoms{0},
-                                       //  num_total_atoms{0}, num_atom_types{0},
+  Atom_data::Atom_data(CAVIAR *fptr) : 
+
                                        synch_owned_data_bcast_details{true},
-                                       ghost_cutoff{0}, domain{nullptr}
+                                       ghost_cutoff{0}, domain{nullptr}, caviar_{fptr},
+                                   comm{fptr->comm},
+                                   error{fptr->error},
+                                   output{fptr->output},
+                                   input{fptr->input},
+                                   object_handler{fptr->object_handler},
+                                   object_container{fptr->object_container},
+                                   object_creator{fptr->object_creator},
+                                   log{fptr->log},
+                                   in{fptr->in},
+                                   out{fptr->out},
+                                   err{fptr->err},
+                                   log_flag{fptr->log_flag},
+                                   out_flag{fptr->out_flag},
+                                   err_flag{fptr->err_flag}
   {
 
     FC_OBJECT_INITIALIZE
@@ -260,7 +274,7 @@ namespace caviar
         auto x = parser->get_real();
         auto y = parser->get_real();
         auto z = parser->get_real();
-        atom_struct_owned.position[ind] = Vector<Real_t>{x, y, z};
+        atom_struct_owned.position[ind] = Vector<double>{x, y, z};
       }
       else if (string_cmp(t, "set_owned_velocity"))
       {
@@ -268,7 +282,7 @@ namespace caviar
         auto x = parser->get_real();
         auto y = parser->get_real();
         auto z = parser->get_real();
-        atom_struct_owned.velocity[ind] = Vector<Real_t>{x, y, z};
+        atom_struct_owned.velocity[ind] = Vector<double>{x, y, z};
       }
       else if (string_cmp(t, "set_owned_acceleration"))
       {
@@ -276,7 +290,7 @@ namespace caviar
         auto x = parser->get_real();
         auto y = parser->get_real();
         auto z = parser->get_real();
-        atom_struct_owned.acceleration[ind] = Vector<Real_t>{x, y, z};
+        atom_struct_owned.acceleration[ind] = Vector<double>{x, y, z};
       }
       else if (string_cmp(t, "add_random_velocity"))
       {
@@ -381,7 +395,7 @@ namespace caviar
     return num_total_atoms;
   }
 
-  void Atom_data::set_num_total_atoms(GlobalID_t)
+  void Atom_data::set_num_total_atoms(size_t)
   {
     // num_total_atoms = n;
     // num_local_atoms_est = n * expected_imbalance_factor / comm->nprocs;
@@ -485,10 +499,10 @@ namespace caviar
   }
 
   // Any new vector addition to this function should be deleted in 'remove_atom()' functions.
-  bool Atom_data::add_atom(GlobalID_t id,
-                           AtomType_t type,
-                           const Vector<Real_t> &pos,
-                           const Vector<Real_t> &vel)
+  bool Atom_data::add_atom(size_t id,
+                           size_t type,
+                           const Vector<double> &pos,
+                           const Vector<double> &vel)
   {
     // =======================================
     // Adding data to atom_struct_owned.
@@ -572,7 +586,7 @@ namespace caviar
     return true;
   }
 
-  bool Atom_data::add_masses(unsigned int type, Real_t m)
+  bool Atom_data::add_masses(unsigned int type, double m)
   {
     if (type + 1 > atom_type_params.mass.size())
     {
@@ -587,7 +601,7 @@ namespace caviar
     return true; // WARNING
   }
 
-  bool Atom_data::add_charges(unsigned int type, Real_t c)
+  bool Atom_data::add_charges(unsigned int type, double c)
   {
     if (type + 1 > atom_type_params.charge.size())
       atom_type_params.charge.resize(type + 1);

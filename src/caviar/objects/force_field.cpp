@@ -16,12 +16,26 @@
 
 #include "caviar/objects/force_field.hpp"
 #include "caviar/interpreter/error.hpp"
+#include "caviar/CAVIAR.hpp"
 
 namespace caviar
 {
 
-  Force_field::Force_field(CAVIAR *fptr) : Pointers{fptr},
-                                           atom_data{nullptr}, domain{nullptr}, neighborlist{nullptr}
+  Force_field::Force_field(CAVIAR *fptr) : caviar_{fptr}, comm{fptr->comm},
+                                           error{fptr->error},
+                                           output{fptr->output},
+                                           input{fptr->input},
+                                           object_handler{fptr->object_handler},
+                                           object_container{fptr->object_container},
+                                           object_creator{fptr->object_creator},
+                                           log{fptr->log},
+                                           in{fptr->in},
+                                           out{fptr->out},
+                                           err{fptr->err},
+                                           log_flag{fptr->log_flag},
+                                           out_flag{fptr->out_flag},
+                                           err_flag{fptr->err_flag}
+
   {
     FC_OBJECT_INITIALIZE
   }

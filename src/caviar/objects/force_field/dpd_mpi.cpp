@@ -121,8 +121,8 @@ namespace caviar
 #ifdef CAVIAR_WITH_MPI
       auto neighborlist_domains = domain->neighborlist_domains;
       std::vector<int> g_num_recv, g_num_send;
-      std::vector<std::vector<Vector<Real_t>>> g_send_accel, g_recv_accel;
-      std::vector<std::vector<GlobalID_t>> g_send_id, g_recv_id;
+      std::vector<std::vector<Vector<double>>> g_send_accel, g_recv_accel;
+      std::vector<std::vector<size_t>> g_send_id, g_recv_id;
       int nd = domain->neighborlist_domains.size();
       g_send_accel.resize(nd);
       g_recv_accel.resize(nd);
@@ -137,11 +137,11 @@ namespace caviar
         rank_to_index[neighborlist_domains[i]] = i; // only after send_owned() happened it is needed to be cleared.
       }
 #else
-      std::vector<Vector<Real_t>> g_send_accel;
-      std::vector<GlobalID_t> g_send_id;
+      std::vector<Vector<double>> g_send_accel;
+      std::vector<size_t> g_send_id;
 #endif
 
-      std::map<GlobalID_t, GlobalID_t> id_to_index;
+      std::map<size_t, size_t> id_to_index;
       for (unsigned i = 0; i < atom_data->atom_struct_owned.id.size(); ++i)
       {                                                      // this doesn't need to be reconstructed in every step
         id_to_index[atom_data->atom_struct_owned.id[i]] = i; // only after send_owned() happened it is needed to be cleared.
@@ -164,9 +164,9 @@ namespace caviar
         for (auto j : nlist[i])
         {
           bool is_ghost = j >= nlist.size();
-          Vector<Real_t> pos_j, vel_j;
-          Real_t type_j, mass_inv_j;
-          GlobalID_t id_j = 0;
+          Vector<double> pos_j, vel_j;
+          double type_j, mass_inv_j;
+          size_t id_j = 0;
           if (is_ghost)
           {
             j -= nlist.size();

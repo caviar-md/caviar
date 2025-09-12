@@ -13,7 +13,8 @@
 // the top level of the CAVIAR distribution.
 //
 //========================================================================
-
+#include "caviar/CAVIAR.hpp"
+#include "caviar/interpreter/all.hpp"
 #include "caviar/interpreter/object_handler.hpp"
 #include "caviar/interpreter/object_handler/all.hpp"
 #include "caviar/interpreter/object_handler/commands_map.hpp"
@@ -24,17 +25,31 @@ namespace caviar
 {
   namespace interpreter
   {
-    Object_handler::Object_handler(CAVIAR *fptr) : Pointers{fptr} {}
+    Object_handler::Object_handler(CAVIAR *fptr) : caviar_{fptr},
+                                   comm{fptr->comm},
+                                   error{fptr->error},
+                                   output{fptr->output},
+                                   input{fptr->input},
+                                   object_handler{fptr->object_handler},
+                                   object_container{fptr->object_container},
+                                   object_creator{fptr->object_creator},
+                                   log{fptr->log},
+                                   in{fptr->in},
+                                   out{fptr->out},
+                                   err{fptr->err},
+                                   log_flag{fptr->log_flag},
+                                   out_flag{fptr->out_flag},
+                                   err_flag{fptr->err_flag} {}
 
     Object_handler::~Object_handler()
     {
     }
-
+    void Object_handler::verify_settings() {}
     bool Object_handler::read_object(Parser *parser, const std::string object_name)
     {
 
       bool in_file = true;
-      object_container = fptr->object_container;
+      //object_container = fptr->object_container;
 
       std::map<std::string, caviar::interpreter::object_handler::Dictionary>::iterator it;
       it = object_container->dictionary.find(object_name);

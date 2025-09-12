@@ -13,7 +13,7 @@
 // the top level of the CAVIAR distribution.
 //
 //========================================================================
-#include "caviar/utility/caviar_config.hpp"
+
 
 namespace caviar
 {

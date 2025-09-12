@@ -41,7 +41,7 @@ namespace caviar
       void calculate_acceleration();
 
     public:
-      std::vector<Real_t> elastic_coef, dissip_coef, R, epsilon_coef, sigma_coef;
+      std::vector<double> elastic_coef, dissip_coef, R, epsilon_coef, sigma_coef;
       double repulsive_cutoff;
     };
 
