@@ -130,7 +130,7 @@ namespace caviar
       const unsigned int n_q_points = quadrature_formula.size();
 
       FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
-      dealii::Vector3d<double> cell_rhs(dofs_per_cell);
+      dealii::Vector<double> cell_rhs(dofs_per_cell);
       cell_rhs = 0;
 
       std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
@@ -191,22 +191,22 @@ namespace caviar
       }
 
       // matrix and boundary value constraints
-      FilteredMatrix<dealii::Vector3d<double>> filtered_A(system_matrix);
+      FilteredMatrix<dealii::Vector<double>> filtered_A(system_matrix);
       filtered_A.add_constraints(boundary_values);
 
       // set up a linear solver
       SolverControl solver_control(solver_control_maximum_iteration, solver_control_tolerance, false, false);
 
       // SolverControl solver_control (1000, 1.e-10);
-      GrowingVectorMemory<dealii::Vector3d<double>> mem;
-      SolverCG<dealii::Vector3d<double>> solver(solver_control, mem);
+      GrowingVectorMemory<dealii::Vector<double>> mem;
+      SolverCG<dealii::Vector<double>> solver(solver_control, mem);
 
       if (use_preconditioner)
       {
         // set up a preconditioner object
         PreconditionJacobi<SparseMatrix<double>> prec;
         prec.initialize(system_matrix, preconditioner_relaxation);
-        FilteredMatrix<dealii::Vector3d<double>> filtered_prec(prec);
+        FilteredMatrix<dealii::Vector<double>> filtered_prec(prec);
         filtered_prec.add_constraints(boundary_values);
 
         // compute modification of right hand side

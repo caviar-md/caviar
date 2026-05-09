@@ -303,7 +303,7 @@ namespace caviar
       data_out.attach_dof_handler(dof_handler);
       data_out.add_data_vector(locally_relevant_solution, "smoothPotential");
 
-      dealii::Vector3d<float> subdomain(triangulation.n_active_cells());
+      dealii::Vector<float> subdomain(triangulation.n_active_cells());
       for (unsigned int i = 0; i < subdomain.size(); ++i)
         subdomain(i) = triangulation.locally_owned_subdomain();
       data_out.add_data_vector(subdomain, "subdomain");

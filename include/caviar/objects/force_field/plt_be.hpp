@@ -109,8 +109,8 @@ namespace caviar
         void set_spherical_manifold();
 
 
-        dealii::Vector3d<double> solution;
-        dealii::Vector3d<double> system_rhs;
+        dealii::Vector<double> solution;
+        dealii::Vector<double> system_rhs;
 
 
         int num_quadrature_points;

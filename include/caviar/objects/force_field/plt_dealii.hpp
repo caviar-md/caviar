@@ -165,8 +165,8 @@ namespace caviar
 #error not implemented
 #endif
 
-      dealii::Vector3d<double> solution;
-      dealii::Vector3d<double> system_rhs;
+      dealii::Vector<double> solution;
+      dealii::Vector<double> system_rhs;
 
       int num_quadrature_points;
       int solver_control_maximum_iteration;

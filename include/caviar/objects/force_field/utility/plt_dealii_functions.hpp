@@ -425,7 +425,7 @@ namespace caviar
                                 const double param2 = 0.03)
       {
 
-        dealii::Vector3d<float> estimated_error_per_cell(triangulation.n_active_cells());
+        dealii::Vector<float> estimated_error_per_cell(triangulation.n_active_cells());
 #if DEALII_VERSION_MAJOR == 8
         KellyErrorEstimator<3>::estimate(dof_handler,
                                          QGauss<3 - 1>(3),
