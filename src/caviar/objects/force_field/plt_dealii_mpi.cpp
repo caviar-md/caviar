@@ -38,7 +38,10 @@
 // #include <deal.II/grid/grid_all_interpreter_tools.h>
 #include <deal.II/grid/grid_tools.h>
 
+#if DEALII_VERSION_MAJOR == 8
 #include <deal.II/grid/tria_boundary_lib.h>
+#endif
+
 #include <deal.II/grid/grid_refinement.h>
 #include <deal.II/dofs/dof_accessor.h>
 #include <deal.II/grid/manifold_lib.h>
@@ -68,7 +71,9 @@
 #include <deal.II/lac/solver_bicgstab.h>
 #include <deal.II/lac/precondition.h>
 #include <deal.II/lac/vector_memory.h>
+#if DEALII_VERSION_MAJOR == 8
 #include <deal.II/lac/filtered_matrix.h>
+#endif
 
 #ifdef CAVIAR_WITH_DEALII_WITH_OPENCASCADE
 #include <deal.II/opencascade/boundary_lib.h>
@@ -95,10 +100,10 @@ namespace caviar
     //==================================================
 
     Plt_dealii_mpi::Plt_dealii_mpi(CAVIAR *fptr) : caviar::Force_field{fptr},
-                                                   triangulation(mpi_comm,
+                                                   triangulation(MPI_COMM_WORLD,
                                                                  typename Triangulation<3>::MeshSmoothing(Triangulation<3>::smoothing_on_refinement |
                                                                                                           Triangulation<3>::smoothing_on_coarsening)),
-                                                   tria_reserve(mpi_comm,
+                                                   tria_reserve(MPI_COMM_WORLD,
                                                                 typename Triangulation<3>::MeshSmoothing(Triangulation<3>::smoothing_on_refinement |
                                                                                                          Triangulation<3>::smoothing_on_coarsening)),
                                                    fe(FC_DEALII_FE_Q_POLY_DEGREE),
@@ -319,11 +324,11 @@ namespace caviar
       std::ofstream output((filename + ".vtu").c_str());
       data_out.write_vtu(output);
 
-      if (Utilities::MPI::this_mpi_process(mpi_comm) == 0)
+      if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
       {
         std::vector<std::string> filenames;
         for (unsigned int i = 0;
-             i < Utilities::MPI::n_mpi_processes(mpi_comm);
+             i < Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD);
              ++i)
           filenames.push_back("solution-" +
                               Utilities::int_to_string(cycle, zeros_of_mesh_output) +
@@ -437,7 +442,7 @@ namespace caviar
     void Plt_dealii_mpi::calculate_induced_charge(int t)
     {
 
-      MPI_Allreduce(MPI::IN_PLACE, &boundary_id_max, 1, MPI::INT, MPI_MAX, mpi_comm);
+      MPI_Allreduce(MPI::IN_PLACE, &boundary_id_max, 1, MPI::INT, MPI_MAX, MPI_COMM_WORLD);
 
       std::vector<double> induced_charge(boundary_id_max + 1, 0);
 
@@ -499,7 +504,7 @@ namespace caviar
       */
 
       if (mpi_world_size != 1)
-        MPI_Allreduce(MPI::IN_PLACE, &induced_charge[0], boundary_id_max + 1, MPI::DOUBLE, MPI_SUM, mpi_comm);
+        MPI_Allreduce(MPI::IN_PLACE, &induced_charge[0], boundary_id_max + 1, MPI::DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 
       if (my_mpi_rank == 0)
       {
@@ -552,7 +557,7 @@ namespace caviar
 #else
         st_com += "Trilinos";
 #endif
-        st_com += " on " + std::to_string(Utilities::MPI::n_mpi_processes(mpi_comm));
+        st_com += " on " + std::to_string(Utilities::MPI::n_mpi_processes(MPI_COMM_WORLD));
         st_com += " MPI rank(s).";
         output->info(st_com);
 
@@ -748,8 +753,8 @@ namespace caviar
         for (int i = 1; i < mpi_world_size; ++i)
         {
 
-          MPI_Recv(&pos_in_mesh[0], pos_size, MPI_INT, i, 0, mpi_comm, MPI_STATUS_IGNORE);
-          MPI_Recv(&acc_found[0], pos_size, mpi_fc_vector_type, i, 1, mpi_comm, MPI_STATUS_IGNORE);
+          MPI_Recv(&pos_in_mesh[0], pos_size, MPI_INT, i, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+          MPI_Recv(&acc_found[0], pos_size, mpi_fc_vector_type, i, 1, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
 
           for (unsigned int j = 0; j < pos_size; ++j)
           {
@@ -762,8 +767,8 @@ namespace caviar
       }
       else
       {
-        MPI_Send(&pos_in_mesh[0], pos_size, MPI_INT, 0, 0, mpi_comm);
-        MPI_Send(&acc_found[0], pos_size, mpi_fc_vector_type, 0, 1, mpi_comm);
+        MPI_Send(&pos_in_mesh[0], pos_size, MPI_INT, 0, 0, MPI_COMM_WORLD);
+        MPI_Send(&acc_found[0], pos_size, mpi_fc_vector_type, 0, 1, MPI_COMM_WORLD);
       }
 
 #else

@@ -29,6 +29,9 @@
 // #ifdef CAVIAR_WITH_MPI
 // #include <mpi.h>
 // #endif
+#ifdef CAVIAR_WITH_OPENMP
+#include <omp.h>
+#endif
 namespace caviar
 {
 

@@ -47,7 +47,7 @@ namespace caviar
     // int charge_size = atom_type_params.charge.size();
     // int root_charge_size = charge_size;
 
-    MPI_Bcast(&root_pos_size, 1, MPI::INT, 0, mpi_comm);
+    MPI_Bcast(&root_pos_size, 1, MPI::INT, 0, MPI_COMM_WORLD);
 
     // XXX not necessary yet.
     // MPI_Bcast (&synch_owned_data_bcast_details,   1, MPI::BOOL, 0, mpi_comm);
@@ -85,7 +85,7 @@ namespace caviar
       // }
     }
 
-    MPI_Bcast(&atom_struct_owned.position[0], root_pos_size, mpi_fc_vector_type, 0, mpi_comm);
+    MPI_Bcast(&atom_struct_owned.position[0], root_pos_size, mpi_fc_vector_type, 0, MPI_COMM_WORLD);
 
     // if (synch_owned_data_bcast_details)
     // {

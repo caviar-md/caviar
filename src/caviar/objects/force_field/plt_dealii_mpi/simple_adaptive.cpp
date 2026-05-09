@@ -67,7 +67,9 @@
 #include <deal.II/lac/solver_bicgstab.h>
 #include <deal.II/lac/precondition.h>
 #include <deal.II/lac/vector_memory.h>
+#if DEALII_VERSION_MAJOR == 8
 #include <deal.II/lac/filtered_matrix.h>
+#endif
 
 #ifdef CAVIAR_WITH_DEALII_WITH_OPENCASCADE
 #include <deal.II/opencascade/boundary_lib.h>
@@ -93,8 +95,8 @@ namespace caviar
                                               locally_relevant_dofs);
 
       locally_relevant_solution.reinit(locally_owned_dofs,
-                                       locally_relevant_dofs, mpi_comm);
-      system_rhs.reinit(locally_owned_dofs, mpi_comm);
+                                       locally_relevant_dofs, MPI_COMM_WORLD);
+      system_rhs.reinit(locally_owned_dofs, MPI_COMM_WORLD);
 
       constraints.clear();
       constraints.reinit(locally_relevant_dofs);
@@ -119,13 +121,13 @@ namespace caviar
                                       constraints, false);
       SparsityTools::distribute_sparsity_pattern(dsp,
                                                  dof_handler.n_locally_owned_dofs_per_processor(),
-                                                 mpi_comm,
+                                                 MPI_COMM_WORLD,
                                                  locally_relevant_dofs);
 
       system_matrix.reinit(locally_owned_dofs,
                            locally_owned_dofs,
                            dsp,
-                           mpi_comm);
+                           MPI_COMM_WORLD);
     }
 
     //==================================================
@@ -196,12 +198,12 @@ namespace caviar
     {
 
       LA::MPI::Vector
-          completely_distributed_solution(locally_owned_dofs, mpi_comm);
+          completely_distributed_solution(locally_owned_dofs, MPI_COMM_WORLD);
 
       SolverControl solver_control(dof_handler.n_dofs(), solver_control_tolerance);
 
 #ifdef USE_PETSC_LA
-      LA::SolverCG solver(solver_control, mpi_comm);
+      LA::SolverCG solver(solver_control, MPI_COMM_WORLD);
 #else
       LA::SolverCG solver(solver_control);
 #endif

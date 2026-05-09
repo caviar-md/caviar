@@ -82,41 +82,42 @@ namespace caviar
     }
 
     void Gravity_external::calculate_acceleration()
-    {
-      FC_OBJECT_VERIFY_SETTINGS
-      double virialLocal = 0;
-      const auto &pos = atom_data->atom_struct_owned.position;
+{
+    FC_OBJECT_VERIFY_SETTINGS
+    double virialLocal = 0;
+    const auto &pos = atom_data->atom_struct_owned.position;
 
+    if (non_inertia_reference_frame_acc == nullptr)
+    {
 #ifdef CAVIAR_WITH_OPENMP
 #pragma omp parallel for
 #endif
-      if (non_inertia_reference_frame_acc == nullptr)
-      {
         for (unsigned int i = 0; i < pos.size(); ++i)
         {
 #ifdef CAVIAR_WITH_MPI
-          if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
-            continue;
+            if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+                continue;
 #endif
-          // const auto type_i = atom_data -> atom_struct_owned.type [i] ;
-          // const auto mass_i = atom_data -> atom_type_params.mass [ type_i ];
-
-          // const auto force = amplitude * direction * mass_i;
-          // atom_data -> atom_struct_owned.acceleration [i] += force / mass_i;
-
-          const auto a = amplitude * direction;
-          atom_data->atom_struct_owned.acceleration[i] += a;
+            const auto a = amplitude * direction;
+            atom_data->atom_struct_owned.acceleration[i] += a;
         }
-      }
-      else
-      {
+    }
+    else
+    {
+#ifdef CAVIAR_WITH_OPENMP
+#pragma omp parallel for
+#endif
         for (unsigned int i = 0; i < pos.size(); ++i)
         {
-          atom_data->atom_struct_owned.acceleration[i] += non_inertia_reference_frame_acc->current_value;
+#ifdef CAVIAR_WITH_MPI
+            if (atom_data->atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+                continue;
+#endif
+            atom_data->atom_struct_owned.acceleration[i] += non_inertia_reference_frame_acc->current_value;
         }
-      }
-      atom_data->virialForce += virialLocal;
     }
+    atom_data->virialForce += virialLocal;
+}
 
   } // force_field
 

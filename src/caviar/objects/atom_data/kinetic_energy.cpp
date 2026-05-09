@@ -354,7 +354,7 @@ namespace caviar
     double mass_sum_total = 0.0;
     //auto p_size = atom_struct_owned.position.size(); // MPI check
 #ifdef CAVIAR_WITH_OPENMP
-#pragma omp parallel for reduction(+ : p_cm, mass_sum)
+#pragma omp parallel for reduction(+ : p_cm_f, mass_sum)
 #endif
     for (auto i : atom_ids)
     {
@@ -397,7 +397,7 @@ namespace caviar
     double mass_sum_total = 0.0;
     auto p_size = atom_struct_owned.position.size(); // MPI check
 #ifdef CAVIAR_WITH_OPENMP
-#pragma omp parallel for reduction(+ : p_cm, mass_sum)
+#pragma omp parallel for reduction(+ : p_cm_f, mass_sum)
 #endif
     for (unsigned int i = 0; i < p_size; ++i)
     {
@@ -464,7 +464,7 @@ namespace caviar
 
     auto p_size = atom_struct_owned.velocity.size(); // MPI check
 #ifdef CAVIAR_WITH_OPENMP
-#pragma omp parallel for reduction(+ : v_cm, mass_sum)
+#pragma omp parallel for reduction(+ : v_cm_f, mass_sum)
 #endif
     for (unsigned int i = 0; i < p_size; ++i)
     {
@@ -530,7 +530,7 @@ namespace caviar
 
     auto p_size = atom_struct_owned.position.size(); // MPI check
 #ifdef CAVIAR_WITH_OPENMP
-#pragma omp parallel for reduction(+ : L_cm)
+#pragma omp parallel for reduction(+ : L_cm_f)
 #endif
     for (unsigned int i = 0; i < p_size; ++i)
     {
@@ -595,7 +595,7 @@ namespace caviar
 
     auto p_size = atom_struct_owned.position.size(); // MPI check
 #ifdef CAVIAR_WITH_OPENMP
-#pragma omp parallel for reduction(+ : it_cm)
+#pragma omp parallel for reduction(+ : I_cm_flat)
 #endif
     for (unsigned int i = 0; i < p_size; ++i)
     {
@@ -653,8 +653,55 @@ namespace caviar
     return I_cm;
   }
 
+std::array<std::array<double, 3>, 3> Atom_data::owned_inertia_tensor_cm_mpi_domain(const Vector3d<double> &p_cm)
+{
+    double I_cm_flat[9] = {
+        0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0,
+        0.0, 0.0, 0.0};
+
+    auto p_size = atom_struct_owned.position.size(); // MPI check
+#ifdef CAVIAR_WITH_OPENMP
+#pragma omp parallel for reduction(+ : I_cm_flat)
+#endif
+    for (unsigned int i = 0; i < p_size; ++i)
+    {
+        if (atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+            continue;
+
+        auto type_i = atom_struct_owned.type[i];
+        auto mass_i = atom_type_params.mass[type_i];
+        auto p = atom_struct_owned.position[i] - p_cm;    // relative position
+        I_cm_flat[0] += mass_i * (p.y * p.y + p.z * p.z); // I_cm[0][0]
+        I_cm_flat[1] += mass_i * (p.x * p.x + p.z * p.z); // I_cm[1][1]
+        I_cm_flat[2] += mass_i * (p.x * p.x + p.y * p.y); // I_cm[2][2]
+
+        I_cm_flat[3] -= mass_i * (p.x * p.y); // I_cm[0][1]
+        I_cm_flat[4] -= mass_i * (p.y * p.z); // I_cm[1][2]
+        I_cm_flat[5] -= mass_i * (p.z * p.x); // I_cm[2][0]
+    }
+    I_cm_flat[6] = I_cm_flat[3]; // I_cm[1][0] = I_cm[0][1]
+    I_cm_flat[7] = I_cm_flat[4]; // I_cm[2][1] = I_cm[1][2]
+    I_cm_flat[8] = I_cm_flat[5]; // I_cm[0][2] = I_cm[2][0]
+
+    std::array<std::array<double, 3>, 3> I_cm;
+    I_cm[0][0] = I_cm_flat[0];
+    I_cm[1][1] = I_cm_flat[1];
+    I_cm[2][2] = I_cm_flat[2];
+    I_cm[0][1] = I_cm_flat[3];
+    I_cm[1][2] = I_cm_flat[4];
+    I_cm[2][0] = I_cm_flat[5];
+    I_cm[1][0] = I_cm_flat[6];
+    I_cm[2][1] = I_cm_flat[7];
+    I_cm[0][2] = I_cm_flat[8];
+
+    return I_cm;
+}
+
+/*
   std::array<std::array<double, 3>, 3> Atom_data::owned_inertia_tensor_cm_mpi_domain(const Vector3d<double> &p_cm)
   {
+
 
     std::array<std::array<double, 3>, 3> I_cm = {{{0.0, 0.0, 0.0},
                                                   {0.0, 0.0, 0.0},
@@ -662,7 +709,7 @@ namespace caviar
 
     auto p_size = atom_struct_owned.position.size(); // MPI check
 #ifdef CAVIAR_WITH_OPENMP
-#pragma omp parallel for reduction(+ : it_cm)
+#pragma omp parallel for reduction(+ : I_cm)
 #endif
     for (unsigned int i = 0; i < p_size; ++i)
     {
@@ -687,7 +734,7 @@ namespace caviar
 
     return I_cm;
   }
-
+*/
   int Atom_data::degree_of_freedoms()
   {
 
