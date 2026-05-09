@@ -23,7 +23,7 @@
 #include "caviar/interpreter/communicator.hpp"
 
 #include <ctime>
-#include <sys/stat.h> // used for mkdir()
+#include <sys/stat.h> // used for ir()
 
 namespace caviar
 {
@@ -39,53 +39,7 @@ namespace caviar
 
     Atom_data::~Atom_data()
     {
-      if (ofs_xyz.is_open())
-        ofs_xyz.close();
-
-      if (ofs_xyz_mpi.is_open())
-        ofs_xyz_mpi.close();
-
-      if (ofs_xyz_ghost.is_open())
-        ofs_xyz_ghost.close();
-
-      if (ofs_xyz_ghost_mpi.is_open())
-        ofs_xyz_ghost_mpi.close();
-
-      if (ofs_energy.is_open())
-        ofs_energy.close();
-
-      if (ofs_energy_mpi.is_open())
-        ofs_energy_mpi.close();
-
-      if (ofs_temperature.is_open())
-        ofs_temperature.close();
-
-      if (ofs_temperature_mpi.is_open())
-        ofs_temperature_mpi.close();
-
-      if (ofs_pressure.is_open())
-        ofs_pressure.close();
-
-      if (ofs_pressure_mpi.is_open())
-        ofs_pressure_mpi.close();
-
-      if (ofs_povray.is_open())
-        ofs_povray.close();
-
-      if (ofs_povray_mpi.is_open())
-        ofs_povray_mpi.close();
-
-      if (ofs_msd.is_open())
-        ofs_msd.close();
-
-      if (ofs_msd_mpi.is_open())
-        ofs_msd_mpi.close();
-
-      if (ofs_volume.is_open())
-        ofs_volume.close();
-
-      if (ofs_volume_mpi.is_open())
-        ofs_volume_mpi.close();
+      close_files();
     }
 
     bool Atom_data::read(caviar::interpreter::Parser *parser)
@@ -507,8 +461,62 @@ namespace caviar
 #endif
     }
 
-    void Atom_data::open_files() {}
-    void Atom_data::close_files() {}
+    void Atom_data::open_files() 
+    {
+
+    }
+    
+    void Atom_data::close_files() 
+    {
+      if (ofs_xyz.is_open())
+        ofs_xyz.close();
+
+      if (ofs_xyz_mpi.is_open())
+        ofs_xyz_mpi.close();
+
+      if (ofs_xyz_ghost.is_open())
+        ofs_xyz_ghost.close();
+
+      if (ofs_xyz_ghost_mpi.is_open())
+        ofs_xyz_ghost_mpi.close();
+
+      if (ofs_energy.is_open())
+        ofs_energy.close();
+
+      if (ofs_energy_mpi.is_open())
+        ofs_energy_mpi.close();
+
+      if (ofs_temperature.is_open())
+        ofs_temperature.close();
+
+      if (ofs_temperature_mpi.is_open())
+        ofs_temperature_mpi.close();
+
+      if (ofs_pressure.is_open())
+        ofs_pressure.close();
+
+      if (ofs_pressure_mpi.is_open())
+        ofs_pressure_mpi.close();
+
+      if (ofs_povray.is_open())
+        ofs_povray.close();
+
+      if (ofs_povray_mpi.is_open())
+        ofs_povray_mpi.close();
+
+      if (ofs_msd.is_open())
+        ofs_msd.close();
+
+      if (ofs_msd_mpi.is_open())
+        ofs_msd_mpi.close();
+
+      if (ofs_volume.is_open())
+        ofs_volume.close();
+
+      if (ofs_volume_mpi.is_open())
+        ofs_volume_mpi.close();
+
+    }
     void Atom_data::generate() {}
 
     void Atom_data::report_xyz_dump(int64_t i, double)

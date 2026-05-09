@@ -48,3 +48,4 @@
 #include "caviar/objects/force_field/macro/opls_proper_dihedral.hpp"
 #include "caviar/objects/force_field/macro/fix_bond.hpp"
 #include "caviar/objects/force_field/macro/umbrella_sampling.hpp"
+#include "caviar/objects/force_field/macro/umbrella_sampling_g.hpp"

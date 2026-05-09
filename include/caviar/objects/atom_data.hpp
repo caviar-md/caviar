@@ -111,6 +111,11 @@ namespace caviar
     virtual Vector3d<double> owned_position_cm();
 
     /**
+     *  position of the center of mass of a list of atom ids
+     */
+    Vector3d<double> owned_position_cm(const std::vector <int> &atom_ids);
+
+    /**
      *  position of the center of mass
      */
     virtual Vector3d<double> owned_position_cm_mpi_domain();

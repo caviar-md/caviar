@@ -346,6 +346,50 @@ namespace caviar
     pressure_ = p1 + p2_total;
   }
 
+
+  Vector3d<double> Atom_data::owned_position_cm(const std::vector <int> &atom_ids)
+  {
+    double p_cm_f[3] = {0.0, 0.0, 0.0};
+    double mass_sum = 0.0;
+    double mass_sum_total = 0.0;
+    //auto p_size = atom_struct_owned.position.size(); // MPI check
+#ifdef CAVIAR_WITH_OPENMP
+#pragma omp parallel for reduction(+ : p_cm, mass_sum)
+#endif
+    for (auto i : atom_ids)
+    {
+      auto type_i = atom_struct_owned.type[i];
+      auto mass_i = atom_type_params.mass[type_i];
+      mass_sum_total += mass_i;
+
+      if (atom_struct_owned.mpi_rank[i] != my_mpi_rank)
+        continue;
+
+      mass_sum += mass_i;
+      p_cm_f[0] += atom_struct_owned.position[i].x * mass_i;
+      p_cm_f[1] += atom_struct_owned.position[i].y * mass_i;
+      p_cm_f[2] += atom_struct_owned.position[i].z * mass_i;
+    }
+
+#if defined(CAVIAR_SINGLE_MPI_MD_DOMAIN)
+
+#elif defined(CAVIAR_WITH_MPI)
+    double p_cm_f_total[3] = {0.0, 0.0, 0.0};
+    MPI_Allreduce(&p_cm_f, &p_cm_f_total, 3, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+    p_cm_f[0] = p_cm_f_total[0];
+    p_cm_f[1] = p_cm_f_total[1];
+    p_cm_f[2] = p_cm_f_total[2];
+
+    mass_sum = mass_sum_total;
+#else
+
+#endif
+    Vector3d<double> p_cm{p_cm_f[0], p_cm_f[1], p_cm_f[2]};
+
+    p_cm = p_cm / mass_sum;
+    return p_cm;
+  }
+
   Vector3d<double> Atom_data::owned_position_cm()
   {
     double p_cm_f[3] = {0.0, 0.0, 0.0};
