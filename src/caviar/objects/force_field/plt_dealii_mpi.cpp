@@ -80,6 +80,7 @@
 #include <cmath>
 #include <time.h>
 
+#include "caviar/CAVIAR.hpp"
 #include "caviar/objects/force_field/utility/plt_dealii_constants.hpp"
 #include "caviar/objects/force_field/utility/plt_dealii_functions.hpp"
 
@@ -125,6 +126,7 @@ namespace caviar
                       " 'slab' to the integrators because they have to be initialized in"
                       " every steps. The initialization functions are done in "
                       "calculate_acceleration function.");
+      this->fptr = fptr;
     }
 
     //==================================================

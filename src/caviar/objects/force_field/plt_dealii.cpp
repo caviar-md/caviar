@@ -93,7 +93,7 @@
 #include <iostream>
 #include <cmath>
 #include <time.h>
-
+#include <caviar/CAVIAR.hpp>
 #include "caviar/objects/force_field/utility/plt_dealii_constants.hpp"
 #include "caviar/objects/force_field/utility/plt_dealii_functions.hpp"
 #include "caviar/objects/neighborlist.hpp" // used for ml training
@@ -143,6 +143,7 @@ namespace caviar
                       "calculate_acceleration function.");
       test_force_spherical = nullptr;
       init_test_force_spherical = false;
+      this->fptr = fptr;
     }
 
     //==================================================

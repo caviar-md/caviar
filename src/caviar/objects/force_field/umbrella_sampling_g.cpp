@@ -41,7 +41,7 @@ namespace caviar
     Umbrella_sampling_g::~Umbrella_sampling_g() {
       if (writerXYZ != nullptr)
         delete writerXYZ;
-      };
+      }
 
     bool Umbrella_sampling_g::read(caviar::interpreter::Parser *parser)
     {
@@ -404,13 +404,13 @@ namespace caviar
 
     void Umbrella_sampling_g::init_production()
     {
-		for (int i = 0; i < fixed_atoms_id.size(); ++i)
+		for (size_t i = 0; i < fixed_atoms_id.size(); ++i)
 		{
 			int id = fixed_atoms_id[i];
 			fixed_atoms_resting_position[i] = atom_data->atom_struct_owned.position[id];
 		}
 		
-		for (int i = 0; i < moving_atoms_id.size(); ++i)
+		for (size_t i = 0; i < moving_atoms_id.size(); ++i)
 		{
 			int id = moving_atoms_id[i];
 			moving_atoms_resting_position[i] = atom_data->atom_struct_owned.position[id];

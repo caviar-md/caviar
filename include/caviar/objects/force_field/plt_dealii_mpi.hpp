@@ -22,7 +22,7 @@
 #pragma once
 
 #include "caviar/objects/force_field.hpp"
-
+#include <fstream>
 #ifdef CAVIAR_WITH_DEALII_MPI
 
 #include <deal.II/grid/tria.h>
@@ -197,6 +197,7 @@ namespace caviar
       std::vector<caviar::Force_field *> force_field_custom;
 
       bool ignore_point_out_of_mesh;
+      CAVIAR * fptr;
     };
 
     //==================================================

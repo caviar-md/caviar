@@ -285,7 +285,7 @@ namespace caviar
       //===================================================
 
       template <typename T>
-      bool dealii_grid_generator(class CAVIAR *fptr, interpreter::Parser *parser, T &triangulation)
+      bool dealii_grid_generator(class CAVIAR *fptr, class interpreter::Parser *parser, T &triangulation)
       {
         auto error = fptr->error;
         bool in_file = true;

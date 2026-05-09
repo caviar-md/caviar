@@ -23,6 +23,7 @@
 
 #include "caviar/objects/force_field.hpp"
 
+#include <fstream>
 #ifdef CAVIAR_WITH_DEALII
 
 #include <deal.II/grid/tria.h>
@@ -222,6 +223,7 @@ namespace caviar
       std::ofstream ofs_test_force_spherical;
       bool init_test_force_spherical;
       std::string spherical_test_file_name;
+      CAVIAR * fptr;
     };
 
     //==================================================
