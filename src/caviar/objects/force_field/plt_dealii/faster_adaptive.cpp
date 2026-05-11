@@ -225,7 +225,59 @@ namespace caviar
 
       constraints.distribute(solution);
 #else
-      error->all(FC_FILE_LINE_FUNC, "Developed for DealII V8. Not implemented for DealII V9 . Use other 'solve_type' for PLT force_field such as 'simple_global' or 'simple_adaptive'.");
+      //error->all(FC_FILE_LINE_FUNC, "Developed for DealII V8. Not implemented for DealII V9 . Use other 'solve_type' for PLT force_field such as 'simple_global' or 'simple_adaptive'.");
+           constraints.clear();
+
+  for (auto &&i : boundary_id_value)
+  {
+    VectorTools::interpolate_boundary_values(
+      dof_handler,
+      i.first,
+      plt_dealii::BoundaryValues(i.second, this),
+      constraints);
+  }
+
+  for (auto &&i : boundary_id_time_function)
+  {
+    auto fvalue = i.second->value();
+
+    VectorTools::interpolate_boundary_values(
+      dof_handler,
+      i.first,
+      plt_dealii::BoundaryValues(fvalue, this),
+      constraints);
+  }
+
+  constraints.close();
+
+  constraints.condense(system_matrix);
+  constraints.condense(system_rhs);
+
+  SolverControl solver_control(
+    solver_control_maximum_iteration,
+    solver_control_tolerance);
+
+  SolverCG<Vector<double>> solver(solver_control);
+
+  if (use_preconditioner)
+  {
+    PreconditionJacobi<SparseMatrix<double>> prec;
+    prec.initialize(system_matrix, preconditioner_relaxation);
+
+    solver.solve(system_matrix,
+                 solution,
+                 system_rhs,
+                 prec);
+  }
+  else
+  {
+    solver.solve(system_matrix,
+                 solution,
+                 system_rhs,
+                 PreconditionIdentity());
+  }
+
+  constraints.distribute(solution);
 #endif
     }
 
@@ -315,8 +367,82 @@ namespace caviar
       std::cout << "t15 - t14: " << (t15 - t14) << "\n";
       std::cout << "t16 - t15: " << (t16 - t15) << "\n";
       std::cout << "t17 - t16: " << (t17 - t16) << "\n";
-#else
-      error->all(FC_FILE_LINE_FUNC, "Developed for DealII V8. Not implemented for DealII V9 . Use other 'solve_type' for PLT force_field such as 'simple_global' or 'simple_adaptive'.");
+#else            
+      //error->all(FC_FILE_LINE_FUNC, "Developed for DealII V8. Not implemented for DealII V9 . Use other 'solve_type' for PLT force_field such as 'simple_global' or 'simple_adaptive'.");
+  double t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0;
+  double t7 = 0, t8 = 0, t9 = 0, t10 = 0, t11 = 0, t12 = 0;
+  double t13 = 0, t14 = 0, t15 = 0;//, t16 = 0, t17 = 0;
+
+  constraints.clear();
+  t1 = get_wall_time();
+  for (auto &&i : boundary_id_value)
+  {
+    t2 = get_wall_time();
+    VectorTools::interpolate_boundary_values(dof_handler,
+                                             i.first,
+                                             plt_dealii::BoundaryValues(i.second, this),
+                                             constraints);
+    t3 = get_wall_time();
+    std::cout << "boundary_id " << i.second << "  : " << (t3 - t2) << "\n";
+  }
+  t4 = get_wall_time();
+  std::cout << "total_boundary_id: " << (t4 - t1) << "\n";
+
+  t5 = get_wall_time();
+  constraints.close();
+  t6 = get_wall_time();
+
+  // set up a linear solver
+  SolverControl solver_control(solver_control_maximum_iteration, solver_control_tolerance, false, false);
+  t7 = get_wall_time();
+
+  GrowingVectorMemory<dealii::Vector<double>> mem;
+  t8 = get_wall_time();
+SolverCG<dealii::Vector<double>> solver(solver_control, mem);
+  t9 = get_wall_time();
+
+  if (use_preconditioner)
+  {
+    t10 = get_wall_time();
+
+    constraints.condense(system_matrix);
+    constraints.condense(system_rhs);
+
+    t11 = get_wall_time();
+
+    PreconditionJacobi<SparseMatrix<double>> prec;
+    prec.initialize(system_matrix, preconditioner_relaxation);
+
+    t12 = get_wall_time();
+
+    solver.solve(system_matrix, solution, system_rhs, prec);
+
+    t13 = get_wall_time();
+  }
+  else
+  {
+    error->all(FC_FILE_LINE_FUNC,
+               "not implemented yet. Use it with preconditioner.");
+  }
+
+  t14 = get_wall_time();
+
+  constraints.distribute(solution);
+
+  t15 = get_wall_time();
+
+  std::cout << "t5  - t4: " << (t5 - t4) << "\n";
+  std::cout << "t6  - t5: " << (t6 - t5) << "\n";
+  std::cout << "t7  - t6: " << (t7 - t6) << "\n";
+  std::cout << "t8  - t7: " << (t8 - t7) << "\n";
+  std::cout << "t9  - t8: " << (t9 - t8) << "\n";
+  std::cout << "t10 - t9: " << (t10 - t9) << "\n";
+  std::cout << "t11 - t10: " << (t11 - t10) << "\n";
+  std::cout << "t12 - t11: " << (t12 - t11) << "\n";
+  std::cout << "t13 - t12: " << (t13 - t12) << "\n";
+  std::cout << "t14 - t13: " << (t14 - t13) << "\n";
+  std::cout << "t15 - t14: " << (t15 - t14) << "\n";
+
 #endif
     }
 

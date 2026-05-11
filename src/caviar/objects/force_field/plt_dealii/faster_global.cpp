@@ -221,9 +221,62 @@ namespace caviar
         error->all(FC_FILE_LINE_FUNC, "not implemented yet. Use it with preconditioner.");
       }
 
-      // constraints.distribute (solution); //XXX no-hanging nodes
+      constraints.distribute(solution); // XXX no-hanging nodes
 #else
-      error->all(FC_FILE_LINE_FUNC, "Developed for DealII V8. Not implemented for DealII V9 . Use other 'solve_type' for PLT force_field such as 'simple_global' or 'simple_adaptive'.");
+
+      constraints.clear();
+
+      for (auto &&i : boundary_id_value)
+      {
+        VectorTools::interpolate_boundary_values(
+            dof_handler,
+            i.first,
+            plt_dealii::BoundaryValues(i.second, this),
+            constraints);
+      }
+
+      for (auto &&i : boundary_id_time_function)
+      {
+        auto fvalue = i.second->value();
+
+        VectorTools::interpolate_boundary_values(
+            dof_handler,
+            i.first,
+            plt_dealii::BoundaryValues(fvalue, this),
+            constraints);
+      }
+
+      constraints.close();
+
+      constraints.condense(system_matrix);
+      constraints.condense(system_rhs);
+
+      SolverControl solver_control(
+          solver_control_maximum_iteration,
+          solver_control_tolerance);
+
+      SolverCG<Vector<double>> solver(solver_control);
+
+      if (use_preconditioner)
+      {
+        PreconditionJacobi<SparseMatrix<double>> prec;
+        prec.initialize(system_matrix, preconditioner_relaxation);
+
+        solver.solve(system_matrix,
+                     solution,
+                     system_rhs,
+                     prec);
+      }
+      else
+      {
+        solver.solve(system_matrix,
+                     solution,
+                     system_rhs,
+                     PreconditionIdentity());
+      }
+
+      constraints.distribute(solution);
+
 #endif
     }
 

@@ -157,10 +157,11 @@ namespace caviar
 
 #if DEALII_VERSION_MAJOR == 8
       ConstraintMatrix constraints;
-#elif DEALII_VERSION_MAJOR == 9 && DEALII_VERSION_MINOR < 3
-      // ConstraintMatrix constraints;
-      AffineConstraints<double> constraints;
-#elif DEALII_VERSION_MAJOR == 9 && DEALII_VERSION_MINOR >= 3
+// #elif DEALII_VERSION_MAJOR == 9 && DEALII_VERSION_MINOR < 3
+//       // ConstraintMatrix constraints;
+//       AffineConstraints<double> constraints;
+// #elif DEALII_VERSION_MAJOR == 9 && DEALII_VERSION_MINOR >= 3
+#elif DEALII_VERSION_MAJOR == 9
       AffineConstraints<double> constraints;
 #else
 #error not implemented
