@@ -22,6 +22,11 @@
 namespace caviar
 {
 
+  namespace interpreter
+  {
+    class Parser;
+  }
+  
   namespace force_field
   {
     namespace dealii_functions
@@ -183,6 +188,244 @@ namespace caviar
       //===================================================
 
       template <typename T>
+      bool dealii_grid_generator_hyper_cube(
+          class CAVIAR *fptr,
+          interpreter::Parser *parser,
+          T &triangulation)
+      {
+        auto object_container = fptr->object_container;
+        auto error = fptr->error;
+
+        double left = 0.0;
+        double right = 1.0;
+        bool colorize = false;
+        bool in_file = true;
+
+        while (true)
+        {
+          GET_A_TOKEN_FOR_CREATION
+          auto t = token.string_value;
+
+          if (string_cmp(t, "left"))
+          {
+            GET_OR_CHOOSE_A_REAL(left, "", "")
+          }
+          else if (string_cmp(t, "right"))
+          {
+            GET_OR_CHOOSE_A_REAL(right, "", "")
+          }
+          else if (string_cmp(t, "colorize"))
+          {
+            GET_OR_CHOOSE_A_INT(colorize, "", "")
+          }
+          else
+            FC_ERR_UNDEFINED_VAR(t)
+        }
+
+        if (left > right)
+          error->all(FC_FILE_LINE_FUNC, "left > right");
+
+        GridGenerator::hyper_cube(
+            triangulation,
+            left,
+            right,
+            colorize);
+
+        return in_file;
+      }
+
+      //===================================================
+      //===================================================
+      //===================================================
+
+      template <typename T>
+      bool dealii_grid_generator_hyper_ball_balanced(
+          class CAVIAR *fptr,
+          interpreter::Parser *parser,
+          T &triangulation)
+      {
+        auto object_container = fptr->object_container;
+        auto error = fptr->error;
+
+        double radius = 1.0;
+        caviar::Vector3d<double> center{0, 0, 0};
+        bool in_file = true;
+
+        while (true)
+        {
+          GET_A_TOKEN_FOR_CREATION
+          auto t = token.string_value;
+
+          if (string_cmp(t, "center"))
+          {
+            GET_OR_CHOOSE_A_REAL_3D_VECTOR(center, "", "");
+          }
+          else if (string_cmp(t, "radius"))
+          {
+            GET_OR_CHOOSE_A_REAL(radius, "", "")
+          }
+          else
+            FC_ERR_UNDEFINED_VAR(t)
+        }
+
+        if (radius < 0)
+          error->all(FC_FILE_LINE_FUNC, "radius < 0");
+
+        const Point<3> p_center(
+            center.x,
+            center.y,
+            center.z);
+
+        GridGenerator::hyper_ball_balanced(
+            triangulation,
+            p_center,
+            radius);
+
+        static const SphericalManifold<3> manifold_description(
+            p_center);
+
+        triangulation.set_manifold(
+            2,
+            manifold_description);
+
+        for (typename Triangulation<3>::active_cell_iterator
+                 cell = triangulation.begin_active();
+             cell != triangulation.end();
+             ++cell)
+        {
+          for (unsigned int f = 0;
+               f < GeometryInfo<3>::faces_per_cell;
+               ++f)
+          {
+            if (cell->face(f)->at_boundary())
+            {
+              cell->set_all_manifold_ids(2);
+              cell->face(f)->set_boundary_id(1);
+            }
+          }
+        }
+
+        return in_file;
+      }
+
+      //===================================================
+      //===================================================
+      //===================================================
+
+      template <typename T>
+      bool dealii_grid_generator_cylinder(
+          class CAVIAR *fptr,
+          interpreter::Parser *parser,
+          T &triangulation)
+      {
+        auto object_container = fptr->object_container;
+        auto error = fptr->error;
+
+        double radius = 1.0;
+        double half_length = 1.0;
+
+        bool in_file = true;
+
+        while (true)
+        {
+          GET_A_TOKEN_FOR_CREATION
+          auto t = token.string_value;
+
+          if (string_cmp(t, "radius"))
+          {
+            GET_OR_CHOOSE_A_REAL(radius, "", "")
+          }
+          else if (string_cmp(t, "half_length"))
+          {
+            GET_OR_CHOOSE_A_REAL(half_length, "", "")
+          }
+          else
+            FC_ERR_UNDEFINED_VAR(t)
+        }
+
+        if (radius <= 0.0)
+          error->all(FC_FILE_LINE_FUNC, "radius <= 0");
+
+        if (half_length <= 0.0)
+          error->all(FC_FILE_LINE_FUNC, "half_length <= 0");
+
+        GridGenerator::cylinder(
+            triangulation,
+            radius,
+            half_length);
+
+        return in_file;
+      }
+
+      //===================================================
+      //===================================================
+      //===================================================
+      /*
+      template <typename T>
+      bool dealii_grid_generator_subdivided_cylinder(
+          class CAVIAR *fptr,
+          interpreter::Parser *parser,
+          T &triangulation)
+      {
+        auto object_container = fptr->object_container;
+        auto error = fptr->error;
+
+        unsigned int x_subdivisions = 1;
+        double radius = 1.0;
+        double half_length = 1.0;
+
+        bool in_file = true;
+
+        while (true)
+        {
+          GET_A_TOKEN_FOR_CREATION
+          auto t = token.string_value;
+
+          if (string_cmp(t, "x_subdivisions"))
+          {
+            GET_OR_CHOOSE_AN_INT(x_subdivisions, "", "")
+          }
+          else if (string_cmp(t, "radius"))
+          {
+            GET_OR_CHOOSE_A_REAL(radius, "", "")
+          }
+          else if (string_cmp(t, "half_length"))
+          {
+            GET_OR_CHOOSE_A_REAL(half_length, "", "")
+          }
+          else
+            FC_ERR_UNDEFINED_VAR(t)
+        }
+
+        if (x_subdivisions == 0)
+          error->all(
+              FC_FILE_LINE_FUNC,
+              "x_subdivisions == 0");
+
+        if (radius <= 0.0)
+          error->all(
+              FC_FILE_LINE_FUNC,
+              "radius <= 0");
+
+        if (half_length <= 0.0)
+          error->all(
+              FC_FILE_LINE_FUNC,
+              "half_length <= 0");
+
+        GridGenerator::subdivided_cylinder(
+            triangulation,
+            x_subdivisions,
+            radius,
+            half_length);
+
+        return in_file;
+      }
+      */
+      //===================================================
+      //===================================================
+      //===================================================
+
+      template <typename T>
       void set_spherical_manifold(T &triangulation)
       {
         const Point<3> center(0, 0, 0);
@@ -303,6 +546,26 @@ namespace caviar
             dealii_grid_generator_hyper_ball(fptr, parser, triangulation);
             return in_file;
           }
+          else if (string_cmp(t, "hyper_ball_balanced"))
+          {
+            dealii_grid_generator_hyper_ball_balanced(fptr, parser, triangulation);
+            return in_file;
+          }
+          else if (string_cmp(t, "hyper_cube"))
+          {
+            dealii_grid_generator_hyper_cube(fptr, parser, triangulation);
+            return in_file;
+          }
+          else if (string_cmp(t, "cylinder"))
+          {
+            dealii_grid_generator_cylinder(fptr, parser, triangulation);
+            return in_file;
+          }
+          // else if (string_cmp(t, "subdivided_cylinder"))
+          // {
+          //   dealii_grid_generator_subdivided_cylinder(fptr, parser, triangulation);
+          //   return in_file;
+          // }
           else
             FC_ERR_UNDEFINED_VAR(t)
         }
